@@ -1,0 +1,90 @@
+BASTION — IMAGE GENERATION PROMPT PACK
+Paste one prompt per generation. Works with ChatGPT/DALL-E, Midjourney, Firefly, etc.
+
+=====================================================================
+MASTER PROMPT (full detail — photorealistic deployed scene)
+=====================================================================
+
+Photorealistic wide product photograph, golden-hour sunlight, shot at
+35mm with shallow depth of field: a rugged olive-drab waterproof hard
+case (Pelican style) sits open on dry grassland, deployed as an
+off-grid communications station. Inside the case, everything is
+precisely organized in gray closed-cell foam: two dark blue 12-volt
+LiFePO4 batteries sit low and centered with orange hold-down straps; a
+small black fanless mini computer, a compact white WiFi router with two
+stub antennas, and a small blue USB software-defined-radio dongle are
+mounted together on a removable aluminum tray; two black handheld GMRS
+radios with short antennas stand upright in their own foam pockets. In
+one corner of the case, neat red and black wiring runs to a small
+labeled fuse block, a red rotary battery-disconnect knob, and a small
+battery monitor. The open lid holds two laminated instruction cards. A
+folding 200-watt solar panel stands beside the case, angled toward the
+low sun, connected by a single orange cable that enters the case wall
+through a sealed round port. A thin whip antenna is clamped to the case
+rim, rising above the scene. In the foreground, a smartphone leans
+against a small rock, its screen glowing with a simple offline menu
+showing two large buttons. The overall impression: calm, capable,
+family-ready preparedness equipment — everything labeled, nothing
+improvised. No people, no visible brand names or logos, no readable
+text anywhere except the phone's two buttons, high detail, natural
+color grading.
+
+=====================================================================
+VARIANT A — studio catalog shot
+=====================================================================
+
+Studio product photography on a seamless light gray background, soft
+even lighting, slight three-quarter angle, sharp focus throughout: a
+rugged olive-drab hard case open toward the camera with its interior
+fully visible — two blue 50Ah batteries with orange straps set low in
+gray foam, a removable aluminum tray above them holding a fanless mini
+computer, a compact WiFi router, and a small blue USB radio dongle, two
+black handheld radios standing upright in foam pockets, and tidy red
+and black wiring to a small fuse panel with a red rotary disconnect
+switch. A folded portable solar panel leans against the side of the
+case; a short whip antenna is mounted on the rim. Commercial product
+catalog style, no people, no logos.
+
+=====================================================================
+VARIANT B — technical cutaway / infographic
+=====================================================================
+
+Clean isometric technical illustration, flat colors with subtle
+shading, white background, engineering poster aesthetic: an open rugged
+equipment case shown in cutaway with clearly separated layers —
+batteries at the bottom with straps, an electronics tray above holding
+a mini computer, router, and radio dongle, two handheld radios in foam
+at one side, and a fuse block with a red disconnect switch in the
+corner. An unfolded solar panel sits beside the case connected by an
+orange cable, a whip antenna rises from the rim, and a nearby
+smartphone shows WiFi arcs linking it to the case. Thin sans-serif
+callout lines, minimal palette, no people, no logos.
+
+=====================================================================
+VARIANT C — dramatic "grid down" scene
+=====================================================================
+
+Cinematic photograph at dusk during a power outage: a dark suburban
+backyard, houses unlit in the background, storm clouds clearing. In the
+foreground on a picnic table, the open olive-drab hard case glows
+faintly from small status LEDs inside — batteries, mini computer,
+router, and radios all visible in organized foam. A folding solar panel
+leans nearby, catching the last light. A family's two smartphones on
+the table show bright screens connected to the station's WiFi. A whip
+antenna silhouettes against the sky. Mood: quiet self-reliance, warm
+light in a dark neighborhood. No visible faces, no brand names, high
+detail, moody but hopeful color grade.
+
+=====================================================================
+TIPS
+=====================================================================
+
+- Generators mangle written text: keep "no readable text" in the
+  prompt, or expect gibberish labels. Add real labels afterward.
+- If people or logos appear anyway, append: "no people, no text,
+  no logos".
+- Wiring will come out as decorative spaghetti. Treat any generated
+  image as decoration — docs/wiring-diagram.svg and
+  docs/deployed-illustration.svg remain the accurate references.
+- Aspect ratio: 16:9 for a poster/cover, 4:3 or 1:1 for the binder.
+- Midjourney users: append "--ar 16:9 --style raw" to any prompt.
