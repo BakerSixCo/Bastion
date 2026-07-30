@@ -40,9 +40,15 @@ log.
 | 1 | 12V USB charging panel | ≥4 ports, feeds phones + radio chargers | §2.1.5, §4.1 | $30 | | |
 | — | Wire, 10 AWG | Battery mains and parallel pairs — **cut in equal lengths** | §2.1.3 | $40 | | |
 | — | Wire, 16 AWG | Branch circuits from the fuse block | §2.1.5 | $20 | | |
+| — | Wire, 12 AWG | MPPT battery feed to the bus | §2.1.7 | $15 | inferred — sized to MPPT output | |
+| 1 | Inline fuse holder + 30A fuse | MPPT charge feed ("its own fused connection") | §2.1.7, diagram | $10 | | |
+| 1 | MC4 extension cable pair | Pre-terminated; cut in half = pigtails for the bulkhead glands, no MC4 crimp tool needed | §2.1.7, §3.2.2 | $18 | inferred | |
+| 2 | DC input pigtails | Barrel plugs matching the mini PC and router jacks (check sizes — commonly 5.5×2.5 / 5.5×2.1 mm) | §2.1.6 | $12 | inferred — the forgotten part | |
+| 1 | Powerpole panel-mount housing | For the external power port bulkhead | §3.2.2 | $12 | inferred | |
 | — | Anderson Powerpole set | Connectors + contacts, bulk | §2.1.8 | $30 | | |
-| — | Ring terminals + heat-shrink | Sized to 10 AWG and 16 AWG | §2.1.8 | $20 | | |
-| | | | | **~$1,105** | | |
+| — | Ring terminals + heat-shrink | Adhesive-lined shrink; ring studs to match battery posts, shunt (M10), MRBF (5/16") | §2.1.8 | $30 | ⚠ verify stud sizes against actual parts | |
+| 1 | Dielectric grease + blue threadlocker | Terminals and fastener retention in the vibration path | §2.1.8 | $15 | inferred | |
+| | | | | **~$1,250** | | |
 
 ## 2. Compute & network (Phase 1)
 
@@ -69,7 +75,8 @@ log.
 | 1 | SDR antenna set | Wideband — the guide's known-good test is local FM | §1.2.5, §7 playbook | $30 | Often bundled with the RTL-SDR kit | |
 | 1 | GMRS antenna | Roll-up or mag-mount, external, for the SMA bulkhead | §3.2.2, §3.2.3 | $35 | inferred — "antenna elements" in the lid | |
 | — | SMA bulkhead connectors + pigtails | One per feedline through the case wall | §3.2.2 | $25 | ⚠ count depends on how many radios you bulkhead | |
-| | | | | **~$230** | | |
+| 1 | RF adapter kit | SMA / RP-SMA / u.FL — SDR dongles, GMRS radios, and mesh boards rarely share a connector | §3.2.2 | $15 | inferred — verify each device's connector before ordering pigtails | |
+| | | | | **~$245** | | |
 
 ## 4. Case & fabrication (Phase 3)
 
@@ -81,7 +88,21 @@ log.
 | 1 | Deck plate | Board/plate carrying mini PC, router, SDR, hub, bucks as one unit | §3.1 | $20 | inferred — material never specified | |
 | 1 | Battery cradle | Fixes battery orientation, mass low and centered | §3.1 | $20 | inferred — the guide requires it, doesn't spec it | |
 | 1 | Panel sleeve + straps | Panel rides outside the case | §3.2.4 | $25 | | |
-| | | | | **~$325** | | |
+| 1 | Stainless fastener assortment | M3–M5 machine screws, nyloc nuts, washers | §3.1 | $25 | inferred | |
+| 1 | Standoff kit | Nylon/brass M3, for boards and bucks on the deck | §3.1 | $12 | inferred | |
+| — | VHB tape + industrial velcro | Mounting for devices with no screw holes (most consumer mini PCs, routers, hubs); velcro where field swap matters | §3.1 | $25 | inferred | |
+| 2 | Battery hold-down straps | Cinch strap or bracket over the foam cradle — foam alone won't hold 6 kg in a drop | §3.1 | $20 | inferred | |
+| — | Zip ties + adhesive/screw-down mounts | Wire management in the cut channels | §3.1 | $15 | inferred | |
+| — | Wire loom / braided sleeve | Abrasion protection where runs cross the deck edge | §3.1 | $15 | inferred | |
+| — | Grommets / edge trim | Any hole a wire passes through inside the case | §3.1 | $8 | inferred | |
+| 1 | Marine sealant | Backing the cable glands, keeps the IP rating honest | §3.2.2 | $10 | inferred | |
+| | | | | **~$455** | | |
+
+**Mounting approach** (the guide implies it, stated here so the hardware makes sense):
+the case wall is only penetrated by the glands — nothing else gets drilled. The deck
+plate seats in its foam pocket (§3.1); devices mount to the *deck* with standoffs,
+VHB, or velcro, and the deck lifts out as one unit with Powerpole tails. Batteries sit
+in the foam cradle with straps over the top. Everything else lives in profiled foam.
 
 ## 5. Resurrection kit & documentation (Phases 4.3, 5)
 
@@ -120,19 +141,23 @@ already own — the guide's skill floor assumes a crimper and a multimeter.
 
 | Section | Est. |
 |---|---|
-| 1. Power system | ~$1,105 |
+| 1. Power system | ~$1,250 |
 | 2. Compute & network | ~$635 |
-| 3. Radio & antennas | ~$230 |
-| 4. Case & fabrication | ~$325 |
+| 3. Radio & antennas | ~$245 |
+| 4. Case & fabrication | ~$455 |
 | 5. Resurrection kit & documentation | ~$110 |
 | 7. Fees | $35 |
-| **Core build** | **~$2,440** |
+| **Core build** | **~$2,730** |
 | 6. Tools & consumables | ~$200 |
-| **All-in** | **~$2,640** |
+| **All-in** | **~$2,930** |
 
-The core build lands at the top of the guide's ~$2,050–2,400 band. The swing items are
-the solar panel, the case, and the cold spare — a smaller panel, a cheaper case, or
-promoting an old drive instead of buying a Pi 5 each move it several hundred dollars.
+The core build now runs ~$300 over the guide's ~$2,050–2,400 band. The overage is
+almost entirely mounting hardware and wiring consumables (~$250 across sections 1
+and 4) that the guide's budget never itemized — the parts that stall assembly on a
+Saturday when the hardware store is the only option. The band is achievable by
+trimming the swing items instead: a smaller panel, a used case, promoting an old
+drive as the cold spare. Don't trim the consumables — they're the cheapest lines
+on the sheet and the most expensive to be missing.
 
 ## Decisions the guide leaves open
 
