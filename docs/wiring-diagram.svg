@@ -125,7 +125,7 @@
   <text x="645" y="486" class="lbl">SDR / USB</text><text x="810" y="486" text-anchor="end" class="lbl">5 A</text>
   <text x="645" y="546" class="lbl">RADIO CHG</text><text x="810" y="546" text-anchor="end" class="lbl">5 A</text>
   <text x="645" y="606" class="lbl">USB PANEL</text><text x="810" y="606" text-anchor="end" class="lbl">10 A</text>
-  <text x="645" y="666" class="lbl">SPARE / EXT</text><text x="810" y="666" text-anchor="end" class="lbl">10 A</text>
+  <text x="645" y="666" class="lbl">EXT / STARLINK</text><text x="810" y="666" text-anchor="end" class="lbl">10 A</text>
 
   <rect x="630" y="700" width="195" height="26" class="bus"/>
   <text x="727" y="718" text-anchor="middle" class="lblB">− BUS</text>
@@ -166,10 +166,15 @@
   <rect x="880" y="580" width="310" height="40" class="box"/>
   <text x="1035" y="605" text-anchor="middle" class="lblB">USB CHARGING PANEL</text>
 
-  <!-- Row 6: external port / spare -->
+  <!-- Row 6: external port -> Starlink Mini via boost -->
   <polyline points="825,660 880,660" class="pos"/>
-  <rect x="880" y="640" width="310" height="40" class="box"/>
-  <text x="1035" y="665" text-anchor="middle" class="lblB">EXT POWERPOLE PORT (bulkhead)</text>
+  <rect x="880" y="640" width="120" height="40" class="box"/>
+  <text x="940" y="658" text-anchor="middle" class="lblB">BOOST 24 V</text>
+  <text x="940" y="674" text-anchor="middle" class="sm">100 W</text>
+  <polyline points="1000,660 1040,660" class="pos"/>
+  <rect x="1040" y="640" width="150" height="40" class="box"/>
+  <text x="1115" y="658" text-anchor="middle" class="lblB">EXT PORT →</text>
+  <text x="1115" y="674" text-anchor="middle" class="lblB">STARLINK MINI</text>
 
   <!-- Negative return rail -->
   <polyline points="1190,370 1215,370 1215,713 825,713" class="neg"/>

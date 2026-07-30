@@ -45,6 +45,10 @@ Create a `/bastion-sources/` folder on your 2TB backup SSD and pull:
 
 **Date-stamp this folder.** This is your data staleness manifest baseline.
 
+A Starlink Mini in the kit makes future refreshes easier — it changes nothing here.
+Download everything anyway: the uplink is a luxury that can vanish (power budget,
+subscription, constellation, weather), and the local copy is the plan.
+
 ---
 
 ## Phase 1 — Bench Bring-Up: Software First (Weekend 1)
@@ -77,6 +81,7 @@ Install and configure, in this order, testing each before the next:
 2. Static-lease the mini PC at `192.168.8.10`.
 3. Set the router's DNS to resolve friendly names: `ai.bastion` → WebUI port, `wiki.bastion` → Kiwix. If the router supports a captive portal / landing page, make it a single page with two big links: **ASK THE AI** and **LIBRARY**. This page is "dumb mode."
 4. Test: phone joins `BASTION` WiFi, both services load, with no internet anywhere in the chain.
+5. **Starlink Mini (optional uplink):** the Mini is a modem, never the LAN. Connect it to the router as WAN — wired through an RJ45 bulkhead, or by joining the Mini's WiFi in WISP/repeater mode (no new case penetrations). The GL.iNet stays the only family-facing AP; the SSID, friendly names, and captive portal don't change whether the dish is present or not. Power it from the EXT Powerpole port through the 24V boost cable — never bare 12V bus (it sags below the Mini's happy range under peak draw). Then test the gate that actually matters: **with the dish powered off, every local service still works.** Internet is a bonus, never a dependency.
 
 ### 1.4 Radio programming (bench)
 
@@ -203,7 +208,8 @@ Hand the closed case to your spouse or eldest kid with zero coaching. Using only
 
 - **LISTEN** (~10–15W): SDR + router + Kiwix, AI off. Days of runtime.
 - **FULL** (~25–60W+): everything including AI. Default while solar is net-positive.
-- **SILENT**: all transmitters off (mesh beaconing included), receive-only. This is also your low-profile mode — a mesh node broadcasting GPS is a beacon by design; transmit only what the situation earns.
+- **UPLINK** (adds ~25–40W): Starlink Mini live for scheduled windows — data refresh, forecasts, family check-ins — then off. Continuous Starlink roughly halves battery runtime; treat sky time as a rationed resource unless solar is net-positive.
+- **SILENT**: all transmitters off (mesh beaconing and Starlink included), receive-only. This is also your low-profile mode — a mesh node broadcasting GPS is a beacon by design, and a dish is a visible, emitting signature; transmit only what the situation earns.
 
 **Comms plan:** radio checks on FAMILY 1 at pre-agreed times, mesh for text/position within the team, SDR watching WEATHER. Rally points are on the paper map, not only in a device.
 
@@ -219,7 +225,7 @@ Hand the closed case to your spouse or eldest kid with zero coaching. Using only
 
 ### Semi-annual
 
-1. **Data refresh:** re-download ZIM updates and map extracts, update AI models if a better small model exists, re-sync `/bastion-sources/`, update the manifest date.
+1. **Data refresh:** re-download ZIM updates and map extracts, update AI models if a better small model exists, re-sync `/bastion-sources/`, update the manifest date. With the Starlink Mini aboard, this can happen from the driveway over an UPLINK window instead of hauling drives to internet.
 2. Re-image the mini PC to the backup SSD (after confirming the current system is healthy — never overwrite your only good image with a broken one; keep two rotating images).
 3. Radio check against current local repeater listings; reflash if anything changed.
 4. Firmware: MPPT/shunt via VictronConnect, router, mesh node — read changelogs first; if it isn't fixing something you have, skip it. Stability beats currency here.
@@ -259,5 +265,6 @@ If the station will sit unused 6+ months: store batteries at **50–60% SOC**, d
 | SDR silent | Antenna seated (SMA snug) | Known-good test: local FM broadcast | Swap dongle from Faraday spare |
 | One radio dead | Battery seated | Reflash from configs folder | Operate single-radio; spares list next order |
 | SOC obviously wrong | A negative wire bypassing the shunt | Re-zero at full charge | Cosmetic until fixed; run by voltage |
+| Starlink dead / no internet | Boost cable output at the dish (~24V)? | Obstructions or account status in the app | Run offline — core services don't depend on it |
 
 *Build once. Drill quarterly. Refresh semi-annually. The wiring is the easy part — the discipline is the product.*

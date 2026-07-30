@@ -126,6 +126,16 @@
   <line x1="1049" y1="420" x2="1049" y2="145" stroke="#263238" stroke-width="3.5"/>
   <circle cx="1049" cy="140" r="4" fill="#263238"/>
 
+  <!-- ===== Starlink Mini (optional uplink) ===== -->
+  <ellipse cx="1102" cy="688" rx="52" ry="8" fill="#000000" opacity="0.13"/>
+  <path d="M 1075 655 C 1058 660, 1050 655, 1041 648" stroke="#8d8d8d" stroke-width="3" fill="none"/>
+  <line x1="1118" y1="652" x2="1130" y2="684" stroke="#78909c" stroke-width="4"/>
+  <g transform="rotate(-22 1102 630)">
+    <rect x="1055" y="602" width="94" height="56" rx="9" fill="#f7f7f7" stroke="#b0bec5" stroke-width="2.5"/>
+  </g>
+  <text x="1008" y="738" font-size="12" fill="#37474f">Starlink Mini — optional uplink</text>
+  <text x="1008" y="753" font-size="11" fill="#607078">24 V boost feed from EXT port</text>
+
   <!-- ===== Phone on WiFi ===== -->
   <rect x="1160" y="480" width="95" height="185" rx="12" fill="#263238"/>
   <rect x="1168" y="495" width="79" height="152" rx="4" fill="#ffffff"/>

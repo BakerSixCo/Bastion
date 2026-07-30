@@ -66,7 +66,10 @@ log.
 | 1 | Compact wired USB keyboard | Console access when SSH is unreachable; lives in the TOOLS pocket | §1.1, playbook | $15 | inferred — no wireless, no batteries to die | |
 | 1 | HDMI cable, short | Pairs with the keyboard for console recovery | §1.1 | $10 | inferred | |
 | 1 | Portable HDMI field monitor | 7", **12V-powerable** — runs off the SPARE circuit, so console recovery needs no working TV | playbook | $50 | inferred, optional-but-recommended for grid-down recovery | |
-| | | | | **~$710** | | |
+| 1 | Starlink Mini | Optional WAN uplink — 12–48V DC in, ~25–40W draw, WiFi + RJ45 built in | owner-supplied | $0 | **owned** — Roam plan pauses when unused | |
+| 1 | Starlink DC boost cable | 12V bus → 24V, 100W, into the Mini's barrel jack; feeds the dish through the EXT Powerpole port | inferred | $30 | Bare 12V bus sags below spec under peak draw — don't skip the boost | |
+| 1 | RJ45 bulkhead + outdoor ethernet | Wired WAN path from dish to router | inferred | $25 | Optional — GL.iNet WISP mode uplinks over the Mini's WiFi with no new case holes | |
+| | | | | **~$765** | | |
 
 **No permanent display, by design.** The family interface is their own phones over
 BASTION WiFi; admin is SSH; Ubuntu Server needs no mouse ever. The keyboard, cable,
@@ -151,14 +154,14 @@ already own — the guide's skill floor assumes a crimper and a multimeter.
 | Section | Est. |
 |---|---|
 | 1. Power system | ~$1,250 |
-| 2. Compute & network | ~$710 |
+| 2. Compute & network | ~$765 |
 | 3. Radio & antennas | ~$245 |
 | 4. Case & fabrication | ~$455 |
 | 5. Resurrection kit & documentation | ~$110 |
 | 7. Fees | $35 |
-| **Core build** | **~$2,805** |
+| **Core build** | **~$2,860** |
 | 6. Tools & consumables | ~$200 |
-| **All-in** | **~$3,005** |
+| **All-in** | **~$3,060** |
 
 The core build now runs ~$400 over the guide's ~$2,050–2,400 band. The overage is
 almost entirely mounting hardware, wiring consumables, and console-recovery gear
@@ -175,7 +178,9 @@ Settle these before you order — each one gates a part number:
 
 1. **Solar panel wattage.** Drives the MPPT model (Voc must clear its input rating) and
    the sleeve size. §6 wants FULL mode (~25–60W) net-positive under sun, which argues
-   for 100W minimum and 200W if you want margin in winter or under cloud.
+   for 100W minimum and 200W if you want margin in winter or under cloud. **The
+   Starlink Mini settles this: buy 200W.** UPLINK duty adds ~25–40W continuous, and a
+   100W panel can't hold FULL + UPLINK net-positive outside perfect sun.
 2. **Case size.** Follow from the battery cradle outward: two 50Ah cells low and
    centered, deck above, lid deep enough for laminated flats.
 3. **Mini PC RAM.** A 4-bit 7–8B model plus Open WebUI and Kiwix-serve wants 16GB.

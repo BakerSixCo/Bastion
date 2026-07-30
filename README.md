@@ -32,7 +32,7 @@ orientation restrictions.
 | Skill floor | Comfortable with a crimper, a multimeter, and a Linux installer |
 | Budget | ~$2,050–2,400 plus consumables |
 | Idle draw | ~15–30W (more under AI load) |
-| Operating modes | LISTEN (~10–15W) · FULL (~25–60W+) · SILENT (receive-only) |
+| Operating modes | LISTEN (~10–15W) · FULL (~25–60W+) · UPLINK (+~25–40W, Starlink windows) · SILENT (receive-only) |
 
 ## Acceptance gates
 
