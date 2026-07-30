@@ -20,7 +20,7 @@ A rugged, solar-recharged, DC-native, fanless off-grid information and communica
 
 ### 0.2 Order everything
 
-Order the full build sheet in one pass — batteries and the power station class of items have the longest shipping times. While waiting:
+Order the [full build sheet](build-sheet.md) in one pass — batteries and the power station class of items have the longest shipping times. Settle the open decisions at the foot of that sheet first; each one gates a part number. While waiting:
 
 ### 0.3 Verify on arrival (do not skip)
 

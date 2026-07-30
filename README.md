@@ -14,6 +14,9 @@ orientation restrictions.
   (Phase 2), case fabrication (Phase 3), commissioning (Phase 4), the lid
   documentation pack (Phase 5), operations doctrine (Phase 6), and maintenance
   through end-of-life (Phase 7), plus a failure playbook.
+- [Build Sheet](docs/build-sheet.md) — bill of materials, every line traced to the
+  phase that requires it, with inferred specs flagged as such. Doubles as the
+  receiving log for §0.3.
 
 ## At a glance
 
