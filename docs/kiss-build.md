@@ -36,7 +36,7 @@ The Pelican 1500's interior depth is **6.12 in**. The Jackery will not fit insid
 | # | Item | Pick | Price | Verified |
 |---|---|---|---|---|
 | 1 | Power plant | **Jackery Explorer 300 v2** — 288Wh LiFePO4, 300W (600W surge), 4,000+ cycles, ≤0.01s UPS, 2× AC, 100W USB-C, 15W USB-C, USB-A | **$0 — owned** | ✅ specs |
-| 2 | Solar | **Jackery SolarSaga 100W** — the unit's input ceiling is 100W; anything larger is wasted | ~$200 | ⚠️ est. |
+| 2 | Solar | **Jackery SolarSaga 100W** — the unit's input ceiling is 100W; anything larger is wasted | **$0 — owned** | ✅ owned |
 | 3 | Compute | **MeLE Quieter DL** — N150, 16GB, 512GB NVMe, **fanless**, dual 2.5GbE, unlocked BIOS, ~6W idle / <12W load | ~$250 | ⚠️ price est., specs ✅ |
 | 4 | Redundancy | Spare 512GB NVMe, cloned, stored in the Faraday bag | ~$40 | ⚠️ est. |
 | 5 | Network | **GL.iNet Beryl AX (GL-MT3000)** — OpenWrt + LuCI, AP/WISP/repeater, USB tethering, 12V in, fan only under load | ~$79 | ✅ |
@@ -50,12 +50,18 @@ The Pelican 1500's interior depth is **6.12 in**. The Jackery will not fit insid
 | 13 | Analog fallback | USGS 7.5' quads for your AO + baseplate compass | ~$70 | ⚠️ est. |
 | 14 | Consumables | Barrel adapters, short HDMI, USB cables, VHB, velcro, straps, foam, zip ties | ~$100 | ⚠️ est. |
 
-### **Total: ~$1,403**
+### **Total: ~$1,203** *(owner confirmed 30 Jul 2026: Jackery, SolarSaga panel, and Starlink Mini all owned — panel line zeroed)*
 
-Against the S-tier version at $3,050: **$1,647 cut, 54% off.**
-Against your original $2,500 target: **$1,100 under.**
+With §8.4's multimeter (+$25) and §9's two Faraday bags (+$140): **~$1,368 all-in.**
 
-With military pricing applied (Pelican via GovX/ExpertVoice, Wouxun via myGMRS on GovX, SSD via Samsung's ID.me program), realistic landed cost is **~$1,250–1,300**.
+Against the S-tier version at $3,050: **more than half cut.**
+Against the original $2,500 target: **~$1,130 under.**
+
+With military pricing applied (Pelican via GovX/ExpertVoice, Wouxun via myGMRS on GovX, SSD via Samsung's ID.me program), realistic landed cost is **~$1,220–1,270 all-in**.
+
+Optional: a dedicated case for the Jackery if its current one disappoints (~$40–60
+soft padded, ~$120 hard). Not counted — the §9.2 plant Faraday bag works inside
+whatever case it rides in.
 
 ---
 
@@ -253,8 +259,8 @@ non-window):
 | 16 | Faraday bag, box-style for the plant | Jackery **plus its AC charger and car cable**; interior ≥ measured unit + 2" each dimension | ~$80 |
 
 (BOM #12, the laptop bag for spare NVMe / SSD / a handheld, is unchanged.)
-Revised total: **~$1,545** (~$1,570 with §8.4's multimeter), still ~$950 under
-the original target.
+Revised total with owned panel and §8.4's multimeter: **~$1,368 all-in**
+(~$1,220–1,270 with mil pricing) — ~$1,130 under the original target.
 
 ### 9.3 Rules that come with the bags
 
