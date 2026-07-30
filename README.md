@@ -7,9 +7,22 @@ station: local AI, offline Wikipedia, SDR receive, GPS, GMRS radio and mesh text
 running off a 100Ah LiFePO4 bank in a sealed case, with no moving parts and no
 orientation restrictions.
 
+## Build variants
+
+- **[KISS Build](docs/kiss-build.md) — current lead variant.** Two pieces, one-hand
+  carry each: a Pelican 1500 terminal (compute, radio, network, docs) and the owned
+  Jackery 288Wh plant + 100W panel. No 12V bus, no crimping, ~$1,400 (~$1,250 with
+  mil pricing). Includes the maintainer's engineering review (§8) — read it; the
+  power numbers there are the honest ones.
+- **Full-spec 12V build** — the original architecture below (build sheet, wiring
+  diagram, Phase 2). Kept as the documented upgrade path when runtime becomes the
+  binding constraint.
+
 ## Documentation
 
 - [Build Guide](docs/build-guide.md) — cradle-to-grave instruction set, v1.0.
+  Software phases (1, 4–7) apply to both variants; Phase 2's 12V power build is
+  full-spec-variant only.
   Procurement and licensing (Phase 0), bench bring-up (Phase 1), power system
   (Phase 2), case fabrication (Phase 3), commissioning (Phase 4), the lid
   documentation pack (Phase 5), operations doctrine (Phase 6), and maintenance
