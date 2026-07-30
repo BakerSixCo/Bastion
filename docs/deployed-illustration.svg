@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <style>
+      .callout { fill: #37474f; font-size: 14px; }
+      .calloutB { fill: #37474f; font-size: 14px; font-weight: bold; }
+      .leader { stroke: #607078; stroke-width: 1.2; fill: none; }
+      .tiny { font-size: 10px; fill: #ffffff; }
+    </style>
+  </defs>
+
+  <!-- Sky & ground -->
+  <rect x="0" y="0" width="1400" height="900" fill="#eef5f9"/>
+  <rect x="0" y="700" width="1400" height="200" fill="#ddd2b6"/>
+  <line x1="0" y1="700" x2="1400" y2="700" stroke="#c4b795" stroke-width="2"/>
+
+  <!-- Sun -->
+  <circle cx="110" cy="110" r="42" fill="#f9c74f"/>
+  <g stroke="#f9c74f" stroke-width="4">
+    <line x1="110" y1="35" x2="110" y2="15"/><line x1="110" y1="185" x2="110" y2="205"/>
+    <line x1="35" y1="110" x2="15" y2="110"/><line x1="185" y1="110" x2="205" y2="110"/>
+    <line x1="57" y1="57" x2="43" y2="43"/><line x1="163" y1="163" x2="177" y2="177"/>
+    <line x1="57" y1="163" x2="43" y2="177"/><line x1="163" y1="57" x2="177" y2="43"/>
+  </g>
+
+  <!-- Title -->
+  <text x="1080" y="70" font-size="34" font-weight="bold" fill="#37474f">BASTION</text>
+  <text x="1080" y="94" font-size="13" fill="#607078">deployed: lid open · panel out · antennas up</text>
+
+  <!-- Shadows -->
+  <ellipse cx="760" cy="702" rx="300" ry="16" fill="#000000" opacity="0.13"/>
+  <ellipse cx="200" cy="702" rx="165" ry="12" fill="#000000" opacity="0.13"/>
+  <ellipse cx="1207" cy="672" rx="58" ry="9" fill="#000000" opacity="0.13"/>
+
+  <!-- ===== Solar panel (leaning toward sun) ===== -->
+  <g transform="rotate(-18 210 600)">
+    <rect x="60" y="520" width="300" height="160" rx="8" fill="#1a2c56" stroke="#37474f" stroke-width="4"/>
+    <g stroke="#2f4a86" stroke-width="2">
+      <line x1="110" y1="520" x2="110" y2="680"/><line x1="160" y1="520" x2="160" y2="680"/>
+      <line x1="260" y1="520" x2="260" y2="680"/><line x1="310" y1="520" x2="310" y2="680"/>
+      <line x1="60" y1="560" x2="360" y2="560"/><line x1="60" y1="600" x2="360" y2="600"/>
+      <line x1="60" y1="640" x2="360" y2="640"/>
+    </g>
+    <line x1="210" y1="520" x2="210" y2="680" stroke="#c9d4e8" stroke-width="3"/>
+  </g>
+  <!-- kickstand -->
+  <line x1="330" y1="620" x2="365" y2="698" stroke="#37474f" stroke-width="4"/>
+
+  <!-- MC4 cable from panel to gland -->
+  <path d="M 353 554 C 420 565, 428 470, 480 470" stroke="#e07b39" stroke-width="4" fill="none"/>
+
+  <!-- ===== Open lid (tilted back) ===== -->
+  <polygon points="500,205 1020,205 1040,360 480,360" fill="#5c684d" stroke="#454e38" stroke-width="3"/>
+  <polygon points="522,227 998,227 1014,343 506,343" fill="#6d7a5c"/>
+  <!-- laminated cards -->
+  <rect x="560" y="247" width="180" height="82" fill="#fdfdfd" stroke="#9e9e9e"/>
+  <text x="650" y="266" text-anchor="middle" font-size="12" font-weight="bold" fill="#37474f">QUICK-START</text>
+  <g stroke="#b0bec5" stroke-width="3">
+    <line x1="575" y1="280" x2="725" y2="280"/><line x1="575" y1="294" x2="725" y2="294"/>
+    <line x1="575" y1="308" x2="700" y2="308"/><line x1="575" y1="322" x2="660" y2="322"/>
+  </g>
+  <rect x="790" y="247" width="180" height="82" fill="#fdfdfd" stroke="#9e9e9e"/>
+  <text x="880" y="266" text-anchor="middle" font-size="12" font-weight="bold" fill="#37474f">WIRING</text>
+  <polyline points="805,290 840,290 840,310 900,310" stroke="#c62828" stroke-width="2.5" fill="none"/>
+  <polyline points="805,320 860,320 860,300 940,300" stroke="#212121" stroke-width="2.5" fill="none"/>
+  <rect x="900" y="282" width="45" height="20" fill="none" stroke="#1565c0" stroke-width="2"/>
+  <!-- hinges -->
+  <rect x="590" y="360" width="26" height="20" fill="#454e38"/>
+  <rect x="890" y="360" width="26" height="20" fill="#454e38"/>
+
+  <!-- ===== Case body (cutaway) ===== -->
+  <rect x="480" y="380" width="560" height="310" rx="14" fill="#5c684d" stroke="#454e38" stroke-width="3"/>
+  <rect x="505" y="405" width="510" height="260" fill="#c9c9c9"/>
+  <!-- latches -->
+  <rect x="595" y="682" width="34" height="14" rx="3" fill="#454e38"/>
+  <rect x="875" y="682" width="34" height="14" rx="3" fill="#454e38"/>
+
+  <!-- Glands on left wall -->
+  <circle cx="492" cy="470" r="10" fill="#37474f" stroke="#263238" stroke-width="2"/>
+  <circle cx="492" cy="530" r="10" fill="#37474f" stroke="#263238" stroke-width="2"/>
+
+  <!-- Batteries (foam cradle + straps) -->
+  <rect x="520" y="550" width="320" height="115" fill="#a8a8a8"/>
+  <rect x="530" y="558" width="140" height="100" rx="6" fill="#2c3e50"/>
+  <rect x="636" y="552" width="18" height="110" fill="#e07b39" opacity="0.9"/>
+  <text x="592" y="605" text-anchor="middle" class="tiny">LiFePO4</text>
+  <text x="592" y="620" text-anchor="middle" class="tiny">12V 50Ah</text>
+  <rect x="690" y="558" width="140" height="100" rx="6" fill="#2c3e50"/>
+  <rect x="796" y="552" width="18" height="110" fill="#e07b39" opacity="0.9"/>
+  <text x="752" y="605" text-anchor="middle" class="tiny">LiFePO4</text>
+  <text x="752" y="620" text-anchor="middle" class="tiny">12V 50Ah</text>
+
+  <!-- Power corner -->
+  <rect x="852" y="573" width="90" height="55" rx="4" fill="#37474f"/>
+  <text x="897" y="605" text-anchor="middle" class="tiny">FUSE BLOCK</text>
+  <circle cx="978" cy="592" r="17" fill="#c62828" stroke="#7f1d1d" stroke-width="3"/>
+  <text x="978" y="625" text-anchor="middle" font-size="9" fill="#37474f">MAIN</text>
+  <rect x="948" y="633" width="66" height="26" rx="4" fill="#455a64"/>
+  <text x="981" y="650" text-anchor="middle" class="tiny">SHUNT</text>
+
+  <!-- Electronics deck -->
+  <rect x="530" y="470" width="380" height="24" rx="4" fill="#8fa3ad" stroke="#607078" stroke-width="2"/>
+  <rect x="545" y="412" width="120" height="58" rx="6" fill="#263238"/>
+  <text x="605" y="445" text-anchor="middle" class="tiny">MINI PC</text>
+  <rect x="690" y="418" width="100" height="52" rx="6" fill="#f5f5f5" stroke="#b0bec5" stroke-width="2"/>
+  <text x="740" y="448" text-anchor="middle" font-size="10" fill="#37474f">ROUTER</text>
+  <line x1="705" y1="418" x2="705" y2="396" stroke="#37474f" stroke-width="3"/>
+  <line x1="775" y1="418" x2="775" y2="396" stroke="#37474f" stroke-width="3"/>
+  <rect x="808" y="440" width="55" height="30" rx="4" fill="#1565c0"/>
+  <text x="835" y="459" text-anchor="middle" class="tiny">SDR</text>
+  <rect x="872" y="430" width="32" height="40" rx="4" fill="#00695c"/>
+  <text x="888" y="454" text-anchor="middle" font-size="8" fill="#ffffff">MESH</text>
+  <line x1="888" y1="430" x2="888" y2="408" stroke="#00695c" stroke-width="3"/>
+  <circle cx="888" cy="405" r="3" fill="#00695c"/>
+
+  <!-- GMRS handhelds in foam -->
+  <rect x="920" y="425" width="100" height="112" fill="#a8a8a8"/>
+  <rect x="928" y="432" width="38" height="98" rx="5" fill="#212121"/>
+  <rect x="936" y="448" width="22" height="16" fill="#4fc3f7"/>
+  <rect x="932" y="410" width="7" height="24" fill="#212121"/>
+  <rect x="974" y="432" width="38" height="98" rx="5" fill="#212121"/>
+  <rect x="982" y="448" width="22" height="16" fill="#4fc3f7"/>
+  <rect x="978" y="410" width="7" height="24" fill="#212121"/>
+
+  <!-- Whip antenna clamped to case side -->
+  <rect x="1040" y="420" width="18" height="32" rx="3" fill="#263238"/>
+  <line x1="1049" y1="420" x2="1049" y2="145" stroke="#263238" stroke-width="3.5"/>
+  <circle cx="1049" cy="140" r="4" fill="#263238"/>
+
+  <!-- ===== Phone on WiFi ===== -->
+  <rect x="1160" y="480" width="95" height="185" rx="12" fill="#263238"/>
+  <rect x="1168" y="495" width="79" height="152" rx="4" fill="#ffffff"/>
+  <text x="1207" y="522" text-anchor="middle" font-size="12" font-weight="bold" fill="#37474f">BASTION</text>
+  <rect x="1176" y="538" width="63" height="28" rx="5" fill="#1565c0"/>
+  <text x="1207" y="556" text-anchor="middle" font-size="9" fill="#ffffff">ASK THE AI</text>
+  <rect x="1176" y="576" width="63" height="28" rx="5" fill="#2e7d32"/>
+  <text x="1207" y="594" text-anchor="middle" font-size="9" fill="#ffffff">LIBRARY</text>
+  <!-- wifi arcs -->
+  <g stroke="#1565c0" stroke-width="3.5" fill="none" stroke-linecap="round">
+    <path d="M 1183 448 A 34 34 0 0 1 1231 448"/>
+    <path d="M 1191 458 A 22 22 0 0 1 1223 458"/>
+  </g>
+  <circle cx="1207" cy="466" r="4.5" fill="#1565c0"/>
+
+  <!-- ===== Callouts ===== -->
+  <text x="1064" y="152" class="callout">GMRS whip antenna</text>
+  <text x="1064" y="169" font-size="12" fill="#607078">(SMA bulkhead feed)</text>
+
+  <text x="1075" y="255" text-anchor="start" class="callout">Lid: laminated quick-start</text>
+  <text x="1075" y="272" text-anchor="start" class="callout">card + wiring diagram</text>
+  <polyline points="1070,258 1018,280" class="leader"/>
+
+  <text x="130" y="368" class="callout">Removable electronics deck</text>
+  <text x="130" y="385" font-size="12" fill="#607078">mini PC · router · SDR · mesh — lifts out as one unit</text>
+  <polyline points="360,375 540,440" class="leader"/>
+
+  <text x="60" y="790" class="calloutB">Folding 100–200 W solar panel</text>
+  <text x="60" y="808" font-size="12" fill="#607078">IP65 — rides outside the case, angled at the sun</text>
+
+  <text x="560" y="790" class="calloutB">2× 50 Ah LiFePO4 — strapped, mass low &amp; centered</text>
+  <text x="560" y="808" font-size="12" fill="#607078">MRBF-fused posts · disconnect · shunt · fuse block in the power corner</text>
+  <polyline points="700,782 690,668" class="leader"/>
+
+  <text x="1130" y="790" class="calloutB">Family phone</text>
+  <text x="1130" y="808" font-size="12" fill="#607078">on BASTION WiFi</text>
+  <polyline points="1185,778 1200,670" class="leader"/>
+
+  <text x="1075" y="315" class="callout">GMRS handhelds in foam</text>
+  <polyline points="1070,320 1000,442" class="leader"/>
+
+  <text x="330" y="758" class="callout">MC4 → sealed bulkhead gland</text>
+  <polyline points="440,743 486,540" class="leader"/>
+
+  <!-- footer -->
+  <text x="20" y="880" font-size="11" fill="#8d8d8d">docs/deployed-illustration.svg · BASTION operating configuration — lid open (thermal rule §3.3), panel out, antennas up, family devices on WiFi</text>
+</svg>
