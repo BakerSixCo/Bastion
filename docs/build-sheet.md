@@ -63,7 +63,16 @@ log.
 | 1 | Cold-spare compute | Raspberry Pi 5 **or** a spare NVMe drive | §4.3.3 | $120 | Lives in the Faraday bag, disconnected | |
 | 1 | USB stick | ≥16GB, for the live-USB rescue image | §0.4 | $10 | inferred | |
 | 1 | USB RTC module | **Only if** the mini PC won't hold time unplugged | §1.2.6 | $15 | Contingency — test first, buy second | |
-| | | | | **~$635** | | |
+| 1 | Compact wired USB keyboard | Console access when SSH is unreachable; lives in the TOOLS pocket | §1.1, playbook | $15 | inferred — no wireless, no batteries to die | |
+| 1 | HDMI cable, short | Pairs with the keyboard for console recovery | §1.1 | $10 | inferred | |
+| 1 | Portable HDMI field monitor | 7", **12V-powerable** — runs off the SPARE circuit, so console recovery needs no working TV | playbook | $50 | inferred, optional-but-recommended for grid-down recovery | |
+| | | | | **~$710** | | |
+
+**No permanent display, by design.** The family interface is their own phones over
+BASTION WiFi; admin is SSH; Ubuntu Server needs no mouse ever. The keyboard, cable,
+and field monitor exist for exactly one scenario: the box is headless and the network
+path to it is down (router dead, bad update, hung boot). That is the failure the
+playbook can't currently reach — console access is the resurrection path.
 
 ## 3. Radio & antennas (Phase 1.4, Phase 3.2)
 
@@ -142,22 +151,23 @@ already own — the guide's skill floor assumes a crimper and a multimeter.
 | Section | Est. |
 |---|---|
 | 1. Power system | ~$1,250 |
-| 2. Compute & network | ~$635 |
+| 2. Compute & network | ~$710 |
 | 3. Radio & antennas | ~$245 |
 | 4. Case & fabrication | ~$455 |
 | 5. Resurrection kit & documentation | ~$110 |
 | 7. Fees | $35 |
-| **Core build** | **~$2,730** |
+| **Core build** | **~$2,805** |
 | 6. Tools & consumables | ~$200 |
-| **All-in** | **~$2,930** |
+| **All-in** | **~$3,005** |
 
-The core build now runs ~$300 over the guide's ~$2,050–2,400 band. The overage is
-almost entirely mounting hardware and wiring consumables (~$250 across sections 1
-and 4) that the guide's budget never itemized — the parts that stall assembly on a
-Saturday when the hardware store is the only option. The band is achievable by
-trimming the swing items instead: a smaller panel, a used case, promoting an old
-drive as the cold spare. Don't trim the consumables — they're the cheapest lines
-on the sheet and the most expensive to be missing.
+The core build now runs ~$400 over the guide's ~$2,050–2,400 band. The overage is
+almost entirely mounting hardware, wiring consumables, and console-recovery gear
+(~$325 across sections 1, 2, and 4) that the guide's budget never itemized — the
+parts that stall assembly on a Saturday, or strand a headless box when the network
+is down. The band is achievable by trimming the swing items instead: a smaller
+panel, a used case, promoting an old drive as the cold spare, skipping the field
+monitor if a TV will always be reachable. Don't trim the consumables — they're the
+cheapest lines on the sheet and the most expensive to be missing.
 
 ## Decisions the guide leaves open
 
