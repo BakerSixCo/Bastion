@@ -178,6 +178,38 @@ panel, a used case, promoting an old drive as the cold spare, skipping the field
 monitor if a TV will always be reachable. Don't trim the consumables — they're the
 cheapest lines on the sheet and the most expensive to be missing.
 
+## Used-market sourcing
+
+The used market (eBay, refurb channels, estate sales, local listings) claws back
+roughly **$350** — enough to erase the consumables overage and land back inside the
+guide's original band without trimming capability. The list splits on one principle:
+**anything passive or testable-on-arrival can be used; anything whose history is
+invisible and load-bearing cannot.**
+
+**Buy used:**
+
+| Item | New | Used | Notes |
+|---|---|---|---|
+| Mini PC | $200 | $80–120 | Best used buy on the sheet. Buy **two identical** units — primary + cold spare for less than one new, and the backup image restores across them |
+| Case | $180 | $80–120 | Pelican 1600-class, surplus/photography market. Inspect gasket, hinges, latches. Buy local, inspect first |
+| Victron MPPT + SmartShunt | $230 | $130–160 | RV teardown pulls; test via VictronConnect in minutes. (Counterfeit risk is on marketplace "new" Victron, not honest used) |
+| Field monitor, keyboard, hub, cables | $100 | $40–50 | Commodity |
+| Laminator | $35 | $5–10 | Thrift store classic |
+| Crimper, multimeters | $90 | $40–60 | A used Fluke beats a new no-name at the same price |
+| GMRS antennas | $35 | $15–20 | Passive metal; check coax and threads |
+
+**Never used:** LiFePO4 batteries (cycle count, storage abuse, and BMS history are
+invisible in a listing — the whole system stands on these); the safety chain (fuses,
+fuse block, disconnect, wire, connectors, glands — fatigue is invisible and it's all
+cheap new); RTL-SDR (clone-saturated channel — buy direct); the 2TB backup SSD (its
+only job is being trustworthy); foam and gaskets (compression set is what you'd be
+buying); the folding panel (hidden cell cracks — though used *rigid* residential
+panels at ~$0.30/W are a cheap base-camp supplement someday).
+
+**Rules:** price from eBay *sold* listings; test everything inside the return
+window (§0.3 verify-on-arrival applies double to used gear); nothing with a battery
+inside; big items bought local and inspected before paying.
+
 ## Decisions the guide leaves open
 
 Settle these before you order — each one gates a part number:
