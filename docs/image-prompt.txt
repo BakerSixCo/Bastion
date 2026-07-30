@@ -1,4 +1,4 @@
-BASTION — IMAGE GENERATION PROMPT PACK
+BASTION — IMAGE GENERATION PROMPT PACK (rev B, with Starlink Mini)
 Paste one prompt per generation. Works with ChatGPT/DALL-E, Midjourney, Firefly, etc.
 
 =====================================================================
@@ -20,10 +20,13 @@ labeled fuse block, a red rotary battery-disconnect knob, and a small
 battery monitor. The open lid holds two laminated instruction cards. A
 folding 200-watt solar panel stands beside the case, angled toward the
 low sun, connected by a single orange cable that enters the case wall
-through a sealed round port. A thin whip antenna is clamped to the case
-rim, rising above the scene. In the foreground, a smartphone leans
-against a small rock, its screen glowing with a simple offline menu
-showing two large buttons. The overall impression: calm, capable,
+through a sealed round port. On the other side of the case, a small
+white rectangular Starlink Mini satellite dish sits propped on the
+grass at an angle toward the sky, connected by a thin gray cable to a
+second sealed port on the case wall. A thin whip antenna is clamped to
+the case rim, rising above the scene. In the foreground, a smartphone
+leans against a small rock, its screen glowing with a simple offline
+menu showing two large buttons. The overall impression: calm, capable,
 family-ready preparedness equipment — everything labeled, nothing
 improvised. No people, no visible brand names or logos, no readable
 text anywhere except the phone's two buttons, high detail, natural
@@ -41,9 +44,10 @@ gray foam, a removable aluminum tray above them holding a fanless mini
 computer, a compact WiFi router, and a small blue USB radio dongle, two
 black handheld radios standing upright in foam pockets, and tidy red
 and black wiring to a small fuse panel with a red rotary disconnect
-switch. A folded portable solar panel leans against the side of the
-case; a short whip antenna is mounted on the rim. Commercial product
-catalog style, no people, no logos.
+switch. A folded portable solar panel leans against one side of the
+case and a small white rectangular Starlink Mini satellite dish leans
+against the other; a short whip antenna is mounted on the rim.
+Commercial product catalog style, no people, no logos.
 
 =====================================================================
 VARIANT B — technical cutaway / infographic
@@ -55,10 +59,12 @@ equipment case shown in cutaway with clearly separated layers —
 batteries at the bottom with straps, an electronics tray above holding
 a mini computer, router, and radio dongle, two handheld radios in foam
 at one side, and a fuse block with a red disconnect switch in the
-corner. An unfolded solar panel sits beside the case connected by an
-orange cable, a whip antenna rises from the rim, and a nearby
-smartphone shows WiFi arcs linking it to the case. Thin sans-serif
-callout lines, minimal palette, no people, no logos.
+corner. An unfolded solar panel sits on one side of the case connected
+by an orange cable, and a small white flat satellite dish tilted at the
+sky sits on the other side connected by a gray cable. A whip antenna
+rises from the rim, and a nearby smartphone shows WiFi arcs linking it
+to the case. Thin sans-serif callout lines, minimal palette, no people,
+no logos.
 
 =====================================================================
 VARIANT C — dramatic "grid down" scene
@@ -69,11 +75,14 @@ backyard, houses unlit in the background, storm clouds clearing. In the
 foreground on a picnic table, the open olive-drab hard case glows
 faintly from small status LEDs inside — batteries, mini computer,
 router, and radios all visible in organized foam. A folding solar panel
-leans nearby, catching the last light. A family's two smartphones on
-the table show bright screens connected to the station's WiFi. A whip
-antenna silhouettes against the sky. Mood: quiet self-reliance, warm
-light in a dark neighborhood. No visible faces, no brand names, high
-detail, moody but hopeful color grade.
+leans nearby, catching the last light, and a small white rectangular
+satellite dish on the grass points up at the first stars, its thin
+cable running back to the case. A family's two smartphones on the table
+show bright screens connected to the station's WiFi. A whip antenna
+silhouettes against the sky. Mood: quiet self-reliance, warm light in a
+dark neighborhood — the only house on the street still connected. No
+visible faces, no brand names, high detail, moody but hopeful color
+grade.
 
 =====================================================================
 TIPS
@@ -83,6 +92,9 @@ TIPS
   prompt, or expect gibberish labels. Add real labels afterward.
 - If people or logos appear anyway, append: "no people, no text,
   no logos".
+- "Starlink" as a word sometimes triggers logo/brand rendering; if the
+  dish comes out branded or wrong, swap the phrase for "small white
+  flat rectangular satellite internet dish on a kickstand".
 - Wiring will come out as decorative spaghetti. Treat any generated
   image as decoration — docs/wiring-diagram.svg and
   docs/deployed-illustration.svg remain the accurate references.
