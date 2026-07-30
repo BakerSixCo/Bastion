@@ -24,15 +24,31 @@ are leads to check, not confirmed offers — programs rotate.
 | 16 | Consumables | Barrel adapters, short HDMI, USB cables, VHB, velcro, straps, foam (if case comes without), zip ties | $100 | Home Depot/Lowe's mil 10% | | |
 | | | | **~$1,383** | | | |
 
-## Order-of-operations (from KISS §6, updated)
+## Buying order — four waves, each gated on the last
 
-1. **Measure the Jackery and the Starlink case interiors first** — bags #11/#12 are
-   sized off your measurements, not spec sheets.
-2. **#1 + #3 first** (mini PC + router) — bench the software stack before anything
-   else ships. Verify the MeLE model name and PD input before paying.
-3. **#9 last among the big lines** — foam gets cut around validated hardware, and
-   the ExpertVoice/GovX code shouldn't be pulled until you're ready to order.
-4. #5 direct-only; #4 through ID.me; everything else wherever it's cheapest that day.
+Principle: **spend on what validates the project before what packages it.** The
+mini PC can kill or confirm the whole concept for $330 of returnable money; the
+foam-cut Pelican is the least reversible purchase here, so it goes dead last.
+
+**Wave 0 — this week, $0:** sign up GovX / ExpertVoice / ID.me (approval takes
+days; don't pull the single-use ExpertVoice code yet). Measure the Jackery, its
+case, and the Starlink case interiors. Verify the MeLE model + PD input. Start
+the `/bastion-sources/` downloads on any computer.
+
+**Wave 1 — the brain (~$520):** #1 mini PC → #3 router → #4 SSD (ID.me) →
+#2 spare NVMe (match the installed drive).
+*Gate:* phone on the router's WiFi chats with the AI and browses Wikipedia with
+no internet anywhere. If this fails, nothing else should have been bought.
+
+**Wave 2 — senses & comms (~$330):** #5 SDR (direct only) → #7 GMRS pair →
+#6 mesh node → #8 antenna → #13 PD trigger cable (test the dish off the
+Jackery) → #15 multimeter.
+*Gate:* full bench milestone — every service and radio proven on the desk.
+
+**Wave 3 — enclosure & protection (~$465):** #9 Pelican (pull the GovX/EV code
+now, not before) → #10–12 Faraday bags (sized from Wave 0 measurements) →
+#16 consumables (big-box mil 10%) → #14 maps + compass.
+*Gate out:* the Family Test — packed case, 15 minutes, lid card only.
 
 ## Standing rules
 
