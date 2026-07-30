@@ -200,7 +200,7 @@ compact DMM rides in the case. +$25 to §1.
   (SolarSaga uses Jackery's DC connector, and the 1500 gets no bulkhead
   penetrations unless antennas demand one).
 
-### What survives from the DIY-variant docs unchanged
+### What survives from the DIY-variant docs unchanged (see §9 for the Starlink change)
 
 The Family Test, the bench-first sequencing (§6.3 here matches guide Phase 1), the
 operating-mode discipline, the offline-first Starlink doctrine, quarterly drills,
@@ -208,3 +208,74 @@ the resurrection-kit pattern, and the used-market sourcing rules all carry over.
 The [build guide](build-guide.md)'s software stack (Phases 1, 4, 5, 6, 7) applies
 to this variant as written; only Phase 2 (12V power build) and Phase 3's bulkhead
 work are superseded.
+
+---
+
+## 9. Three-module doctrine & EMP protection (owner decision, 30 Jul 2026)
+
+### 9.1 The fallback paradox, stated plainly
+
+**If the internet is up and reachable, the terminal is mostly moot — online
+services win.** That is not a flaw; it is the mission statement read backwards.
+The terminal exists for exactly the condition where the uplink doesn't. Therefore
+the uplink is not integrated into the build — it is a **peer module in its own
+case** that happens to travel with the others.
+
+| Module | Case | Role |
+|---|---|---|
+| **A — Terminal** | Pelican 1500 | The offline core. Mission case: internet unreachable |
+| **B — Plant** | Jackery's own case | Power for whichever module needs it |
+| **C — Uplink** | Starlink kit's own case | Luxury layer. When it works, A idles — that's success, not waste |
+
+Integration between modules is deliberately thin: one PD trigger cable so the
+Plant can feed the Uplink, one WISP profile on the router so the Terminal can use
+the Uplink as WAN when it happens to exist. No shared enclosure, no shared power
+budget, no dependency in either direction. §8.3's port-contention concern
+dissolves: the dish is not in the Terminal's power budget at all.
+
+### 9.2 EMP: nest bags, don't line cases
+
+The B and C cases do not get conductive lining. A Faraday enclosure requires
+electrical continuity across every gap, and a hinged, gasketed lid opened
+hundreds of times over the kit's life will not keep a taped fabric seam
+conductive. The reliable pattern:
+
+> **Bag shields, case armors.** A certified roll-top Faraday bag *inside* the
+> existing case. The case keeps doing crush and water; the bag does RF; the
+> roll-top is the only seam and it's engineered for that job.
+
+Additions to the BOM (Mission Darkness / Faraday Defense class, certified
+non-window):
+
+| # | Item | Contents | Est. |
+|---|---|---|---|
+| 15 | Faraday bag, dish-size (laptop/XL) | Starlink Mini **plus its power cable and the PD trigger cable** — a shielded dish with a fried PSU is still dead | ~$60 |
+| 16 | Faraday bag, box-style for the plant | Jackery **plus its AC charger and car cable**; interior ≥ measured unit + 2" each dimension | ~$80 |
+
+(BOM #12, the laptop bag for spare NVMe / SSD / a handheld, is unchanged.)
+Revised total: **~$1,545** (~$1,570 with §8.4's multimeter), still ~$950 under
+the original target.
+
+### 9.3 Rules that come with the bags
+
+1. **No grounding required.** A Faraday enclosure works ungrounded — persistent
+   myth, ignore it.
+2. **Test quarterly, because you can.** Seal a phone inside and call it; tune an
+   FM radio to a strong station and close the roll around it. If the phone rings
+   or the radio keeps playing, the bag failed. This testability is the whole
+   argument for bags over lining — a lined case can never be proven.
+3. **Readiness state: in bag, in case, charged.** Quarterly top-off means opening
+   the plant bag; it reseals in ten seconds. A bag left open "for convenience"
+   is a bag that isn't there.
+4. **Cables and chargers live in the bag with their device.** The kit's weakest
+   EMP link is whichever unshielded accessory the shielded device can't run
+   without.
+
+### 9.4 The honest limit
+
+Shielding the dish hedges **ground-level EMP** (HEMP, localized events). It does
+nothing for **constellation loss** — a severe solar storm or orbital conflict
+degrades the satellites themselves, and a pristine terminal wakes to an empty
+sky. That asymmetry is why C is the luxury layer and A is the plan: the failure
+modes that kill the uplink from above are invisible to any preparation on the
+ground.

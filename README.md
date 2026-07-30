@@ -9,11 +9,13 @@ orientation restrictions.
 
 ## Build variants
 
-- **[KISS Build](docs/kiss-build.md) — current lead variant.** Two pieces, one-hand
-  carry each: a Pelican 1500 terminal (compute, radio, network, docs) and the owned
-  Jackery 288Wh plant + 100W panel. No 12V bus, no crimping, ~$1,400 (~$1,250 with
-  mil pricing). Includes the maintainer's engineering review (§8) — read it; the
-  power numbers there are the honest ones.
+- **[KISS Build](docs/kiss-build.md) — current lead variant.** Three peer modules,
+  each in its own case, deliberately not integrated: the Pelican 1500 **terminal**
+  (offline core — its mission case is "internet unreachable"), the owned Jackery
+  **plant**, and the owned Starlink **uplink** (luxury layer; nested Faraday bags
+  inside the plant and uplink cases handle EMP — bag shields, case armors). No 12V
+  bus, no crimping, ~$1,550. Read §8 (honest power numbers) and §9 (three-module
+  doctrine).
 - **Full-spec 12V build** — the original architecture below (build sheet, wiring
   diagram, Phase 2). Kept as the documented upgrade path when runtime becomes the
   binding constraint.
