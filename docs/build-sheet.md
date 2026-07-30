@@ -110,6 +110,12 @@ playbook can't currently reach — console access is the resurrection path.
 | 1 | Marine sealant | Backing the cable glands, keeps the IP rating honest | §3.2.2 | $10 | inferred | |
 | | | | | **~$455** | | |
 
+**3D printer owners:** [`hardware/printed-parts/`](../hardware/printed-parts/) has
+parametric OpenSCAD sources that replace the deck plate, battery cradle, Powerpole
+panel mount, and most of the VHB/velcro and zip-tie-mount lines (~$60 of this
+section), plus parts you can't buy (MC4 spanner, gland blanking plugs, fitted
+device pockets). ASA or PETG only — no PLA in a box that sees vehicle heat.
+
 **Mounting approach** (the guide implies it, stated here so the hardware makes sense):
 the case wall is only penetrated by the glands — nothing else gets drilled. The deck
 plate seats in its foam pocket (§3.1); devices mount to the *deck* with standoffs,

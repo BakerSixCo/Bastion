@@ -23,6 +23,10 @@ orientation restrictions.
 - [Wiring Diagram](docs/wiring-diagram.svg) — one-page 12V DC power schematic
   (batteries → MRBF fuses → disconnect → fuse block, all negatives through the
   shunt, MPPT feed, six branch circuits). Print and laminate for the lid.
+- [Printed Parts](hardware/printed-parts/) — parametric OpenSCAD sources (+ preview
+  STLs) for the deck tray, battery spacers, Powerpole panel mount, cable clips,
+  MC4 spanner, fuse organizer, and gland plugs. Measure, edit one config file,
+  re-export.
 
 ## At a glance
 
