@@ -107,6 +107,8 @@ Install and configure, in this order, testing each before the next:
 
 ### 2.1 Wiring order (this exact sequence)
 
+*Full schematic: [wiring-diagram.svg](wiring-diagram.svg) — print, mark up with your actual wire labels, laminate for the lid.*
+
 ```
 BATTERY(+) → MRBF fuse (on the post) → Disconnect switch → Fuse block (+ bus)
 BATTERY(−) → SmartShunt (battery side) → Shunt (load side) → Fuse block (− bus)
@@ -185,7 +187,7 @@ Hand the closed case to your spouse or eldest kid with zero coaching. Using only
 ## Phase 5 — Documentation Pack (in the lid, laminated)
 
 1. **Quick-start card** (one page): power-on steps with photos, WiFi name/password, the two URLs, radio channel plan in plain English, "if it doesn't work" three-step (check disconnect switch → check shunt app → swap the deck).
-2. **Wiring diagram** (one page): the Phase 2.1 diagram with your actual wire labels.
+2. **Wiring diagram** (one page): [wiring-diagram.svg](wiring-diagram.svg) with your actual wire labels written in.
 3. **Manifest**: data sync date, model versions, radio image date, battery install date, GMRS call sign.
 4. Paper topo maps of your region + baseplate compass.
 

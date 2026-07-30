@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1250 860" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <style>
+      .box   { fill: #f5f5f5; stroke: #424242; stroke-width: 1.5; }
+      .fuse  { fill: #fff8e1; stroke: #424242; stroke-width: 1.5; }
+      .bus   { fill: #e3f2fd; stroke: #424242; stroke-width: 1.5; }
+      .note  { fill: #fafafa; stroke: #9e9e9e; stroke-width: 1; }
+      .pos   { stroke: #c62828; stroke-width: 3; fill: none; }
+      .neg   { stroke: #212121; stroke-width: 3; fill: none; }
+      .pv    { stroke: #ef6c00; stroke-width: 3; fill: none; }
+      .lbl   { fill: #212121; font-size: 13px; }
+      .lblB  { fill: #212121; font-size: 13px; font-weight: bold; }
+      .sm    { fill: #616161; font-size: 11px; }
+      .bulk  { stroke: #757575; stroke-width: 1.5; stroke-dasharray: 6 4; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1250" height="860" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="40" y="36" font-size="22" font-weight="bold" fill="#212121">BASTION — 12 V DC POWER WIRING</text>
+  <text x="40" y="58" class="sm">Phase 2.1 one-page diagram · rev A · fill in your actual wire labels on the laminated copy</text>
+
+  <!-- ===================== SOLAR / MPPT ===================== -->
+  <rect x="40" y="75" width="170" height="100" class="box"/>
+  <text x="125" y="115" text-anchor="middle" class="lblB">FOLDING SOLAR PANEL</text>
+  <text x="125" y="135" text-anchor="middle" class="lbl">100–200 W · IP65 · MC4</text>
+
+  <line x1="257" y1="65" x2="257" y2="190" class="bulk"/>
+  <text x="257" y="205" text-anchor="middle" class="sm">bulkhead glands</text>
+
+  <rect x="305" y="70" width="165" height="115" class="box"/>
+  <text x="387" y="98" text-anchor="middle" class="lblB">VICTRON MPPT</text>
+  <text x="387" y="118" text-anchor="middle" class="lbl">SmartSolar (size to PV)</text>
+  <text x="387" y="138" text-anchor="middle" class="sm">LiFePO4 profile · temp sense</text>
+  <text x="387" y="156" text-anchor="middle" class="sm">low-temp cutoff 5 °C</text>
+
+  <!-- PV wires -->
+  <polyline points="210,105 305,105" class="pv"/>
+  <polyline points="210,145 305,145" class="pv"/>
+  <text x="232" y="97" class="sm">PV+</text>
+  <text x="232" y="163" class="sm">PV−</text>
+
+  <!-- MPPT battery feed (+ via its own fuse, into + bus) -->
+  <rect x="520" y="90" width="80" height="30" class="fuse"/>
+  <text x="560" y="110" text-anchor="middle" class="lbl">FUSE 30 A</text>
+  <polyline points="470,105 520,105" class="pos"/>
+  <polyline points="600,105 735,105 735,300" class="pos"/>
+  <text x="648" y="97" class="sm">MPPT charge feed</text>
+
+  <!-- MPPT battery negative down to − bus -->
+  <polyline points="470,145 610,145 610,713 630,713" class="neg"/>
+
+  <!-- ===================== NOTES ===================== -->
+  <rect x="40" y="215" width="355" height="255" class="note"/>
+  <text x="52" y="238" class="lblB">BUILD RULES</text>
+  <text x="52" y="260" class="lbl">1. Match pack voltages (±0.1 V) before paralleling.</text>
+  <text x="52" y="282" class="lbl">2. Battery + leaves ONLY through its MRBF fuse.</text>
+  <text x="52" y="304" class="lbl">3. ALL negatives land on shunt LOAD side or − bus.</text>
+  <text x="52" y="326" class="lbl">4. Fuses protect wire — size to downstream gauge.</text>
+  <text x="52" y="348" class="lbl">5. Buck-boost, not buck: bus swings 10–14.6 V.</text>
+  <text x="52" y="370" class="lbl">6. MPPT: abs 14.2–14.4 V · float 13.5 V.</text>
+  <text x="52" y="392" class="lbl">7. Pairs drawn as single lines — label both ends.</text>
+  <line x1="52" y1="415" x2="92" y2="415" class="pos"/><text x="100" y="420" class="lbl">+12 V</text>
+  <line x1="160" y1="415" x2="200" y2="415" class="neg"/><text x="208" y="420" class="lbl">− return</text>
+  <line x1="280" y1="415" x2="320" y2="415" class="pv"/><text x="328" y="420" class="lbl">PV</text>
+  <text x="52" y="450" class="sm">Wire: 10 AWG mains · 16 AWG branches · blade fuses per row</text>
+
+  <!-- ===================== BATTERIES ===================== -->
+  <text x="40" y="528" class="sm">equal-length 10 AWG pairs ↓</text>
+
+  <rect x="40" y="540" width="175" height="110" class="box"/>
+  <text x="127" y="583" text-anchor="middle" class="lblB">LiFePO4 #1</text>
+  <text x="127" y="603" text-anchor="middle" class="lbl">12 V · 50 Ah</text>
+
+  <rect x="40" y="690" width="175" height="110" class="box"/>
+  <text x="127" y="733" text-anchor="middle" class="lblB">LiFePO4 #2</text>
+  <text x="127" y="753" text-anchor="middle" class="lbl">12 V · 50 Ah</text>
+
+  <!-- MRBF fuses on the positive posts -->
+  <rect x="245" y="555" width="75" height="30" class="fuse"/>
+  <text x="282" y="575" text-anchor="middle" class="lbl">MRBF 60 A</text>
+  <rect x="245" y="705" width="75" height="30" class="fuse"/>
+  <text x="282" y="725" text-anchor="middle" class="lbl">MRBF 60 A</text>
+
+  <!-- Positive mains -->
+  <circle cx="215" cy="570" r="4" fill="#c62828"/>
+  <circle cx="215" cy="720" r="4" fill="#c62828"/>
+  <polyline points="215,570 245,570" class="pos"/>
+  <polyline points="215,720 245,720" class="pos"/>
+  <polyline points="320,570 360,570 360,645" class="pos"/>
+  <polyline points="320,720 360,720 360,645" class="pos"/>
+  <circle cx="360" cy="645" r="4" fill="#c62828"/>
+  <polyline points="360,645 400,645" class="pos"/>
+
+  <!-- Main disconnect -->
+  <rect x="400" y="615" width="135" height="60" class="box"/>
+  <text x="467" y="640" text-anchor="middle" class="lblB">MAIN</text>
+  <text x="467" y="660" text-anchor="middle" class="lblB">DISCONNECT</text>
+  <polyline points="535,645 630,645" class="pos"/>
+  <text x="545" y="637" class="sm">+ main · 10 AWG</text>
+
+  <!-- Negative mains through shunt -->
+  <circle cx="215" cy="625" r="4" fill="#212121"/>
+  <circle cx="215" cy="775" r="4" fill="#212121"/>
+  <polyline points="215,625 340,625 340,785" class="neg"/>
+  <polyline points="215,775 340,775 340,785" class="neg"/>
+  <circle cx="340" cy="785" r="4" fill="#212121"/>
+  <polyline points="340,785 380,785" class="neg"/>
+
+  <rect x="380" y="760" width="180" height="50" class="box"/>
+  <text x="470" y="781" text-anchor="middle" class="lblB">SMARTSHUNT 500 A</text>
+  <text x="400" y="800" class="sm">BATT −</text>
+  <text x="510" y="800" class="sm">LOAD −</text>
+  <polyline points="560,785 660,785 660,726" class="neg"/>
+  <text x="570" y="825" class="sm">ALL current passes through the shunt</text>
+
+  <!-- ===================== FUSE BLOCK + BUSES ===================== -->
+  <rect x="630" y="300" width="195" height="390" class="bus"/>
+  <text x="727" y="325" text-anchor="middle" class="lblB">BLUE SEA</text>
+  <text x="727" y="343" text-anchor="middle" class="lblB">FUSE BLOCK (+ BUS)</text>
+
+  <text x="645" y="376" class="lbl">MINI PC</text><text x="810" y="376" text-anchor="end" class="lbl">10 A</text>
+  <text x="645" y="426" class="lbl">ROUTER</text><text x="810" y="426" text-anchor="end" class="lbl">5 A</text>
+  <text x="645" y="486" class="lbl">SDR / USB</text><text x="810" y="486" text-anchor="end" class="lbl">5 A</text>
+  <text x="645" y="546" class="lbl">RADIO CHG</text><text x="810" y="546" text-anchor="end" class="lbl">5 A</text>
+  <text x="645" y="606" class="lbl">USB PANEL</text><text x="810" y="606" text-anchor="end" class="lbl">10 A</text>
+  <text x="645" y="666" class="lbl">SPARE / EXT</text><text x="810" y="666" text-anchor="end" class="lbl">10 A</text>
+
+  <rect x="630" y="700" width="195" height="26" class="bus"/>
+  <text x="727" y="718" text-anchor="middle" class="lblB">− BUS</text>
+
+  <!-- ===================== BRANCH CIRCUITS ===================== -->
+  <text x="838" y="342" class="sm">16 AWG branches</text>
+
+  <!-- Row 1: mini PC -->
+  <polyline points="825,370 880,370" class="pos"/>
+  <rect x="880" y="350" width="120" height="40" class="box"/>
+  <text x="940" y="368" text-anchor="middle" class="lblB">BUCK-BOOST</text>
+  <text x="940" y="384" text-anchor="middle" class="sm">12 V regulated</text>
+  <polyline points="1000,370 1040,370" class="pos"/>
+  <rect x="1040" y="350" width="150" height="40" class="box"/>
+  <text x="1115" y="375" text-anchor="middle" class="lblB">MINI PC</text>
+
+  <!-- Row 2: router -->
+  <polyline points="825,420 880,420" class="pos"/>
+  <rect x="880" y="400" width="120" height="40" class="box"/>
+  <text x="940" y="418" text-anchor="middle" class="lblB">BUCK-BOOST</text>
+  <text x="940" y="434" text-anchor="middle" class="sm">12 V regulated</text>
+  <polyline points="1000,420 1040,420" class="pos"/>
+  <rect x="1040" y="400" width="150" height="40" class="box"/>
+  <text x="1115" y="425" text-anchor="middle" class="lblB">ROUTER</text>
+
+  <!-- Row 3: USB hub / SDR / GPS -->
+  <polyline points="825,480 880,480" class="pos"/>
+  <rect x="880" y="460" width="310" height="40" class="box"/>
+  <text x="1035" y="485" text-anchor="middle" class="lblB">POWERED USB HUB → SDR · GPS</text>
+
+  <!-- Row 4: radio chargers -->
+  <polyline points="825,540 880,540" class="pos"/>
+  <rect x="880" y="520" width="310" height="40" class="box"/>
+  <text x="1035" y="545" text-anchor="middle" class="lblB">RADIO CHARGE CRADLES</text>
+
+  <!-- Row 5: USB panel -->
+  <polyline points="825,600 880,600" class="pos"/>
+  <rect x="880" y="580" width="310" height="40" class="box"/>
+  <text x="1035" y="605" text-anchor="middle" class="lblB">USB CHARGING PANEL</text>
+
+  <!-- Row 6: external port / spare -->
+  <polyline points="825,660 880,660" class="pos"/>
+  <rect x="880" y="640" width="310" height="40" class="box"/>
+  <text x="1035" y="665" text-anchor="middle" class="lblB">EXT POWERPOLE PORT (bulkhead)</text>
+
+  <!-- Negative return rail -->
+  <polyline points="1190,370 1215,370 1215,713 825,713" class="neg"/>
+  <polyline points="1190,420 1215,420" class="neg"/>
+  <polyline points="1190,480 1215,480" class="neg"/>
+  <polyline points="1190,540 1215,540" class="neg"/>
+  <polyline points="1190,600 1215,600" class="neg"/>
+  <polyline points="1190,660 1215,660" class="neg"/>
+
+  <!-- Footer -->
+  <text x="40" y="848" class="sm">docs/wiring-diagram.svg · matches build guide §2.1 with the buck-boost correction · print, mark up with your wire labels, laminate for the lid (§5.2)</text>
+</svg>

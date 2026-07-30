@@ -17,6 +17,9 @@ orientation restrictions.
 - [Build Sheet](docs/build-sheet.md) — bill of materials, every line traced to the
   phase that requires it, with inferred specs flagged as such. Doubles as the
   receiving log for §0.3.
+- [Wiring Diagram](docs/wiring-diagram.svg) — one-page 12V DC power schematic
+  (batteries → MRBF fuses → disconnect → fuse block, all negatives through the
+  shunt, MPPT feed, six branch circuits). Print and laminate for the lid.
 
 ## At a glance
 
