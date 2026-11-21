@@ -53,6 +53,12 @@ cd android
 Requires JDK 17+, Android SDK (platform 35, build-tools 35.0.0). Pinned:
 Gradle 8.14.3 (wrapper), AGP 8.7.3, Kotlin 2.1.0, Compose BOM 2024.12.01.
 
+Owner's Windows PC: Gradle 8.14.3 cannot run on Android Studio's bundled
+JDK 25 — set `JAVA_HOME` to the installed Temurin 21
+(`C:\Program Files\Eclipse Adoptium\jdk-21.*`). SDK is at
+`%LOCALAPPDATA%\Android\Sdk` (`sdk.dir` in gitignored
+`android/local.properties`); AVD `Medium_Phone_API_37.0` (WHPX-accelerated).
+
 ## Working conventions
 
 - Every reported result is labeled: tested on emulator / tested on named
