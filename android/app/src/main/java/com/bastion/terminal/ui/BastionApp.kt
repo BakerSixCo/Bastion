@@ -7,9 +7,11 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,11 +31,16 @@ fun BastionApp() {
 
     if (readerDocId >= 0) {
         BackHandler { readerDocId = -1L }
-        ReaderScreen(
-            docId = readerDocId,
-            query = readerQuery,
-            onClose = { readerDocId = -1L },
-        )
+        // The reader sits outside the Scaffold, so it needs its own Surface to
+        // supply the theme's content color; without one, text falls back to
+        // black on the dark window background (found on emulator 2026-11-21).
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ReaderScreen(
+                docId = readerDocId,
+                query = readerQuery,
+                onClose = { readerDocId = -1L },
+            )
+        }
         return
     }
 

@@ -153,10 +153,20 @@ class LibraryStore private constructor(private val app: Context) {
         }
     }
 
+    /**
+     * Reads the preserved original (the same bytes that were indexed). Reading
+     * the FTS row instead crashes for documents over ~2 MB: a single row must
+     * fit Android's CursorWindow (SQLiteBlobTooBigException, found on emulator
+     * 2026-11-21 with a 20 MB import). The DB path is only a fallback.
+     */
     suspend fun docText(id: Long): String? = withContext(Dispatchers.IO) {
-        helper.readableDatabase.rawQuery(
-            "SELECT content FROM doc_fts WHERE docid=?", arrayOf(id.toString())
-        ).use { c -> if (c.moveToFirst()) c.getString(0) else null }
+        val orig = File(libDir(), "$id.orig")
+        if (orig.isFile) return@withContext String(orig.readBytes(), Charsets.UTF_8)
+        runCatching {
+            helper.readableDatabase.rawQuery(
+                "SELECT content FROM doc_fts WHERE docid=?", arrayOf(id.toString())
+            ).use { c -> if (c.moveToFirst()) c.getString(0) else null }
+        }.getOrNull()
     }
 
     suspend fun docMeta(id: Long): DocMeta? = withContext(Dispatchers.IO) {
