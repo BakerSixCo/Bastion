@@ -44,8 +44,8 @@ Implemented (v0.1.0, `android/`):
 | Claim | Status |
 |---|---|
 | Gradle wrapper generated (8.14.3) | Tested in this session (cloud) |
-| Project compiles / debug APK builds | **Pending** — running in a `bastion`-environment build session; this session's network cannot fetch AGP/SDK |
-| Unit tests pass | **Pending** — same build session |
+| Project compiles / debug APK builds | **Tested in cloud build session (no emulator — compile and JVM tests only)**: `./gradlew :app:assembleDebug` → `BUILD SUCCESSFUL in 59s` (35 actionable tasks: 16 executed, 19 up-to-date). APK: `app/build/outputs/apk/debug/app-debug.apk`, 22,477,521 bytes (~21.4 MiB). No source changes were needed. First attempt failed with a transient HTTP 429 (Too Many Requests) from Maven Central while fetching the Kotlin compiler; an unchanged retry succeeded. One compiler warning (deprecated `Icons.Filled.List` in BastionApp.kt), left as-is. |
+| Unit tests pass | **Tested in cloud build session (no emulator — compile and JVM tests only)**: `./gradlew :app:testDebugUnitTest` → `BUILD SUCCESSFUL in 21s`; JUnit XML reports `tests="4" skipped="0" failures="0" errors="0"` (TextUtilTest). No test changes were needed. |
 | App launches; import/search/reader/persistence work | **Not tested** — requires emulator (owner's computer) or a physical device; no KVM here |
 | Offline proof protocol (fresh process, networking off, JUNIPER-7-ACTUAL) | **Not tested** — device/emulator required |
 
@@ -53,9 +53,8 @@ Nothing above is simulated; pending means pending.
 
 ## Next actions
 
-1. Build session on `bastion` env: install SDK (cmdline-tools + platform 35 +
-   build-tools 35.0.0, ~600 MB), `./gradlew :app:assembleDebug` and
-   `:app:testDebugUnitTest`, commit fixes, update this file with real output.
+1. ~~Build session on `bastion` env~~ — **done 2026-11-21** (see Test
+   evidence above; no code fixes were required).
 2. Owner: when convenient, open `android/` in Android Studio on your
    computer → run on an emulator (any x86_64 API 29+ image) → walk the
    M1 checklist (import, search, open source, restart, airplane-mode use).
