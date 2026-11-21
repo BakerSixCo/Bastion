@@ -35,6 +35,7 @@ import com.bastion.terminal.data.DocMeta
 import com.bastion.terminal.data.ImportResult
 import com.bastion.terminal.data.LibraryStore
 import com.bastion.terminal.data.SearchHit
+import com.bastion.terminal.data.TextUtil
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -62,7 +63,7 @@ fun LibraryScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit)
             scope.launch {
                 busy = true
                 message = when (val r = store.importFromUri(uri)) {
-                    is ImportResult.Ok -> "Imported “${r.doc.title}” (${r.doc.sizeBytes / 1024} KB)."
+                    is ImportResult.Ok -> "Imported “${r.doc.title}” (${TextUtil.formatSize(r.doc.sizeBytes)})."
                     is ImportResult.Rejected -> r.reason
                 }
                 busy = false
@@ -80,6 +81,7 @@ fun LibraryScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
                 onClick = {
+                    message = null
                     try {
                         picker.launch(arrayOf("text/*", "application/octet-stream"))
                     } catch (_: ActivityNotFoundException) {
@@ -90,6 +92,7 @@ fun LibraryScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit)
             ) { Text("Import document") }
             OutlinedButton(
                 onClick = {
+                    message = null
                     scope.launch {
                         busy = true
                         message = when (val r = store.importSample()) {
@@ -108,7 +111,7 @@ fun LibraryScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit)
         }
         OutlinedTextField(
             value = query,
-            onValueChange = { query = it },
+            onValueChange = { query = it; message = null },
             label = { Text("Search the library") },
             modifier = Modifier.fillMaxWidth(),
         )
@@ -147,7 +150,7 @@ private fun DocRow(d: DocMeta, onClick: () -> Unit) {
         Column(Modifier.padding(12.dp)) {
             Text(d.title, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
             Text(
-                "${d.filename} · ${d.sizeBytes / 1024} KB · imported $date",
+                "${d.filename} · ${TextUtil.formatSize(d.sizeBytes)} · imported $date",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

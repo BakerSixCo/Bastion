@@ -60,16 +60,42 @@ class LibraryStore private constructor(private val app: Context) {
 
     suspend fun importFromUri(uri: Uri): ImportResult = withContext(Dispatchers.IO) {
         val resolver = app.contentResolver
-        val name = runCatching {
+        var name = "document.txt"
+        var reportedSize: Long? = null
+        runCatching {
             resolver.query(uri, null, null, null, null)?.use { c ->
-                val i = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-                if (c.moveToFirst() && i >= 0) c.getString(i) else null
+                if (c.moveToFirst()) {
+                    val n = c.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                    if (n >= 0 && !c.isNull(n)) name = c.getString(n)
+                    val s = c.getColumnIndex(OpenableColumns.SIZE)
+                    if (s >= 0 && !c.isNull(s)) reportedSize = c.getLong(s)
+                }
             }
-        }.getOrNull() ?: "document.txt"
-        val bytes = runCatching {
-            resolver.openInputStream(uri)?.use { it.readBytes() }
-        }.getOrNull() ?: return@withContext ImportResult.Rejected("Could not read the selected file.")
+        }
+        // Reject on the provider-reported size before reading anything.
+        reportedSize?.let { if (it > TextUtil.MAX_IMPORT_BYTES) return@withContext tooLarge(it) }
+        // The reported size can be missing or wrong, so the read itself is bounded too.
+        val unreadable = ImportResult.Rejected("Could not read the selected file.")
+        val stream = runCatching { resolver.openInputStream(uri) }.getOrNull()
+            ?: return@withContext unreadable
+        val bytes = runCatching { stream.use { TextUtil.readBounded(it, TextUtil.MAX_IMPORT_BYTES) } }
+            .getOrElse { return@withContext unreadable }
+            ?: return@withContext tooLarge(null)
         indexBytes(bytes, name, "Imported via Android file picker")
+    }
+
+    private fun tooLarge(size: Long?): ImportResult.Rejected {
+        val limit = TextUtil.formatSize(TextUtil.MAX_IMPORT_BYTES).replace(".0 ", " ")
+        val shown = size?.let { TextUtil.formatSize(it) }
+        return ImportResult.Rejected(
+            when {
+                shown == null -> "File is larger than the current $limit plain-text limit."
+                // Rounding would print "20.0 MB" against a "20 MB" limit; say so plainly.
+                shown == TextUtil.formatSize(TextUtil.MAX_IMPORT_BYTES) ->
+                    "File is just over the current $limit plain-text limit."
+                else -> "File is $shown; the current plain-text limit is $limit."
+            }
+        )
     }
 
     suspend fun importSample(): ImportResult = withContext(Dispatchers.IO) {
@@ -79,9 +105,7 @@ class LibraryStore private constructor(private val app: Context) {
 
     private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String): ImportResult {
         if (bytes.isEmpty()) return ImportResult.Rejected("The file is empty.")
-        if (bytes.size > MAX_BYTES) {
-            return ImportResult.Rejected("File exceeds the current 20 MB text limit.")
-        }
+        if (bytes.size > TextUtil.MAX_IMPORT_BYTES) return tooLarge(bytes.size.toLong())
         if (TextUtil.isLikelyBinary(bytes)) {
             return ImportResult.Rejected(
                 "This looks like binary data. v0.1 indexes plain text and Markdown only; " +
@@ -187,7 +211,6 @@ class LibraryStore private constructor(private val app: Context) {
     }
 
     companion object {
-        private const val MAX_BYTES = 20 * 1024 * 1024
 
         @Volatile
         private var inst: LibraryStore? = null

@@ -32,6 +32,25 @@ class TextUtilTest {
     }
 
     @Test
+    fun formatSize_usesDecimalUnitsAndNeverShowsZeroForSmallFiles() {
+        assertEquals("0 B", TextUtil.formatSize(0))
+        assertEquals("52 B", TextUtil.formatSize(52))
+        assertEquals("999 B", TextUtil.formatSize(999))
+        assertEquals("1.2 KB", TextUtil.formatSize(1_234))
+        assertEquals("20.0 MB", TextUtil.formatSize(20_000_000))
+        assertEquals("21.0 MB", TextUtil.formatSize(20_971_000))
+        assertEquals("1.5 GB", TextUtil.formatSize(1_500_000_000))
+    }
+
+    @Test
+    fun readBounded_returnsBytesAtLimitAndNullPastIt() {
+        val data = ByteArray(200_000) { (it % 251).toByte() }
+        assertTrue(data.contentEquals(TextUtil.readBounded(data.inputStream(), 200_000)))
+        assertNull(TextUtil.readBounded(data.inputStream(), 199_999))
+        assertEquals(0, TextUtil.readBounded(ByteArray(0).inputStream(), 10)!!.size)
+    }
+
+    @Test
     fun highlightRanges_emptyQueryYieldsNothing() {
         assertTrue(TextUtil.highlightRanges("some text", " ").isEmpty())
         assertTrue(TextUtil.highlightRanges("some text", "a").isEmpty())

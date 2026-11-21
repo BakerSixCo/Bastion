@@ -78,7 +78,7 @@ physical phone).
 | APK installs and launches | `adb install -r` → `Success`; Home renders the status cards (Library empty, Local AI not installed, 4 companion apps "not installed", storage free). |
 | Picker offers .txt and .bin | DocumentsUI lists `.txt` and `.bin` files (`text/*` + `application/octet-stream`). |
 | **Binary file rejected** | `bastion-binary.bin` (4,096 random bytes) → "This looks like binary data. v0.1 indexes plain text and Markdown only; PDF, EPUB, and ZIM support are planned, separate capabilities." A PNG-header binary renamed `.txt` → same message (verified after a different message was shown, so not stale). Library stayed empty. |
-| **20 MB size cap** | 21,000,000-byte text file → "File exceeds the current 20 MB text limit." 20,971,000-byte text file (520 bytes under 20 MiB) → imported ("20479 KB"). Cap is 20 MiB; boundary confirmed from both sides. |
+| **20 MB size cap** | 21,000,000-byte text file → "File exceeds the current 20 MB text limit." 20,971,000-byte text file (520 bytes under 20 MiB) → imported ("20479 KB"). Cap was 20 MiB at this point; boundary confirmed from both sides. (Later changed to 20 MB decimal — see below.) |
 | **No file-picker app message** | With `com.google.android.documentsui` disabled (`pm disable-user`; `query-activities` for OPEN_DOCUMENT → "No activities found"), tapping Import document → "This device has no file picker app, so documents cannot be imported here." No crash — this is the first run of the crash path fixed in e908191. DocumentsUI re-enabled afterwards. |
 | Import + duplicate rejection | Small `.txt` imported; re-importing it → "Already in the library (identical content)." Sample added; adding again → same duplicate message. |
 | Search (prefix) | Library search "OSPR" finds `OSPREY-3-ECHO` (prefix fix from e908191 confirmed on device); snippet shown. |
@@ -101,18 +101,33 @@ physical phone).
    (identical bytes to what was indexed), DB read kept as a guarded fallback
    (`data/LibraryStore.kt`). Verified with the 20 MB document.
 
-**Observations, not fixed (minor):**
+**Minor import issues observed above — fixed later the same day:**
 
-- Sizes under 1 KB display as "0 KB" (import message and list row).
-- The cap message says "20 MB" but means 20 MiB; DocumentsUI shows the
-  accepted 20,971,000-byte file as "20.97 MB" — slightly confusing at the
-  boundary.
-- `importFromUri` reads the whole file into memory before the size check;
-  a very large pick (hundreds of MB) could hit memory limits before being
-  rejected. Checking `OpenableColumns.SIZE` / streaming with a byte limit
-  would avoid that.
-- The status message under the Library buttons is never cleared, so an old
-  result stays visible until the next action.
+- ~~Sizes under 1 KB display as "0 KB"~~ → one formatter,
+  `TextUtil.formatSize`, in decimal units like Android's picker ("52 B",
+  "1.2 KB", "20.0 MB") for the import message, library rows, Home library
+  total and Home free storage.
+- ~~Cap says "20 MB" but means 20 MiB~~ → **the cap is now 20 MB decimal
+  (20,000,000 bytes)**, `TextUtil.MAX_IMPORT_BYTES`, so it matches the
+  picker's display. Behavior change: the 20,971,000-byte file accepted in the
+  run above is now rejected. Message: "File is 21.0 MB; the current
+  plain-text limit is 20 MB." (or "just over" when rounding would print 20.0).
+- ~~Whole file read into memory before the size check~~ → the
+  provider-reported `OpenableColumns.SIZE` is checked first, and the read is
+  bounded (`TextUtil.readBounded`) and stops one chunk past the limit.
+- ~~Stale status message~~ → cleared when Import, Add sample, or search
+  typing starts.
+
+Verified **on the hardware-accelerated emulator**: build OK, unit tests
+`tests="6" failures="0"` (new: `formatSize`, `readBounded`); 52-byte file →
+"Imported “bastion-ok” (52 B)." and row "52 B"; 21,000,000 and 20,971,000
+bytes → "File is 21.0 MB; …"; 20,000,001 bytes → "File is just over the
+current 20 MB plain-text limit."; exactly 20,000,000 bytes → imported "(20.0
+MB)" and opens in the reader; Home "3 document(s), 20.0 MB indexed", "8.3 GB
+free in app storage"; a rejection message clears on search typing and on
+opening-then-cancelling the picker. No crash/ANR. The bounded-read path for
+providers that report no size is covered by the unit test only (DocumentsUI
+always reports a size).
 
 **Not tested:** any physical phone; launching companion apps (none
 installed on the emulator); cancelling an import mid-way; process death
@@ -127,8 +142,8 @@ Nothing above is simulated; pending means pending.
    20 MB cap, no-picker message; re-run the M1 checklist on the accelerated
    emulator~~ — **done 2026-11-21** (API 37, WHPX); two reader bugs found and
    fixed.
-3. Optional M1 polish: the minor observations above (size display, memory-safe
-   size check, clearing stale messages).
+3. ~~M1 polish: size display, memory-safe size check, stale messages~~ —
+   **done 2026-11-21** (cap now 20 MB decimal).
 4. Then: M2 runtime/model selection with measured numbers on the real target
    class of phone.
 

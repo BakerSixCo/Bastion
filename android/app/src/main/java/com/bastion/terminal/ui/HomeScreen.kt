@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.bastion.terminal.data.LibraryStore
+import com.bastion.terminal.data.TextUtil
 
 private data class CompanionApp(val label: String, val pkg: String, val role: String)
 
@@ -69,7 +70,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             title = "Library",
             ok = docCount > 0,
             body = if (docCount > 0) {
-                "$docCount document(s), ${docBytes / 1024} KB indexed. Full-text search works fully offline."
+                "$docCount document(s), ${TextUtil.formatSize(docBytes)} indexed. Full-text search works fully offline."
             } else {
                 "No documents yet. Import plain-text or Markdown files in the Library tab."
             },
@@ -121,11 +122,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             }
         }
 
-        val freeMb = remember { StatFs(ctx.filesDir.path).availableBytes / (1024 * 1024) }
+        val freeBytes = remember { StatFs(ctx.filesDir.path).availableBytes }
         StatusCard(
             title = "Storage",
-            ok = freeMb > 500,
-            body = "$freeMb MB free in app storage.",
+            ok = freeBytes > 500_000_000L,
+            body = "${TextUtil.formatSize(freeBytes)} free in app storage.",
         )
     }
 }

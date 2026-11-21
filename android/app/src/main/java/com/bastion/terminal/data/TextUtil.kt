@@ -59,4 +59,37 @@ object TextUtil {
         }
         return out.sortedBy { it.first }
     }
+
+    /**
+     * Import limit: 20 MB in decimal units (20,000,000 bytes), the same units
+     * Android's file picker uses to display sizes, so "20.97 MB" in the
+     * picker is visibly over a "20 MB" limit.
+     */
+    const val MAX_IMPORT_BYTES: Long = 20_000_000L
+
+    /** Human-readable size in decimal units, matching Android's picker: 52 B, 1.2 KB, 21.0 MB. */
+    fun formatSize(bytes: Long): String = when {
+        bytes < 1_000 -> "$bytes B"
+        bytes < 1_000_000 -> String.format(java.util.Locale.US, "%.1f KB", bytes / 1_000.0)
+        bytes < 1_000_000_000 -> String.format(java.util.Locale.US, "%.1f MB", bytes / 1_000_000.0)
+        else -> String.format(java.util.Locale.US, "%.1f GB", bytes / 1_000_000_000.0)
+    }
+
+    /**
+     * Reads at most [limit] bytes. Returns null as soon as the stream proves
+     * longer than [limit], so an oversized file is never fully loaded.
+     */
+    fun readBounded(input: java.io.InputStream, limit: Long): ByteArray? {
+        val out = java.io.ByteArrayOutputStream()
+        val buf = ByteArray(64 * 1024)
+        var total = 0L
+        while (true) {
+            val n = input.read(buf)
+            if (n < 0) break
+            total += n
+            if (total > limit) return null
+            out.write(buf, 0, n)
+        }
+        return out.toByteArray()
+    }
 }
