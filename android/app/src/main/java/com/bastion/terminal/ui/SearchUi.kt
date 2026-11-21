@@ -1,4 +1,4 @@
-package com.outpostzero.terminal.ui
+package com.bastion.terminal.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -17,8 +17,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.outpostzero.terminal.data.SearchHit
-import com.outpostzero.terminal.data.TextUtil
+import com.bastion.terminal.data.SearchHit
+import com.bastion.terminal.data.TextUtil
 
 /** Renders a search hit card; tapping opens the source document. */
 @Composable

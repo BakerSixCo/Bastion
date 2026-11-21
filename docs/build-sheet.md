@@ -1,4 +1,4 @@
-# Outpost Zero Build Sheet — Android pivot (source of truth)
+# BASTION Build Sheet — Android pivot (source of truth)
 
 **Date:** 2026-11-21. **Supersedes** the hardware-kit sheets now in
 [archive/](archive/) (12V DIY build; KISS three-module build). This pivot
@@ -32,7 +32,7 @@ Milestone 4; nothing here re-opens the discarded 12V bus or home automation.
 
 | Component | Choice | Status |
 |---|---|---|
-| App | Native Kotlin + Jetpack Compose, package `com.outpostzero.terminal` | Scaffolded; see status.md for build evidence |
+| App | Native Kotlin + Jetpack Compose, package `com.bastion.terminal` | Scaffolded; see status.md for build evidence |
 | Toolchain | Gradle 8.14.3 (wrapper) · AGP 8.7.3 · Kotlin 2.1.0 · Compose BOM 2024.12.01 · min SDK 29 / target 35 | Pinned in `android/gradle/libs.versions.toml` |
 | Library index | SQLite FTS4, on-device; originals preserved + SHA-256 provenance | Implemented (v0.1) |
 | Import formats | `.txt`, `.md` via SAF picker | Implemented. PDF/EPUB/OCR/ZIM: separate, future capabilities |
@@ -66,7 +66,7 @@ Milestone 2.
 3. ZIM-wide search vs. selected imported documents first — current answer:
    selected documents first; ZIM retrieval is its own capability.
 4. Depth of ATAK/Meshtastic integration in first release — M3.
-5. Outpost Zero as launcher — not now; revisit after M3.
+5. BASTION as launcher — not now; revisit after M3.
 6. Voice in/out — optional later investigation.
 7. Distribution beyond prototype APK (store/sideload/kit image) — M4.
 8. Custom ROM — not selected; requires a demonstrated need.

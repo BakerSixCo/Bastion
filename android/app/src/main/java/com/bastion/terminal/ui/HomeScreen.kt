@@ -1,4 +1,4 @@
-package com.outpostzero.terminal.ui
+package com.bastion.terminal.ui
 
 import android.os.StatFs
 import androidx.compose.foundation.layout.Arrangement
@@ -27,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.outpostzero.terminal.data.LibraryStore
+import com.bastion.terminal.data.LibraryStore
 
 private data class CompanionApp(val label: String, val pkg: String, val role: String)
 
@@ -58,7 +58,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text("OUTPOST ZERO", style = MaterialTheme.typography.headlineLarge)
+        Text("BASTION", style = MaterialTheme.typography.headlineLarge)
         Text(
             "Off-grid field terminal — v0.1 (library/search milestone)",
             style = MaterialTheme.typography.bodyMedium,

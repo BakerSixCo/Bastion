@@ -1,4 +1,4 @@
-package com.outpostzero.terminal.ui
+package com.bastion.terminal.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,8 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.outpostzero.terminal.data.LibraryStore
-import com.outpostzero.terminal.data.SearchHit
+import com.bastion.terminal.data.LibraryStore
+import com.bastion.terminal.data.SearchHit
 import kotlinx.coroutines.launch
 
 @Composable

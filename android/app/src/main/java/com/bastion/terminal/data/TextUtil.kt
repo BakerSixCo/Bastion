@@ -1,4 +1,4 @@
-package com.outpostzero.terminal.data
+package com.bastion.terminal.data
 
 /**
  * Pure-JVM text helpers, kept free of Android imports so they run in plain

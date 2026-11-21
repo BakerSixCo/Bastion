@@ -1,4 +1,4 @@
-package com.outpostzero.terminal.ui
+package com.bastion.terminal.ui
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -26,6 +26,6 @@ private val DarkColors = darkColorScheme(
 val HighlightColor = Color(0xFF9CCC65)
 
 @Composable
-fun OutpostZeroTheme(content: @Composable () -> Unit) {
+fun BastionTheme(content: @Composable () -> Unit) {
     MaterialTheme(colorScheme = DarkColors, content = content)
 }

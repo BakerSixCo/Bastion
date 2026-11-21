@@ -1,11 +1,10 @@
-# CLAUDE.md — Outpost Zero project conventions
+# CLAUDE.md — BASTION project conventions
 
-## What Outpost Zero is now
+## What BASTION is now
 
-Outpost Zero (renamed 2026-11-21; formerly BASTION, before that OASIS — the
-old names survive in `docs/archive/`, `hardware/`, the GitHub repo name and
-the `bastion` cloud environment). **Current direction: an
-Android-phone-centered off-grid terminal.** The phone provides local AI, an offline reference
+Battery-backed, Autonomous Survival Terminal for Information & Off-grid
+Networking (formerly OASIS). **Current direction: an Android-phone-centered
+off-grid terminal.** The phone provides local AI, an offline reference
 library with grounded search and open-able sources, offline mapping alongside
 ATAK/TAK, and off-grid messaging via Meshtastic with external radio hardware.
 
@@ -33,7 +32,7 @@ home-control agent), cloud AI fallback in field mode, custom ROMs/rooting
 ## Repository layout
 
 - `android/` — the Android app (Gradle project root; open this dir in
-  Android Studio). Package `com.outpostzero.terminal`.
+  Android Studio). Package `com.bastion.terminal`.
 - `docs/build-sheet.md` — **source of truth** for specs, ownership, choices,
   and open decisions.
 - `docs/status.md` — current milestone, test evidence, next actions.
