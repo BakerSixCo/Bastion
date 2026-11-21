@@ -1,4 +1,4 @@
-package com.bastion.terminal.ui
+package com.outpostzero.terminal.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 private enum class Tab { HOME, ASK, LIBRARY }
 
 @Composable
-fun BastionApp() {
+fun OutpostZeroApp() {
     var tab by rememberSaveable { mutableStateOf(Tab.HOME) }
     var readerDocId by rememberSaveable { mutableLongStateOf(-1L) }
     var readerQuery by rememberSaveable { mutableStateOf("") }

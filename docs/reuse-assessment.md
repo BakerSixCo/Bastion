@@ -10,13 +10,13 @@ choices get their own verification pass when they start.
 **Kiwix Android** — mature, maintained ZIM reader; the right owner of
 "all of Wikipedia offline." ⚠ Verify current version's intent/content-
 provider surface before claiming any programmatic integration; v0.1 only
-detects and launches it. Do **not** assume BASTION can read Kiwix's private
+detects and launches it. Do **not** assume Outpost Zero can read Kiwix's private
 ZIM storage — cross-app file access requires SAF grants or a supported API.
 
 **AnythingLLM Mobile** — exists for Android with local-model support;
-closest "finished local-AI app." Reasons it is not the BASTION core: its
+closest "finished local-AI app." Reasons it is not the Outpost Zero core: its
 RAG pipeline and UI are its own product decisions, custom tool/MCP
-extensibility on mobile is ⚠ unverified, and BASTION's value is the
+extensibility on mobile is ⚠ unverified, and Outpost Zero's value is the
 integrated field terminal (library + comms status + doctrine), not a chat
 app. Worth keeping installed as a benchmark/fallback during M2.
 
@@ -28,11 +28,11 @@ RAM behavior, license. Not needed for M1.
 
 **ATAK-CIV** — official civilian TAK client (TAK.gov / Play Store). Plugin
 SDK exists but plugin development is its own project with its own signing
-realities. M1/M3 posture: launch + document supported intents; a BASTION
+realities. M1/M3 posture: launch + document supported intents; a Outpost Zero
 ATAK plugin only if a demonstrated need survives M3.
 
 **Meshtastic Android** — maintained; owns the BLE connection to the node.
-Rule: one app owns the radio connection — BASTION must not compete for BLE.
+Rule: one app owns the radio connection — Outpost Zero must not compete for BLE.
 Supported outward surfaces to evaluate at M3: ⚠ current ATAK-forwarder
 status and any intent/IPC surface in the current release. v0.1 detects and
 launches only. Meshtastic ↔ ATAK integration claims from older plugin
@@ -47,7 +47,7 @@ is a later decision; MapLibre would be the candidate if ever justified.
 - **A. Existing apps configured as a kit** — zero code, but nothing provides
   the grounded ask-your-own-documents path with honest states, and nothing
   ties status together. Insufficient for the mission.
-- **B. BASTION dashboard + a few owned functions** — custom app owns:
+- **B. Outpost Zero dashboard + a few owned functions** — custom app owns:
   status/honest states, document import + FTS + reader with provenance;
   companions handle ZIM/maps/comms. **Chosen for M1.**
 - **C. Integrated app with embedded inference + retrieval** — B plus a local

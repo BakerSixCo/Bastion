@@ -1,4 +1,4 @@
-package com.bastion.terminal.data
+package com.outpostzero.terminal.data
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse

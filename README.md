@@ -1,9 +1,9 @@
-# BASTION
+# Outpost Zero
 
-**B**attery-backed **A**utonomous **S**urvival **T**erminal for **I**nformation
-& **O**ff-grid **N**etworking — an Android-phone-centered off-grid terminal:
-local AI, an offline reference library with grounded search, offline mapping
-alongside ATAK/TAK, and Meshtastic messaging via external radio hardware.
+An off-grid base in your pocket: an Android-phone-centered terminal with
+local AI, an offline reference library with grounded, cited search, offline
+mapping alongside ATAK/TAK, and Meshtastic messaging via external radio
+hardware — no internet required. (Formerly BASTION.)
 
 ## Current state (2026-11-21)
 

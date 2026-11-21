@@ -1,4 +1,4 @@
-# BASTION status
+# Outpost Zero status (formerly BASTION)
 
 **Updated:** 2026-11-21 · **Milestone:** 0 complete, 1 in progress (M1 checklist passed on hardware-accelerated emulator)
 
@@ -93,7 +93,7 @@ physical phone).
    `Scaffold`, so no Surface supplied a content color; title and body text
    fell back to black on the dark window background (only provenance and
    highlights were readable). Fix: wrap the reader in a themed `Surface`
-   (`ui/BastionApp.kt`). Verified by screenshot.
+   (`ui/BastionApp.kt`, now `ui/OutpostZeroApp.kt`). Verified by screenshot.
 2. **Reader crash on documents over ~2 MB.** `docText` read the whole FTS
    row through one cursor → `SQLiteBlobTooBigException: Row too big to fit
    into CursorWindow`. Import allows 20 MB, so any large import would crash
@@ -117,6 +117,21 @@ physical phone).
 **Not tested:** any physical phone; launching companion apps (none
 installed on the emulator); cancelling an import mid-way; process death
 during import.
+
+### Rename to Outpost Zero (2026-11-21) — tested on the hardware-accelerated emulator
+
+App ID and package `com.bastion.terminal` → `com.outpostzero.terminal`
+(also `BastionApp`/`BastionTheme`/`Theme.Bastion` → `OutpostZero*`, DB file
+`outpostzero.db`, sample document text). Clean build `BUILD SUCCESSFUL`,
+unit tests `tests="4" failures="0"` under the new package. Old app
+uninstalled from the emulator (test data only); new APK installed — launcher
+label "Outpost Zero", Home header "OUTPOST ZERO", no INTERNET permission
+(`dumpsys package`). Smoke test: Add sample → fresh start in airplane mode
+(`Active default network: none`) → Ask "JUNIPER-7-ACTUAL" → sample hit opens
+in the reader with provenance. No crash/ANR. A web search found an existing
+"Outpost Zero" video game (tinyBuild, Steam 2018/2019) and an Image Comics
+series; no trademark clearance has been done — required before any public
+release.
 
 Nothing above is simulated; pending means pending.
 

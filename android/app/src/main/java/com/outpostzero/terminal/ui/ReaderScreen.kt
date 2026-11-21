@@ -1,4 +1,4 @@
-package com.bastion.terminal.ui
+package com.outpostzero.terminal.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,9 +25,9 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.bastion.terminal.data.DocMeta
-import com.bastion.terminal.data.LibraryStore
-import com.bastion.terminal.data.TextUtil
+import com.outpostzero.terminal.data.DocMeta
+import com.outpostzero.terminal.data.LibraryStore
+import com.outpostzero.terminal.data.TextUtil
 
 private const val MAX_DISPLAY_CHARS = 400_000
 

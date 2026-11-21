@@ -1,4 +1,4 @@
-package com.bastion.terminal.ui
+package com.outpostzero.terminal.ui
 
 import android.content.ActivityNotFoundException
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -31,10 +31,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.bastion.terminal.data.DocMeta
-import com.bastion.terminal.data.ImportResult
-import com.bastion.terminal.data.LibraryStore
-import com.bastion.terminal.data.SearchHit
+import com.outpostzero.terminal.data.DocMeta
+import com.outpostzero.terminal.data.ImportResult
+import com.outpostzero.terminal.data.LibraryStore
+import com.outpostzero.terminal.data.SearchHit
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date

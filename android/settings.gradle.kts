@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "bastion"
+rootProject.name = "outpost-zero"
 include(":app")

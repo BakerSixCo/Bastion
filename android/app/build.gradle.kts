@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.bastion.terminal"
+    namespace = "com.outpostzero.terminal"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.bastion.terminal"
+        applicationId = "com.outpostzero.terminal"
         minSdk = 29
         targetSdk = 35
         versionCode = 1

@@ -16,7 +16,7 @@
     <application
         android:label="@string/app_name"
         android:allowBackup="true"
-        android:theme="@style/Theme.Bastion">
+        android:theme="@style/Theme.OutpostZero">
         <activity
             android:name=".MainActivity"
             android:exported="true">

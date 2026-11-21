@@ -1,12 +1,12 @@
 # SAMPLE DOCUMENT — bundled demo data
 
-This file ships inside the BASTION app as clearly labeled sample content so the
+This file ships inside the Outpost Zero app as clearly labeled sample content so the
 library, search, and reader can be demonstrated before you import your own
 documents. It is not field reference material.
 
 ## Unique test marker
 
-The BASTION offline test phrase is JUNIPER-7-ACTUAL. Searching for that phrase
+The Outpost Zero offline test phrase is JUNIPER-7-ACTUAL. Searching for that phrase
 after a fresh app start, with networking disabled, demonstrates that retrieval
 runs locally: this string exists nowhere else.
 
@@ -26,5 +26,5 @@ drinks only if the person is fully alert.
 
 ## Provenance
 
-Created for the BASTION project as demo data. No external source; safe to
+Created for the Outpost Zero project as demo data. No external source; safe to
 delete once real documents are imported.

@@ -1,17 +1,17 @@
-package com.bastion.terminal
+package com.outpostzero.terminal
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.bastion.terminal.ui.BastionApp
-import com.bastion.terminal.ui.BastionTheme
+import com.outpostzero.terminal.ui.OutpostZeroApp
+import com.outpostzero.terminal.ui.OutpostZeroTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            BastionTheme {
-                BastionApp()
+            OutpostZeroTheme {
+                OutpostZeroApp()
             }
         }
     }

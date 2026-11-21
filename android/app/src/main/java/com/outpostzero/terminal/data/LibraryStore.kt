@@ -1,4 +1,4 @@
-package com.bastion.terminal.data
+package com.outpostzero.terminal.data
 
 import android.content.ContentValues
 import android.content.Context
@@ -41,7 +41,7 @@ class LibraryStore private constructor(private val app: Context) {
     /** Bumped after every successful import so screens can reload. */
     val changeCounter = MutableStateFlow(0)
 
-    private val helper = object : SQLiteOpenHelper(app, "bastion.db", null, 1) {
+    private val helper = object : SQLiteOpenHelper(app, "outpostzero.db", null, 1) {
         override fun onCreate(db: SQLiteDatabase) {
             db.execSQL(
                 "CREATE TABLE docs(" +
@@ -74,7 +74,7 @@ class LibraryStore private constructor(private val app: Context) {
 
     suspend fun importSample(): ImportResult = withContext(Dispatchers.IO) {
         val bytes = app.assets.open("sample_field_notes.md").use { it.readBytes() }
-        indexBytes(bytes, "SAMPLE - Bastion field notes.md", "Bundled sample document (demo data, clearly labeled)")
+        indexBytes(bytes, "SAMPLE - Outpost Zero field notes.md", "Bundled sample document (demo data, clearly labeled)")
     }
 
     private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String): ImportResult {
