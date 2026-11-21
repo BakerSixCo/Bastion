@@ -2,8 +2,12 @@
 
 ## What BASTION is now
 
-Battery-backed, Autonomous Survival Terminal for Information & Off-grid
-Networking (formerly OASIS). **Current direction: an Android-phone-centered
+Backcountry AI & Situational Terminal for Information & Off-grid Networking
+(acronym redefined 2026-11-21; it previously stood for "Battery-backed
+Autonomous Survival Terminal…" from the hardware-kit era; the project was
+formerly OASIS). The four pillars map to the words: local AI, situational
+awareness (ATAK/maps), information (offline library + Kiwix), off-grid
+networking (Meshtastic). **Current direction: an Android-phone-centered
 off-grid terminal.** The phone provides local AI, an offline reference
 library with grounded search and open-able sources, offline mapping alongside
 ATAK/TAK, and off-grid messaging via Meshtastic with external radio hardware.

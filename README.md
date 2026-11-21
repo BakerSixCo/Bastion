@@ -1,6 +1,6 @@
 # BASTION
 
-**B**attery-backed **A**utonomous **S**urvival **T**erminal for **I**nformation
+**B**ackcountry **A**I & **S**ituational **T**erminal for **I**nformation
 & **O**ff-grid **N**etworking — an Android-phone-centered off-grid terminal:
 local AI, an offline reference library with grounded search, offline mapping
 alongside ATAK/TAK, and Meshtastic messaging via external radio hardware.
