@@ -1,5 +1,6 @@
 package com.bastion.terminal.ui
 
+import android.content.ActivityNotFoundException
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -78,7 +79,13 @@ fun LibraryScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit)
         Text("Library", style = MaterialTheme.typography.headlineMedium)
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(
-                onClick = { picker.launch(arrayOf("text/*", "application/octet-stream")) },
+                onClick = {
+                    try {
+                        picker.launch(arrayOf("text/*", "application/octet-stream"))
+                    } catch (_: ActivityNotFoundException) {
+                        message = "This device has no file picker app, so documents cannot be imported here."
+                    }
+                },
                 enabled = !busy,
             ) { Text("Import document") }
             OutlinedButton(

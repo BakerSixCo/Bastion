@@ -27,6 +27,9 @@ object TextUtil {
      * Builds a safe FTS4 MATCH expression from raw user input: each term is
      * quoted (so FTS syntax in the input cannot change the query's meaning)
      * and prefix-matched. Returns null when there are no usable terms.
+     *
+     * FTS4 only honors the prefix `*` inside the quotes; after the closing
+     * quote it is silently ignored and the term matches whole tokens only.
      */
     fun ftsQuery(raw: String): String? {
         val terms = raw.split(Regex("\\s+"))
@@ -34,7 +37,7 @@ object TextUtil {
             .filter { it.isNotEmpty() }
             .take(8)
         if (terms.isEmpty()) return null
-        return terms.joinToString(" ") { "\"$it\"*" }
+        return terms.joinToString(" ") { "\"$it*\"" }
     }
 
     /** Case-insensitive ranges of term occurrences, for reader highlighting. */

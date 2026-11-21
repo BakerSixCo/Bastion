@@ -17,8 +17,8 @@ class TextUtilTest {
 
     @Test
     fun ftsQuery_quotesTermsAndStripsEmbeddedQuotes() {
-        assertEquals("\"water\"* \"purification\"*", TextUtil.ftsQuery("water purification"))
-        assertEquals("\"droptable\"*", TextUtil.ftsQuery(" \"drop\"\"table\" "))
+        assertEquals("\"water*\" \"purification*\"", TextUtil.ftsQuery("water purification"))
+        assertEquals("\"droptable*\"", TextUtil.ftsQuery(" \"drop\"\"table\" "))
         assertNull(TextUtil.ftsQuery("   "))
         assertNull(TextUtil.ftsQuery("\"\""))
     }
