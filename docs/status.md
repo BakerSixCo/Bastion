@@ -129,9 +129,27 @@ opening-then-cancelling the picker. No crash/ANR. The bounded-read path for
 providers that report no size is covered by the unit test only (DocumentsUI
 always reports a size).
 
-**Not tested:** any physical phone; launching companion apps (none
-installed on the emulator); cancelling an import mid-way; process death
-during import.
+**Not tested:** any physical phone (deliberately last — see Next actions);
+ATAK-CIV launch; cancelling an import mid-way; process death during import.
+
+### Companion apps (2026-11-21) — tested on the hardware-accelerated emulator
+
+Installed from Google Play on the emulator (owner signed in to a Google
+account on the emulator; Play Pass upsell declined). Emulator ABIs
+`x86_64,arm64-v8a` with ARM translation (`libndk_translation.so`).
+
+| App (package) | Play install | BASTION Home | "Open" result |
+|---|---|---|---|
+| Kiwix (`org.kiwix.kiwixmobile`) | Installed (Kiwix Team, 15 MB) | "Open" shown | `KiwixMainActivity` comes to foreground |
+| Meshtastic (`com.geeksville.mesh`) | Installed (33 MB) | "Open" shown | `org.meshtastic.app.MainActivity` foreground |
+| Organic Maps (`app.organicmaps`) | Installed (78 MB) | "Open" shown | Organic Maps task foreground; its own location-permission prompt shown (dismissed, nothing granted) |
+| ATAK-CIV (`com.atakmap.app.civ`) | **Not installed** — Play: "Your device isn't compatible with this version." (TAK Product Center listing) | "not installed" (correct) | n/a |
+
+Detection via `<queries>` and launch intents work for all three installed
+apps; the missing app is reported honestly. No crash/ANR. No ZIM content,
+map data, or radio is loaded yet — these are launch checks only, not
+integration. ATAK-CIV options: sideload the APK from tak.gov (owner account
+required; may run under ARM translation) or verify on the physical phone.
 
 Nothing above is simulated; pending means pending.
 
@@ -144,11 +162,18 @@ Nothing above is simulated; pending means pending.
    fixed.
 3. ~~M1 polish: size display, memory-safe size check, stale messages~~ —
    **done 2026-11-21** (cap now 20 MB decimal).
-4. Then: M2 runtime/model selection with measured numbers on the real target
-   class of phone.
+4. ~~Install companion apps on the emulator~~ — **done 2026-11-21** for
+   Kiwix, Meshtastic, Organic Maps; ATAK-CIV blocked (Play: incompatible).
+5. M2 runtime/model selection — first round on the emulator; measured
+   numbers on the real target phone come in the physical-phone pass.
+6. **Last:** physical-phone pass (owner decision 2026-11-21) — install the
+   APK, re-run the M1 checklist, ATAK-CIV, M2 performance numbers.
 
 ## Blockers needing the owner
 
-- None for code progress. Physical-phone evidence needs a test phone.
+- None for code progress. Physical-phone evidence needs a test phone
+  (scheduled last).
+- ATAK-CIV on the emulator needs the APK from tak.gov (owner's account), or
+  waits for the physical phone.
 - Local builds on Windows: set `JAVA_HOME` to a JDK 17–24 (Temurin 21 is
   installed) — Android Studio's bundled JDK 25 does not work with Gradle 8.14.3.
