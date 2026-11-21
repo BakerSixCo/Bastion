@@ -46,8 +46,8 @@ Implemented (v0.1.0, `android/`):
 | Gradle wrapper generated (8.14.3) | Tested in this session (cloud) |
 | Project compiles / debug APK builds | **Tested in cloud build session (no emulator — compile and JVM tests only)**: `./gradlew :app:assembleDebug` → `BUILD SUCCESSFUL in 59s` (35 actionable tasks: 16 executed, 19 up-to-date). APK: `app/build/outputs/apk/debug/app-debug.apk`, 22,477,521 bytes (~21.4 MiB). No source changes were needed. First attempt failed with a transient HTTP 429 (Too Many Requests) from Maven Central while fetching the Kotlin compiler; an unchanged retry succeeded. One compiler warning (deprecated `Icons.Filled.List` in BastionApp.kt), left as-is. |
 | Unit tests pass | **Tested in cloud build session (no emulator — compile and JVM tests only)**: `./gradlew :app:testDebugUnitTest` → `BUILD SUCCESSFUL in 21s`; JUnit XML reports `tests="4" skipped="0" failures="0" errors="0"` (TextUtilTest). No test changes were needed. |
-| App launches; import/search/reader/persistence work | **Not tested** — requires emulator (owner's computer) or a physical device; no KVM here |
-| Offline proof protocol (fresh process, networking off, JUNIPER-7-ACTUAL) | **Not tested** — device/emulator required |
+| App launches; import/search/reader/persistence work | **Tested on emulator — software-emulated (no KVM), Android 11 (API 30) x86_64, cloud container, 2026-11-21.** Driven via `adb` + uiautomator. Works: launch; Home status cards (Library, Local AI "not installed", 4 companion apps "not installed"); Add sample; duplicate rejected ("Already in the library (identical content)"); reader with provenance + SHA-256; `.txt` import through the system file picker (DocumentsUI); full-text search of the imported file. Two bugs found and fixed (commit after 164cfb5): prefix search never matched (`"term"*` → `"term*"`; "hypoth" now finds Hypothermia — re-verified on emulator) and Import crashed with `ActivityNotFoundException` when no picker app exists (now a plain message — compiles, crash path **not** re-run). **Not tested:** binary-file rejection, 20 MB cap. |
+| Offline proof protocol (fresh process, networking off, JUNIPER-7-ACTUAL) | **Tested on emulator (same software-emulated API 30 device).** Airplane mode on (`airplane_mode_on=1`, ping → "Network is unreachable"), app force-stopped and relaunched; Home showed "1 document(s), 1 KB indexed"; Ask tab search for JUNIPER-7-ACTUAL returned the sample passage. Runtime permission list contains no INTERNET. Not yet repeated on a hardware-accelerated emulator or a physical phone. |
 
 Nothing above is simulated; pending means pending.
 
@@ -55,9 +55,10 @@ Nothing above is simulated; pending means pending.
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21** (see Test
    evidence above; no code fixes were required).
-2. Owner: when convenient, open `android/` in Android Studio on your
-   computer → run on an emulator (any x86_64 API 29+ image) → walk the
-   M1 checklist (import, search, open source, restart, airplane-mode use).
+2. Development moves to the owner's Windows laptop (Android Studio,
+   hardware-accelerated emulator, Claude Code running locally). First
+   local tasks: binary-file rejection and 20 MB cap tests; re-run the M1
+   checklist on the accelerated emulator; confirm the no-picker message.
 3. Then: M2 runtime/model selection with measured numbers on the real target
    class of phone.
 
