@@ -256,7 +256,10 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             state = if (status.atakInstalled) "ATAK-CIV is installed." else "ATAK-CIV is not installed.",
             steps = listOf(
                 "Install ATAK-CIV, open it once, and go through its license and permission screens yourself.",
-                "The Meshtastic app offers itself to ATAK as a plugin, so positions and chat can travel over the mesh. In ATAK open Plugins and load it if it's listed.",
+                "No plugin is needed (the old Meshtastic ATAK plugin no longer works — don't install it). In Meshtastic → Settings → Advanced → TAK Server, switch on “Enable Local TAK Server” and “Mesh to CoT Converter”.",
+                "Set “TAK Mesh Channel” to your private channel, not the public default.",
+                "Tap “Export TAK Data Package”, save the .zip, then in ATAK use Import and pick that file. Mesh nodes then appear on the ATAK map and chat is bridged.",
+                "Markers and other map items need radio firmware 2.8.0 or newer; older firmware bridges location and chat only.",
                 "BASTION opens ATAK but doesn't exchange data with it yet.",
             ),
             actions = if (status.atakInstalled) listOf("Open ATAK" to { launch(PKG_ATAK, "ATAK") })

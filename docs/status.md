@@ -658,6 +658,41 @@ What is and isn't protected (honest scope):
 - Meshtastic, ATAK and the other companion apps have their own permissions
   and network access.
 
+### ATAK on the emulator (2026-11-22) — partly working
+
+- **ATAK crashed at start** with the emulator's default host-GPU graphics
+  (`GLSurfaceView … No config chosen`). Started with
+  `-gpu swiftshader_indirect` (software rendering) **ATAK-CIV 5.5.1.8 runs**:
+  map UI, callsign, GPS fix ✅. `tools/bastion-pc.ps1` now starts the
+  emulator that way.
+- **Correction of an earlier finding:** the Meshtastic app is *not* an ATAK
+  plugin. ATAK's log shows "Could not open plugin.xml asset in
+  com.geeksville.mesh", and it is not in ATAK's plugin list. Per the
+  Meshtastic app's own bundled docs (`docs/user/tak.md`, 2026-10-21):
+  - The old Meshtastic ATAK plugin cannot work with app ≥ 2.8.0.
+  - Interop is the app's **local TAK server** (`127.0.0.1:8089`, mutual-TLS)
+    plus the **Mesh to CoT Converter**, with stock ATAK.
+- Done in Meshtastic on the emulator: Local TAK Server enabled ("Listening
+  on 127.0.0.1:8089 — waiting for ATAK"), Mesh to CoT Converter on, TAK Mesh
+  Channel set to the private channel "1: Bastion", and the data package
+  exported to Downloads (`Meshtastic_TAK_Server.zip`, 5.9 KB).
+  - The simulated node's firmware (2.7.26) bridges location and chat only;
+    markers need 2.8.0 or newer.
+- **Not done:** importing the package into ATAK. ATAK's own file browser
+  doesn't show Downloads, the Android picker did not register scripted
+  taps in ATAK's landscape layout, and a copy placed in
+  `atak/tools/import/` was not picked up. So **ATAK ↔ mesh is untested**.
+  By hand: ATAK → Import → Choose App → Downloads →
+  `Meshtastic_TAK_Server.zip`.
+- ATAK's "always run in background" prompt was denied (owner's call).
+- The simulator's private-channel script left a duplicate "Bastion" channel
+  (index 2) on the nodes. Harmless; not yet cleaned up.
+
+For "BASTION sees everything": that local TAK server is the route. A TAK
+client inside BASTION would see positions, chat and markers and could send
+them. But loopback sockets need Android's INTERNET permission, which is an
+explicit decision against the current no-INTERNET guarantee.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
