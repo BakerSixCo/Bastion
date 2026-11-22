@@ -365,9 +365,59 @@ Emulator speed with ~670-token prompts: 100–117 s per answer (prefill
 ~20 tok/s, decode ~2 tok/s, app RAM ~1.65 GB) — the emulator is far slower
 than the published phone figures; phone numbers pending.
 
-**Known gaps:** ZIM retrieval has no automated eval yet (needs a test ZIM
-on the device; the library `RetrievalEvalTest` doesn't cover it); "how to
-treat X" questions can miss the most practical paragraph; one reference ZIM
+### ZIM retrieval eval + "how to treat" quality (2026-11-21)
+
+`ZimRetrievalEvalTest` (instrumented; skipped unless WikiMed is in BASTION's
+ZIM folder): 14 questions over the isolated eval library plus the real ZIM.
+A case passes only if a chosen passage comes from the **exact** article
+(not "Exercise-induced anaphylaxis" for "Anaphylaxis") and contains a
+practical answer phrase. For treatment questions, that passage must also
+sit under a treatment-type section. Two library questions check that the
+user's own documents still win.
+
+Baseline under the strict check: 12/14 (once two test bugs were fixed).
+Burn never reached the *Burn* article ("First aid kit" won on "first aid").
+Snakebite picked sentences that merely say "treatment". Anaphylaxis ranked
+oral-mite and exercise-induced articles above *Anaphylaxis › Management*.
+The fixes, each traced to one of those failures:
+- **Exact-title lookup** (`ZimLibrary.titleLookup`, follows redirects). The
+  question's subject phrase ("burn", "sprained ankle", "Lyme disease") is
+  looked up as an article title and gets the strongest title prior. It only
+  runs for phrases that make up at least half the subject, so "water" in a
+  bleach question doesn't pull in *Water*.
+- **Aspect detection** (`Grounding.aspect`: treatment / symptoms / cause /
+  prevention). Ranking uses the subject words only; the aspect is matched
+  against **section headings** (`Grounding.aspectWeight`):
+  - leaf heading First aid / Prehospital: ×1.8
+  - leaf heading matches the aspect: ×1.4
+  - only a parent heading matches: ×1.2
+  - research / history / epidemiology sections: ×0.6
+  - a section's opening passage: an extra ×1.1
+- **Section paths in the chunker:** "Signs and symptoms › Acute poisoning",
+  so a subsection keeps its parent's meaning.
+- **Prompt:** for what-to-do questions, practical actions come first as
+  bullets, then what not to do.
+
+Result: **14/14** on `ZimRetrievalEvalTest`, and `RetrievalEvalTest` is
+still **13/13**. Tested on the hardware-accelerated emulator. Retrieval
+takes 0.5–1.5 s per question with the ZIM.
+
+End-to-end answers (Gemma 4 E2B, CPU, emulator):
+- **First aid for a burn** (cites [4], *Thermal burn — Treatment*):
+  - stop the burning process
+  - stop, drop and roll
+  - remove jewelry but not stuck clothing
+  - cool with running water within 30 min
+  - acetaminophen or ibuprofen for pain
+  - "Do not use ice, butter, cream, or ointment"
+
+  ✅ Total 78 s.
+- **How do I treat a snakebite** (cites [1] *Treatment › First aid*, [3]):
+  pressure immobilization to contain the venom, with its trade-off, and
+  first aid varying by snake. 🟡 Now from the right section, though still
+  discursive; the article's first-aid text is itself hedged. Total 47 s.
+
+**Known gaps:** the ZIM eval is tied to WikiMed (other ZIMs skip it); one reference ZIM
 at a time; Kiwix-app ZIMs aren't shared (copy needed); APK ~182 MB debug
 (split per ABI for release).
 
@@ -390,8 +440,9 @@ Nothing above is simulated; pending means pending.
    a fixed QA set for regression~~ — **done 2026-11-21** (Retrieval v2,
    13/13 on `RetrievalEvalTest`). ~~Keep generation alive across tab
    switches~~ — **done** (`AskSession`). ~~Offline Wikipedia (ZIM) in
-   answers~~ — **done 2026-11-21** (WikiMed on the emulator). Remaining:
-   ZIM retrieval eval, GPU backend, then phone numbers.
+   answers~~ — **done 2026-11-21** (WikiMed on the emulator). ~~ZIM
+   retrieval eval + "how to treat" answers~~ — **done 2026-11-21** (14/14).
+   Remaining: GPU backend, then phone numbers.
 6. **Last:** physical-phone pass (owner decision 2026-11-21) — install the
    APK, re-run the M1 checklist, ATAK-CIV, M2 performance numbers.
 

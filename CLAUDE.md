@@ -55,11 +55,13 @@ cd android
 # On-device retrieval eval (isolated DB; needs a running emulator/device).
 # The flag stops Gradle from uninstalling the app — and its imported model — afterwards.
 ./gradlew :app:connectedDebugAndroidTest -Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true
-adb logcat -d -s RetrievalEval:I   # per-question HIT/MISS + SUMMARY
+adb logcat -d -s RetrievalEval:I ZimEval:I   # per-question HIT/MISS + SUMMARY
 ```
 
-Retrieval changes must keep `RetrievalEvalTest` at 13/13 (add cases for new
-failure modes rather than loosening it).
+Retrieval changes must keep `RetrievalEvalTest` at 13/13 and
+`ZimRetrievalEvalTest` at 14/14 (add cases for new failure modes rather than
+loosening them). The ZIM eval needs WikiMed (`wikipedia_en_medicine_*.zim`) in
+BASTION's ZIM folder on the device and is skipped (not failed) without it.
 
 Requires JDK 17+, Android SDK (platform 35, build-tools 35.0.0). Pinned:
 Gradle 8.14.3 (wrapper), AGP 8.7.3, Kotlin 2.4.21, Compose BOM 2024.12.01,

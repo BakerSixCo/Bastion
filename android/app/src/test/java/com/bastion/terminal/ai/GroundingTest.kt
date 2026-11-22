@@ -76,4 +76,46 @@ class GroundingTest {
         assertFalse(Grounding.checkCitations("Boil water for 3 minutes [1].", 1).isNoAnswer)
         assertFalse(Grounding.checkCitations("Do not drink cloudy water [1].", 1).isNoAnswer)
     }
+
+    @Test
+    fun subjectPhrases_keepSubjectRunsInOriginalCase() {
+        assertEquals(listOf("burn"), Grounding.subjectPhrases("First aid for a burn"))
+        assertEquals(listOf("sprained ankle"), Grounding.subjectPhrases("How to treat a sprained ankle"))
+        assertEquals(listOf("compression", "CPR"), Grounding.subjectPhrases("What is the compression rate for CPR"))
+        assertEquals(listOf("early", "Lyme disease"), Grounding.subjectPhrases("What are the early symptoms of Lyme disease?"))
+        assertTrue(Grounding.subjectPhrases("how to treat the").isEmpty())
+    }
+
+    @Test
+    fun aspect_detectsWhatTheQuestionIsAfter() {
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("How do I treat a snakebite"))
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("First aid for a burn"))
+        assertEquals(Grounding.Aspect.SYMPTOMS, Grounding.aspect("What are the signs of dehydration"))
+        assertEquals(Grounding.Aspect.CAUSE, Grounding.aspect("What causes altitude sickness"))
+        assertNull(Grounding.aspect("Where does Team Kestrel regroup"))
+        // "treat water" is still TREATMENT; library section headings rarely match, so it's harmless.
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("How much bleach to treat water"))
+    }
+
+    @Test
+    fun aspectWeight_prefersPracticalSections() {
+        val t = Grounding.Aspect.TREATMENT
+        val firstAid = Grounding.aspectWeight(t, "Treatment › First aid", "Snakebite")
+        val leaf = Grounding.aspectWeight(t, "Management", "Burn")
+        val parent = Grounding.aspectWeight(t, "Management › Surgery", "Burn")
+        val research = Grounding.aspectWeight(t, "Treatment › In development", "Snakebite")
+        assertTrue(firstAid > leaf && leaf > parent && parent > 1.0 && research < 1.0)
+        // The lead section's "heading" is the title: neutral, even if it says "First aid kit".
+        assertEquals(1.0, Grounding.aspectWeight(t, "First aid kit", "First aid kit"), 0.0)
+        assertEquals(1.0, Grounding.aspectWeight(null, "Treatment", "Burn"), 0.0)
+        assertTrue(Grounding.aspectWeight(Grounding.Aspect.SYMPTOMS, "Signs and symptoms › Acute poisoning", "CO") > 1.0)
+    }
+
+    @Test
+    fun subjectTerms_dropAspectWordsButNeverEverything() {
+        assertEquals(listOf("burn"), Grounding.subjectTerms("First aid for a burn"))
+        assertEquals(listOf("snakebite"), Grounding.subjectTerms("How do I treat a snakebite"))
+        assertEquals(listOf("early", "lyme", "disease"), Grounding.subjectTerms("What are the early symptoms of Lyme disease"))
+        assertEquals(listOf("treatment"), Grounding.subjectTerms("treatment"))
+    }
 }

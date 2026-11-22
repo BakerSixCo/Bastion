@@ -25,6 +25,13 @@ class RetrievalTest {
     }
 
     @Test
+    fun chunker_keepsSectionPathForSubsections() {
+        val text = "## Hypo\n\nLead.\n\n## Signs and symptoms\n\n### Acute poisoning\n\nHeadache.\n\n## Treatment\n\nOxygen."
+        val h = Chunker.chunk(text).map { it.heading }
+        assertEquals(listOf("Hypo", "Signs and symptoms › Acute poisoning", "Treatment"), h)
+    }
+
+    @Test
     fun chunker_respectsTargetAndSplitsOverlongParagraphsAtSentences() {
         val para = (1..40).joinToString(" ") { "Sentence number $it is here." } // ~1,100 chars
         val text = "Short one.\n\n$para"

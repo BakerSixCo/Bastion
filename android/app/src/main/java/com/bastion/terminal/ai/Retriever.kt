@@ -19,9 +19,11 @@ import com.bastion.terminal.kiwix.ZimLibrary
  *
  * With no ZIM open, this returns the library passages unchanged.
  */
-class Retriever(context: Context) {
-    private val store = LibraryStore.get(context)
-    private val zim = ZimLibrary.get(context)
+class Retriever internal constructor(
+    private val store: LibraryStore,
+    private val zim: ZimLibrary,
+) {
+    constructor(context: Context) : this(LibraryStore.get(context), ZimLibrary.get(context))
 
     /** Diagnostics for the last call (shown in eval logs, never document text). */
     var lastZimArticles: List<String> = emptyList()
@@ -34,23 +36,41 @@ class Retriever(context: Context) {
     suspend fun retrieve(question: String): List<Passage> {
         val terms = Grounding.keyTerms(question)
         if (terms.isEmpty()) return emptyList()
+        val aspect = Grounding.aspect(question)
+        // With a known aspect, rank on the subject; the aspect is matched on headings.
+        val rankTerms = if (aspect != null) Grounding.subjectTerms(question) else terms
         val lib = store.retrieve(question)
         val zimInfo = zim.currentInfo()
-        val hits = if (zimInfo != null) zim.search(terms, MAX_ARTICLES) else emptyList()
-        lastZimArticles = hits.map { "${it.title} (${it.score}%)" }
+        // Exact-title articles first ("burn" → Burn), then the full-text top articles.
+        // Only phrases that are most of the subject: "water" alone is not what a
+        // bleach-per-gallon question is about.
+        val phrases = Grounding.subjectPhrases(question).filter { p ->
+            2 * Grounding.keyTerms(p).count { it in rankTerms } >= rankTerms.size
+        }
+        val titleHits = if (zimInfo != null) zim.titleLookup(phrases) else emptyList()
+        val textHits = if (zimInfo != null) zim.search(rankTerms, MAX_ARTICLES) else emptyList()
+        val hits = (titleHits + textHits).distinctBy { it.path }
+        val aboutPaths = titleHits.map { it.path }.toSet()
+        lastZimArticles = titleHits.map { "${it.title} (title)" } + textHits.map { "${it.title} (${it.score}%)" }
         if (hits.isEmpty()) return lib
 
-        data class Cand(val title: String, val heading: String?, val text: String, val docId: Long, val zimPath: String?)
+        data class Cand(
+            val title: String, val heading: String?, val text: String, val docId: Long, val zimPath: String?,
+            val opensSection: Boolean = false,
+        )
         val cands = ArrayList<Cand>()
         lib.forEach { cands += Cand(it.title, it.heading, it.plainText, it.docId, null) }
         hits.forEachIndexed { i, h ->
             val article = zim.article(h.path) ?: return@forEachIndexed
             val text = article.text
+            var prevHeading: String? = "0000"
             for (ch in Chunker.chunk(text)) {
                 val body = text.substring(ch.start, ch.end).trim()
                 if (body.length < MIN_ZIM_CHARS) continue
+                val opens = ch.heading != prevHeading
+                prevHeading = ch.heading
                 // Negative ids keep ZIM articles distinct from library doc ids for the per-doc cap.
-                cands += Cand("${zimInfo!!.title}: ${article.title}", ch.heading, body, -(i + 1L), article.path)
+                cands += Cand("${zimInfo!!.title}: ${article.title}", ch.heading, body, -(i + 1L), article.path, opens)
             }
         }
         // Score each passage with its title and heading ("Snakebite — Treatment"): a section
@@ -58,21 +78,30 @@ class Retriever(context: Context) {
         // without this, "Epidemiology" sections outranked "Snakebite › Treatment").
         val scored = Bm25.scoreInMemory(
             cands.mapIndexed { i, c -> Bm25.Item(i.toLong(), c.docId, "${c.title}\n${c.heading.orEmpty()}\n${c.text}") },
-            terms,
+            rankTerms,
         )
         // Title prior: the article *about* the subject should win ("Hypothermia" over
         // "Shapiro syndrome" for hypothermia symptoms — seen on emulator). Up to +50%,
-        // proportional to the share of key terms found in the passage's title.
+        // proportional to the share of key terms found in the passage's title; +100%
+        // for an article found by exact title ("Burn" for "first aid for a burn" —
+        // otherwise "First aid kit" wins on two of three words; seen on emulator).
+        // Section prior: see [Grounding.aspectWeight] (Treatment / First aid for "how to treat",
+        // Signs and symptoms for symptoms …). Section openers usually summarise: +10%.
         val boosted = scored.map { sc ->
-            val titleWords = Regex("[\\p{L}\\p{N}]+").findAll(cands[sc.id.toInt()].title.lowercase()).map { it.value }.toList()
-            val inTitle = terms.count { t -> titleWords.any { it.startsWith(t) } }
-            sc.copy(score = sc.score * (1.0 + TITLE_BOOST * inTitle / terms.size))
+            val c = cands[sc.id.toInt()]
+            val articleTitle = if (c.zimPath != null) c.title.substringAfter(": ") else c.title
+            val titleWords = Regex("[\\p{L}\\p{N}]+").findAll(articleTitle.lowercase()).map { it.value }.toList()
+            val inTitle = rankTerms.count { t -> titleWords.any { it.startsWith(t) } }
+            val titlePrior = if (c.zimPath in aboutPaths) 1.0 + TITLE_BOOST + ABOUT_BOOST
+            else 1.0 + TITLE_BOOST * inTitle / rankTerms.size
+            val section = Grounding.aspectWeight(aspect, c.heading, articleTitle) * (if (c.opensSection) 1.1 else 1.0)
+            sc.copy(score = sc.score * titlePrior * section)
         }
         val chosen = Bm25.select(boosted, { cands[it.toInt()].text.length })
         lastChoice = chosen.joinToString(" ; ") { sc ->
             val c = cands[sc.id.toInt()]
             "${c.title.takeLast(28)}|${c.heading?.take(20)} s=${"%.2f".format(sc.score)} tf=${sc.termTf.toList()}"
-        } + " | terms=$terms df=${scored.firstOrNull()?.termDf?.toList()} n=${scored.size}"
+        } + " | terms=$rankTerms df=${scored.firstOrNull()?.termDf?.toList()} n=${scored.size}"
         return chosen.mapIndexed { n, sc ->
             val c = cands[sc.id.toInt()]
             Passage(
@@ -91,5 +120,7 @@ class Retriever(context: Context) {
         /** Skip stub fragments (lone captions, one-word lines). */
         const val MIN_ZIM_CHARS = 80
         const val TITLE_BOOST = 0.5
+        /** Extra for the article found by exact title over ones that merely contain the word ("Burn" vs "Pediatric burn"). */
+        const val ABOUT_BOOST = 0.5
     }
 }

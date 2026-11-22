@@ -179,6 +179,45 @@ class ZimLibrary private constructor(private val app: Context) {
         }
     }
 
+    /**
+     * Exact article-title lookup ("burn" → *Burn*, "CPR" → redirect →
+     * *Cardiopulmonary resuscitation*). Full-text ranking alone can bury the
+     * main article under longer ones that repeat the words ("First aid kit"
+     * for "first aid for a burn" — seen on emulator). Redirects are followed;
+     * only HTML articles count.
+     */
+    suspend fun titleLookup(phrases: List<String>, max: Int = 2): List<ZimHit> = withContext(Dispatchers.IO) {
+        lock.withLock {
+            val a = archive ?: return@withLock emptyList()
+            val out = ArrayList<ZimHit>()
+            for (p in phrases) {
+                if (out.size >= max) break
+                val variants = linkedSetOf(
+                    p.replaceFirstChar { it.uppercase() },
+                    p.lowercase().replaceFirstChar { it.uppercase() },
+                    p.uppercase(),
+                )
+                if (p.length > 4 && p.endsWith("s", ignoreCase = true)) variants += p.dropLast(1).replaceFirstChar { it.uppercase() }
+                for (v in variants) {
+                    val hit = runCatching {
+                        if (!a.hasEntryByTitle(v)) return@runCatching null
+                        var e = a.getEntryByTitle(v)
+                        var hops = 0
+                        while (e.isRedirect && hops++ < 5) e = e.redirectEntry
+                        if (e.isRedirect || !e.getItem(true).mimetype.startsWith("text/html")) null
+                        else ZimHit(e.title, e.path, 100)
+                    }.getOrNull()
+                    if (hit != null) {
+                        if (out.none { it.path == hit.path }) out += hit
+                        break
+                    }
+                }
+            }
+            android.util.Log.i("BastionZim", "titleLookup $phrases → ${out.map { it.title }}")
+            out
+        }
+    }
+
     private fun titleMatches(title: String, terms: List<String>): Boolean {
         val words = title.lowercase().split(Regex("[^\\p{L}\\p{N}]+"))
         return terms.any { t -> words.any { it.startsWith(t) } }

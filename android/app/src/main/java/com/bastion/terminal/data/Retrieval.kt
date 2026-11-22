@@ -20,6 +20,7 @@ object Chunker {
     fun chunk(text: String, target: Int = 700, max: Int = 1000): List<Chunk> {
         val out = ArrayList<Chunk>()
         var heading: String? = null
+        val path = ArrayList<Pair<Int, String>>()
         var curStart = -1
         var curEnd = -1
         var curHeading: String? = null
@@ -45,7 +46,19 @@ object Chunker {
             val headingMatch = HEADING.matchEntire(para.trim())
             if (headingMatch != null) {
                 flush()
-                heading = headingMatch.groupValues[1].trim()
+                val level = headingMatch.groupValues[1].length
+                val title = headingMatch.groupValues[2].trim()
+                // Section path below level 1: "Signs and symptoms › Acute poisoning", so a
+                // subsection keeps its parent's meaning (seen on emulator: CO symptoms live
+                // under "Acute poisoning"). A level-1 heading (document title) resets it.
+                if (level == 1) {
+                    path.clear()
+                    heading = title
+                } else {
+                    path.removeAll { it.first >= level }
+                    path.add(level to title)
+                    heading = path.joinToString(" › ") { it.second }
+                }
                 continue
             }
             if (pEnd - pStart <= max) {
@@ -58,7 +71,7 @@ object Chunker {
         return out
     }
 
-    private val HEADING = Regex("#{1,6}\\s+(.+)")
+    private val HEADING = Regex("(#{1,6})\\s+(.+)")
 
     /** [start, end) of each non-blank paragraph. */
     private fun paragraphs(text: String): List<Pair<Int, Int>> {
