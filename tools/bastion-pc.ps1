@@ -31,7 +31,8 @@ if (-not $NoMesh) {
 Write-Host 'Emulator...'
 $devices = (& $adb devices) -join "`n"
 if ($devices -notmatch 'emulator-\d+\s+device') {
-    Start-Process -FilePath $emu -ArgumentList '-avd', $Avd, '-no-snapshot-save', '-no-boot-anim'
+    # Software graphics: ATAK's map crashes on the host-GPU translator ("No config chosen", 2026-11-22).
+    Start-Process -FilePath $emu -ArgumentList '-avd', $Avd, '-no-snapshot-save', '-no-boot-anim', '-gpu', 'swiftshader_indirect'
     & $adb wait-for-device
 }
 for ($i = 0; $i -lt 120; $i++) {
