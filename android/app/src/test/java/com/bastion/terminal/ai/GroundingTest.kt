@@ -118,4 +118,12 @@ class GroundingTest {
         assertEquals(listOf("early", "lyme", "disease"), Grounding.subjectTerms("What are the early symptoms of Lyme disease"))
         assertEquals(listOf("treatment"), Grounding.subjectTerms("treatment"))
     }
+
+    @Test
+    fun aspect_everydayWordingCountsAsTreatment() {
+        // Typed on a phone over the mesh (2026-11-22): "How do I deal with a sucking chest wound".
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("How do I deal with a sucking chest wound"))
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("what should I do for a snakebite"))
+        assertEquals(listOf("suck", "chest", "wound"), Grounding.subjectTerms("How do I deal with a sucking chest wound"))
+    }
 }

@@ -68,7 +68,7 @@ object Grounding {
         "treat", "treated", "treating", "treatment", "treatments", "symptom", "symptoms",
         "sign", "signs", "cause", "causes", "caused", "first", "aid", "manage", "management",
         "cure", "prevent", "prevention", "diagnose", "diagnosis", "best", "way",
-        "stop", "help", "need", "know", "rate", "dose", "steps",
+        "stop", "help", "need", "know", "rate", "dose", "steps", "deal", "handle",
     )
 
     /**
@@ -149,7 +149,9 @@ object Grounding {
     fun aspect(question: String): Aspect? {
         val q = question.lowercase()
         return when {
-            Regex("\\b(treat\\w*|first aid|what to do|what do i do|manage\\w*|cure|how to stop|how do i stop)\\b").containsMatchIn(q) -> Aspect.TREATMENT
+            // Everyday wording counts too: "how do I deal with a sucking chest wound" was typed
+            // on a phone over the mesh and missed the first-aid section (2026-11-22).
+            Regex("\\b(treat\\w*|first aid|what to do|what do i do|what should i do|deal with|handle|help with|manage\\w*|cure|how to stop|how do i stop)\\b").containsMatchIn(q) -> Aspect.TREATMENT
             Regex("\\b(symptoms?|signs?|how do i know|recogni[sz]e)\\b").containsMatchIn(q) -> Aspect.SYMPTOMS
             Regex("\\b(caus\\w*|why does|risk factors?)\\b").containsMatchIn(q) -> Aspect.CAUSE
             Regex("\\b(prevent\\w*|avoid)\\b").containsMatchIn(q) -> Aspect.PREVENTION

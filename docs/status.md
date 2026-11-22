@@ -1153,6 +1153,34 @@ Observed:
 Pending: an AI answer to a "?question" typed on the iPhone in the Bastion
 channel; iTAK.
 
+### First AI answer to a real second device (2026-11-22)
+
+iPhone (Meshtastic iOS) → simulated radio B → mesh → radio A → Meshtastic
+Android → BASTION → answer back the same way.
+
+- The owner typed "How do I deal with a sucking chest wound" twice
+  **without the "?" trigger** and got nothing. Change: for an approved
+  radio on a private channel, a message that *reads* like a question (ends
+  with "?" or starts with a question word) is now answered
+  (`looksLikeQuestion`). Such an untriggered message gets **no reply at
+  all** when the library has nothing, so ordinary chat isn't answered with
+  "no answer". An explicit `?` / `bastion` still always gets a reply.
+- With `?how do I deal with a sucking chest wound` on the Bastion channel,
+  radio B received about 50 s later: "AI: Check for air escaping through a
+  sucking chest wound, which can cause a collapsed lung." ✅ end to end.
+  - **Quality: poor.** Accurate, but not what to do. "deal with" was not
+    recognised as a treatment question. Fixed (`Grounding.aspect` now covers
+    deal with / handle / what should I do / help with). **Not re-tested from
+    the iPhone.**
+- The iPhone shows "Failed to deliver to mesh" on its own messages although
+  radio A received each one (logs). The simulated radios don't produce the
+  rebroadcast a real radio uses as confirmation. Simulator artefact.
+- Using the command-line tool on radio B while the iPhone is connected to
+  it appears to displace the iPhone briefly: an earlier NAV reply did not
+  show on the iPhone. Keep the CLI off the radio another client is using.
+- After the changes: 6 device tests ✅, evals 13/13 and 14/14 ✅; the inbox
+  reader reconnects by itself about 5 s after a reinstall ✅.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

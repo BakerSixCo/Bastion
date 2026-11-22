@@ -86,7 +86,8 @@ object MeshAutoResponder {
         - If the sources do not contain the answer, reply exactly: ${Grounding.NO_ANSWER}
     """.trimIndent()
 
-    private class Job(val msg: MeshMessage, val question: String, val reply: Notification.Action)
+    /** [explicit]: sent with the "?" / "bastion" trigger (always gets a reply, even "no answer"). */
+    private class Job(val msg: MeshMessage, val question: String, val reply: Notification.Action, val explicit: Boolean)
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val queue = Channel<Job>(capacity = 3)
@@ -102,7 +103,7 @@ object MeshAutoResponder {
 
     fun setEnabled(context: Context, on: Boolean) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_ENABLED, on).apply()
-        _status.value = if (on) "Auto-answer on. Waiting for a question starting with “?”." else ""
+        _status.value = if (on) "Auto-answer on. Waiting for a question from an approved radio." else ""
     }
 
     /**
@@ -120,9 +121,31 @@ object MeshAutoResponder {
         return q.takeIf { it.length >= 3 && !t.startsWith(REPLY_PREFIX) && !t.startsWith(NAV_PREFIX) }
     }
 
+    private val QUESTION_STARTS = setOf(
+        "how", "what", "whats", "what's", "where", "wheres", "where's", "when", "why", "who", "which",
+        "is", "are", "can", "could", "should", "do", "does", "will", "treat", "treatment", "symptoms", "signs",
+    )
+
+    /**
+     * A message that *reads* like a question without the "?" / "bastion"
+     * trigger: it ends with "?" or starts with a question word. Found with a
+     * real second device (2026-11-22): people type "How do I deal with a
+     * sucking chest wound", not "?How do I…". Used only for approved radios
+     * on a private channel, and such a message gets **no reply at all** when
+     * nothing in the library answers it — so ordinary chat ("where are we
+     * meeting?") doesn't get an "AI: no answer" back.
+     */
+    fun looksLikeQuestion(text: String): String? {
+        val t = text.trim()
+        if (t.length !in 8..300 || t.startsWith(REPLY_PREFIX) || t.startsWith(NAV_PREFIX)) return null
+        val first = t.substringBefore(' ').lowercase().trimEnd(',', ':')
+        return if (t.endsWith("?") || first in QUESTION_STARTS) t.trimEnd('?', ' ') else null
+    }
+
     /** Called by the inbox for each **new** message when auto-answer is on. */
     fun offer(context: Context, msg: MeshMessage, reply: Notification.Action?) {
-        val question = questionIn(msg.text) ?: return
+        val explicit = questionIn(msg.text)
+        val question = explicit ?: looksLikeQuestion(msg.text) ?: return
         if (isPublicChannel(msg.channel) && !publicAllowed(context)) {
             _status.value = "Not answered: ${msg.sender} asked on the public channel “${msg.channel}”. " +
                 "Auto-answer only replies on private channels."
@@ -150,7 +173,7 @@ object MeshAutoResponder {
             lastBySender[msg.sender] = now
         }
         start(context.applicationContext)
-        if (!queue.trySend(Job(msg, question, reply)).isSuccess) {
+        if (!queue.trySend(Job(msg, question, reply, explicit != null)).isSuccess) {
             _status.value = "Busy: skipped a question from ${msg.sender} (queue full)."
         }
     }
@@ -178,6 +201,12 @@ object MeshAutoResponder {
         // by the model. Measured from the asker's own position when BASTION knows it.
         com.bastion.terminal.nav.Nav.targetOf(job.question)?.let { target ->
             val contacts = com.bastion.terminal.link.LinkClient.get(app).contacts.value
+            if (!job.explicit && com.bastion.terminal.nav.Nav.findContact(target, contacts) == null &&
+                !Regex("^(base|hq|bastion|you)$", RegexOption.IGNORE_CASE).matches(target)
+            ) {
+                _status.value = "“${job.question.take(40)}” from $who looked like chat, not a question for BASTION. No reply sent."
+                return
+            }
             val asker = contacts.firstOrNull { it.hasPosition && it.callsign.contains(who, ignoreCase = true) }
             val mine = com.bastion.terminal.nav.LocationSource.get(app).fix.value
             val from = asker?.let { com.bastion.terminal.nav.Nav.Fix(it.lat, it.lon) } ?: mine
@@ -185,7 +214,7 @@ object MeshAutoResponder {
             // "where is base / bastion / hq" = this phone, when it has a GPS fix.
             val self = mine?.let {
                 com.bastion.terminal.link.TakContact(
-                    "BASTION-SELF", "BASTION (base, hq)", "a-f-G-U-C", it.lat, it.lon, null, null, null,
+                    "BASTION-SELF", "BASTION (base, hq, you)", "a-f-G-U-C", it.lat, it.lon, null, null, null,
                     if (it.time > 0) it.time else System.currentTimeMillis(),
                 )
             }
@@ -212,6 +241,11 @@ object MeshAutoResponder {
             val sb = StringBuilder()
             model.generate(SYSTEM_INSTRUCTION, Grounding.userPrompt(job.question, passages), MAX_TOKENS).collect { sb.append(it) }
             sb.toString().trim().takeUnless { it.isBlank() || Grounding.checkCitations(it, passages.size).isNoAnswer }
+        }
+        if (answer == null && !job.explicit) {
+            // An untriggered message nothing in the library answers: treat it as chat, say nothing.
+            _status.value = "Nothing in the library for “${job.question.take(40)}” from $who. No reply sent."
+            return
         }
         val body = answer ?: "no answer to that in my offline library."
         val text = REPLY_PREFIX + MeshBridge.fit(body, MeshBridge.MAX_BYTES - MeshBridge.byteLength(REPLY_PREFIX)).first

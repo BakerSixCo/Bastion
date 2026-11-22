@@ -27,4 +27,16 @@ class MeshAutoResponderTest {
         org.junit.Assert.assertFalse(MeshAutoResponder.isPublicChannel("BASTION"))
         org.junit.Assert.assertFalse(MeshAutoResponder.isPublicChannel("Team Kestrel"))
     }
+
+    @Test
+    fun looksLikeQuestion_naturalQuestionsWithoutTheTrigger() {
+        org.junit.Assert.assertEquals("How do I deal with a sucking chest wound", MeshAutoResponder.looksLikeQuestion("How do I deal with a sucking chest wound"))
+        org.junit.Assert.assertEquals("Is the water at camp safe", MeshAutoResponder.looksLikeQuestion("Is the water at camp safe?"))
+        org.junit.Assert.assertEquals("gate code", MeshAutoResponder.looksLikeQuestion("gate code?"))
+        // Statements and BASTION's own replies are not questions.
+        assertNull(MeshAutoResponder.looksLikeQuestion("Need water at checkpoint 2"))
+        assertNull(MeshAutoResponder.looksLikeQuestion("Camp at grid 4421. All OK."))
+        assertNull(MeshAutoResponder.looksLikeQuestion("AI: cool the burn with running water?"))
+        assertNull(MeshAutoResponder.looksLikeQuestion("ok?"))
+    }
 }
