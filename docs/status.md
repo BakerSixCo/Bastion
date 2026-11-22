@@ -423,6 +423,40 @@ at a time; Kiwix-app ZIMs aren't shared (copy needed); APK ~182 MB debug
 
 Nothing above is simulated; pending means pending.
 
+### Build-out pass (2026-11-22) — tested on the hardware-accelerated emulator
+
+- **PDF + EPUB import.** PDF text layer via PdfBox-Android, EPUB chapters in
+  reading order. The original is preserved and the extracted text is indexed
+  and shown in the reader with provenance ("PDF text layer extracted").
+  Scanned and password-protected PDFs are rejected with a clear message.
+  `DocImportTest` (on device): real PdfBox import → reader text → Ask
+  retrieval ✅. Also imported a PDF and an EPUB through the real file picker ✅.
+- **Several ZIMs, SD card.** Every .zim in BASTION's folders on phone
+  storage and SD cards is opened and searched. Citations open the right file,
+  the same article in two ZIMs is kept once, and Home lists each file with
+  Remove, plus Add ZIM / Add to SD card / Rescan.
+  - Tested: two ZIMs open and searched with de-duplication ✅; a citation
+    opened from the second file ✅; Remove ✅; Rescan after a USB-style
+    rename ✅; refusal for a 510 MB SD card ("needs 1047 MB, 534 MB free") ✅.
+  - Not tested: an actual copy onto an SD card (the emulator's card is too
+    small).
+- **GPU backend.** The Compute setting is Auto / GPU / CPU, saved per device.
+  - Found on the emulator: the GPU engine *initializes* and then fails at
+    first use ("Can not find OpenCL library"). So GPU is now proven with a
+    one-token warm-up, and Auto falls back to CPU and says why on Home.
+  - Tested: Auto → CPU fallback → correct cited answer ✅.
+  - Not tested: GPU on real hardware. GPU-only failure state: code-reviewed
+    only.
+- **Smaller APKs.** Split per ABI; release builds use R8 shrinking and
+  compressed native libraries, signed with the local debug key for R&D
+  sideloading. The arm64 release went from 195 MB (universal debug) to
+  **36 MB**. The release build was smoke-tested on the emulator: ZIM opens,
+  PDF extraction, ZIM search, cited AI answer (26 s total) ✅.
+- **Evals after all of the above:** `RetrievalEvalTest` 13/13,
+  `ZimRetrievalEvalTest` 14/14, `DocImportTest` ✅, unit tests ✅.
+- Emulator note: the AVD hung once (adb shell unresponsive); recovered with
+  a forced kill and a cold start. This was not caused by the app.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
@@ -442,7 +476,8 @@ Nothing above is simulated; pending means pending.
    switches~~ — **done** (`AskSession`). ~~Offline Wikipedia (ZIM) in
    answers~~ — **done 2026-11-21** (WikiMed on the emulator). ~~ZIM
    retrieval eval + "how to treat" answers~~ — **done 2026-11-21** (14/14).
-   Remaining: GPU backend, then phone numbers.
+   ~~PDF/EPUB, several ZIMs + SD card, GPU option, smaller APKs~~ — **done
+   2026-11-22** (emulator). Remaining: phone numbers (GPU vs CPU on hardware).
 6. **Last:** physical-phone pass (owner decision 2026-11-21) — install the
    APK, re-run the M1 checklist, ATAK-CIV, M2 performance numbers.
 

@@ -15,14 +15,28 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        // Phones (arm64) + the x86_64 emulator only: each extra ABI costs ~50 MB of
-        // libkiwix + LiteRT-LM native code.
-        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
+    }
+
+    // One APK per ABI: phones get arm64-v8a only, the emulator x86_64 only (each ABI
+    // carries ~70 MB of libkiwix + LiteRT-LM + PdfBox native code). Other ABIs are not built.
+    splits {
+        abi {
+            isEnable = true
+            reset()
+            include("arm64-v8a", "x86_64")
+            isUniversalApk = false
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8 shrinks the Java/Kotlin side (PdfBox + BouncyCastle are large); JNI-bound
+            // libraries are kept whole in proguard-rules.pro.
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // R&D sideload builds: signed with the local debug key so they install. A real
+            // release key is an M4 (distribution) decision.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -31,6 +45,11 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+    packaging {
+        // Compress native libraries inside the APK (smaller sideload file; Android extracts
+        // them at install).
+        jniLibs { useLegacyPackaging = true }
     }
 }
 

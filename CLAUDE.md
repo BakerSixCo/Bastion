@@ -72,8 +72,15 @@ Kotlin 2.4 metadata (needs a Kotlin ≥ 2.3 compiler); this also required the
 `kotlin { compilerOptions { jvmTarget } }` DSL instead of `kotlinOptions`.
 libkiwix `org.kiwix:libkiwix` 2.7.0 (Kiwix's official libzim/libkiwix
 binding; ZIM reading + Xapian full-text search). The APK is limited to
-`abiFilters arm64-v8a, x86_64` — each extra ABI costs ~50 MB; the debug APK
-is ~182 MB with both. Never use `latest.release` — pin versions.
+PdfBox-Android `com.tom-roush:pdfbox-android` 2.0.27.0 (Apache-2.0; PDF text
+layer). APKs are split per ABI (`splits.abi`: arm64-v8a for phones, x86_64
+for the emulator; no universal APK) — install the matching file. Release
+builds use R8 (`app/proguard-rules.pro` keeps the JNI-bound libraries whole),
+compressed native libs, and the local **debug key** (R&D sideload only; a
+real release key is an M4 decision): arm64 release ≈ 36 MB, debug ≈ 117 MB.
+After changing keep rules, smoke-test a release build (ZIM search, PDF
+import, an AI answer) — R8 can break JNI. Never use `latest.release` — pin
+versions.
 
 Model files (`.litertlm`) are managed assets: the user imports them into
 app storage (`files/models/`) via the file picker; the app never downloads
@@ -85,7 +92,10 @@ app-specific folder `Android/media/com.bastion.terminal/zim/` and are opened
 storage denies for file-picker descriptors (`/dev/fd/N: Permission denied`).
 "Add ZIM file" copies a picked file there; very large ZIMs should be copied
 there over USB. Do not add MANAGE_EXTERNAL_STORAGE without an explicit,
-documented decision. One reference ZIM at a time (v1).
+documented decision. Every .zim in BASTION's reference folders is opened
+and searched (phone storage and SD card — `externalMediaDirs`, no
+permission); the same article in two ZIMs is kept once. Home → Rescan picks
+up files copied over USB.
 
 Owner's Windows PC: Gradle 8.14.3 cannot run on Android Studio's bundled
 JDK 25 — set `JAVA_HOME` to the installed Temurin 21
