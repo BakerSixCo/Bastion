@@ -56,6 +56,18 @@ requirement to be set by the model chosen, not by the UI), LoRa node
 (Wio Tracker L1 Pro is the candidate — verify hardware/firmware/region
 before configuring), GMRS handhelds, RTL-SDR, rugged phone case.
 
+**R&D buy scope (owner decision, 2026-11-22):** only the phone and the
+mesh/ATAK hardware for now — nothing else until R&D says otherwise.
+- **Phone:** 16 GB RAM, Snapdragon, ≥512 GB, big screen. Leading picks:
+  OnePlus 15 16/512 (7,300 mAh battery) or Galaxy S26 Ultra **16 GB** (1 TB
+  model only). Pixel 10 Pro XL deprioritized (Tensor is weaker for on-device
+  LLMs). Verify the exact SKU's RAM before buying.
+- **Meshtastic:** two LoRa nodes (Wio Tracker L1 Pro candidate; US 915 MHz)
+  so messaging can be tested end to end; the owner's iPhone can drive the
+  second node via the Meshtastic iOS app.
+- **ATAK:** software only (ATAK-CIV, free); no hardware to buy.
+- Deferred: power bank, Faraday bags, GMRS, RTL-SDR, rugged case.
+
 **Budget posture:** historical kit budgets ($900–1,300 KISS; $3,050
 discarded DIY) are context, not an approved phone or dev budget. Phone
 recommendation comes with measured workload numbers at the end of
