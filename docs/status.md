@@ -1039,6 +1039,40 @@ Maps (owner, same day): the kit step lets the user pick areas and layers,
 shows the size, and offers phone storage or SD card as the destination.
 Not built yet.
 
+### Kit builder (2026-11-22)
+
+- `tools/kit-manifest.json`: what can go in a kit. Each item has an
+  official source URL, a pinned SHA-256, size and licence.
+  - **Pinned and verified:** the Gemma 4 E2B model and WikiMed (the exact
+    files tested with BASTION).
+  - **Not pinned yet:** Meshtastic, ATAK-CIV, Organic Maps, Kiwix (no URL
+    or hash). The builder will not download those. It accepts a file you
+    place in the kit folder and prints its SHA-256 so it can be pinned.
+- `tools/kit-build.ps1`: lists items with sizes and where each stands;
+  choose by number, `-Only`, or `-All`; checks free space; uses a `-Cache`
+  folder if the file there matches the hash; otherwise downloads with
+  resume; **verifies SHA-256 and deletes a file that doesn't match**.
+- `tools/provision.ps1 -Sd`: puts reference files on the phone's SD card.
+
+Evidence (this PC):
+- `-List` showed all six items, with the two big files found in the cache.
+- Built from the cache with `-NoDownload`: the model (2.6 GB) and WikiMed
+  (1.0 GB) were copied into `tools/kit` and **verified** ✅; Meshtastic was
+  reported "not pinned yet" ✅.
+- Tamper test: a fake file named like the WikiMed ZIM → "SHA-256 mismatch —
+  the file was removed" ✅
+
+Not tested:
+- an actual download through the builder (both files came from the cache);
+- `-Sd` (no test here);
+- the interactive number prompt;
+- the kit pushed to a phone end to end.
+
+Not built:
+- the map picker (areas, layers, sizes) — second stage on this same list;
+- pinning the companion apps (needs choosing and testing exact versions;
+  the no-Google builds of Meshtastic and Kiwix are the intended ones).
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

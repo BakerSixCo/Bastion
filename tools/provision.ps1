@@ -12,12 +12,14 @@
 #   - Put companion app .apk files in tools\kit\ (Meshtastic, ATAK-CIV, Organic Maps, Kiwix),
 #     plus optionally a .litertlm model and .zim files. BASTION installs the apps itself.
 #
-# This version installs from files you already have. Downloading the kit automatically at
-# pinned, verified versions is the next step (see docs/build-sheet.md).
+# Build the kit folder first with tools\kit-build.ps1 (downloads from official sources and
+# verifies every file). Add -Sd to put reference files on the phone's SD card.
 param(
     [string]$Serial = '',
     [string]$Apk = '',
-    [string]$Kit = (Join-Path $PSScriptRoot 'kit')
+    [string]$Kit = (Join-Path $PSScriptRoot 'kit'),
+    # Put reference (.zim) files on the phone's SD card instead of its internal storage.
+    [switch]$Sd
 )
 $ErrorActionPreference = 'Stop'
 $adb = Join-Path $env:LOCALAPPDATA 'Android\Sdk\platform-tools\adb.exe'
@@ -54,11 +56,19 @@ Write-Host 'Mesh inbox access granted.'
 
 if (Test-Path $Kit) {
     $media = "/sdcard/Android/media/$pkg"
-    A shell mkdir -p "$media/kit" "$media/zim" | Out-Null
+    $zimDir = "$media/zim"
+    if ($Sd) {
+        # A removable card shows up under /storage as XXXX-XXXX.
+        $card = (A shell ls /storage) | ForEach-Object { "$_".Trim() } | Where-Object { $_ -match '^[0-9A-F]{4}-[0-9A-F]{4}$' } | Select-Object -First 1
+        if (-not $card) { throw 'No SD card found in the phone. Insert one, or run without -Sd.' }
+        $zimDir = "/storage/$card/Android/media/$pkg/zim"
+        Write-Host "Reference files go to the SD card ($card)."
+    }
+    A shell mkdir -p "$media/kit" "$zimDir" | Out-Null
     foreach ($f in Get-ChildItem $Kit -File) {
         switch -Regex ($f.Extension) {
             '\.apk$'      { Write-Host "Kit app: $($f.Name)";   A push $f.FullName "$media/kit/$($f.Name)" | Select-Object -Last 1 }
-            '\.zim$'      { Write-Host "Reference: $($f.Name)"; A push $f.FullName "$media/zim/$($f.Name)" | Select-Object -Last 1 }
+            '\.zim$'      { Write-Host "Reference: $($f.Name)"; A push $f.FullName "$zimDir/$($f.Name)" | Select-Object -Last 1 }
             '\.litertlm$' { Write-Host "AI model: $($f.Name) -> Download (import it in BASTION > Home > Local AI)"
                             A push $f.FullName "/sdcard/Download/$($f.Name)" | Select-Object -Last 1 }
         }

@@ -1,0 +1,78 @@
+{
+  "_about": "What can go into a BASTION kit. Each item is fetched from its OFFICIAL source by tools/kit-build.ps1 and checked against the SHA-256 below before it is used. An item with an empty url or sha256 is 'not pinned yet': the builder will not download it, but accepts a file you place in the kit folder yourself (and prints its SHA-256 so it can be pinned). Pin a new version only after testing it together with the others.",
+  "version": "2026-11-22",
+  "items": [
+    {
+      "id": "model-gemma4-e2b",
+      "title": "AI model: Gemma 4 E2B (small, fast)",
+      "kind": "model",
+      "default": true,
+      "file": "gemma-4-E2B-it.litertlm",
+      "url": "https://huggingface.co/litert-community/gemma-4-E2B-it-litert-lm/resolve/main/gemma-4-E2B-it.litertlm",
+      "sha256": "181938105e0eefd105961417e8da75903eacda102c4fce9ce90f50b97139a63c",
+      "bytes": 2588147712,
+      "licence": "Apache-2.0",
+      "note": "Tested with BASTION on the emulator."
+    },
+    {
+      "id": "ref-wikimed",
+      "title": "Reference: WikiMed (Wikipedia medicine, no pictures)",
+      "kind": "reference",
+      "default": true,
+      "file": "wikipedia_en_medicine_nopic_2026-10.zim",
+      "url": "https://download.kiwix.org/zim/wikipedia/wikipedia_en_medicine_nopic_2026-10.zim",
+      "sha256": "718fadad40b3491be3fa8f95181a948e4d726f97a79a14e0ef1b90c6b2b03625",
+      "bytes": 1047708415,
+      "licence": "CC BY-SA",
+      "note": "Tested with BASTION on the emulator (14/14 retrieval eval)."
+    },
+    {
+      "id": "app-meshtastic",
+      "title": "App: Meshtastic (use the build without Google components)",
+      "kind": "app",
+      "default": true,
+      "file": "meshtastic.apk",
+      "url": "",
+      "sha256": "",
+      "bytes": 0,
+      "licence": "GPL-3.0",
+      "note": "Not pinned yet. BASTION was tested with Meshtastic Android 2.8.4 (Play build). Official source: github.com/meshtastic/Meshtastic-Android releases."
+    },
+    {
+      "id": "app-atak",
+      "title": "App: ATAK-CIV",
+      "kind": "app",
+      "default": true,
+      "file": "atak-civ.apk",
+      "url": "",
+      "sha256": "",
+      "bytes": 0,
+      "licence": "See TAK Product Center terms",
+      "note": "Not pinned, and may stay manual: tak.gov downloads need an account. BASTION was tested with ATAK-CIV 5.5.1.8 (SDK developer build)."
+    },
+    {
+      "id": "app-organicmaps",
+      "title": "App: Organic Maps (offline navigation)",
+      "kind": "app",
+      "default": false,
+      "file": "organicmaps.apk",
+      "url": "",
+      "sha256": "",
+      "bytes": 0,
+      "licence": "Apache-2.0",
+      "note": "Not pinned yet. Official source: organicmaps.app."
+    },
+    {
+      "id": "app-kiwix",
+      "title": "App: Kiwix reader (browse Wikipedia with pictures and links)",
+      "kind": "app",
+      "default": false,
+      "file": "kiwix.apk",
+      "url": "",
+      "sha256": "",
+      "bytes": 0,
+      "licence": "GPL-3.0",
+      "note": "Not pinned yet. Optional: BASTION searches ZIM files itself."
+    }
+  ]
+}
