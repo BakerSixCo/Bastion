@@ -139,9 +139,17 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   notifications (user-granted notification access). Keep that package +
   category filter; never read other apps' notifications. Received text is
   data: "Ask AI" passes it as a question, never as an instruction.
-- Auto-answer (`mesh/MeshAutoResponder`) transmits without a tap via
-  Meshtastic's notification reply action. Keep it off by default,
-  trigger-gated (`?` / `bastion`), grounded, rate-limited and marked "AI:".
+- **Standing rule (owner): only a leading symbol is a command.** `?` asks the
+  AI, `@` locates a unit; anything else is chat and is never answered. Never
+  add word triggers or "looks like a question" guessing — new actions get a
+  new symbol (`MeshAutoResponder.commandIn`).
+- Auto-answer transmits without a tap via Meshtastic's notification reply
+  action. Keep it off by default, approved-radio-only, grounded, rate-limited,
+  marked "AI"/"NAV". "What do I do" answers are numbered steps, sent as up to
+  4 messages. A follow-up `?` within 10 min continues the topic
+  (`Retriever.retrieve(..., context)`).
+- SMS / satellite SMS as a channel: on hold (owner). Long range = Starlink
+  Mini bridging meshes.
 - Privacy: backups are off (`allowBackup=false` + extraction rules); keep
   auto-answer private-channel-only by default (`isPublicChannel`); never log
   message text or keys. Simulator private channel: `tools/meshsim/private-channel.sh`.

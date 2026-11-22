@@ -10,6 +10,11 @@ import com.bastion.terminal.ai.AskSession
 import com.bastion.terminal.ai.Grounding
 import com.bastion.terminal.ai.LocalAi
 import com.bastion.terminal.ai.Retriever
+import com.bastion.terminal.data.Scope
+import com.bastion.terminal.link.LinkClient
+import com.bastion.terminal.link.TakContact
+import com.bastion.terminal.nav.LocationSource
+import com.bastion.terminal.nav.Nav
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,32 +26,71 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 
 /**
- * Answers questions that arrive over the mesh — for people who do **not**
- * have BASTION — and sends the reply back through the Meshtastic app.
+ * Answers commands that arrive over the mesh — for people who do **not**
+ * have BASTION — and replies through the Meshtastic app.
+ *
+ * **Standing rule (owner, 2026-11-22): a leading symbol marks a message for
+ * BASTION; everything else is ordinary chat and is never answered.**
+ *   `?question`  ask the AI (library / offline reference)
+ *   `@callsign`  where is that unit — `@base` for this phone (computed, not AI)
+ * New actions get a new symbol; a word or a "looks like a question" guess is
+ * never a trigger. (That guess was tried for an hour and withdrawn.)
  *
  * How it sends without a tap: Meshtastic's message notification carries a
- * "Reply" action (direct reply). BASTION fills it in and fires it, exactly
- * as typing a reply in the notification shade would. Meshtastic still owns
- * the radio; BASTION adds no network or Bluetooth permission.
+ * "Reply" action (direct reply). BASTION fills it in and fires it. Meshtastic
+ * still owns the radio.
  *
- * Guard rails — this transmits on the owner's behalf, so:
- * - **Off by default**; the owner switches it on in the Mesh tab.
- * - **Private channels only** unless the owner also allows public ones: the default
- *   Meshtastic channel uses a publicly known key, so anything sent there is readable
- *   by anyone in range.
- * - Only messages that start with the trigger ("?" or "bastion") are
- *   answered; ordinary chat is never replied to.
- * - Answers come only from the library / offline reference (same grounding
- *   as Ask). The incoming text is a *question*, never an instruction; with
- *   no supporting passage BASTION says so instead of guessing.
- * - One short message per answer (mesh airtime is scarce), marked "AI:".
- * - Rate-limited: one at a time, a small queue, a per-sender cool-down.
+ * Guard rails — this transmits on the owner's behalf:
+ * - Off by default; approved radios only; private channels only unless the
+ *   owner also allows public ones.
+ * - AI answers come only from packs switched on for the mesh plus the public
+ *   offline reference ([Scope.MESH]). The incoming text is a *question*,
+ *   never an instruction; with no supporting passage BASTION says so.
+ * - Positions and distances are computed ([Nav]), never generated.
+ * - A few short numbered messages per answer, marked "AI" / "NAV".
+ * - One at a time, a small queue, a per-sender cool-down.
+ *
+ * **Topics:** a follow-up `?` from the same radio within [TOPIC_MS] that
+ * doesn't name a subject of its own continues the previous topic — the
+ * earlier question steers retrieval and the earlier answer is shown to the
+ * model, so "?what if I have no seal" is about the chest wound just asked
+ * about. A question that names its own subject starts a new topic.
  */
 object MeshAutoResponder {
     private const val TAG = "BastionMesh"
     private const val PREFS = "mesh"
     private const val KEY_ENABLED = "auto_answer"
     private const val KEY_PUBLIC = "auto_answer_public"
+    const val REPLY_PREFIX = "AI: "
+    /** Computed (not AI-generated) navigation replies. */
+    const val NAV_PREFIX = "NAV: "
+    private const val SENDER_COOLDOWN_MS = 20_000L
+    private const val MAX_TOKENS = 220
+    /** At most this many radio messages per answer. */
+    private const val MAX_PARTS = 4
+    private const val PART_GAP_MS = 4_000L
+    /** How long a topic stays open for follow-up questions. */
+    const val TOPIC_MS = 10 * 60_000L
+
+    /** What a mesh message asks BASTION to do. */
+    sealed class Command {
+        data class Ask(val question: String) : Command()
+        data class Locate(val target: String) : Command()
+    }
+
+    /**
+     * The command in a mesh message, or null for ordinary chat. Only a leading
+     * symbol counts: `?` asks the AI, `@` locates a unit.
+     */
+    fun commandIn(text: String): Command? {
+        val t = text.trim()
+        if (t.startsWith(REPLY_PREFIX) || t.startsWith(NAV_PREFIX) || t.startsWith("AI ")) return null
+        return when {
+            t.startsWith("?") -> t.drop(1).trim().trimEnd('?', ' ').takeIf { it.length >= 3 }?.let { Command.Ask(it) }
+            t.startsWith("@") -> t.drop(1).trim().takeIf { it.length in 2..40 }?.let { Command.Locate(it) }
+            else -> null
+        }
+    }
 
     /**
      * Channel names Meshtastic gives its **default** channel (the modem preset name). The
@@ -69,14 +113,6 @@ object MeshAutoResponder {
     fun setPublicAllowed(context: Context, on: Boolean) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_PUBLIC, on).apply()
     }
-    const val REPLY_PREFIX = "AI: "
-    /** Computed (not AI-generated) navigation replies. */
-    const val NAV_PREFIX = "NAV: "
-    private const val SENDER_COOLDOWN_MS = 20_000L
-    private const val MAX_TOKENS = 220
-    /** At most this many radio messages per answer. */
-    private const val MAX_PARTS = 4
-    private const val PART_GAP_MS = 4_000L
 
     /** Mesh answers: steps first, short enough to send as a few 200-byte messages. */
     val SYSTEM_INSTRUCTION = """
@@ -91,16 +127,21 @@ object MeshAutoResponder {
           already knows what it is and needs to know what to do.
         - Include "do not" warnings only if the sources give them.
         - For any other question, answer in at most 30 words, most useful fact first.
+        - If an EARLIER QUESTION and EARLIER ANSWER are shown, the new question continues that
+          topic. Answer only the new question and do not repeat what was already said.
         - At most 90 words in total. Plain text. No citations, no preamble.
         - If the sources do not contain the answer, reply exactly: ${Grounding.NO_ANSWER}
     """.trimIndent()
 
-    /** [explicit]: sent with the "?" / "bastion" trigger (always gets a reply, even "no answer"). */
-    private class Job(val msg: MeshMessage, val question: String, val reply: Notification.Action, val explicit: Boolean)
+    private class Job(val msg: MeshMessage, val command: Command, val reply: Notification.Action)
+
+    /** The open topic with one radio: the question that named the subject, and the last answer. */
+    private class Topic(val question: String, val answer: String, val time: Long)
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private val queue = Channel<Job>(capacity = 3)
     private val lastBySender = HashMap<String, Long>()
+    private val topics = HashMap<String, Topic>()
     @Volatile private var started = false
 
     private val _status = MutableStateFlow("")
@@ -112,49 +153,12 @@ object MeshAutoResponder {
 
     fun setEnabled(context: Context, on: Boolean) {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_ENABLED, on).apply()
-        _status.value = if (on) "Auto-answer on. Waiting for a question from an approved radio." else ""
-    }
-
-    /**
-     * The question inside a mesh message, or null if it isn't addressed to
-     * BASTION: "?how do I treat a burn" / "bastion, how do I …".
-     */
-    fun questionIn(text: String): String? {
-        val t = text.trim()
-        val q = when {
-            t.startsWith("?") -> t.drop(1)
-            t.startsWith("bastion", ignoreCase = true) -> t.drop(7).trimStart(',', ':', ' ', '?')
-            else -> return null
-        }.trim()
-        // Our own replies (if ever echoed back) and empty triggers are not questions.
-        return q.takeIf { it.length >= 3 && !t.startsWith(REPLY_PREFIX) && !t.startsWith(NAV_PREFIX) }
-    }
-
-    private val QUESTION_STARTS = setOf(
-        "how", "what", "whats", "what's", "where", "wheres", "where's", "when", "why", "who", "which",
-        "is", "are", "can", "could", "should", "do", "does", "will", "treat", "treatment", "symptoms", "signs",
-    )
-
-    /**
-     * A message that *reads* like a question without the "?" / "bastion"
-     * trigger: it ends with "?" or starts with a question word. Found with a
-     * real second device (2026-11-22): people type "How do I deal with a
-     * sucking chest wound", not "?How do I…". Used only for approved radios
-     * on a private channel, and such a message gets **no reply at all** when
-     * nothing in the library answers it — so ordinary chat ("where are we
-     * meeting?") doesn't get an "AI: no answer" back.
-     */
-    fun looksLikeQuestion(text: String): String? {
-        val t = text.trim()
-        if (t.length !in 8..300 || t.startsWith(REPLY_PREFIX) || t.startsWith(NAV_PREFIX)) return null
-        val first = t.substringBefore(' ').lowercase().trimEnd(',', ':')
-        return if (t.endsWith("?") || first in QUESTION_STARTS) t.trimEnd('?', ' ') else null
+        _status.value = if (on) "Auto-answer on. Waiting for “?question” or “@callsign” from an approved radio." else ""
     }
 
     /** Called by the inbox for each **new** message when auto-answer is on. */
     fun offer(context: Context, msg: MeshMessage, reply: Notification.Action?) {
-        val explicit = questionIn(msg.text)
-        val question = explicit ?: looksLikeQuestion(msg.text) ?: return
+        val command = commandIn(msg.text) ?: return
         if (isPublicChannel(msg.channel) && !publicAllowed(context)) {
             _status.value = "Not answered: ${msg.sender} asked on the public channel “${msg.channel}”. " +
                 "Auto-answer only replies on private channels."
@@ -169,21 +173,21 @@ object MeshAutoResponder {
             return
         }
         if (reply == null) {
-            _status.value = "Question from ${msg.sender}, but Meshtastic offered no reply action — not answered."
+            _status.value = "Message from ${msg.sender}, but Meshtastic offered no reply action — not answered."
             return
         }
         val now = System.currentTimeMillis()
         synchronized(lastBySender) {
             val last = lastBySender[msg.sender] ?: 0L
             if (now - last < SENDER_COOLDOWN_MS) {
-                _status.value = "Skipped a question from ${msg.sender}: asked again within ${SENDER_COOLDOWN_MS / 1000} s."
+                _status.value = "Skipped a message from ${msg.sender}: sent again within ${SENDER_COOLDOWN_MS / 1000} s."
                 return
             }
             lastBySender[msg.sender] = now
         }
         start(context.applicationContext)
-        if (!queue.trySend(Job(msg, question, reply, explicit != null)).isSuccess) {
-            _status.value = "Busy: skipped a question from ${msg.sender} (queue full)."
+        if (!queue.trySend(Job(msg, command, reply)).isSuccess) {
+            _status.value = "Busy: skipped a message from ${msg.sender} (queue full)."
         }
     }
 
@@ -204,71 +208,83 @@ object MeshAutoResponder {
     }
 
     private suspend fun handle(app: Context, job: Job) {
-        val who = job.msg.sender
-        _status.value = "Answering ${who}: “${job.question.take(60)}”…"
-        // Navigation questions ("where is bravo") are answered with computed numbers, never
-        // by the model. Measured from the asker's own position when BASTION knows it.
-        com.bastion.terminal.nav.Nav.targetOf(job.question)?.let { target ->
-            val contacts = com.bastion.terminal.link.LinkClient.get(app).contacts.value
-            if (!job.explicit && com.bastion.terminal.nav.Nav.findContact(target, contacts) == null &&
-                !Regex("^(base|hq|bastion|you)$", RegexOption.IGNORE_CASE).matches(target)
-            ) {
-                _status.value = "“${job.question.take(40)}” from $who looked like chat, not a question for BASTION. No reply sent."
-                return
-            }
-            val asker = contacts.firstOrNull { it.hasPosition && it.callsign.contains(who, ignoreCase = true) }
-            val mine = com.bastion.terminal.nav.LocationSource.get(app).fix.value
-            val from = asker?.let { com.bastion.terminal.nav.Nav.Fix(it.lat, it.lon) } ?: mine
-            val fromName = if (asker != null) "you" else "BASTION"
-            // "where is base / bastion / hq" = this phone, when it has a GPS fix.
-            val self = mine?.let {
-                com.bastion.terminal.link.TakContact(
-                    "BASTION-SELF", "BASTION (base, hq, you)", "a-f-G-U-C", it.lat, it.lon, null, null, null,
-                    if (it.time > 0) it.time else System.currentTimeMillis(),
-                )
-            }
-            val body = com.bastion.terminal.nav.Nav.answer(
-                target, contacts.filterNot { it.uid == asker?.uid } + listOfNotNull(self), from, fromName,
-                System.currentTimeMillis(),
-            )
-            // Plain ASCII for radio screens: the degree sign showed as "##" on the simulated node.
-            val text = MeshBridge.fit(NAV_PREFIX + body.replace("°", " deg")).first
-            send(app, job.reply, text)
-            MeshInbox.get(app).add(System.currentTimeMillis(), "BASTION NAV → $who", job.msg.channel, text)
-            Log.i(TAG, "nav-answered sender=$who bytes=${MeshBridge.byteLength(text)}")
-            _status.value = "Sent $who a position for “$target”."
-            return
+        when (val c = job.command) {
+            is Command.Locate -> locate(app, job, c.target)
+            // "?where is base" still works: a navigation question is computed, not generated.
+            is Command.Ask -> Nav.targetOf(c.question)?.let { locate(app, job, it) } ?: ask(app, job, c.question)
         }
+    }
+
+    /** `@callsign`: a computed position, measured from the asker's own position when known. */
+    private fun locate(app: Context, job: Job, target: String) {
+        val who = job.msg.sender
+        val contacts = LinkClient.get(app).contacts.value
+        val asker = contacts.firstOrNull { it.hasPosition && it.callsign.contains(who, ignoreCase = true) }
+        val mine = LocationSource.get(app).fix.value
+        // "@base" / "@hq" / "@bastion" = this phone, when it has a GPS fix.
+        val self = mine?.let {
+            TakContact(
+                "BASTION-SELF", "BASTION (base, hq, you)", "a-f-G-U-C", it.lat, it.lon, null, null, null,
+                if (it.time > 0) it.time else System.currentTimeMillis(),
+            )
+        }
+        val from = asker?.let { Nav.Fix(it.lat, it.lon) } ?: mine
+        val body = Nav.answer(
+            target, contacts.filterNot { it.uid == asker?.uid } + listOfNotNull(self), from,
+            if (asker != null) "you" else "BASTION", System.currentTimeMillis(),
+        )
+        // Plain ASCII for radio screens: the degree sign showed as "##" on the simulated node.
+        val text = MeshBridge.fit(NAV_PREFIX + body.replace("°", " deg")).first
+        send(app, job.reply, text)
+        MeshInbox.get(app).add(System.currentTimeMillis(), "BASTION NAV → $who", job.msg.channel, text)
+        Log.i(TAG, "nav-answered sender=$who bytes=${MeshBridge.byteLength(text)}")
+        _status.value = "Sent $who a position for “$target”."
+    }
+
+    /** `?question`: a grounded AI answer, continuing the open topic with this radio if there is one. */
+    private suspend fun ask(app: Context, job: Job, question: String) {
+        val who = job.msg.sender
+        val now = System.currentTimeMillis()
+        val open = synchronized(topics) { topics[who]?.takeIf { now - it.time <= TOPIC_MS } }
+        _status.value = "Answering $who: “${question.take(60)}”…"
+        val retriever = Retriever(app)
         // MESH scope: only packs the owner allowed to be answered over the radio.
-        val passages = Retriever(app).retrieve(job.question, com.bastion.terminal.data.Scope.MESH)
+        val passages = retriever.retrieve(question, Scope.MESH, context = open?.question)
+        val followUp = open != null && retriever.lastContinuedTopic
         val answer: String? = if (passages.isEmpty()) null else {
             // Don't run two generations at once: wait for an answer in the Ask tab to finish.
-            val ask = AskSession.get(app)
-            withTimeoutOrNull(180_000) { while (ask.generating) delay(1_000) }
-            val model = LocalAi.get(app).obtain()
-                ?: error("the local AI model is not available")
+            val session = AskSession.get(app)
+            withTimeoutOrNull(180_000) { while (session.generating) delay(1_000) }
+            val model = LocalAi.get(app).obtain() ?: error("the local AI model is not available")
+            val prompt = buildString {
+                if (followUp && open != null) {
+                    appendLine("EARLIER QUESTION: ${open.question}")
+                    appendLine("EARLIER ANSWER: ${open.answer}")
+                    appendLine()
+                }
+                append(Grounding.userPrompt(question, passages))
+            }
             val sb = StringBuilder()
-            model.generate(SYSTEM_INSTRUCTION, Grounding.userPrompt(job.question, passages), MAX_TOKENS).collect { sb.append(it) }
+            model.generate(SYSTEM_INSTRUCTION, prompt, MAX_TOKENS).collect { sb.append(it) }
             sb.toString().trim().takeUnless { it.isBlank() || Grounding.checkCitations(it, passages.size).isNoAnswer }
-        }
-        if (answer == null && !job.explicit) {
-            // An untriggered message nothing in the library answers: treat it as chat, say nothing.
-            _status.value = "Nothing in the library for “${job.question.take(40)}” from $who. No reply sent."
-            return
         }
         val body = answer ?: "no answer to that in my offline library."
         // Steps don't fit one 200-byte message: send up to MAX_PARTS numbered parts, spaced out
-        // so they arrive in order and don't hog the channel (owner: "if that requires multiple
-        // sends then so be it", 2026-11-22).
+        // so they arrive in order and don't hog the channel.
         val parts = MeshBridge.split(body, MAX_PARTS) { i, n -> if (n == 1) REPLY_PREFIX else "AI $i/$n: " }
         for ((i, text) in parts.withIndex()) {
             if (i > 0) delay(PART_GAP_MS)
             send(app, job.reply, text)
             MeshInbox.get(app).add(System.currentTimeMillis(), "BASTION AI → $who", job.msg.channel, text)
         }
-        Log.i(TAG, "auto-answered sender=$who parts=${parts.size} bytes=${parts.sumOf { MeshBridge.byteLength(it) }} grounded=${answer != null}")
-        _status.value = "Answered $who" + (if (parts.size > 1) " in ${parts.size} messages" else "") +
-            if (answer == null) " (nothing in the library on that)." else "."
+        if (answer != null) synchronized(topics) {
+            // A follow-up keeps the question that named the subject; a new subject replaces it.
+            topics[who] = Topic(if (followUp && open != null) open.question else question, answer, System.currentTimeMillis())
+        }
+        Log.i(TAG, "auto-answered sender=$who parts=${parts.size} followUp=$followUp grounded=${answer != null}")
+        _status.value = "Answered $who" + (if (followUp) " (same topic)" else "") +
+            (if (parts.size > 1) " in ${parts.size} messages" else "") +
+            if (answer == null) " — nothing in the library on that." else "."
     }
 
     /** Fires Meshtastic's own direct-reply action with [text]. */

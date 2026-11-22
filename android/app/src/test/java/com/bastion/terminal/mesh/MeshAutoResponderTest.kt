@@ -1,42 +1,39 @@
 package com.bastion.terminal.mesh
 
+import com.bastion.terminal.mesh.MeshAutoResponder.Command
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class MeshAutoResponderTest {
+    /** Standing rule: only a leading symbol is a command; everything else is chat. */
     @Test
-    fun questionIn_onlyTriggeredMessagesAreQuestions() {
-        assertEquals("how do I treat a burn", MeshAutoResponder.questionIn("?how do I treat a burn"))
-        assertEquals("how do I treat a burn", MeshAutoResponder.questionIn("  ? how do I treat a burn "))
-        assertEquals("symptoms of hypothermia", MeshAutoResponder.questionIn("Bastion, symptoms of hypothermia"))
-        assertEquals("symptoms of hypothermia", MeshAutoResponder.questionIn("bastion: symptoms of hypothermia"))
-        // Ordinary chat, even when it is a question, is never auto-answered.
-        assertNull(MeshAutoResponder.questionIn("Where are you?"))
-        assertNull(MeshAutoResponder.questionIn("Need water at checkpoint 2"))
+    fun commandIn_onlyLeadingSymbolsAreCommands() {
+        assertEquals(Command.Ask("how do I treat a burn"), MeshAutoResponder.commandIn("?how do I treat a burn"))
+        assertEquals(Command.Ask("how do I treat a burn"), MeshAutoResponder.commandIn("  ? how do I treat a burn? "))
+        assertEquals(Command.Locate("base"), MeshAutoResponder.commandIn("@base"))
+        assertEquals(Command.Locate("Sim B"), MeshAutoResponder.commandIn("@ Sim B"))
+        // Ordinary chat is never a command — not even a well-formed question, and not a word trigger.
+        assertNull(MeshAutoResponder.commandIn("How do I deal with a sucking chest wound"))
+        assertNull(MeshAutoResponder.commandIn("Where are you?"))
+        assertNull(MeshAutoResponder.commandIn("bastion, symptoms of hypothermia"))
+        assertNull(MeshAutoResponder.commandIn("Need water at checkpoint 2"))
         // Empty triggers and BASTION's own replies are ignored.
-        assertNull(MeshAutoResponder.questionIn("?"))
-        assertNull(MeshAutoResponder.questionIn("AI: cool the burn with running water"))
+        assertNull(MeshAutoResponder.commandIn("?"))
+        assertNull(MeshAutoResponder.commandIn("@"))
+        assertNull(MeshAutoResponder.commandIn("AI: cool the burn with running water"))
+        assertNull(MeshAutoResponder.commandIn("AI 1/2: 1. Cover the wound."))
+        assertNull(MeshAutoResponder.commandIn("NAV: BASTION: 3.1 km at 183 deg S"))
     }
 
     @Test
     fun isPublicChannel_defaultPresetNamesArePublic() {
-        org.junit.Assert.assertTrue(MeshAutoResponder.isPublicChannel("LongFast"))
-        org.junit.Assert.assertTrue(MeshAutoResponder.isPublicChannel(" mediumslow "))
-        org.junit.Assert.assertTrue(MeshAutoResponder.isPublicChannel(""))
-        org.junit.Assert.assertFalse(MeshAutoResponder.isPublicChannel("BASTION"))
-        org.junit.Assert.assertFalse(MeshAutoResponder.isPublicChannel("Team Kestrel"))
-    }
-
-    @Test
-    fun looksLikeQuestion_naturalQuestionsWithoutTheTrigger() {
-        org.junit.Assert.assertEquals("How do I deal with a sucking chest wound", MeshAutoResponder.looksLikeQuestion("How do I deal with a sucking chest wound"))
-        org.junit.Assert.assertEquals("Is the water at camp safe", MeshAutoResponder.looksLikeQuestion("Is the water at camp safe?"))
-        org.junit.Assert.assertEquals("gate code", MeshAutoResponder.looksLikeQuestion("gate code?"))
-        // Statements and BASTION's own replies are not questions.
-        assertNull(MeshAutoResponder.looksLikeQuestion("Need water at checkpoint 2"))
-        assertNull(MeshAutoResponder.looksLikeQuestion("Camp at grid 4421. All OK."))
-        assertNull(MeshAutoResponder.looksLikeQuestion("AI: cool the burn with running water?"))
-        assertNull(MeshAutoResponder.looksLikeQuestion("ok?"))
+        assertTrue(MeshAutoResponder.isPublicChannel("LongFast"))
+        assertTrue(MeshAutoResponder.isPublicChannel(" mediumslow "))
+        assertTrue(MeshAutoResponder.isPublicChannel(""))
+        assertFalse(MeshAutoResponder.isPublicChannel("Bastion"))
+        assertFalse(MeshAutoResponder.isPublicChannel("Team Kestrel"))
     }
 }

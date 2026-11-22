@@ -1223,6 +1223,43 @@ Caveats:
   eval set of their own yet.
 - Not re-sent from the iPhone after the fix.
 
+### Standing rules for mesh commands; topics (owner, 2026-11-22)
+
+- **A leading symbol marks a message for BASTION; everything else is chat
+  and is never answered.** `?question` asks the AI; `@callsign` locates a
+  unit (`@base` = this phone). New actions get new symbols. The "looks like
+  a question" trigger added earlier the same day is **withdrawn**, and so
+  is the word trigger "bastion, …".
+- **SMS / satellite-SMS as a second channel: on hold.** Long range goes
+  through the Starlink Mini (a Meshtastic radio at base bridging meshes).
+- **Topics:** a follow-up `?` from the same radio within 10 minutes that
+  names no article of its own continues the previous topic. The earlier
+  question picks the article, the new words pick the passage, and the
+  earlier Q and A are shown to the model. A question that names its own
+  subject starts a new topic.
+
+Evidence (emulator, simulated radios, sent from radio B on the private
+channel):
+1. "How do I deal with a sucking chest wound" (no symbol) → **0 replies** ✅
+2. "?How do I deal with a sucking chest wound" → "AI 1/2: 1. Cover the hole
+   with a waterproof wrapper of a field dressing. 2. Place the clean inside
+   of the wrapper against the wound." / "AI 2/2: 3. Tape the sides and top
+   of the wrapper, leaving the bottom edge free. 4. The wrapper acts as a
+   flapper valve to allow air out as the casualty exhales." ✅
+3. "?what if I have no seal or dressing" → log `followUp=true`; "AI: 1.
+   Cover the hole with a petrolatum gauze pad. 2. Use a non-stick dressing
+   as an occlusive dressing for sucking chest wounds. 3. Do not use
+   hemostatic agents if they cause burns." ✅ on topic. Step 3 is an odd
+   pull from the source.
+4. "@base" → "NAV: BASTION (base, hq, you): 3.1 km at 183 deg S from you,
+   …" ✅
+
+6 device tests ✅, evals 13/13 and 14/14 ✅ after the changes.
+
+Not tested: a new-subject question correctly dropping the topic over the
+radio (logic and unit-level only); topic expiry after 10 minutes; from the
+iPhone.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

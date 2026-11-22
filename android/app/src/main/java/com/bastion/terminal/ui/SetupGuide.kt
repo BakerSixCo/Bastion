@@ -252,7 +252,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             state = if (status.autoAnswerOn) "On." else "Off.",
             steps = listOf(
                 "Needs steps 1, 2, 4 and a private channel (step 5). Mesh tab → switch on “Auto-answer questions”.",
-                "Anyone on your channel can then send “?how do I treat a burn” and BASTION replies by itself with one short AI answer.",
+                "A message starting with a symbol is for BASTION: “?how do I treat a burn” asks the AI (a follow-up ? continues the topic), “@base” asks where a unit is. Anything else is ordinary chat and is never answered.",
                 "It only answers on private channels unless you also switch on “Also answer on public channels”.",
             ),
         )

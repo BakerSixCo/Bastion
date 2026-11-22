@@ -33,25 +33,55 @@ class Retriever internal constructor(
     var lastChoice: String = ""
         private set
 
+    /** True when the last [retrieve] call treated the question as a follow-up to its context. */
+    var lastContinuedTopic: Boolean = false
+        private set
+
     /**
      * [scope]: who is asking. MESH (a question that arrived by radio) may only use packs the
      * owner switched on for the mesh — plus the offline reference, which is public content.
+     *
+     * [context]: the question that opened the current topic, if any. A new question that
+     * names an article of its own ("?how do I treat a burn") starts a new topic and the
+     * context is ignored. One that doesn't ("?what if I have no seal") continues the topic:
+     * the earlier subject picks the article, the new words pick the passage.
      */
-    suspend fun retrieve(question: String, scope: com.bastion.terminal.data.Scope = com.bastion.terminal.data.Scope.ASK): List<Passage> {
-        val terms = Grounding.keyTerms(question)
-        if (terms.isEmpty()) return emptyList()
-        val aspect = Grounding.aspect(question)
-        // With a known aspect, rank on the subject; the aspect is matched on headings.
-        val rankTerms = if (aspect != null) Grounding.subjectTerms(question) else terms
-        val lib = store.retrieve(question, scope)
+    suspend fun retrieve(
+        question: String,
+        scope: com.bastion.terminal.data.Scope = com.bastion.terminal.data.Scope.ASK,
+        context: String? = null,
+    ): List<Passage> {
+        lastContinuedTopic = false
+        val ownTerms = Grounding.keyTerms(question)
+        if (ownTerms.isEmpty() && context == null) return emptyList()
         val zimOpen = zim.currentInfos().isNotEmpty()
-        // Exact-title articles first ("burn" → Burn), then the full-text top articles.
-        // Only phrases that are most of the subject: "water" alone is not what a
-        // bleach-per-gallon question is about.
-        val phrases = Grounding.subjectPhrases(question).filter { p ->
-            2 * Grounding.keyTerms(p).count { it in rankTerms } >= rankTerms.size
+        fun subjectOf(q: String): Pair<List<String>, List<String>> {
+            val rank = if (Grounding.aspect(q) != null) Grounding.subjectTerms(q) else Grounding.keyTerms(q)
+            // Only phrases that are most of the subject: "water" alone is not what a
+            // bleach-per-gallon question is about.
+            val phrases = Grounding.subjectPhrases(q).filter { p ->
+                rank.isNotEmpty() && 2 * Grounding.keyTerms(p).count { it in rank } >= rank.size
+            }
+            return rank to phrases
         }
-        val titleHits = if (zimOpen) zim.titleLookup(phrases) else emptyList()
+        val (ownRank, ownPhrases) = subjectOf(question)
+        // Exact-title articles first ("burn" → Burn), then the full-text top articles.
+        var titleHits = if (zimOpen) zim.titleLookup(ownPhrases) else emptyList()
+        var rankTerms = ownRank
+        var aspect = Grounding.aspect(question)
+        var libQuestion = question
+        if (context != null && titleHits.isEmpty()) {
+            // Follow-up: no subject of its own, so the open topic supplies it.
+            val (ctxRank, ctxPhrases) = subjectOf(context)
+            titleHits = if (zimOpen) zim.titleLookup(ctxPhrases) else emptyList()
+            rankTerms = (ownRank + ctxRank).distinct().take(10)
+            aspect = aspect ?: Grounding.aspect(context)
+            libQuestion = "$question $context"
+            lastContinuedTopic = true
+        }
+        val terms = if (lastContinuedTopic) rankTerms else ownTerms
+        if (rankTerms.isEmpty()) return emptyList()
+        val lib = store.retrieve(libQuestion, scope)
         val textHits = if (zimOpen) zim.search(rankTerms, MAX_ARTICLES) else emptyList()
         // Same article in two ZIMs (WikiMed is a subset of full Wikipedia): keep one, from the
         // larger file (opened first), so duplicates don't crowd out other sources.

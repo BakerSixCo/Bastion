@@ -132,9 +132,12 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                             Column(Modifier.weight(1f)) {
                                 Text("Auto-answer questions", style = MaterialTheme.typography.titleSmall)
                                 Text(
-                                    "Anyone on the mesh can send “?question” (or “bastion, question”) and BASTION " +
-                                        "replies by itself with one short AI answer from your library and offline " +
-                                        "reference. This transmits on your node without you pressing Send.",
+                                    "A message that starts with a symbol is for BASTION; everything else is " +
+                                        "ordinary chat and is never answered.\n" +
+                                        "?question — ask the AI (your mesh-enabled packs and the offline reference). " +
+                                        "A follow-up ? within 10 minutes continues the same topic.\n" +
+                                        "@callsign — where is that unit (@base for this phone).\n" +
+                                        "This transmits on your node without you pressing Send.",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
