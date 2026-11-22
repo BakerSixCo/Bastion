@@ -73,6 +73,45 @@
       "bytes": 98735146,
       "licence": "GPL-3.0",
       "note": "Kiwix Android 4.0.1 standalone (package org.kiwix.kiwixmobile.standalone). Optional: BASTION searches ZIM files itself."
+    },
+    {
+      "id": "ref-mechanics",
+      "title": "Reference: Motor Vehicle Mechanics Q&A (Stack Exchange)",
+      "kind": "reference",
+      "default": false,
+      "preset": "self-reliance",
+      "file": "mechanics.stackexchange.com_en_all_2026-10.zim",
+      "url": "https://download.kiwix.org/zim/stack_exchange/mechanics.stackexchange.com_en_all_2026-10.zim",
+      "sha256": "3b8790dcde480f466d0d55fae23941cdb1f06ff464a77168f27110f98d8eb923",
+      "bytes": 341672133,
+      "licence": "CC BY-SA",
+      "note": "Forum answers on vehicle faults and repair. Not a factory service manual."
+    },
+    {
+      "id": "ref-appropedia",
+      "title": "Reference: Appropedia (low-tech how-to: water, energy, building, farming)",
+      "kind": "reference",
+      "default": false,
+      "preset": "self-reliance",
+      "file": "appropedia_en_all_maxi_2026-02.zim",
+      "url": "https://download.kiwix.org/zim/other/appropedia_en_all_maxi_2026-02.zim",
+      "sha256": "dcf200ba723c27397e1c9a2e4891ff91fa13993df1fa285315190d8525a53469",
+      "bytes": 581641351,
+      "licence": "CC BY-SA",
+      "note": "Appropriate-technology wiki."
+    },
+    {
+      "id": "ref-gardening",
+      "title": "Reference: Gardening & Landscaping Q&A (Stack Exchange)",
+      "kind": "reference",
+      "default": false,
+      "preset": "self-reliance",
+      "file": "gardening.stackexchange.com_en_all_2026-10.zim",
+      "url": "https://download.kiwix.org/zim/stack_exchange/gardening.stackexchange.com_en_all_2026-10.zim",
+      "sha256": "8079b77ba40d830c31cdfa0e3f43a100e9d9488d856b10ffb3aca4e829594e6e",
+      "bytes": 933097375,
+      "licence": "CC BY-SA",
+      "note": "Forum answers on growing food, soil, pests."
     }
   ]
 }

@@ -22,6 +22,8 @@ object HtmlText {
         s = s.replace(Regex("(?is)<head\\b.*?</head>"), " ") // <title> would duplicate the heading
         s = s.replace(Regex("(?is)<(script|style|noscript|template)\\b.*?</\\1>"), " ")
         s = s.replace(Regex("(?is)<!--.*?-->"), " ")
+        // Site chrome (Q&A sites: "Questions - Tags - Users - About" on every page).
+        s = s.replace(Regex("(?is)<(nav|header|footer)\\b.*?</\\1>"), " ")
         s = s.replace(Regex("(?is)<sup\\b[^>]*class=\"[^\"]*reference[^\"]*\"[^>]*>.*?</sup>"), "")
         s = s.replace(Regex("(?is)<(figure|figcaption)\\b.*?</\\1>"), " ")
         // Structure → newlines / Markdown headings.
@@ -41,6 +43,10 @@ object HtmlText {
         s = s.replace(' ', ' ')
         s = s.replace(Regex("[ \\t\\x0B\\f\\r]+"), " ")
         s = s.replace(Regex(" *\\n *"), "\n")
+        // Q&A post statistics ("Asked Feb 25 '17 at 13:16 Active … Viewed 1,914 times").
+        // and signatures ("asked Dec 03 '12 at 08:43 Chris - 133 - 1 - 5"): noise for search and the AI.
+        s = s.replace(Regex("\\bAsked\\s[\\s\\S]{0,90}?Viewed\\s+[\\d.,]+[km]?\\s+times?"), "")
+        s = s.replace(Regex("(?mi)^(asked|answered|edited) \\w{3} \\d{1,2} '\\d\\d at \\d{1,2}:\\d\\d\\n[^\\n]{0,60}(\\n- [\\d.,k]+)*$"), "")
         s = s.replace(Regex("\\n{3,}"), "\n\n")
         return dropTrailingSections(s.trim())
     }

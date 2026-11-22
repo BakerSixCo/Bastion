@@ -211,3 +211,7 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   device owner. Keep it that way so ordinary installs get no launcher prompt.
 - Licence: GPL-3.0 (`LICENSE`), owner decision 2026-11-22 (open source, not
   for sale; libkiwix is GPL).
+
+## Running instrumented tests
+
+Do not use `gradlew connectedDebugAndroidTest` on an emulator that holds a set-up BASTION: it uninstalls the app afterwards and with it the model, references, PINs and approved radios (happened 2026-11-22). Use `gradlew :app:installDebug :app:installDebugAndroidTest`, then `adb shell am instrument -w -e class <TestClass> com.bastion.terminal.test/androidx.test.runner.AndroidJUnitRunner`.

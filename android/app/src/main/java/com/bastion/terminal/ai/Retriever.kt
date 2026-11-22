@@ -56,7 +56,10 @@ class Retriever internal constructor(
         if (ownTerms.isEmpty() && context == null) return emptyList()
         val zimOpen = zim.currentInfos().isNotEmpty()
         fun subjectOf(q: String): Pair<List<String>, List<String>> {
-            val rank = if (Grounding.aspect(q) != null) Grounding.subjectTerms(q) else Grounding.keyTerms(q)
+            val all = if (Grounding.aspect(q) != null) Grounding.subjectTerms(q) else Grounding.keyTerms(q)
+            // A model year ("2009 jeep wrangler") is rarely in the article that explains the
+            // repair, and ranking on it pulled in an unrelated 2009 car (seen on emulator).
+            val rank = all.filterNot { YEAR.matches(it) }.ifEmpty { all }
             // Only phrases that are most of the subject: "water" alone is not what a
             // bleach-per-gallon question is about.
             val phrases = Grounding.subjectPhrases(q).filter { p ->
@@ -140,7 +143,9 @@ class Retriever internal constructor(
             val inTitle = rankTerms.count { t -> titleWords.any { it.startsWith(t) } }
             val titlePrior = if (c.zimPath != null && "${c.zimFile}|${c.zimPath}" in aboutPaths) 1.0 + TITLE_BOOST + ABOUT_BOOST
             else 1.0 + TITLE_BOOST * inTitle / rankTerms.size
-            val section = Grounding.aspectWeight(aspect, c.heading, articleTitle) * (if (c.opensSection) 1.1 else 1.0)
+            // Q&A references: the answers hold the how-to, the question only restates the problem.
+            val answers = if (c.heading?.substringAfterLast(" › ")?.let { ANSWERS.matches(it) } == true) ANSWER_BOOST else 1.0
+            val section = Grounding.aspectWeight(aspect, c.heading, articleTitle) * (if (c.opensSection) 1.1 else 1.0) * answers
             sc.copy(score = sc.score * titlePrior * section)
         }
         val chosen = Bm25.select(boosted, { cands[it.toInt()].text.length })
@@ -171,5 +176,9 @@ class Retriever internal constructor(
         const val ABOUT_BOOST = 0.5
         /** Share of the best lexical score every passage of an exact-title article gets at least. */
         const val ABOUT_FLOOR = 0.6
+        val YEAR = Regex("(19|20)\\d\\d")
+        /** Stack Exchange answer sections are headed "5 Answers5". */
+        val ANSWERS = Regex("\\d+ Answers?\\d*")
+        const val ANSWER_BOOST = 1.3
     }
 }

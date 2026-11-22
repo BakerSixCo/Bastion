@@ -69,6 +69,7 @@ object Grounding {
         "sign", "signs", "cause", "causes", "caused", "first", "aid", "manage", "management",
         "cure", "prevent", "prevention", "diagnose", "diagnosis", "best", "way",
         "stop", "help", "need", "know", "rate", "dose", "steps", "deal", "handle",
+        "build", "building", "built", "make", "making", "construct", "assemble",
     )
 
     /**
@@ -113,11 +114,13 @@ object Grounding {
         SYMPTOMS(Regex("sign|symptom|presentation|clinical features", RegexOption.IGNORE_CASE)),
         CAUSE(Regex("cause|etiology|aetiology|risk factor|pathophysiology|mechanism", RegexOption.IGNORE_CASE)),
         PREVENTION(Regex("prevention|prophylaxis", RegexOption.IGNORE_CASE)),
+        /** "How do I build / make X": the construction part, not examples or history (added for the self-reliance references). */
+        BUILD(Regex("construct|build|design|instruction|how to|step|procedure|method|materials|assembl|install|making", RegexOption.IGNORE_CASE)),
     }
 
     private val FIRST_AID = Regex("first aid|prehospital|pre-hospital|initial|emergency", RegexOption.IGNORE_CASE)
     private val NOT_PRACTICAL = Regex(
-        "research|in development|history|epidemiology|society|culture|econom|cost|etymology|terminology|other animals|awareness",
+        "research|in development|history|epidemiology|society|culture|econom|cost|budget|timeline|examples|etymology|terminology|other animals|awareness",
         RegexOption.IGNORE_CASE,
     )
 
@@ -155,6 +158,7 @@ object Grounding {
             Regex("\\b(symptoms?|signs?|how do i know|recogni[sz]e)\\b").containsMatchIn(q) -> Aspect.SYMPTOMS
             Regex("\\b(caus\\w*|why does|risk factors?)\\b").containsMatchIn(q) -> Aspect.CAUSE
             Regex("\\b(prevent\\w*|avoid)\\b").containsMatchIn(q) -> Aspect.PREVENTION
+            Regex("\\b(build\\w*|make|making|construct\\w*|assemble)\\b").containsMatchIn(q) -> Aspect.BUILD
             else -> null
         }
     }

@@ -202,20 +202,40 @@ class ZimLibrary private constructor(private val app: Context) {
 
     /**
      * Full-text search (each ZIM's own Xapian index), up to [max] hits per ZIM.
-     * All key terms together first (trusted). If that finds too little, any
-     * term — but those looser hits are kept only when the article *title*
-     * contains a key term, so an antenna question doesn't pull in
-     * "Photosynthesis" (seen on emulator).
+     * All key terms together first (trusted). If that finds too little, the
+     * question is loosened: each pair of neighbouring terms is searched on its
+     * own ("head gasket", "jeep wrangler") and articles are ranked by how many
+     * pairs they match. A long question rarely has every word in one article:
+     * "repair blown head gasket 2009 jeep wrangler" found nothing at all
+     * (2026-11-22), and libzim does not treat "OR" as an operator, so the old
+     * any-term fallback never loosened anything. Looser hits are kept only when
+     * the article *title* contains a key term, so an antenna question doesn't
+     * pull in "Photosynthesis" (seen on emulator).
      */
     suspend fun search(terms: List<String>, max: Int = 5): List<ZimHit> = withContext(Dispatchers.IO) {
         lock.withLock {
             if (terms.isEmpty()) return@withLock emptyList()
             open.values.flatMap { o ->
                 val s = o.searcher ?: return@flatMap emptyList()
-                val strict = runSearch(s, terms.joinToString(" "), max, o.info.file)
-                if (strict.size >= max) return@flatMap strict
-                val loose = runSearch(s, terms.joinToString(" OR "), max * 2, o.info.file)
-                    .filter { hit -> titleMatches(hit.title, terms) }
+                // Of the articles holding every term, prefer those that say so in the title:
+                // on a Q&A reference "How do I jump start a car" beats a long thread that
+                // merely mentions jump leads (seen on emulator 2026-11-22).
+                val strict = runSearch(s, terms.joinToString(" "), max * 4, o.info.file)
+                    .sortedByDescending { titleCoverage(it.title, terms) }
+                    .take(max)
+                if (strict.size >= max || terms.size < 2) return@flatMap strict
+                val queries = if (terms.size == 2) terms.map { listOf(it) } else terms.zipWithNext { x, y -> listOf(x, y) }
+                val votes = LinkedHashMap<String, Pair<ZimHit, Int>>()
+                for (q in queries) {
+                    for (hit in runSearch(s, q.joinToString(" "), max, o.info.file)) {
+                        if (!titleMatches(hit.title, terms)) continue
+                        val prev = votes[hit.path]
+                        votes[hit.path] = (prev?.first ?: hit) to (prev?.second ?: 0) + 1
+                    }
+                }
+                val loose = votes.values
+                    .sortedWith(compareByDescending<Pair<ZimHit, Int>> { it.second }.thenByDescending { it.first.score })
+                    .map { it.first }
                 (strict + loose).distinctBy { it.path }.take(max)
             }
         }
@@ -290,9 +310,16 @@ class ZimLibrary private constructor(private val app: Context) {
         return cur
     }
 
-    private fun titleMatches(title: String, terms: List<String>): Boolean {
+    private val LISTING = Regex("^(questions/tagged|tags|users|search)([/_?]|$)")
+    /** Translated copies of an article ("Rocket stove/th"): the AI answers in English. */
+    private val TRANSLATION = Regex("/[a-z]{2}(-[a-z]{2,4})?$")
+
+    private fun titleMatches(title: String, terms: List<String>): Boolean = titleCoverage(title, terms) > 0
+
+    /** How many of [terms] the title contains (as word prefixes). */
+    private fun titleCoverage(title: String, terms: List<String>): Int {
         val words = title.lowercase().split(Regex("[^\\p{L}\\p{N}]+"))
-        return terms.any { t -> words.any { it.startsWith(t) } }
+        return terms.count { t -> words.any { it.startsWith(t) } }
     }
 
     private fun runSearch(s: Searcher, q: String, max: Int, zim: String): List<ZimHit> = runCatching {
@@ -301,6 +328,8 @@ class ZimLibrary private constructor(private val app: Context) {
         while (it.hasNext()) {
             val score = runCatching { it.score }.getOrDefault(0)
             val e = it.next()
+            // Index pages (a Q&A site's tag and user listings) are lists of links, not answers.
+            if (LISTING.containsMatchIn(e.path) || TRANSLATION.containsMatchIn(e.path)) continue
             out.add(ZimHit(e.title, e.path, score, zim))
         }
         android.util.Log.i("BastionZim", "query=[$q] zim=${File(zim).name} results=${out.size}")
