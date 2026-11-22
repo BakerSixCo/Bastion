@@ -1260,6 +1260,57 @@ Not tested: a new-subject question correctly dropping the topic over the
 radio (logic and unit-level only); topic expiry after 10 minutes; from the
 iPhone.
 
+### Self-reliance references: repair, growing food, water, low-tech building (2026-11-22)
+
+Owner request: "repair manuals, gardening, electrical… what if public services
+stopped working and I had to do and repair everything myself."
+
+Added to `tools/kit-manifest.json` (preset `self-reliance`, each pinned by
+SHA-256, downloaded and verified by `tools/kit-build.ps1`): Motor Vehicle
+Mechanics Q&A (342 MB), Appropedia (582 MB), Gardening & Landscaping Q&A
+(933 MB). Loaded next to WikiMed on the emulator: four references open at once.
+
+New eval `SelfRelianceEvalTest` — 15 plain-language questions. **Tested on
+emulator: 14/14 counted, 1 known gap; retrieval only (which passages are
+found), not the AI's wording, and not on a physical phone.**
+
+Found and fixed with it:
+
+- **A long question found nothing.** "?how do I repair a blown head gasket in a
+  2009 jeep wrangler" returned zero articles: the first search needs every
+  word in one article, and the "any word" fallback never worked because libzim
+  does not treat `OR` as an operator. The fallback now searches each pair of
+  neighbouring words and ranks articles by how many pairs they match.
+- Model years ("2009") are left out of ranking; they pulled in an unrelated
+  2009 car.
+- Q&A references: tag/user listing pages are skipped, site menus and post
+  statistics are stripped, answer sections rank above the question text, and
+  among articles that hold every word the ones saying so in the title go first.
+- "How do I build / make X" now prefers Construction / Design / Instructions
+  sections over Examples, Budget and Timeline (composting toilet went from
+  "Examples › Germany" to "Basics › Construction").
+- Translated copies of an article ("Rocket stove/th") are skipped.
+
+No regression: `ZimRetrievalEvalTest` 14/14 (WikiMed alone) and
+`RetrievalEvalTest` 13/13, re-run on the emulator after the changes.
+
+Honest limits:
+
+- **Known gap:** "how do I save tomato seeds" — the reference's own search
+  returns variety-specific threads first; the how-to thread is not in its top
+  results. Logged as `GAP`, not counted.
+- The head gasket answer comes from Q&A threads about diagnosing and deciding
+  whether to repair. A step-by-step procedure for a specific vehicle needs a
+  real service manual, imported as a PDF into a pack — none of these
+  references contains one.
+- Nothing electrical or household-repair is loaded yet (iFixit, Home
+  Improvement and Electronics Q&A are in the build queue; larger downloads).
+- Running `gradlew connectedDebugAndroidTest` **uninstalled BASTION from the
+  emulator** afterwards, deleting its model, references, PINs and approved
+  radios. Evals are now run with `installDebug installDebugAndroidTest` and
+  `adb shell am instrument`, which leaves the app in place. The references
+  were restored; the model, PINs and approved radio need setting up again.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
