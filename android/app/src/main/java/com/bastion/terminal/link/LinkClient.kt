@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
+import com.bastion.terminal.data.TextUtil
 import java.util.UUID
 
 /** Where the connection to the TAK picture stands, in plain words for the UI. */
@@ -66,10 +67,26 @@ class LinkClient private constructor(private val app: Context) {
     /** Imports the .zip exported by Meshtastic ("Export TAK Data Package") and reconnects. */
     suspend fun importPackage(uri: Uri): String = withContext(Dispatchers.IO) {
         val result = runCatching {
-            app.contentResolver.openInputStream(uri)?.use { TakConfig.import(app, it) }
-        }.getOrNull() ?: "Could not open the selected file."
+            val bytes = app.contentResolver.openInputStream(uri)?.use { TextUtil.readBounded(it, 2_000_000) }
+                ?: return@runCatching null
+            TakConfig.import(app, bytes.inputStream()).also { msg ->
+                // Keep the package so an ATAK-ready copy can be saved later.
+                if (msg.startsWith("Imported")) java.io.File(java.io.File(app.filesDir, "tak"), ORIGINAL).writeBytes(bytes)
+            }
+        }.getOrNull() ?: "Could not open the selected file (or it is too large to be a TAK data package)."
         withContext(Dispatchers.Main) { stop(); start() }
         result
+    }
+
+    fun canExportForAtak(): Boolean = java.io.File(java.io.File(app.filesDir, "tak"), ORIGINAL).isFile
+
+    /** Saves an ATAK-importable copy of the imported package to [uri] (see [AtakPackage]). */
+    suspend fun exportForAtak(uri: Uri): String = withContext(Dispatchers.IO) {
+        runCatching {
+            val src = java.io.File(java.io.File(app.filesDir, "tak"), ORIGINAL)
+            app.contentResolver.openOutputStream(uri)!!.use { out -> src.inputStream().use { AtakPackage.repack(it, out) } }
+            "Saved. In ATAK: Import → Choose App → pick this file. ATAK then connects to Meshtastic by itself."
+        }.getOrElse { "Could not save: ${it.message ?: it.javaClass.simpleName}" }
     }
 
     /** Forgets the imported certificates and disconnects. */
@@ -113,6 +130,7 @@ class LinkClient private constructor(private val app: Context) {
     companion object {
         private const val MAX_CONTACTS = 200
         private const val MAX_CHATS = 100
+        private const val ORIGINAL = "original.zip"
 
         @Volatile private var inst: LinkClient? = null
         fun get(context: Context): LinkClient =

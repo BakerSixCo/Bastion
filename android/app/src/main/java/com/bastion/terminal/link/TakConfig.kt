@@ -81,3 +81,35 @@ class TakConfig(val host: String, val port: Int, val clientP12: File, val trustP
         fun clear(ctx: Context) { dir(ctx).listFiles()?.forEach { it.delete() } }
     }
 }
+
+/**
+ * Makes the Meshtastic-exported TAK data package importable by ATAK.
+ *
+ * Found 2026-11-22 (Meshtastic Android 2.8.4, ATAK-CIV 5.5.1.8): the export
+ * puts `manifest.xml` at the top of the zip, but ATAK only recognises
+ * `MANIFEST/manifest.xml` and otherwise logs "not a datapackage" and ignores
+ * the file without telling the user. This rewrites the zip with the manifest
+ * in the right place; every other entry is copied unchanged. Pure JVM.
+ */
+object AtakPackage {
+    fun repack(input: java.io.InputStream, output: java.io.OutputStream) {
+        java.util.zip.ZipOutputStream(output).use { out ->
+            ZipInputStream(input).use { z ->
+                var total = 0
+                while (true) {
+                    val e = z.nextEntry ?: break
+                    if (e.isDirectory) continue
+                    val bytes = z.readBytes()
+                    total += bytes.size
+                    require(total < 2_000_000) { "package is too large to be a TAK data package" }
+                    val name = if (e.name.substringAfterLast('/').equals("manifest.xml", ignoreCase = true)) {
+                        "MANIFEST/manifest.xml"
+                    } else e.name
+                    out.putNextEntry(java.util.zip.ZipEntry(name))
+                    out.write(bytes)
+                    out.closeEntry()
+                }
+            }
+        }
+    }
+}

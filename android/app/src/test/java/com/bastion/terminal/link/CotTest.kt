@@ -51,4 +51,23 @@ class CotTest {
         val d = Cot.distanceMeters(39.7392, -104.9903, 39.75, -105.0)
         assertTrue(d > 1300 && d < 1600)
     }
+
+    @Test
+    fun atakPackage_movesManifestIntoManifestFolder() {
+        val src = java.io.ByteArrayOutputStream()
+        java.util.zip.ZipOutputStream(src).use { z ->
+            for ((n, c) in listOf("manifest.xml" to "<m/>", "server.pref" to "<p/>", "client.p12" to "KEY")) {
+                z.putNextEntry(java.util.zip.ZipEntry(n)); z.write(c.toByteArray()); z.closeEntry()
+            }
+        }
+        val out = java.io.ByteArrayOutputStream()
+        AtakPackage.repack(src.toByteArray().inputStream(), out)
+        val names = HashMap<String, String>()
+        java.util.zip.ZipInputStream(out.toByteArray().inputStream()).use { z ->
+            while (true) { val e = z.nextEntry ?: break; names[e.name] = String(z.readBytes()) }
+        }
+        assertEquals(setOf("MANIFEST/manifest.xml", "server.pref", "client.p12"), names.keys)
+        assertEquals("<m/>", names["MANIFEST/manifest.xml"])
+        assertEquals("KEY", names["client.p12"])
+    }
 }

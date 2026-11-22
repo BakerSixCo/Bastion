@@ -45,6 +45,9 @@ fun TakCard() {
     val picker = androidx.activity.compose.rememberLauncherForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
     ) { uri -> if (uri != null) scope.launch { note = link.importPackage(uri) } }
+    val saver = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/zip")
+    ) { uri -> if (uri != null) scope.launch { note = link.exportForAtak(uri) } }
 
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -74,6 +77,20 @@ fun TakCard() {
                     }
                 }) { Text(if (state.state == "not_set_up") "Import TAK data package" else "Re-import package") }
                 if (state.state != "not_set_up") androidx.compose.material3.TextButton(onClick = { link.forget() }) { Text("Forget") }
+            }
+            if (state.state != "not_set_up" && link.canExportForAtak()) {
+                OutlinedButton(onClick = {
+                    note = null
+                    try { saver.launch("BASTION_ATAK_package.zip") } catch (_: android.content.ActivityNotFoundException) {
+                        note = "This phone has no file picker app."
+                    }
+                }) { Text("Save package for ATAK") }
+                Text(
+                    "ATAK ignores the package as Meshtastic exports it. This saves a copy ATAK accepts — import it in ATAK once.",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                note?.let { if (state.connected) Text(it, style = MaterialTheme.typography.labelSmall) }
             }
             Text(
                 "This is BASTION's only network connection, and it stays inside this phone (127.0.0.1).",

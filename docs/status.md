@@ -779,6 +779,30 @@ Not re-checked in the release build: AI answers, PDF import, mesh inbox.
 **Dedicated device (owner, 2026-11-22):** the BASTION phone is not a
 daily-use phone, which is the basis for the one-app decision.
 
+### ATAK ↔ mesh working on the emulator (2026-11-22)
+
+- **Root cause of the failed imports:** Meshtastic 2.8.4's exported package
+  has `manifest.xml` at the top of the zip. ATAK-CIV 5.5.1.8 only accepts
+  `MANIFEST/manifest.xml` and otherwise logs "not a datapackage" and ignores
+  the file without telling the user. A hand import would have failed the
+  same way.
+- Repackaged with the manifest in `MANIFEST/` and placed in ATAK's
+  data-package folder (via adb). ATAK logged "valid manifest found" and,
+  after a restart, Meshtastic logged "TAK client accepted, connection count
+  now 2" (BASTION + ATAK). **ATAK's Contacts list shows "SIMB - BASTION Sim
+  B"** ✅ — the chain mesh node → Meshtastic TAK server → ATAK works.
+- **Fix for users:** BASTION → Mesh → Units and TAK → **Save package for
+  ATAK** writes an ATAK-ready copy (`link/AtakPackage.repack`, unit-tested).
+  Tested: the saved zip contains `MANIFEST/manifest.xml` plus the pref and
+  both certificates ✅.
+- ATAK takes about 2 minutes to load on the emulator with software graphics.
+- BASTION does not see the ATAK user on the *same* phone as a unit; the
+  server does not relay one local client to another.
+
+Not tested: importing BASTION's saved package through ATAK's own Import
+screen (ATAK was configured through its data-package folder here); chat or
+markers from ATAK reaching another node; real radios.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
