@@ -232,7 +232,7 @@ private fun LocalAiCard() {
                 Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Text(
-                "Nothing is sent to any cloud service: this app does not declare the Internet permission at all.",
+                "Nothing is sent to any cloud service. BASTION's only network connection is to the Meshtastic app on this phone (for units and TAK chat); it never connects to the internet.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

@@ -85,10 +85,10 @@ class MeshInbox private constructor(app: Context) {
  *
  * Why this way (decision 2026-11-22): Meshtastic Android 2.8.4 exports no
  * API for other apps, and BASTION talking to the radio itself would need a
- * Bluetooth/INTERNET permission and would lock Meshtastic — and its ATAK
- * plugin — out of the radio. Meshtastic's message notifications are
+ * Bluetooth permission and would lock Meshtastic — and its TAK server —
+ * out of the radio. Meshtastic's message notifications are
  * structured (sender, text, time, channel), so listening to them gives
- * BASTION an inbox with **no network or Bluetooth permission**, while
+ * BASTION an inbox without touching the radio or the network, while
  * Meshtastic keeps the radio.
  *
  * Scope, enforced here: only notifications from the Meshtastic package, and

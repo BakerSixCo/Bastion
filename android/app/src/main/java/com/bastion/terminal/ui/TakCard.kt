@@ -23,12 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.bastion.terminal.link.LinkClient
+import kotlinx.coroutines.launch
 import com.bastion.terminal.link.TakContact
 import java.util.Locale
 
 /**
- * Units and TAK chat, from the Meshtastic app's local TAK server via BASTION
- * Link. Honest about every state: Link missing, not set up, server off.
+ * Units and TAK chat, straight from the Meshtastic app's local TAK server on
+ * this phone. Honest about every state: not set up, server off, refused.
  */
 @Composable
 fun TakCard() {
@@ -40,6 +41,10 @@ fun TakCard() {
     LaunchedEffect(Unit) { link.start() }
     var draft by rememberSaveable { mutableStateOf("") }
     var note by remember { mutableStateOf<String?>(null) }
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    val picker = androidx.activity.compose.rememberLauncherForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
+    ) { uri -> if (uri != null) scope.launch { note = link.importPackage(uri) } }
 
     Card(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -50,24 +55,32 @@ fun TakCard() {
             )
             Text(
                 when (state.state) {
-                    "not_installed" -> "BASTION Link is not installed. It is the small companion app that lets BASTION " +
-                        "see unit positions and TAK chat. BASTION itself never opens a network connection."
-                    "not_set_up" -> state.detail
+                    "not_set_up" -> "Not set up. In Meshtastic → Settings → Advanced → TAK Server: switch on the server " +
+                        "and “Mesh to CoT Converter”, tap “Export TAK Data Package”, then import that .zip here."
                     "connecting" -> "Connecting to the Meshtastic app's local TAK server…"
                     "connected" -> "Connected to the TAK server on this phone. Positions come from Meshtastic's " +
                         "“Mesh to CoT Converter” and from ATAK users on your TAK channel."
-                    "refused" -> state.detail
-                    "idle" -> "Starting BASTION Link…"
+                    "idle" -> "Starting…"
                     else -> "Not connected. " + state.detail
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            if (state.state == "not_set_up" || state.state == "disconnected") {
-                OutlinedButton(onClick = {
-                    ctx.packageManager.getLaunchIntentForPackage(LinkClient.LINK_PACKAGE)?.let { ctx.startActivity(it) }
-                }) { Text("Open BASTION Link") }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (!state.connected) OutlinedButton(onClick = {
+                    note = null
+                    try { picker.launch(arrayOf("*/*")) } catch (_: android.content.ActivityNotFoundException) {
+                        note = "This phone has no file picker app."
+                    }
+                }) { Text(if (state.state == "not_set_up") "Import TAK data package" else "Re-import package") }
+                if (state.state != "not_set_up") androidx.compose.material3.TextButton(onClick = { link.forget() }) { Text("Forget") }
             }
+            Text(
+                "This is BASTION's only network connection, and it stays inside this phone (127.0.0.1).",
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            if (!state.connected) note?.let { Text(it, style = MaterialTheme.typography.labelSmall) }
             if (state.connected) {
                 Text("Units (${contacts.size})", style = MaterialTheme.typography.labelLarge)
                 if (contacts.isEmpty()) Text(

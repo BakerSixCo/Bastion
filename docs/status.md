@@ -741,6 +741,38 @@ Limits:
   permission).
 - TAK chat reaches TAK users only.
 
+### Link merged into BASTION (owner decision, 2026-11-22)
+
+The owner questioned why a separate bridge app should exist when the field
+has no internet, and decided on one app. The trade-off, as explained to the
+owner: the separation only protected data while the phone is online (setup,
+updates); in the field both designs behave the same.
+
+- The `:link` module is removed. `TakClient` / `TakConfig` now live in
+  `:app` (`link/` package). The TAK data package is imported in Mesh →
+  Units and TAK.
+- `:app` now declares **INTERNET**. This replaces the earlier
+  "no INTERNET permission" rule. The claim is now "never connects to the
+  internet; one loopback connection to Meshtastic on this phone".
+  - It is enforced by code and by `NetworkGuardTest`, **not by Android**.
+  - The test fails the build if network APIs appear outside
+    `link/TakClient.kt`, if that file uses name lookups or a second address,
+    or if `TakConfig` accepts a non-loopback host.
+- Every in-app text that said "no Internet permission" is corrected.
+- Android 17 implicitly adds `ACCESS_LOCAL_NETWORK` next to INTERNET (seen
+  in the installed app's permission list; not declared by BASTION).
+- Mitigation for when the phone is online: airplane mode except during
+  setup.
+
+Evidence (simulated radios, emulator), merged build with the Link app
+uninstalled: package imported from the Mesh tab → "Connected" → Sim B shown
+with its position ✅. "Merged build radio check" sent → Sim B decoded a
+port-72 packet on the private channel ✅. All unit tests pass, including
+`NetworkGuardTest` ✅.
+
+Not re-run after the merge: the on-device evals (13/13, 14/14, DocImport) and
+the release (R8) build — R8 keep rules may need checking for the TLS code.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

@@ -1,4 +1,4 @@
-package com.bastion.link
+package com.bastion.terminal.link
 
 import android.content.Context
 import java.io.File
@@ -9,7 +9,7 @@ import java.util.zip.ZipInputStream
 /**
  * The connection details from the Meshtastic app's "Export TAK Data Package"
  * (.zip: a .pref with the address and certificate passwords, a client
- * certificate, a trust certificate). Kept in Link's private storage only.
+ * certificate, a trust certificate). Kept in BASTION's private storage only.
  */
 class TakConfig(val host: String, val port: Int, val clientP12: File, val trustP12: File,
                 val clientPassword: String, val trustPassword: String) {
@@ -17,10 +17,10 @@ class TakConfig(val host: String, val port: Int, val clientP12: File, val trustP
     companion object {
         private fun dir(ctx: Context) = File(ctx.filesDir, "tak").apply { mkdirs() }
 
-        /** Loopback only. Link exists to talk to this phone's Meshtastic app and nothing else. */
+        /** Loopback only: BASTION's one network use is this phone's Meshtastic app, nothing else. */
         fun requireLoopback(host: String) {
             require(host == "127.0.0.1" || host == "localhost" || host == "::1") {
-                "BASTION Link only connects to this phone (127.0.0.1); the package points at \"$host\"."
+                "BASTION only connects to this phone (127.0.0.1); the package points at \"$host\"."
             }
         }
 
@@ -73,7 +73,7 @@ class TakConfig(val host: String, val port: Int, val clientP12: File, val trustP
                 setProperty("clientPassword", entry("clientPassword").orEmpty())
                 setProperty("trustPassword", entry("caPassword").orEmpty())
             }.let { p -> File(d, "config.properties").outputStream().use { p.store(it, null) } }
-            "Imported. Link will connect to $host:$port when BASTION asks."
+            "Imported. Connecting to $host:$port."
         } catch (t: Throwable) {
             "Could not import: ${t.message ?: t.javaClass.simpleName}"
         }

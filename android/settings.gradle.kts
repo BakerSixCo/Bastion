@@ -14,4 +14,3 @@ dependencyResolutionManagement {
 }
 rootProject.name = "bastion"
 include(":app")
-include(":link")

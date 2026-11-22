@@ -27,7 +27,7 @@ sealed class AiState {
  * App-wide owner of the model file and the loaded runtime. Model files are
  * managed assets: imported by the user (Android file picker) into app-private
  * storage, never bundled in the APK, never committed to git, never downloaded
- * by the app (no INTERNET permission).
+ * by the app (BASTION never connects to the internet).
  */
 class LocalAi private constructor(private val app: Context) {
 

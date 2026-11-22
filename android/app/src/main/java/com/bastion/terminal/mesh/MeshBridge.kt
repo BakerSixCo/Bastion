@@ -15,10 +15,9 @@ import android.content.pm.PackageManager
  * - What it does accept is a standard Android text share. BASTION hands the
  *   text over; the user picks the channel/contact **and presses Send in
  *   Meshtastic** — nothing is transmitted without that tap.
- * - BASTION itself still has no INTERNET or Bluetooth permission. Talking
- *   to a radio directly would need one of them and would lock the
- *   Meshtastic app (and its ATAK plugin) out of the radio; that is an
- *   explicit future decision, not a side effect.
+ * - BASTION has no Bluetooth permission and does not talk to the radio
+ *   itself: that would lock the Meshtastic app (and its TAK server) out of
+ *   the radio.
  */
 object MeshBridge {
     const val MESHTASTIC_PACKAGE = "com.geeksville.mesh"

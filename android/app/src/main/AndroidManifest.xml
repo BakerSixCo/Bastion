@@ -2,26 +2,18 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Deliberately NO android.permission.INTERNET: the offline guarantee is
-         structural. v0.1 cannot transmit anything, to anyone. If a later
-         milestone adds a model-download setup mode, that becomes an explicit,
-         documented decision. -->
-
-    <!-- Lets BASTION bind to BASTION Link (the separate, network-capable bridge to the
-         Meshtastic app's local TAK server). Signature-level: only apps signed with the same
-         key hold it. Declared here too so install order doesn't matter. This is NOT a
-         network permission — BASTION still cannot open a socket. -->
-    <permission
-        android:name="com.bastion.permission.LINK"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="com.bastion.permission.LINK" />
+    <!-- INTERNET is declared for ONE purpose (owner decision 2026-11-22): the connection to
+         the Meshtastic app's local TAK server on this phone (127.0.0.1) — Android requires the
+         permission even for a socket that never leaves the device. BASTION opens no other
+         connection: link/TakClient connects to a literal 127.0.0.1 and NetworkGuardTest fails
+         the build if network code appears anywhere else. Still no Bluetooth or location. -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <queries>
         <package android:name="org.kiwix.kiwixmobile" />
         <package android:name="com.geeksville.mesh" />
         <package android:name="com.atakmap.app.civ" />
         <package android:name="app.organicmaps" />
-        <package android:name="com.bastion.link" />
     </queries>
 
     <application

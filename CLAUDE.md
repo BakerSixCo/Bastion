@@ -23,9 +23,14 @@ home-control agent), cloud AI fallback in field mode, custom ROMs/rooting
 - Reuse maintained apps/components for heavy functions (Kiwix, ATAK-CIV,
   Meshtastic, a llama.cpp-class runtime); custom code only where nothing
   maintained fits.
-- Offline-first is structural: `app/src/main/AndroidManifest.xml` declares
-  **no INTERNET permission**. Adding any network capability is an explicit,
-  documented decision, never a dependency side effect.
+- Offline-first: every field function works with no internet, and BASTION
+  **never connects to the internet**. It declares INTERNET for exactly one
+  purpose (owner decision 2026-11-22, replacing the earlier "no INTERNET
+  permission" rule): the loopback connection to the Meshtastic app's local
+  TAK server on the same phone, which Android won't allow without it. That
+  is enforced by code and by `NetworkGuardTest`, not by Android. Any other
+  network use is a new explicit, documented owner decision, never a
+  dependency side effect.
 - Documents are retrieved and cited, not "learned": import → preserve
   original → extract text → index → retrieve → infer → cite real records.
 - Honest states everywhere: missing model, missing companion app, missing
@@ -84,7 +89,7 @@ versions.
 
 Model files (`.litertlm`) are managed assets: the user imports them into
 app storage (`files/models/`) via the file picker; the app never downloads
-them (no INTERNET permission) and they are never committed or bundled.
+them (BASTION never connects to the internet) and they are never committed or bundled.
 
 ZIM files (offline reference, e.g. Kiwix Wikipedia) live in BASTION's own
 app-specific folder `Android/media/com.bastion.terminal/zim/` and are opened
@@ -127,9 +132,9 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   simulator + emulator + BASTION. Label results "simulated radio".
 - Meshtastic Android (2.8.4) exports no bindable service; BASTION's only
   supported door is a text share (`mesh/MeshBridge`). The user presses Send
-  in Meshtastic. Do not add Bluetooth/INTERNET permissions or a direct radio
-  client without an explicit, documented decision (it would also lock the
-  Meshtastic app and its ATAK plugin out of the radio).
+  in Meshtastic. Do not add a Bluetooth permission or a direct radio client
+  without an explicit, documented decision (it would lock the Meshtastic app
+  and its TAK server out of the radio).
 - Receiving: `mesh/MeshInboxService` reads **only** Meshtastic's message
   notifications (user-granted notification access). Keep that package +
   category filter; never read other apps' notifications. Received text is
@@ -142,15 +147,16 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   message text or keys. Simulator private channel: `tools/meshsim/private-channel.sh`.
 - Mesh text limit: 200 UTF-8 bytes (`MeshBridge.MAX_BYTES`).
 
-## BASTION Link (`android/link`, package `com.bastion.link`)
+## TAK connection (`link/` package) — BASTION's only network code
 
-- The **only** component allowed the INTERNET permission. It exists so
-  `:app` never needs it: Android requires INTERNET even for loopback, and
-  the Meshtastic app's local TAK server (127.0.0.1:8089, mTLS) is TCP-only.
-- Keep it tiny and data-free: no library, AI, inbox or UI beyond setup. It
-  connects only to a literal 127.0.0.1 (`TakConfig.requireLoopback`,
-  `TakClient`). Never add another network destination or dependency.
-- `:app` talks to it through a bound Messenger service guarded by the
-  signature permission `com.bastion.permission.LINK` (both APKs must be
-  signed with the same key). Never add INTERNET to `:app`.
-- Build/install both: `./gradlew :app:installDebug :link:installDebug`.
+- `link/TakClient` connects by mutual TLS to the Meshtastic app's local TAK
+  server (127.0.0.1:8089) using the data package the user exports from
+  Meshtastic and imports in Mesh → Units and TAK. `link/Cot` parses/writes
+  CoT XML as data.
+- History: this was briefly a separate app ("BASTION Link") so BASTION could
+  keep zero network permission. The owner merged it (2026-11-22): in the
+  field there is no internet to protect against, and one app is simpler.
+- Rules: network APIs only in `link/TakClient.kt`; connect only to a literal
+  127.0.0.1; no name lookups; no new network dependency. `NetworkGuardTest`
+  enforces this — extend it, never weaken it. Android also adds
+  `ACCESS_LOCAL_NETWORK` implicitly on Android 17.

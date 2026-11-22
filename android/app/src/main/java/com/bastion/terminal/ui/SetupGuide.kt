@@ -93,7 +93,7 @@ fun rememberSetupStatus(): SetupStatus {
             atakInstalled = installed(ctx, PKG_ATAK),
             kiwixInstalled = installed(ctx, PKG_KIWIX),
             mapsInstalled = installed(ctx, PKG_MAPS),
-            linkInstalled = installed(ctx, "com.bastion.link"),
+            linkInstalled = com.bastion.terminal.link.LinkClient.get(ctx).isSetUp(),
             deviceSecure = (ctx.getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager)?.isDeviceSecure == true,
         )
     }
@@ -123,7 +123,7 @@ fun SetupCard(status: SetupStatus, onOpen: () -> Unit) {
 
 /**
  * Step-by-step setup with live status. BASTION itself cannot download
- * anything (no Internet permission), so every download happens in another
+ * anything (it never connects to the internet), so every download happens in another
  * app or on a PC and this page says exactly what to get and where it goes.
  */
 @Composable
@@ -157,7 +157,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
         TextButton(onClick = onClose) { Text("← Back") }
         Text("Setup guide", style = MaterialTheme.typography.headlineMedium)
         Text(
-            "BASTION never goes online, so it can't download these for you. Get each file with this phone's " +
+            "BASTION never connects to the internet, so it can't download these for you. Get each file with this phone's " +
                 "browser or on a computer while you have internet — after that everything works with no signal.",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -228,7 +228,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             else "No screen lock. Anyone who picks up this phone can read your library and mesh messages.",
             steps = listOf(
                 "Set a PIN or password (not just a swipe). Android's storage encryption depends on it.",
-                "BASTION's data is excluded from cloud backups and phone-to-phone transfers, and BASTION has no Internet permission, so it stays on this phone.",
+                "BASTION's data is excluded from cloud backups and phone-to-phone transfers, and BASTION never connects to the internet — its only network link is to the Meshtastic app on this phone.",
                 "Offline reference (.zim) files are public content kept in shared storage; they are not secret.",
             ),
             actions = listOf("Security settings" to { open(Intent(Settings.ACTION_SECURITY_SETTINGS), "Could not open security settings.") }),
@@ -286,15 +286,13 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             else listOf("Get Kiwix" to { store(PKG_KIWIX, "Kiwix") }),
         )
         Step(
-            n = 12, title = "BASTION Link (units and TAK chat inside BASTION)", done = status.linkInstalled, optional = true,
-            state = if (status.linkInstalled) "BASTION Link is installed. The Mesh tab shows whether it is connected." else "BASTION Link is not installed.",
+            n = 12, title = "Units and TAK chat inside BASTION", done = status.linkInstalled, optional = true,
+            state = if (status.linkInstalled) "A TAK data package is imported. The Mesh tab shows whether it is connected." else "Not set up.",
             steps = listOf(
-                "BASTION Link is a separate small app. Android requires the Internet permission even for a connection inside this phone, so Link holds it — and none of your data — while BASTION holds your data and no Internet permission. Link only connects to this phone (127.0.0.1), and only BASTION can talk to it.",
-                "Install BASTION Link from the same place you got BASTION (they must be the same build).",
-                "In Meshtastic → Settings → Advanced → TAK Server: switch on the server and “Mesh to CoT Converter”, set the TAK channel to your private channel, then “Export TAK Data Package”.",
-                "Open BASTION Link → “Import TAK data package” → pick that .zip. Then open BASTION → Mesh: units and TAK chat appear there.",
+                "In Meshtastic → Settings → Advanced → TAK Server: switch on the server and “Mesh to CoT Converter”, set the TAK channel to your private channel, then “Export TAK Data Package” and save the .zip.",
+                "In BASTION → Mesh → Units and TAK → “Import TAK data package”, pick that .zip. Units with positions and TAK chat then appear there.",
+                "This is BASTION's only network connection and it stays inside this phone. Keep the phone in airplane mode in the field anyway.",
             ),
-            actions = if (status.linkInstalled) listOf("Open BASTION Link" to { launch("com.bastion.link", "BASTION Link") }) else emptyList(),
         )
         Text(
             "Before you rely on it: switch on airplane mode and ask BASTION a question. If it answers with sources, " +

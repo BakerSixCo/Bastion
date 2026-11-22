@@ -1,4 +1,4 @@
-package com.bastion.link
+package com.bastion.terminal.link
 
 import java.io.OutputStream
 import java.net.InetAddress
@@ -26,7 +26,7 @@ class TakClient(
     fun start() {
         if (running) return
         running = true
-        thread = Thread({ loop() }, "bastion-link-tak").apply { isDaemon = true; start() }
+        thread = Thread({ loop() }, "bastion-tak").apply { isDaemon = true; start() }
     }
 
     fun stop() {
@@ -83,7 +83,7 @@ class TakClient(
                         "disconnected",
                         when {
                             t is java.net.ConnectException -> "Meshtastic's local TAK server isn't running. Open Meshtastic → Settings → Advanced → TAK Server and switch it on."
-                            t is javax.net.ssl.SSLException -> "The certificates were refused. Export the TAK data package from Meshtastic again and re-import it in BASTION Link."
+                            t is javax.net.ssl.SSLException -> "The certificates were refused. Export the TAK data package from Meshtastic again and re-import it in BASTION (Mesh tab)."
                             else -> t.message ?: t.javaClass.simpleName
                         },
                     )
