@@ -118,3 +118,16 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
 - Cloud sessions for this repo use the personal `bastion` environment
   (allows dl.google.com + maven.google.com for SDK/AGP downloads). The
   user's Default environment does not allow those hosts.
+
+## Mesh (M3) notes
+
+- PC development uses two **simulated** Meshtastic nodes in WSL
+  (`tools/meshsim/install.sh`; Sim A `localhost:4403`, Sim B `:4404`;
+  emulator reaches them at `10.0.2.2`). `tools/bastion-pc.cmd` starts
+  simulator + emulator + BASTION. Label results "simulated radio".
+- Meshtastic Android (2.8.4) exports no bindable service; BASTION's only
+  supported door is a text share (`mesh/MeshBridge`). The user presses Send
+  in Meshtastic. Do not add Bluetooth/INTERNET permissions or a direct radio
+  client without an explicit, documented decision (it would also lock the
+  Meshtastic app and its ATAK plugin out of the radio).
+- Mesh text limit: 200 UTF-8 bytes (`MeshBridge.MAX_BYTES`).

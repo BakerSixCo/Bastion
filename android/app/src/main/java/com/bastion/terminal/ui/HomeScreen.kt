@@ -94,6 +94,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         ZimCard()
 
+        MeshCard()
+
         Card {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("Companion apps", style = MaterialTheme.typography.titleMedium)

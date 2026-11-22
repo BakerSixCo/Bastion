@@ -457,6 +457,69 @@ Nothing above is simulated; pending means pending.
 - Emulator note: the AVD hung once (adb shell unresponsive); recovered with
   a forced kill and a cold start. This was not caused by the app.
 
+## Milestone 3 — mesh + ATAK (started 2026-11-22, software-first)
+
+Owner decision 2026-11-22: develop and test against software now, hardware
+(phone, two LoRa nodes) later.
+
+### Mesh simulator on the PC — simulated, no RF
+
+`tools/meshsim/install.sh` sets up two simulated Meshtastic nodes in WSL
+Ubuntu 26.04: `meshtasticd --sim` 2.7.26 from Meshtastic's official PPA.
+Sim A is on `localhost:4403` and Sim B on `:4404`. Each node has its own
+network namespace on a bridge. The nodes mesh over Meshtastic's UDP
+multicast, which only one process per network stack can bind. Found while
+testing: on one stack, A never bound and B heard nothing.
+`tools/bastion-pc.cmd` starts the simulator, the emulator and BASTION.
+
+Evidence (simulated radios, hardware-accelerated emulator):
+- Sim A → Sim B text over the simulated mesh ✅ (B's log: "Received text
+  msg … hello from A").
+- Meshtastic Android 2.8.4 on the emulator connected to Sim A at
+  `10.0.2.2:4403` (network transport) ✅. A message sent from Sim B appeared
+  in the app ("000b: Radio check from Sim B"), with 2 nodes online ✅.
+- Permissions on the emulator: only Meshtastic's local-network access was
+  granted. Bluetooth, location and notifications were skipped.
+
+### What BASTION can and cannot do with Meshtastic (found 2026-11-22)
+
+Read from the installed app's manifest (2.8.4):
+- `MeshService` is **not exported**. The bindable third-party API older
+  integrations used is gone, so BASTION cannot read mesh messages, nodes or
+  positions from the app.
+- The app accepts a standard text share (`ACTION_SEND text/plain`).
+- The app registers `AtakPluginDiscoveryActivity` (action
+  `com.atakmap.app.component`): **Meshtastic now presents itself to ATAK as a
+  plugin.** Not tested yet — ATAK's EULA has not been accepted on the
+  emulator (owner's call).
+
+Implemented: **send to mesh** (`mesh/MeshBridge`, `ui/MeshCompose`).
+- Home "Mesh messaging" card → composer with a live byte counter (200-byte
+  mesh limit).
+- "Send to mesh…" on a finished AI answer: citation markers are stripped and
+  the text is cut at a word boundary to fit one message.
+- BASTION opens Meshtastic with the text. The user picks the channel and
+  presses Send **in Meshtastic** — nothing transmits without that tap.
+- BASTION still declares no INTERNET or Bluetooth permission.
+
+Evidence: a message typed in BASTION's composer ("Camp at grid 4421. All
+OK.", 26/200 bytes) → Meshtastic share screen → LongFast → Send → received
+by Sim B ✅ (B's log). Unit tests cover fitting (word cut, multi-byte safe).
+
+Not tested: "Send to mesh…" from an AI answer end to end (same dialog,
+different entry point); any real radio; Bluetooth transport; ATAK.
+
+**Open decision — receiving mesh traffic inside BASTION.** Options:
+1. Stay as is: send from BASTION, read in Meshtastic/ATAK. No new
+   permissions.
+2. BASTION talks to the radio itself (Bluetooth or USB on the phone, network
+   in a dev build). Needs a Bluetooth or INTERNET permission and a
+   Meshtastic protocol client, and locks the Meshtastic app — and with it
+   the ATAK plugin — out of the radio while BASTION holds it.
+3. Wait for an official Meshtastic third-party API.
+
+Recommendation: 1 now; revisit after the ATAK plugin is tested on hardware.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

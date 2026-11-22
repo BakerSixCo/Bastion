@@ -33,6 +33,10 @@ import com.bastion.terminal.ai.Grounding
 import com.bastion.terminal.ai.LocalAi
 import com.bastion.terminal.ai.LocalModel
 import com.bastion.terminal.ai.Passage
+import com.bastion.terminal.mesh.MeshBridge
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 
 
 @Composable
@@ -225,6 +229,13 @@ private fun AnswerCard(
             stats?.let {
                 Text(AskSession.statsLine(it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
+            // Hand a finished, grounded answer to the mesh (the user edits and sends it in Meshtastic).
+            val ctx = LocalContext.current
+            var meshOpen by rememberSaveable { mutableStateOf(false) }
+            if (!generating && answer.isNotBlank() && check?.isNoAnswer != true && remember { MeshBridge.isInstalled(ctx) }) {
+                OutlinedButton(onClick = { meshOpen = true }) { Text("Send to mesh…") }
+            }
+            if (meshOpen) MeshComposeDialog(initial = answer, onDismiss = { meshOpen = false })
         }
     }
 }
