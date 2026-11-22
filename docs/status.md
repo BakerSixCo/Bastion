@@ -593,6 +593,27 @@ Not tested / limits:
 - BASTION still sees text messages only: no positions, node list or ATAK
   traffic.
 
+### In-app Setup guide (2026-11-22) — tested on the hardware-accelerated emulator
+
+Home → "Setup guide" card ("N of 4 essentials ready") → a step-by-step page
+with live status per step (`ui/SetupGuide`).
+- Essentials: (1) AI model, (2) offline reference / own documents,
+  (3) Meshtastic app + radio, (4) mesh inbox.
+- Optional: (5) auto-answer, (6) ATAK, (7) Organic Maps, (8) Kiwix.
+- Each step says what to download, from where, how big, and where it goes.
+- BASTION cannot download anything itself (no INTERNET permission). Buttons
+  open the app store listing, the other app, or the Android settings screen.
+
+Evidence: all 8 steps showed the emulator's real state ✅; "Open Meshtastic"
+launched Meshtastic ✅; Back returned to Home ✅.
+
+Not tested: the "Get …" store buttons (every app is already installed
+here), and a fresh install with nothing set up.
+
+ATAK on the emulator: the owner accepted the license; ATAK then stops at its
+"Permission Rationale" screen, which was left for the owner. The Meshtastic
+plugin inside ATAK is still untested.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

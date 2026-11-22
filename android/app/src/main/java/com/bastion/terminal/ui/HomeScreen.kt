@@ -56,6 +56,12 @@ private val COMPANIONS = listOf(
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     val ctx = LocalContext.current
+    val setup = rememberSetupStatus()
+    var showGuide by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+    if (showGuide) {
+        androidx.compose.foundation.layout.Box(modifier) { SetupGuide(setup, onClose = { showGuide = false }) }
+        return
+    }
     val store = remember { LibraryStore.get(ctx) }
     val tick by store.changeCounter.collectAsState()
     var docCount by remember { mutableIntStateOf(0) }
@@ -75,10 +81,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     ) {
         Text("BASTION", style = MaterialTheme.typography.headlineLarge)
         Text(
-            "Off-grid field terminal — v0.1 (library/search milestone)",
+            "Off-grid field terminal — v0.1",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+
+        SetupCard(setup, onOpen = { showGuide = true })
 
         StatusCard(
             title = "Library",
@@ -86,7 +94,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             body = if (docCount > 0) {
                 "$docCount document(s), ${TextUtil.formatSize(docBytes)} indexed. Full-text search works fully offline."
             } else {
-                "No documents yet. Import plain-text or Markdown files in the Library tab."
+                "No documents yet. Import text, Markdown, PDF or EPUB files in the Library tab."
             },
         )
 
