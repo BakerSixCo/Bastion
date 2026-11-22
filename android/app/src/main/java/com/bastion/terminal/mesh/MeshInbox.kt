@@ -122,8 +122,10 @@ class MeshInboxService : NotificationListenerService() {
         val auto = MeshAutoResponder.isEnabled(this)
         // Meshtastic's own direct-reply action (the one with a text input), if offered.
         val reply = n.actions?.firstOrNull { !it.remoteInputs.isNullOrEmpty() }
+        val wipedAt = com.bastion.terminal.security.AppLock.wipedAt(this)
         for (m in style.messages) {
             val text = m.text?.toString() ?: continue
+            if (m.timestamp <= wipedAt) continue // received before a wipe: never bring it back
             val sender = m.person?.name?.toString() ?: "Unknown node"
             val isNew = inbox.add(m.timestamp, sender, channel, text)
             // Only brand-new messages can trigger an automatic answer (never a re-announced one).

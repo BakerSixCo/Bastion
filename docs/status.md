@@ -889,6 +889,70 @@ on-device evals after this change.
 Limits: straight-line distance and bearing only (no terrain or route);
 positions can be minutes old; true bearing, not magnetic.
 
+### Approved radios, always-on service, app PIN and wipe PIN (2026-11-22)
+
+Built from owner decisions 2, 3 and 4.
+
+**Approved radios** (`mesh/ApprovedRadios`)
+- Auto-answer only replies to radios the owner approved.
+- An unknown asker gets silence and appears under "asked — not approved"
+  with an Approve button.
+- Limit: identity is the name Meshtastic shows, which the radio's holder
+  can change. This is not cryptographic; the channel key stays the real
+  barrier.
+
+**Always-on** (`BastionService`)
+- A foreground service with a permanent notification, on by default, with a
+  switch in the Mesh tab.
+- It keeps the TAK link and GPS fix alive so messages and answers continue
+  with the screen off.
+
+**App PIN and wipe PIN** (`security/AppLock`, Home → App lock)
+- Both optional, 4–12 digits, stored only as salted PBKDF2 hashes.
+- Five wrong tries → a 30 s lock-out that doubles.
+- Typing the wipe PIN on the lock screen erases everything BASTION stored
+  **except** a short keep-list (the AI model, the model setting, the lock
+  itself). BASTION then restarts straight into an empty app.
+- ZIM files are public content in shared storage and are not erased.
+- This is an app lock, not disk encryption.
+
+Evidence (emulator, simulated radios):
+- Service: `isForeground=true`, types special-use + location ✅.
+- Approved radios:
+  - Unapproved Sim B asked `?where is base` → **no reply**, listed as "asked
+    — not approved" ✅.
+  - After Approve → answered with BASTION in the background: "NAV: BASTION
+    (base, hq): 3.1 km at 183 deg S from you, …" ✅
+- PINs set through the UI. After a restart: wrong PIN refused, app PIN
+  opens, data intact ✅.
+- **Real wipe executed** with the wipe PIN ✅:
+  - Before: 12 database files, library + packs, TAK certificates, 6
+    preference files.
+  - After: an empty library (0 documents, the pack gone), an empty TAK
+    folder, only `lock` and `local_ai` preferences, and the 2.6 GB model
+    intact.
+  - BASTION reopened without asking again, and the TAK package re-imported
+    fine afterwards.
+- Leak found by that test and fixed: one Meshtastic notification still on
+  screen was read back into the inbox after the wipe. Messages timestamped
+  before a wipe are now ignored. **The fix is not re-tested with a second
+  wipe.**
+- `AppLockTest` (on device): hashing, distinct PINs, lock-out ✅.
+- After these changes: `RetrievalEvalTest` 13/13, `ZimRetrievalEvalTest`
+  14/14, 6 device tests ✅.
+
+Not tested: the service surviving hours in the background or a reboot (no
+start-on-boot yet); the notification-permission prompt; the lock-out timing
+by hand.
+
+Known gaps:
+- The lock appears at app start only; it does not re-lock when BASTION goes
+  to the background.
+- Meshtastic's own message history is not touched by BASTION's wipe.
+
+Not built yet from the queue: two-model support; device-manager mode (needs
+a clean emulator).
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

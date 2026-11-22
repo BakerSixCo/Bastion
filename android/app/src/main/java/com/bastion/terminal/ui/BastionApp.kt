@@ -38,6 +38,17 @@ fun BastionApp() {
     // Open every ZIM in BASTION's reference folders (phone storage and SD card).
     val ctx = LocalContext.current
     LaunchedEffect(Unit) { ZimLibrary.get(ctx).restore() }
+    // Always-on service (if enabled): keeps the mesh inbox and auto-answer alive in the background.
+    LaunchedEffect(Unit) { com.bastion.terminal.BastionService.sync(ctx) }
+
+    // App PIN, if one is set. The wipe PIN is typed in the same box.
+    var locked by androidx.compose.runtime.remember {
+        mutableStateOf(com.bastion.terminal.security.AppLock.needsPin(ctx))
+    }
+    if (locked) {
+        Surface(color = MaterialTheme.colorScheme.background) { LockScreen(onOpen = { locked = false }) }
+        return
+    }
 
     readerZimPath?.let { path ->
         BackHandler { readerZimPath = null }

@@ -128,6 +128,14 @@ object MeshAutoResponder {
                 "Auto-answer only replies on private channels."
             return
         }
+        // Approved radios only (owner decision). Unknown askers get silence, not a refusal
+        // message — a reply would confirm there is a BASTION listening.
+        val radios = ApprovedRadios.get(context)
+        if (!radios.isApproved(msg.sender)) {
+            radios.notePending(msg.sender)
+            _status.value = "Not answered: “${msg.sender}” is not an approved radio. Approve it below to answer its questions."
+            return
+        }
         if (reply == null) {
             _status.value = "Question from ${msg.sender}, but Meshtastic offered no reply action — not answered."
             return

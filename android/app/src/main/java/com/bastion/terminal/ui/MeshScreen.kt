@@ -101,6 +101,30 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                         }) { Text("Turn on inbox") }
                     }
                     note?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
+                    if (installed) {
+                        var alwaysOn by remember { mutableStateOf(com.bastion.terminal.BastionService.isEnabled(ctx)) }
+                        val askNotify = androidx.activity.compose.rememberLauncherForActivityResult(
+                            androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+                        ) { }
+                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text("Keep BASTION running", style = MaterialTheme.typography.titleSmall)
+                                Text(
+                                    "Stays on with the screen off so messages keep arriving and questions keep " +
+                                        "getting answered. Shows a permanent notification and uses more battery.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Switch(checked = alwaysOn, onCheckedChange = {
+                                alwaysOn = it
+                                com.bastion.terminal.BastionService.setEnabled(ctx, it)
+                                if (it && android.os.Build.VERSION.SDK_INT >= 33) {
+                                    askNotify.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                            })
+                        }
+                    }
                     if (installed && access) {
                         var auto by remember { mutableStateOf(MeshAutoResponder.isEnabled(ctx)) }
                         val autoStatus by MeshAutoResponder.status.collectAsState()
@@ -131,6 +155,32 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                                     )
                                 }
                                 Switch(checked = pub, onCheckedChange = { pub = it; MeshAutoResponder.setPublicAllowed(ctx, it) })
+                            }
+                        }
+                        if (auto) {
+                            val radios = remember { com.bastion.terminal.mesh.ApprovedRadios.get(ctx) }
+                            val approved by radios.approved.collectAsState()
+                            val pending by radios.pending.collectAsState()
+                            Text("Approved radios (${approved.size})", style = MaterialTheme.typography.titleSmall)
+                            Text(
+                                if (approved.isEmpty()) "None yet, so nobody gets answers. When a radio asks a question it " +
+                                    "appears here for you to approve."
+                                else "Only these radios get answers. A radio's name can be changed by whoever holds it — " +
+                                    "your private channel key is the real lock.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            approved.forEach { name ->
+                                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                                    Text(name, Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                                    TextButton(onClick = { radios.remove(name) }) { Text("Remove") }
+                                }
+                            }
+                            pending.forEach { name ->
+                                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                                    Text("$name asked — not approved", Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
+                                    OutlinedButton(onClick = { radios.approve(name) }) { Text("Approve") }
+                                }
                             }
                         }
                         if (autoStatus.isNotBlank()) Text(autoStatus, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
