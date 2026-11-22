@@ -1008,6 +1008,37 @@ Limits: settings inside other apps (Meshtastic's TAK server switch) still
 need guided taps. ATAK-CIV has no public direct download the tool can fetch
 without an account, so that file may stay a manual download.
 
+### Hide other apps (device manager) — 2026-11-22
+
+Owner: on a dedicated device, hidden is as good as deleted; storage is
+solved by a bigger phone or an SD card.
+
+- `DeviceManager.hideOtherApps`: hides every app that has a launcher icon
+  and is not BASTION, a companion app or an essential (Settings, file
+  picker, Bluetooth, permission controller). It also blocks adding accounts.
+  A switch on Home → Device manager turns it on and off;
+  `showHiddenApps` restores exactly what was hidden; releasing the
+  device-manager role restores them first.
+- Built-in apps are hidden, not deleted (read-only system area).
+- Bug found and fixed: Android's package-visibility rules let BASTION see
+  only 2 other apps, so only 2 were hidden. The manifest now declares a
+  launcher-intent query.
+
+Evidence (clean emulator `Bastion_Clean`, BASTION as device owner):
+- 21 apps with an icon → **3** (Settings, BASTION, file picker); log "hid
+  18 app(s)" ✅
+- Opening a web link → "unable to resolve Intent" (no browser) ✅
+- Settings opens; Home → BASTION; the recent-apps screen still works ✅
+
+Not tested: switching it off again after the full hide (restore was
+exercised once, with 2 apps); the effect on Meshtastic/ATAK, which are not
+installed on the clean emulator and may rely on hidden Google components;
+a real phone.
+
+Maps (owner, same day): the kit step lets the user pick areas and layers,
+shows the size, and offers phone storage or SD card as the destination.
+Not built yet.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
