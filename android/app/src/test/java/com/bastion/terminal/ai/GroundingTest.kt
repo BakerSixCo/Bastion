@@ -19,6 +19,20 @@ class GroundingTest {
     }
 
     @Test
+    fun keyTerms_stemsForPrefixMatchingAndDropsFiller() {
+        assertEquals(listOf("step", "set", "field", "antenna"), Grounding.keyTerms("What are the steps to set up the field antenna"))
+        assertEquals(listOf("bleach", "gallon", "treat", "water"), Grounding.keyTerms("How much bleach per gallon to treat water"))
+        assertEquals(listOf("symptom", "hypothermia"), Grounding.keyTerms("What are the symptoms of hypothermia"))
+        assertEquals("batter", Grounding.stem("batteries"))
+        assertEquals("box", Grounding.stem("boxes"))
+        assertEquals("boil", Grounding.stem("boiling"))
+        assertEquals("treat", Grounding.stem("treated"))
+        assertEquals("glass", Grounding.stem("glass"))
+        assertEquals("virus", Grounding.stem("virus"))
+        assertEquals("gas", Grounding.stem("gas")) // too short to strip
+    }
+
+    @Test
     fun termHits_countsDistinctPrefixMatches() {
         val terms = listOf("boil", "water", "altitude")
         assertEquals(2, Grounding.termHits("Bring clear water to a rolling boil; boiling...", terms))

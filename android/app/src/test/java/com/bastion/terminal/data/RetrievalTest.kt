@@ -75,6 +75,22 @@ class RetrievalTest {
     }
 
     @Test
+    fun scoreInMemory_matchesPrefixesAndRanksTheRelevantPassageFirst() {
+        val items = listOf(
+            Bm25.Item(1, 1, "Hypothermia is treated by removing wet clothing and rewarming."),
+            Bm25.Item(2, 1, "Heat stroke is treated by rapid cooling."),
+            Bm25.Item(3, 2, "Wet clothing should be dried in the sun."),
+        )
+        val s = Bm25.scoreInMemory(items, listOf("hypotherm", "treat"))
+        assertEquals(3, s.size)
+        assertEquals(1L, s.maxByOrNull { it.score }!!.id)
+        assertEquals(listOf(1, 1), s.first { it.id == 1L }.termTf.toList()) // "treated" matches "treat"
+        assertEquals(listOf(1, 2), s.first().termDf.toList())
+        assertEquals(0.0, s.first { it.id == 3L }.score, 0.0)
+        assertTrue(Bm25.scoreInMemory(emptyList(), listOf("x")).isEmpty())
+    }
+
+    @Test
     fun bm25_shorterPassageWinsAtEqualTf() {
         val short = Bm25.score(mi(50, 100, 50, Triple(2, 10, 5)))
         val long = Bm25.score(mi(50, 100, 300, Triple(2, 10, 5)))

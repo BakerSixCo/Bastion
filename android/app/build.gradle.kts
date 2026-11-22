@@ -15,6 +15,9 @@ android {
         versionCode = 1
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Phones (arm64) + the x86_64 emulator only: each extra ABI costs ~50 MB of
+        // libkiwix + LiteRT-LM native code.
+        ndk { abiFilters += listOf("arm64-v8a", "x86_64") }
     }
 
     buildTypes {
@@ -47,6 +50,7 @@ dependencies {
     implementation(libs.androidx.compose.icons.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.litertlm.android)
+    implementation(libs.libkiwix)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)

@@ -14,12 +14,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.bastion.terminal.kiwix.ZimLibrary
 
 private enum class Tab { HOME, ASK, LIBRARY }
 
@@ -28,6 +31,19 @@ fun BastionApp() {
     var tab by rememberSaveable { mutableStateOf(Tab.HOME) }
     var readerDocId by rememberSaveable { mutableLongStateOf(-1L) }
     var readerQuery by rememberSaveable { mutableStateOf("") }
+    var readerZimPath by rememberSaveable { mutableStateOf<String?>(null) }
+
+    // Re-open the remembered offline reference ZIM (in place, never copied).
+    val ctx = LocalContext.current
+    LaunchedEffect(Unit) { ZimLibrary.get(ctx).restore() }
+
+    readerZimPath?.let { path ->
+        BackHandler { readerZimPath = null }
+        Surface(color = MaterialTheme.colorScheme.background) {
+            ZimReaderScreen(path = path, query = readerQuery, onClose = { readerZimPath = null })
+        }
+        return
+    }
 
     if (readerDocId >= 0) {
         BackHandler { readerDocId = -1L }
@@ -75,7 +91,14 @@ fun BastionApp() {
     ) { pad ->
         when (tab) {
             Tab.HOME -> HomeScreen(Modifier.padding(pad))
-            Tab.ASK -> AskScreen(Modifier.padding(pad), onOpen = open)
+            Tab.ASK -> AskScreen(
+                Modifier.padding(pad),
+                onOpen = open,
+                onOpenZim = { path, q ->
+                    readerZimPath = path
+                    readerQuery = q
+                },
+            )
             Tab.LIBRARY -> LibraryScreen(Modifier.padding(pad), onOpen = open)
         }
     }

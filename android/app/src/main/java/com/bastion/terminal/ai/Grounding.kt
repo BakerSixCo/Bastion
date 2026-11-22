@@ -11,7 +11,11 @@ data class Passage(
     val markedText: String,
     /** Nearest Markdown heading above the passage, if any (context for model and user). */
     val heading: String? = null,
+    /** Set when the passage comes from a ZIM article (offline reference) instead of the library. */
+    val zimPath: String? = null,
 ) {
+    val isZim: Boolean get() = zimPath != null
+
     /** "Title — Heading" label used in the prompt and on source cards. */
     val label: String
         get() = if (heading.isNullOrBlank()) title else "$title — $heading"
@@ -39,15 +43,41 @@ object Grounding {
         "so", "than", "that", "the", "their", "them", "then", "there", "these", "they", "this",
         "to", "was", "we", "what", "when", "where", "which", "who", "why", "will", "with",
         "would", "you", "your", "about", "tell", "give", "please", "much", "many", "long",
+        // Filler that matched junk in WikiMed ("per gallon" → sewer articles; "set up").
+        "up", "out", "off", "per", "get", "got", "use", "used", "using", "also", "any",
+        "some", "most", "more", "very", "just", "has", "have", "had", "been", "being",
     )
 
-    /** Meaningful lowercase terms of a natural-language question, in order, deduplicated. */
+    /**
+     * Meaningful lowercase terms of a natural-language question, in order,
+     * deduplicated, lightly stemmed for prefix matching ("steps" must match
+     * "Step 1"; seen on emulator).
+     */
     fun keyTerms(question: String, max: Int = 8): List<String> =
         question.lowercase()
             .split(Regex("[^\\p{L}\\p{N}]+"))
             .filter { it.length >= 2 && it !in STOPWORDS }
+            .map(::stem)
             .distinct()
             .take(max)
+
+    /**
+     * Suffix stripping for *prefix* matching, so shorter is safer:
+     * batteries→batter, boxes→box, steps→step, boiling→boil, treated→treat.
+     * Never strips below 3 characters.
+     */
+    fun stem(w: String): String {
+        fun cut(n: Int) = if (w.length - n >= 3) w.dropLast(n) else w
+        return when {
+            w.endsWith("ies") && w.length > 4 -> cut(3)
+            w.endsWith("sses") -> cut(2)
+            Regex(".*(x|ch|sh|ss)es$").matches(w) -> cut(2)
+            w.endsWith("ing") && w.length > 5 -> cut(3)
+            w.endsWith("ed") && w.length > 4 && !w.endsWith("eed") -> cut(2)
+            w.endsWith("s") && !w.endsWith("ss") && !w.endsWith("us") && !w.endsWith("is") && w.length > 3 -> cut(1)
+            else -> w
+        }
+    }
 
     /**
      * FTS4 query matching ANY key term (prefix match), or null if the
@@ -58,6 +88,20 @@ object Grounding {
         val terms = keyTerms(question)
         if (terms.isEmpty()) return null
         return terms.joinToString(" OR ") { "\"$it*\"" }
+    }
+
+    /** Wraps occurrences of [terms] in TextUtil highlight markers (for display). */
+    fun markTerms(text: String, terms: List<String>): String {
+        val ranges = TextUtil.highlightRanges(text, terms.joinToString(" "))
+        val sb = StringBuilder(text.length + ranges.size * 2)
+        var pos = 0
+        for (r in ranges) {
+            if (r.first < pos) continue
+            sb.append(text, pos, r.first).append(TextUtil.MARK_START)
+                .append(text, r.first, r.last + 1).append(TextUtil.MARK_END)
+            pos = r.last + 1
+        }
+        return sb.append(text, pos, text.length).toString()
     }
 
     /** How many distinct key terms (as prefixes of words) occur in [text]. */

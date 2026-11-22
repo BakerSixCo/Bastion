@@ -161,6 +161,33 @@ object Bm25 {
         )
     }
 
+    /** A passage scored in memory (not from SQLite), e.g. ZIM article text. */
+    data class Item(val id: Long, val docId: Long, val text: String)
+
+    private val WORD = Regex("[\\p{L}\\p{N}]+")
+
+    /**
+     * Scores [items] against prefix [terms] exactly like the SQLite path:
+     * builds the same 'pcnalx' layout (prefix matching on lowercase words,
+     * df and average length over [items]) and feeds it to [scored].
+     */
+    fun scoreInMemory(items: List<Item>, terms: List<String>): List<Scored> {
+        if (items.isEmpty() || terms.isEmpty()) return emptyList()
+        val words = items.map { WORD.findAll(it.text.lowercase()).map { m -> m.value }.toList() }
+        val tf = words.map { ws -> IntArray(terms.size) { t -> ws.count { it.startsWith(terms[t]) } } }
+        val df = IntArray(terms.size) { t -> tf.count { it[t] > 0 } }
+        val total = IntArray(terms.size) { t -> tf.sumOf { it[t] } }
+        val avg = (words.sumOf { it.size } / items.size).coerceAtLeast(1)
+        return items.indices.map { i ->
+            val mi = IntArray(5 + 3 * terms.size)
+            mi[0] = terms.size; mi[1] = 1; mi[2] = items.size; mi[3] = avg; mi[4] = words[i].size
+            for (t in terms.indices) {
+                mi[5 + 3 * t] = tf[i][t]; mi[6 + 3 * t] = total[t]; mi[7 + 3 * t] = df[t]
+            }
+            scored(items[i].id, items[i].docId, mi)
+        }
+    }
+
     /**
      * Picks passages: best first, at most [perDoc] per document, at most [k]
      * total, within [charBudget] (via [lengthOf]), dropping anything below

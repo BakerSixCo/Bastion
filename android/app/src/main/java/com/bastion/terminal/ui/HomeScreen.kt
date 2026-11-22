@@ -36,6 +36,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.bastion.terminal.ai.AiState
 import com.bastion.terminal.ai.LocalAi
+import com.bastion.terminal.kiwix.ZimLibrary
+import com.bastion.terminal.kiwix.ZimState
 import com.bastion.terminal.data.LibraryStore
 import kotlinx.coroutines.launch
 import com.bastion.terminal.data.TextUtil
@@ -87,6 +89,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         )
 
         LocalAiCard()
+
+        ZimCard()
 
         Card {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -219,4 +223,69 @@ private fun localAiBody(s: AiState): String = when (s) {
     is AiState.Loaded -> "Loaded: ${s.label} (load took ${"%.1f".format(java.util.Locale.US, s.loadSeconds)} s). " +
         "Ask can answer from your library with citations."
     is AiState.Failed -> s.reason + (s.file?.let { " File: ${it.name}." } ?: "")
+}
+
+@Composable
+private fun ZimCard() {
+    val ctx = LocalContext.current
+    val zim = remember { ZimLibrary.get(ctx) }
+    val state by zim.state.collectAsState()
+    val scope = rememberCoroutineScope()
+    var message by remember { mutableStateOf<String?>(null) }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) scope.launch { message = zim.add(uri) }
+    }
+
+    Card {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            val ok = state is ZimState.Ready
+            Text(
+                (if (ok) "● " else "○ ") + "Offline reference (ZIM)",
+                style = MaterialTheme.typography.titleMedium,
+                color = if (ok) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+                when (val s = state) {
+                    is ZimState.NoZim -> "None added. Add a Kiwix .zim file (e.g. offline Wikipedia) and Ask " +
+                        "will search it alongside your library, citing the articles it uses. Large files can " +
+                        "instead be copied over USB into ${zim.folder().absolutePath}."
+                    is ZimState.Copying -> "Copying into BASTION's reference folder... ${TextUtil.formatSize(s.copiedBytes)}" +
+                        (s.totalBytes?.let { " of ${TextUtil.formatSize(it)}" } ?: "")
+                    is ZimState.Opening -> "Opening…"
+                    is ZimState.Ready -> "“${s.info.title}”" + (s.info.date?.let { " ($it)" } ?: "") +
+                        " — ${"%,d".format(s.info.articleCount)} articles, ${TextUtil.formatSize(s.info.sizeBytes)}. " +
+                        "File: ${s.info.fileName} in BASTION's reference folder."
+                    is ZimState.Failed -> s.reason
+                },
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            (state as? ZimState.Copying)?.let { c ->
+                val total = c.totalBytes
+                if (total != null && total > 0) LinearProgressIndicator(progress = { c.copiedBytes.toFloat() / total }, modifier = Modifier.fillMaxWidth())
+                else LinearProgressIndicator(Modifier.fillMaxWidth())
+            }
+            if (state is ZimState.Opening) LinearProgressIndicator(Modifier.fillMaxWidth())
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    enabled = state !is ZimState.Opening && state !is ZimState.Copying,
+                    onClick = {
+                        message = null
+                        try {
+                            picker.launch(arrayOf("*/*"))
+                        } catch (_: ActivityNotFoundException) {
+                            message = "This device has no file picker app, so a ZIM cannot be added here."
+                        }
+                    },
+                ) { Text(if (state is ZimState.NoZim) "Add ZIM file" else "Replace ZIM") }
+                if (state is ZimState.Ready || state is ZimState.Failed) {
+                    OutlinedButton(onClick = { scope.launch { message = zim.remove() } }) {
+                        Text("Remove")
+                    }
+                }
+            }
+            message?.let {
+                Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+    }
 }

@@ -92,4 +92,25 @@ object TextUtil {
         }
         return out.toByteArray()
     }
+
+    /**
+     * Removes Markdown heading markers ("## ") from line starts for display and
+     * returns the heading lines' ranges in the resulting text.
+     */
+    fun stripHeadings(text: String): Pair<String, List<IntRange>> {
+        val sb = StringBuilder(text.length)
+        val ranges = ArrayList<IntRange>()
+        for ((i, line) in text.split('\n').withIndex()) {
+            if (i > 0) sb.append('\n')
+            val m = Regex("^#{1,6} +(.+)$").find(line)
+            if (m != null) {
+                val start = sb.length
+                sb.append(m.groupValues[1])
+                ranges.add(start until sb.length)
+            } else {
+                sb.append(line)
+            }
+        }
+        return sb.toString() to ranges
+    }
 }

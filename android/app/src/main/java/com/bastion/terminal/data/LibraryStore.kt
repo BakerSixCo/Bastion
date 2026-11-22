@@ -257,7 +257,7 @@ class LibraryStore private constructor(
                         index = i + 1,
                         docId = sc.docId,
                         title = c.getString(2),
-                        markedText = markTerms(c.getString(0), terms),
+                        markedText = com.bastion.terminal.ai.Grounding.markTerms(c.getString(0), terms),
                         heading = c.getString(1),
                     )
                 }
@@ -279,19 +279,6 @@ class LibraryStore private constructor(
         }
     }
 
-    /** Wraps occurrences of [terms] in highlight markers for display. */
-    private fun markTerms(text: String, terms: List<String>): String {
-        val ranges = TextUtil.highlightRanges(text, terms.joinToString(" "))
-        val sb = StringBuilder(text.length + ranges.size * 2)
-        var pos = 0
-        for (r in ranges) {
-            if (r.first < pos) continue
-            sb.append(text, pos, r.first).append(TextUtil.MARK_START)
-                .append(text, r.first, r.last + 1).append(TextUtil.MARK_END)
-            pos = r.last + 1
-        }
-        return sb.append(text, pos, text.length).toString()
-    }
 
     suspend fun search(raw: String): List<SearchHit> = withContext(Dispatchers.IO) {
         val match = TextUtil.ftsQuery(raw) ?: return@withContext emptyList()

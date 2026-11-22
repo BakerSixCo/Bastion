@@ -55,4 +55,12 @@ class TextUtilTest {
         assertTrue(TextUtil.highlightRanges("some text", " ").isEmpty())
         assertTrue(TextUtil.highlightRanges("some text", "a").isEmpty())
     }
+
+    @Test
+    fun stripHeadings_removesMarkersAndReportsRanges() {
+        val (text, ranges) = TextUtil.stripHeadings("Intro\n## Treatment\nWash the wound.\n#nohash\n")
+        assertEquals("Intro\nTreatment\nWash the wound.\n#nohash\n", text)
+        assertEquals(1, ranges.size)
+        assertEquals("Treatment", text.substring(ranges[0].first, ranges[0].last + 1))
+    }
 }

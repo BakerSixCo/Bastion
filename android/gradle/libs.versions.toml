@@ -9,6 +9,7 @@ junit = "4.13.2"
 litertlm = "0.19.1"
 androidxTestRunner = "1.6.2"
 androidxTestExtJunit = "1.2.1"
+libkiwix = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -23,6 +24,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 litertlm-android = { group = "com.google.ai.edge.litertlm", name = "litertlm-android", version.ref = "litertlm" }
 androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
+libkiwix = { group = "org.kiwix", name = "libkiwix", version.ref = "libkiwix" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

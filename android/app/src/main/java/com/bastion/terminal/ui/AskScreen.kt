@@ -20,53 +20,33 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.bastion.terminal.ai.AiState
+import com.bastion.terminal.ai.AskSession
+import com.bastion.terminal.kiwix.ZimLibrary
+import com.bastion.terminal.kiwix.ZimState
 import com.bastion.terminal.ai.GenerationStats
 import com.bastion.terminal.ai.Grounding
 import com.bastion.terminal.ai.LocalAi
 import com.bastion.terminal.ai.LocalModel
 import com.bastion.terminal.ai.Passage
-import com.bastion.terminal.data.LibraryStore
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import java.util.Locale
 
-private const val MAX_ANSWER_TOKENS = 384
 
 @Composable
-fun AskScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit) {
+fun AskScreen(
+    modifier: Modifier = Modifier,
+    onOpen: (Long, String) -> Unit,
+    onOpenZim: (String, String) -> Unit,
+) {
     val ctx = LocalContext.current
-    val store = remember { LibraryStore.get(ctx) }
     val ai = remember { LocalAi.get(ctx) }
     val aiState by ai.state.collectAsState()
-    val scope = rememberCoroutineScope()
-
-    var query by rememberSaveable { mutableStateOf("") }
-    var passages by remember { mutableStateOf<List<Passage>>(emptyList()) }
-    var askedFor by remember { mutableStateOf("") }
-    var searched by remember { mutableStateOf(false) }
-    var answer by remember { mutableStateOf("") }
-    var answerError by remember { mutableStateOf<String?>(null) }
-    var stats by remember { mutableStateOf<GenerationStats?>(null) }
-    var modelLabel by remember { mutableStateOf("") }
-    var check by remember { mutableStateOf<Grounding.CitationCheck?>(null) }
-    var job by remember { mutableStateOf<Job?>(null) }
-    var running by remember { mutableStateOf<LocalModel?>(null) }
-    // Explicit state: Job.isActive is not observable by Compose.
-    var generating by remember { mutableStateOf(false) }
-
-    fun resetAnswer() {
-        answer = ""; answerError = null; stats = null; check = null
-    }
+    val zimState by remember { ZimLibrary.get(ctx) }.state.collectAsState()
+    // App-scoped: survives tab switches and opening a source.
+    val s = remember { AskSession.get(ctx) }
 
     LazyColumn(
         modifier.fillMaxSize().padding(16.dp),
@@ -76,7 +56,7 @@ fun AskScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit) {
         item {
             Card {
                 Text(
-                    aiIntro(aiState),
+                    aiIntro(aiState) + "\n" + zimIntro(zimState),
                     Modifier.padding(12.dp),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -85,98 +65,66 @@ fun AskScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit) {
         }
         item {
             OutlinedTextField(
-                value = query,
-                onValueChange = { query = it },
+                value = s.query,
+                onValueChange = { s.query = it },
                 label = { Text("Question or keywords") },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
         item {
             Button(
-                enabled = query.isNotBlank() && !generating,
-                onClick = {
-                    scope.launch {
-                        resetAnswer()
-                        askedFor = query
-                        passages = store.retrieve(query)
-                        searched = true
-                    }
-                },
-            ) { Text("Search library") }
+                enabled = s.query.isNotBlank() && !s.generating && !s.searching,
+                onClick = { s.search() },
+            ) { Text(if (zimState is ZimState.Ready) "Search library + reference" else "Search library") }
         }
+        if (s.searching) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
 
-        if (searched && passages.isEmpty()) {
+        if (s.searched && !s.searching && s.passages.isEmpty()) {
             item {
                 Text(
-                    "No matching passages in the library — not enough local evidence to answer.",
+                    "No matching passages — not enough local evidence to answer.",
                     color = MaterialTheme.colorScheme.error,
                 )
             }
         }
 
-        if (passages.isNotEmpty()) {
+        if (s.passages.isNotEmpty()) {
             item {
                 Text(
-                    "Sources (${passages.size}) — these exact passages are what the local AI may use:",
+                    "Sources (${s.passages.size}) — these exact passages are what the local AI may use:",
                     style = MaterialTheme.typography.labelLarge,
                 )
             }
-            items(passages) { p ->
-                SourceCard(p, cited = check?.cited?.contains(p.index) == true) { onOpen(p.docId, askedFor) }
+            items(s.passages) { p ->
+                SourceCard(p, cited = s.check?.cited?.contains(p.index) == true) {
+                    val path = p.zimPath
+                    // Highlight the key terms (not "the", "of" … from the raw question).
+                    val hl = Grounding.keyTerms(s.askedFor).joinToString(" ")
+                    if (path != null) onOpenZim(path, hl) else onOpen(p.docId, hl)
+                }
             }
             item {
                 AnswerControls(
                     aiState = aiState,
-                    generating = generating,
-                    onAnswer = {
-                        resetAnswer()
-                        generating = true
-                        job = scope.launch {
-                            val model = ai.obtain()
-                            if (model == null) {
-                                answerError = (ai.state.value as? AiState.Failed)?.reason
-                                    ?: "Local AI is not available."
-                                generating = false
-                                return@launch
-                            }
-                            running = model
-                            modelLabel = model.label
-                            try {
-                                model.generate(
-                                    Grounding.SYSTEM_INSTRUCTION,
-                                    Grounding.userPrompt(askedFor, passages),
-                                    MAX_ANSWER_TOKENS,
-                                ).collect { answer += it }
-                                stats = model.lastStats()
-                                check = Grounding.checkCitations(answer, passages.size)
-                                // One line per answer for benchmarking (no document text logged).
-                                android.util.Log.i(
-                                    "BastionAI",
-                                    "done ${model.label} | ${stats?.let(::statsLine)} | cited=${check?.cited} invalid=${check?.invalid} noAnswer=${check?.isNoAnswer}",
-                                )
-                            } catch (c: CancellationException) {
-                                answerError = "Stopped."
-                                throw c
-                            } catch (t: Throwable) {
-                                answerError = "Generation failed: ${t.message ?: t.javaClass.simpleName}"
-                            } finally {
-                                running = null
-                                generating = false
-                            }
-                        }
-                    },
-                    onStop = {
-                        running?.cancel()
-                        job?.cancel()
-                    },
+                    generating = s.generating,
+                    onAnswer = { s.answer() },
+                    onStop = { s.stop() },
                 )
             }
         }
 
-        if (answer.isNotEmpty() || answerError != null) {
-            item { AnswerCard(answer, answerError, modelLabel, stats, check, generating) }
+        if (s.answer.isNotEmpty() || s.answerError != null) {
+            item { AnswerCard(s.answer, s.answerError, s.modelLabel, s.stats, s.check, s.generating) }
         }
     }
+}
+
+private fun zimIntro(z: ZimState): String = when (z) {
+    is ZimState.Ready -> "Offline reference: “${z.info.title}” (${z.info.articleCount} articles) is searched too."
+    is ZimState.Opening -> "Opening the offline reference…"
+    is ZimState.Copying -> "Copying the offline reference into BASTION (see Home)…"
+    is ZimState.Failed -> "Offline reference unavailable: ${z.reason}"
+    is ZimState.NoZim -> "No offline reference (ZIM) added — add one on Home to search Wikipedia-style content."
 }
 
 private fun aiIntro(s: AiState): String = when (s) {
@@ -273,20 +221,9 @@ private fun AnswerCard(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             stats?.let {
-                Text(statsLine(it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(AskSession.statsLine(it), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
     }
 }
 
-private fun statsLine(s: GenerationStats): String {
-    fun f(d: Double) = String.format(Locale.US, "%.1f", d)
-    return buildList {
-        s.loadSeconds?.let { add("load ${f(it)} s") }
-        add("first text ${f(s.timeToFirstChunkSeconds)} s")
-        add("total ${f(s.totalSeconds)} s")
-        if (s.prefillTokens != null && s.prefillTokensPerSecond != null) add("prefill ${s.prefillTokens} tok @ ${f(s.prefillTokensPerSecond)}/s")
-        if (s.decodeTokens != null && s.decodeTokensPerSecond != null) add("decode ${s.decodeTokens} tok @ ${f(s.decodeTokensPerSecond)}/s")
-        s.processRssMb?.let { add("app RAM $it MB") }
-    }.joinToString(" · ")
-}

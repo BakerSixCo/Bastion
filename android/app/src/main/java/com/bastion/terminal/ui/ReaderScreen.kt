@@ -25,9 +25,12 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.bastion.terminal.data.DocMeta
 import com.bastion.terminal.data.LibraryStore
 import com.bastion.terminal.data.TextUtil
+import com.bastion.terminal.kiwix.ZimArticle
+import com.bastion.terminal.kiwix.ZimLibrary
 
 private const val MAX_DISPLAY_CHARS = 400_000
 
@@ -41,7 +44,35 @@ fun ReaderScreen(docId: Long, query: String, onClose: () -> Unit) {
         meta = store.docMeta(docId)
         text = store.docText(docId)
     }
+    ReaderLayout(meta?.title, meta?.provenance, text, query, onClose)
+}
 
+/** An article from the offline reference ZIM, read in place (never copied). */
+@Composable
+fun ZimReaderScreen(path: String, query: String, onClose: () -> Unit) {
+    val ctx = LocalContext.current
+    val zim = remember { ZimLibrary.get(ctx) }
+    var article by remember { mutableStateOf<ZimArticle?>(null) }
+    var missing by remember { mutableStateOf(false) }
+    LaunchedEffect(path) {
+        article = zim.article(path)
+        missing = article == null
+    }
+    val provenance = zim.currentInfo()?.let {
+        "Offline reference “${it.title}”" + (it.date?.let { d -> " ($d)" } ?: "") +
+            " · ${it.fileName} · article $path"
+    }
+    ReaderLayout(
+        title = article?.title,
+        provenance = provenance,
+        text = if (missing) "This article could not be read from the ZIM (file closed or moved)." else article?.text,
+        query = query,
+        onClose = onClose,
+    )
+}
+
+@Composable
+private fun ReaderLayout(title: String?, provenance: String?, text: String?, query: String, onClose: () -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
@@ -51,14 +82,14 @@ fun ReaderScreen(docId: Long, query: String, onClose: () -> Unit) {
             TextButton(onClick = onClose) { Text("← Back") }
             Spacer(Modifier.width(8.dp))
             Text(
-                meta?.title ?: "…",
+                title ?: "…",
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
             )
         }
-        meta?.let {
+        provenance?.let {
             Text(
-                it.provenance,
+                it,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -70,11 +101,17 @@ fun ReaderScreen(docId: Long, query: String, onClose: () -> Unit) {
             Text("Loading…")
         } else {
             val truncated = body.length > MAX_DISPLAY_CHARS
-            val display = if (truncated) body.take(MAX_DISPLAY_CHARS) else body
+            // Markdown-style "## Heading" lines render as bold titles, markers removed.
+            val (display, headingRanges) = remember(body) {
+                TextUtil.stripHeadings(if (truncated) body.take(MAX_DISPLAY_CHARS) else body)
+            }
             val ranges = remember(display, query) { TextUtil.highlightRanges(display, query) }
             val annotated = remember(display, ranges) {
                 buildAnnotatedString {
                     append(display)
+                    for (h in headingRanges) {
+                        addStyle(SpanStyle(fontWeight = FontWeight.Bold, fontSize = 18.sp), h.first, h.last + 1)
+                    }
                     for (r in ranges) {
                         addStyle(
                             SpanStyle(color = HighlightColor, fontWeight = FontWeight.Bold),
