@@ -21,7 +21,9 @@ if (-not $NoMesh) {
     }
     # Keep the WSL instance from idling out while the session is in use.
     if (-not (Get-CimInstance Win32_Process -Filter "Name='wsl.exe'" | Where-Object { $_.CommandLine -match 'bastion-keepalive' })) {
-        Start-Process wsl -ArgumentList '-d','Ubuntu','--','bash','-c','exec -a bastion-keepalive sleep infinity' -WindowStyle Hidden
+        # One argument string: as separate arguments the quoting was lost and the keep-alive exited at
+        # once, so WSL shut down when idle and took the simulated radios with it (found 2026-11-22).
+        Start-Process wsl -ArgumentList '-d Ubuntu -- bash -c "exec -a bastion-keepalive sleep infinity"' -WindowStyle Hidden
     }
     $ok = (Test-NetConnection -ComputerName 127.0.0.1 -Port 4403 -WarningAction SilentlyContinue).TcpTestSucceeded
     Write-Host ("  Sim A localhost:4403  " + $(if ($ok) { 'up' } else { 'NOT reachable - run tools/meshsim/install.sh in WSL' }))
