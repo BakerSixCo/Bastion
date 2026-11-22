@@ -44,10 +44,13 @@ Write-Host 'Installing BASTION...'
 A install -r $Apk | Select-Object -Last 1
 
 Write-Host 'Making BASTION the device manager...'
-$r = (A shell dpm set-device-owner "$pkg/.device.BastionAdmin") -join ' '
-Write-Host "  $r"
-if ($r -notmatch 'Success') {
-    if ($r -match 'already') { Write-Host '  (already set, continuing)' } else { throw 'Android refused the device-manager role. See the message above.' }
+$owners = (A shell dpm list-owners) -join ' '
+if ($owners -match [regex]::Escape("$pkg/")) {
+    Write-Host '  already the device manager.'
+} else {
+    $r = (A shell dpm set-device-owner "$pkg/.device.BastionAdmin") -join ' '
+    if ($r -notmatch 'Success') { Write-Host "  $r"; throw 'Android refused the device-manager role. See the message above.' }
+    Write-Host '  done.'
 }
 
 # Mesh inbox: notification access cannot be granted by a device manager, but it can over USB.

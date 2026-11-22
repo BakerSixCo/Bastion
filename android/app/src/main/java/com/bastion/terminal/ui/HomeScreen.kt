@@ -110,7 +110,16 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("Companion apps", style = MaterialTheme.typography.titleMedium)
                 COMPANIONS.forEach { comp ->
-                    val launch = remember(comp.pkg) { ctx.packageManager.getLaunchIntentForPackage(comp.pkg) }
+                    // The same app published outside the Play Store has a different package name.
+                    val altPkg = when (comp.pkg) {
+                        "org.kiwix.kiwixmobile" -> "org.kiwix.kiwixmobile.standalone"
+                        "app.organicmaps" -> "app.organicmaps.web"
+                        else -> null
+                    }
+                    val launch = remember(comp.pkg) {
+                        ctx.packageManager.getLaunchIntentForPackage(comp.pkg)
+                            ?: altPkg?.let { ctx.packageManager.getLaunchIntentForPackage(it) }
+                    }
                     Row(
                         Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,

@@ -31,12 +31,12 @@
       "title": "App: Meshtastic (use the build without Google components)",
       "kind": "app",
       "default": true,
-      "file": "meshtastic.apk",
-      "url": "",
-      "sha256": "",
-      "bytes": 0,
+      "file": "androidApp-fdroid-universal-release.apk",
+      "url": "https://github.com/meshtastic/Meshtastic-Android/releases/download/v2.8.4/androidApp-fdroid-universal-release.apk",
+      "sha256": "ed4f916a098512129405aa951376adb419df44225fc9c485ca7747a95b713864",
+      "bytes": 64833919,
       "licence": "GPL-3.0",
-      "note": "Not pinned yet. BASTION was tested with Meshtastic Android 2.8.4 (Play build). Official source: github.com/meshtastic/Meshtastic-Android releases."
+      "note": "Meshtastic Android 2.8.4, the build without Google components (package com.geeksville.mesh). Same version BASTION was tested with as the Play build."
     },
     {
       "id": "app-atak",
@@ -55,24 +55,24 @@
       "title": "App: Organic Maps (offline navigation)",
       "kind": "app",
       "default": false,
-      "file": "organicmaps.apk",
-      "url": "",
-      "sha256": "",
-      "bytes": 0,
+      "file": "OrganicMaps-26111139-web-release.apk",
+      "url": "https://github.com/organicmaps/organicmaps/releases/download/2026.11.11-39-android/OrganicMaps-26111139-web-release.apk",
+      "sha256": "9dacaec3125d65ab03d803a7285a6ce14211c3a50921defbf78a98f643cbe7d5",
+      "bytes": 65750108,
       "licence": "Apache-2.0",
-      "note": "Not pinned yet. Official source: organicmaps.app."
+      "note": "Organic Maps 2026.11.11-39 (package app.organicmaps.web). SHA-256 matches the checksum the publisher posts beside the release."
     },
     {
       "id": "app-kiwix",
       "title": "App: Kiwix reader (browse Wikipedia with pictures and links)",
       "kind": "app",
       "default": false,
-      "file": "kiwix.apk",
-      "url": "",
-      "sha256": "",
-      "bytes": 0,
+      "file": "app-universal-standalone.apk",
+      "url": "https://github.com/kiwix/kiwix-android/releases/download/4.0.1/app-universal-standalone.apk",
+      "sha256": "1492b07b7982608f3a702c88fa6b963e2a0293291ebd73c0ad6cee564fb0f200",
+      "bytes": 98735146,
       "licence": "GPL-3.0",
-      "note": "Not pinned yet. Optional: BASTION searches ZIM files itself."
+      "note": "Kiwix Android 4.0.1 standalone (package org.kiwix.kiwixmobile.standalone). Optional: BASTION searches ZIM files itself."
     }
   ]
 }

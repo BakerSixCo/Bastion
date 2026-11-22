@@ -91,8 +91,8 @@ fun rememberSetupStatus(): SetupStatus {
             inboxOn = MeshInbox.accessGranted(ctx),
             autoAnswerOn = MeshAutoResponder.isEnabled(ctx),
             atakInstalled = installed(ctx, PKG_ATAK),
-            kiwixInstalled = installed(ctx, PKG_KIWIX),
-            mapsInstalled = installed(ctx, PKG_MAPS),
+            kiwixInstalled = installed(ctx, PKG_KIWIX) || installed(ctx, "org.kiwix.kiwixmobile.standalone"),
+            mapsInstalled = installed(ctx, PKG_MAPS) || installed(ctx, "app.organicmaps.web"),
             linkInstalled = com.bastion.terminal.link.LinkClient.get(ctx).isSetUp(),
             deviceSecure = (ctx.getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager)?.isDeviceSecure == true,
         )
@@ -146,7 +146,9 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
         "No app store on this phone. Install $name another way, then come back.",
     )
     fun launch(pkg: String, name: String) {
+        val alt = mapOf(PKG_KIWIX to "org.kiwix.kiwixmobile.standalone", PKG_MAPS to "app.organicmaps.web")[pkg]
         val i = ctx.packageManager.getLaunchIntentForPackage(pkg)
+            ?: alt?.let { ctx.packageManager.getLaunchIntentForPackage(it) }
         if (i != null) open(i, "Could not open $name.") else note = "$name is not installed."
     }
 

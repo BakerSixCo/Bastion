@@ -1073,6 +1073,52 @@ Not built:
 - pinning the companion apps (needs choosing and testing exact versions;
   the no-Google builds of Meshtastic and Kiwix are the intended ones).
 
+### Kit pinned and installed by BASTION (2026-11-22)
+
+All six kit items are now pinned by SHA-256 in `tools/kit-manifest.json`,
+and `kit-build.ps1 -All` reports **6 verified, 0 problems**:
+
+| Item | Version | Source |
+|---|---|---|
+| Gemma 4 E2B model | — | Hugging Face (litert-community) |
+| WikiMed ZIM | 2026-10 | download.kiwix.org |
+| Meshtastic (no-Google "fdroid" build) | 2.8.4 | GitHub release |
+| Organic Maps | 2026.11.11-39 | GitHub release; hash matches the publisher's posted checksum |
+| Kiwix (standalone) | 4.0.1 | GitHub release |
+| ATAK-CIV (SDK developer build) | 5.5.1.8 | manual file from the owner's SDK zip (no direct download) |
+
+The owner downloaded the three GitHub APKs; file sizes matched the release
+listings exactly. The manifest keeps the original file names, so no
+renaming is needed.
+
+Found: the non-Play builds use different package names
+(`app.organicmaps.web`, `org.kiwix.kiwixmobile.standalone`). BASTION now
+recognises both variants (manifest queries, Home companion list, Setup
+guide, device-manager permission list).
+
+Evidence — clean emulator `Bastion_Clean`, BASTION as device owner, other
+apps hidden:
+- `provision.ps1 -Kit <apps>` pushed the four APKs (575 MB).
+- "Install kit apps" → all four installed **silently** (log: "install …:
+  ok" for each; all four packages present) ✅
+- "Apply setup" → Meshtastic has Bluetooth, location and notification
+  permissions **granted with no prompts** ✅
+- Launcher now shows exactly: BASTION, Meshtastic, ATAK, Organic Maps,
+  Kiwix, Settings, file picker ✅
+- Meshtastic, Organic Maps and Kiwix each opened with no crash ✅
+
+Not tested:
+- ATAK launched on the clean emulator (slow in software graphics; not run);
+- the model and ZIM pushed by the tool (apps only here, for space);
+- a download through the builder;
+- the no-Google Meshtastic build against BASTION's inbox and TAK link (the
+  main emulator still runs the Play build);
+- a real phone.
+
+iPhone test prepared: the owner added a Windows port-forward
+(192.168.128.33:4404 → simulated radio B) and a firewall rule limited to
+the local subnet. Radio B answers on that address. Result pending.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
