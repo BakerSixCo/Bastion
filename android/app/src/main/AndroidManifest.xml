@@ -9,6 +9,12 @@
          the build if network code appears anywhere else. Still no Bluetooth or location. -->
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <!-- GPS position of this phone (owner decision 2026-11-22): distance and bearing to team
+         members and navigation answers. Satellites only (LocationManager GPS provider); the
+         position is held in memory and never stored or sent by BASTION's location code. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <queries>
         <package android:name="org.kiwix.kiwixmobile" />
         <package android:name="com.geeksville.mesh" />

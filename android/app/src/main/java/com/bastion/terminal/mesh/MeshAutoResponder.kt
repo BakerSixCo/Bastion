@@ -70,6 +70,8 @@ object MeshAutoResponder {
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_PUBLIC, on).apply()
     }
     const val REPLY_PREFIX = "AI: "
+    /** Computed (not AI-generated) navigation replies. */
+    const val NAV_PREFIX = "NAV: "
     private const val SENDER_COOLDOWN_MS = 20_000L
     private const val MAX_TOKENS = 96
 
@@ -115,7 +117,7 @@ object MeshAutoResponder {
             else -> return null
         }.trim()
         // Our own replies (if ever echoed back) and empty triggers are not questions.
-        return q.takeIf { it.length >= 3 && !t.startsWith(REPLY_PREFIX) }
+        return q.takeIf { it.length >= 3 && !t.startsWith(REPLY_PREFIX) && !t.startsWith(NAV_PREFIX) }
     }
 
     /** Called by the inbox for each **new** message when auto-answer is on. */
@@ -164,6 +166,33 @@ object MeshAutoResponder {
     private suspend fun handle(app: Context, job: Job) {
         val who = job.msg.sender
         _status.value = "Answering ${who}: “${job.question.take(60)}”…"
+        // Navigation questions ("where is bravo") are answered with computed numbers, never
+        // by the model. Measured from the asker's own position when BASTION knows it.
+        com.bastion.terminal.nav.Nav.targetOf(job.question)?.let { target ->
+            val contacts = com.bastion.terminal.link.LinkClient.get(app).contacts.value
+            val asker = contacts.firstOrNull { it.hasPosition && it.callsign.contains(who, ignoreCase = true) }
+            val mine = com.bastion.terminal.nav.LocationSource.get(app).fix.value
+            val from = asker?.let { com.bastion.terminal.nav.Nav.Fix(it.lat, it.lon) } ?: mine
+            val fromName = if (asker != null) "you" else "BASTION"
+            // "where is base / bastion / hq" = this phone, when it has a GPS fix.
+            val self = mine?.let {
+                com.bastion.terminal.link.TakContact(
+                    "BASTION-SELF", "BASTION (base, hq)", "a-f-G-U-C", it.lat, it.lon, null, null, null,
+                    if (it.time > 0) it.time else System.currentTimeMillis(),
+                )
+            }
+            val body = com.bastion.terminal.nav.Nav.answer(
+                target, contacts.filterNot { it.uid == asker?.uid } + listOfNotNull(self), from, fromName,
+                System.currentTimeMillis(),
+            )
+            // Plain ASCII for radio screens: the degree sign showed as "##" on the simulated node.
+            val text = MeshBridge.fit(NAV_PREFIX + body.replace("°", " deg")).first
+            send(app, job.reply, text)
+            MeshInbox.get(app).add(System.currentTimeMillis(), "BASTION NAV → $who", job.msg.channel, text)
+            Log.i(TAG, "nav-answered sender=$who bytes=${MeshBridge.byteLength(text)}")
+            _status.value = "Sent $who a position for “$target”."
+            return
+        }
         // MESH scope: only packs the owner allowed to be answered over the radio.
         val passages = Retriever(app).retrieve(job.question, com.bastion.terminal.data.Scope.MESH)
         val answer: String? = if (passages.isEmpty()) null else {

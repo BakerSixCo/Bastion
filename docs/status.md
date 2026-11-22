@@ -852,6 +852,43 @@ Limits:
 - Answers are one short message.
 - No photos.
 
+### Location and team navigation (2026-11-22)
+
+Owner decisions 1–7 are recorded in the build sheet. First item built:
+
+- **Location** (`nav/LocationSource`): GPS only (Android LocationManager; no
+  Google location service). Runtime permission is requested from Mesh →
+  Units and TAK ("Use this phone's location"). The fix is held in memory
+  only.
+- **Navigation maths** (`nav/Nav`, unit-tested): distance, true bearing,
+  16-point compass, and recognising questions like "where is bravo" /
+  "nav to …" / "distance to …". **Never done by the AI model.**
+- **UI:** each unit shows "— 3.1 km at 003° N" from this phone.
+- **Over the radio:** `?where is <callsign>` (or "base" / "hq" for this
+  phone) is answered with a computed "NAV:" message, measured from the
+  asker's own position when BASTION knows it. Radio text is plain ASCII
+  ("deg").
+
+Evidence (emulator; fake GPS fix 39.7392, -104.9903; simulated radios):
+- The permission prompt appeared from the in-app button and was granted
+  "While using the app".
+- "You: 39.73920, -104.99030 (±5 m)" and "SIMB - BASTION Sim B — 3.1 km at
+  003° N" ✅ (checked by hand: 0.028° of latitude ≈ 3.1 km).
+- Sim B sent `?where is base` on the private channel and **5 s later**
+  received "NAV: BASTION (base, hq): 3.1 km at 183° S from you, at 39.73920,
+  -104.99030, seen just now." ✅
+- Sim B's position arrives blurred (39.76724 where 39.7500 was set): the
+  Meshtastic channel's position-precision setting. For accurate
+  navigation, set precise position on the private channel.
+
+Not tested: real GPS; movement updates; a second unit as the target; nav
+answers while BASTION is in the background (the permission is "while using
+the app" — the always-on service is the next item); the re-run of the
+on-device evals after this change.
+
+Limits: straight-line distance and bearing only (no terrain or route);
+positions can be minutes old; true bearing, not magnetic.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
