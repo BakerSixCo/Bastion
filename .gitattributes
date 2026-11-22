@@ -1,0 +1,8 @@
+# Binary assets: never convert line endings.
+*.pdf binary
+*.epub binary
+*.zim binary
+*.litertlm binary
+*.png binary
+*.jpg binary
+*.jar binary
