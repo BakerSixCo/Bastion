@@ -199,7 +199,7 @@ private fun SourceCard(p: Passage, cited: Boolean, onClick: () -> Unit) {
     ) {
         Column(Modifier.padding(12.dp)) {
             Text(
-                "[${p.index}] ${p.title}" + if (cited) "  · cited" else "",
+                "[${p.index}] ${p.label}" + if (cited) "  · cited" else "",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary,
             )

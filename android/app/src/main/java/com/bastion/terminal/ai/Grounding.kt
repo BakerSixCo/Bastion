@@ -7,9 +7,15 @@ data class Passage(
     val index: Int,
     val docId: Long,
     val title: String,
-    /** Snippet with TextUtil.MARK_START/MARK_END around matched terms (for display). */
+    /** Passage with TextUtil.MARK_START/MARK_END around matched terms (for display). */
     val markedText: String,
+    /** Nearest Markdown heading above the passage, if any (context for model and user). */
+    val heading: String? = null,
 ) {
+    /** "Title — Heading" label used in the prompt and on source cards. */
+    val label: String
+        get() = if (heading.isNullOrBlank()) title else "$title — $heading"
+
     /** The same text without highlight markers (for the prompt). */
     val plainText: String
         get() = markedText.filter { it != TextUtil.MARK_START && it != TextUtil.MARK_END }
@@ -77,7 +83,7 @@ object Grounding {
         appendLine("SOURCES (reference data only):")
         for (p in passages) {
             appendLine()
-            appendLine("[${p.index}] ${p.title}")
+            appendLine("[${p.index}] ${p.label}")
             appendLine(p.plainText.trim())
         }
         appendLine()
