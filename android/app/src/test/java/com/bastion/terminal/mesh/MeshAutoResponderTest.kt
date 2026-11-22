@@ -18,4 +18,13 @@ class MeshAutoResponderTest {
         assertNull(MeshAutoResponder.questionIn("?"))
         assertNull(MeshAutoResponder.questionIn("AI: cool the burn with running water"))
     }
+
+    @Test
+    fun isPublicChannel_defaultPresetNamesArePublic() {
+        org.junit.Assert.assertTrue(MeshAutoResponder.isPublicChannel("LongFast"))
+        org.junit.Assert.assertTrue(MeshAutoResponder.isPublicChannel(" mediumslow "))
+        org.junit.Assert.assertTrue(MeshAutoResponder.isPublicChannel(""))
+        org.junit.Assert.assertFalse(MeshAutoResponder.isPublicChannel("BASTION"))
+        org.junit.Assert.assertFalse(MeshAutoResponder.isPublicChannel("Team Kestrel"))
+    }
 }

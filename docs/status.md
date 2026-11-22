@@ -614,6 +614,50 @@ ATAK on the emulator: the owner accepted the license; ATAK then stops at its
 "Permission Rationale" screen, which was left for the owner. The Meshtastic
 plugin inside ATAK is still untested.
 
+### Privacy and encryption pass (owner requirement, 2026-11-22)
+
+- **Backups off.** `allowBackup=false` plus data-extraction rules exclude
+  everything from cloud backup and device transfer (overriding libkiwix's
+  `allowBackup=true`). Verified in the merged manifest of the built APK:
+  `allowBackup=false`, and no INTERNET / Bluetooth / location permission.
+- **Auto-answer is private-channel-only by default.** Meshtastic's default
+  channel uses a publicly known key. BASTION sees a channel's name, not its
+  key, so the default preset names (LongFast, MediumFast, …) are treated as
+  public. A separate switch, "Also answer on public channels", is off by
+  default. Inbox entries from such channels are tagged "(public)".
+- **Setup guide → Privacy:** how to create a private 256-bit channel and
+  share it by QR in person; a live screen-lock check (Android's storage
+  encryption depends on a PIN/password); turning off Meshtastic analytics;
+  hiding lock-screen notification text.
+- `tools/meshsim/private-channel.sh` adds a private channel "Bastion"
+  (random 256-bit key, kept only inside WSL) to both simulated nodes.
+  Found along the way: channel names are limited to 11 characters, and a
+  longer name is silently dropped.
+
+Evidence (simulated radios, hardware-accelerated emulator):
+- `?how do you treat frostbite` on **LongFast** → received, tagged
+  "(public)", **not answered** ("Auto-answer only replies on private
+  channels") ✅
+- The same question on the private channel **Bastion** → 91 s later Sim B
+  received "AI: Assess for hypothermia and raise core temperature. Give oral
+  or IV fluids. Use NSAIDs or opioids for pain control during rewarming." ✅
+  That answer is grounded but hospital-oriented, not field first aid: the
+  25-word limit picked that passage. Answer quality on short replies needs
+  its own eval.
+- The Meshtastic app dropped its link when Sim A rebooted for the channel
+  change and reconnected only when opened. Something to watch on real
+  radios.
+
+What is and isn't protected (honest scope):
+- Stored data: protected by Android's file-based encryption when a screen
+  lock is set, and by app-private storage. BASTION adds no app-level
+  encryption of its own.
+- ZIM files are public content in shared storage.
+- Mesh traffic: encrypted only on a private channel or in direct messages.
+  Transmissions can still be detected and direction-found.
+- Meshtastic, ATAK and the other companion apps have their own permissions
+  and network access.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

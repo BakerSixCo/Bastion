@@ -137,4 +137,7 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
 - Auto-answer (`mesh/MeshAutoResponder`) transmits without a tap via
   Meshtastic's notification reply action. Keep it off by default,
   trigger-gated (`?` / `bastion`), grounded, rate-limited and marked "AI:".
+- Privacy: backups are off (`allowBackup=false` + extraction rules); keep
+  auto-answer private-channel-only by default (`isPublicChannel`); never log
+  message text or keys. Simulator private channel: `tools/meshsim/private-channel.sh`.
 - Mesh text limit: 200 UTF-8 bytes (`MeshBridge.MAX_BYTES`).

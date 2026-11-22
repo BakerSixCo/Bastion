@@ -117,6 +117,22 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                             }
                             Switch(checked = auto, onCheckedChange = { auto = it; MeshAutoResponder.setEnabled(ctx, it) })
                         }
+                        if (auto) {
+                            var pub by remember { mutableStateOf(MeshAutoResponder.publicAllowed(ctx)) }
+                            Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                                Column(Modifier.weight(1f)) {
+                                    Text("Also answer on public channels", style = MaterialTheme.typography.titleSmall)
+                                    Text(
+                                        "Off: only private channels are answered. The default channel (LongFast …) " +
+                                            "uses a key everyone knows, so questions and answers there are readable " +
+                                            "by anyone in range.",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    )
+                                }
+                                Switch(checked = pub, onCheckedChange = { pub = it; MeshAutoResponder.setPublicAllowed(ctx, it) })
+                            }
+                        }
                         if (autoStatus.isNotBlank()) Text(autoStatus, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
                     }
                 }
@@ -136,7 +152,9 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                 Card(Modifier.fillMaxWidth()) {
                     Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                         Text(
-                            m.sender + (if (m.channel.isNotBlank()) " · ${m.channel}" else "") + " · " + TIME.format(Date(m.time)),
+                            m.sender + (if (m.channel.isNotBlank()) " · ${m.channel}" else "") +
+                                (if (MeshAutoResponder.isPublicChannel(m.channel)) " (public)" else "") +
+                                " · " + TIME.format(Date(m.time)),
                             style = MaterialTheme.typography.labelMedium,
                             color = MaterialTheme.colorScheme.primary,
                         )

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Deliberately NO android.permission.INTERNET: the offline guarantee is
          structural. v0.1 cannot transmit anything, to anyone. If a later
@@ -15,7 +16,10 @@
 
     <application
         android:label="@string/app_name"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        tools:replace="android:allowBackup"
+        android:dataExtractionRules="@xml/no_backup"
+        android:fullBackupContent="@xml/no_backup_legacy"
         android:theme="@style/Theme.Bastion">
         <!-- GPU backend (LiteRT-LM via OpenCL). Optional: absent on the emulator and some
              phones, where Auto falls back to CPU. Android 12+ needs these declared. -->

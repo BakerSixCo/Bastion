@@ -31,6 +31,9 @@ import kotlinx.coroutines.withTimeoutOrNull
  *
  * Guard rails — this transmits on the owner's behalf, so:
  * - **Off by default**; the owner switches it on in the Mesh tab.
+ * - **Private channels only** unless the owner also allows public ones: the default
+ *   Meshtastic channel uses a publicly known key, so anything sent there is readable
+ *   by anyone in range.
  * - Only messages that start with the trigger ("?" or "bastion") are
  *   answered; ordinary chat is never replied to.
  * - Answers come only from the library / offline reference (same grounding
@@ -43,6 +46,29 @@ object MeshAutoResponder {
     private const val TAG = "BastionMesh"
     private const val PREFS = "mesh"
     private const val KEY_ENABLED = "auto_answer"
+    private const val KEY_PUBLIC = "auto_answer_public"
+
+    /**
+     * Channel names Meshtastic gives its **default** channel (the modem preset name). The
+     * default channel is encrypted with a key everyone knows, so it is effectively public.
+     * BASTION cannot see a channel's key — only its name — so a default name is treated as
+     * public. (A private channel deliberately named like a preset would be misjudged as
+     * public: the safe direction.)
+     */
+    private val PUBLIC_CHANNEL_NAMES = setOf(
+        "longfast", "longslow", "longmoderate", "longturbo", "verylongslow", "mediumfast", "mediumslow",
+        "shortfast", "shortslow", "shortturbo", "primary", "default", "",
+    )
+
+    fun isPublicChannel(name: String): Boolean = name.trim().lowercase() in PUBLIC_CHANNEL_NAMES
+
+    /** Whether the owner allowed auto-answers on public (default-key) channels. Default: no. */
+    fun publicAllowed(context: Context): Boolean =
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(KEY_PUBLIC, false)
+
+    fun setPublicAllowed(context: Context, on: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_PUBLIC, on).apply()
+    }
     const val REPLY_PREFIX = "AI: "
     private const val SENDER_COOLDOWN_MS = 20_000L
     private const val MAX_TOKENS = 96
@@ -95,6 +121,11 @@ object MeshAutoResponder {
     /** Called by the inbox for each **new** message when auto-answer is on. */
     fun offer(context: Context, msg: MeshMessage, reply: Notification.Action?) {
         val question = questionIn(msg.text) ?: return
+        if (isPublicChannel(msg.channel) && !publicAllowed(context)) {
+            _status.value = "Not answered: ${msg.sender} asked on the public channel “${msg.channel}”. " +
+                "Auto-answer only replies on private channels."
+            return
+        }
         if (reply == null) {
             _status.value = "Question from ${msg.sender}, but Meshtastic offered no reply action — not answered."
             return

@@ -51,6 +51,7 @@ data class SetupStatus(
     val atakInstalled: Boolean,
     val kiwixInstalled: Boolean,
     val mapsInstalled: Boolean,
+    val deviceSecure: Boolean = false,
 ) {
     /** The steps BASTION needs to be useful: AI model, something to answer from, mesh. */
     val coreDone: Int
@@ -91,6 +92,7 @@ fun rememberSetupStatus(): SetupStatus {
             atakInstalled = installed(ctx, PKG_ATAK),
             kiwixInstalled = installed(ctx, PKG_KIWIX),
             mapsInstalled = installed(ctx, PKG_MAPS),
+            deviceSecure = (ctx.getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager)?.isDeviceSecure == true,
         )
     }
 }
@@ -205,18 +207,52 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             }),
         )
 
+        Text("Privacy", style = MaterialTheme.typography.titleMedium)
+        Step(
+            n = 5, title = "Private, encrypted mesh channel", done = false, optional = true,
+            state = "BASTION can't check this — it sees a channel's name, not its key.",
+            steps = listOf(
+                "Meshtastic's default channel (LongFast) is encrypted with a key everyone knows. Anyone in range can read it.",
+                "In Meshtastic → Settings → Channels, add a channel, give it your own name, and let the app generate a new key (256-bit).",
+                "Share it with your group by showing them the channel QR code in person. Anyone who gets that code can read the channel, so don't post it.",
+                "Use that channel for anything sensitive. Direct messages between two radios are encrypted separately.",
+                "Radio traffic can still be detected and located even when it can't be read.",
+            ),
+            actions = if (status.meshtasticInstalled) listOf("Open Meshtastic" to { launch(MeshBridge.MESHTASTIC_PACKAGE, "Meshtastic") }) else emptyList(),
+        )
+        Step(
+            n = 6, title = "Screen lock (encrypts this phone's storage)", done = status.deviceSecure,
+            state = if (status.deviceSecure) "A screen lock is set. Android encrypts BASTION's library and mesh inbox while the phone is locked."
+            else "No screen lock. Anyone who picks up this phone can read your library and mesh messages.",
+            steps = listOf(
+                "Set a PIN or password (not just a swipe). Android's storage encryption depends on it.",
+                "BASTION's data is excluded from cloud backups and phone-to-phone transfers, and BASTION has no Internet permission, so it stays on this phone.",
+                "Offline reference (.zim) files are public content kept in shared storage; they are not secret.",
+            ),
+            actions = listOf("Security settings" to { open(Intent(Settings.ACTION_SECURITY_SETTINGS), "Could not open security settings.") }),
+        )
+        Step(
+            n = 7, title = "Quiet the other apps", done = false, optional = true,
+            state = "BASTION can't check this.",
+            steps = listOf(
+                "Meshtastic collects usage analytics unless you turn it off: Meshtastic → Settings → turn off analytics.",
+                "To keep message text off the lock screen: Android Settings → Notifications → hide sensitive content. BASTION's inbox still works.",
+                "ATAK, Kiwix and Organic Maps are separate apps with their own permissions and network access.",
+            ),
+        )
+
         Text("Optional", style = MaterialTheme.typography.titleMedium)
         Step(
-            n = 5, title = "Auto-answer for others on the mesh", done = status.autoAnswerOn, optional = true,
+            n = 8, title = "Auto-answer for others on the mesh", done = status.autoAnswerOn, optional = true,
             state = if (status.autoAnswerOn) "On." else "Off.",
             steps = listOf(
-                "Needs steps 1, 2 and 4. Mesh tab → switch on “Auto-answer questions”.",
+                "Needs steps 1, 2, 4 and a private channel (step 5). Mesh tab → switch on “Auto-answer questions”.",
                 "Anyone on your channel can then send “?how do I treat a burn” and BASTION replies by itself with one short AI answer.",
-                "It transmits from your radio without you pressing Send, so use a private channel, not the public default one.",
+                "It only answers on private channels unless you also switch on “Also answer on public channels”.",
             ),
         )
         Step(
-            n = 6, title = "ATAK (tactical map)", done = status.atakInstalled, optional = true,
+            n = 9, title = "ATAK (tactical map)", done = status.atakInstalled, optional = true,
             state = if (status.atakInstalled) "ATAK-CIV is installed." else "ATAK-CIV is not installed.",
             steps = listOf(
                 "Install ATAK-CIV, open it once, and go through its license and permission screens yourself.",
@@ -227,7 +263,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             else listOf("Get ATAK-CIV" to { store(PKG_ATAK, "ATAK-CIV") }),
         )
         Step(
-            n = 7, title = "Offline maps", done = status.mapsInstalled, optional = true,
+            n = 10, title = "Offline maps", done = status.mapsInstalled, optional = true,
             state = if (status.mapsInstalled) "Organic Maps is installed." else "Organic Maps is not installed.",
             steps = listOf(
                 "Install Organic Maps and download the regions you'll travel through while you have internet.",
@@ -236,7 +272,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             else listOf("Get Organic Maps" to { store(PKG_MAPS, "Organic Maps") }),
         )
         Step(
-            n = 8, title = "Kiwix reader", done = status.kiwixInstalled, optional = true,
+            n = 11, title = "Kiwix reader", done = status.kiwixInstalled, optional = true,
             state = if (status.kiwixInstalled) "Kiwix is installed." else "Kiwix is not installed.",
             steps = listOf(
                 "Only needed if you want to browse Wikipedia with pictures and links. BASTION searches its own copy of the .zim files (step 2); files downloaded inside Kiwix are not shared with BASTION.",
