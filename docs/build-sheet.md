@@ -102,3 +102,28 @@ licenses (CC-BY-SA for Wikipedia and friends), map data (ODbL for OSM),
 ATAK-CIV distribution terms (TAK.gov), Meshtastic (GPL-3.0 app — launch/
 integrate via supported interfaces, don't embed), Kiwix (GPL-3.0 — same).
 A public download is not automatically commercial-redistribution rights.
+
+## Owner decisions, 2026-11-22 (asked one by one)
+
+| # | Decision | Answer |
+|---|---|---|
+| 1 | BASTION uses the phone's GPS location (adds the location permission) | **Yes** — needed for navigation, map, sharing own position |
+| 2 | Who may query the AI over the radio | **Approved radios only** (allow-list; unknown radios get no answer) |
+| 3 | Run in the background permanently (foreground service + permanent notification) | **Yes** — dedicated device |
+| 4 | Emergency wipe (duress PIN erasing library, packs, inbox, TAK certificates) | **Yes**, optional, off until set |
+| 5 | Voice between team members | **Keep the plan**: Meshtastic text/positions, GMRS voice, OpenMANET later |
+| 6 | AI model | **Middle ground**: support two models side by side (small/fast for radio answers, larger for on-phone Ask); pick the larger model after phone measurements |
+| 7 | Audience | **Team now, product later** — no shortcuts that would block selling it (licences, signing key, setup polish stay on the list) |
+
+Also discussed: **BASTION as the OS.** Recommendation accepted in principle:
+(1) BASTION as the home screen, (2) BASTION as Android *device owner* on the
+dedicated phone (installs/updates companion apps, grants their permissions,
+locks the phone to chosen apps, enforces airplane mode, can wipe) — both on
+stock Android, after the real-phone pass. A custom ROM only if selling
+multiple units and level 2 hits a wall (GrapheneOS is Pixel-only; patching
+burden). Emulator graphics: ATAK crashes in every hardware-GPU mode on this
+PC, so the emulator runs software graphics when ATAK is needed.
+
+Build queue from these: location + team navigation → approved-radio list →
+always-on service → two-model support → wipe PIN → offline map → missed
+check-in alarm → structured reports → pack sharing.
