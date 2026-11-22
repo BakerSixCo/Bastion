@@ -181,7 +181,8 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             steps = listOf(
                 "Offline Wikipedia: download a .zim file from library.kiwix.org. “WikiMed” (medicine, about 1 GB) is a good first one; “Wikipedia top 1M, no pictures” is about 16 GB.",
                 "On Home, under Offline reference, tap “Add ZIM” and pick the file — or copy big files over USB into $zimFolder and tap Rescan.",
-                "Your own manuals and notes: Library tab → “Import document” (.txt, .md, .pdf with real text, .epub).",
+                "Your own plans: Library tab → “New pack” → pick what it is (trip, hunting plan, bug-out plan, team plan, contact list) and fill in the form. Or import files (.txt, .md, .pdf with real text, .epub).",
+                "Each pack has two switches: “Use in Ask” and “Answer over the mesh”. Leave the second one off for anything teammates on the radio shouldn't be able to ask about.",
             ),
         )
         Step(

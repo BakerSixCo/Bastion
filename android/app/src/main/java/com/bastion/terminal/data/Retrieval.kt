@@ -83,7 +83,27 @@ object Chunker {
             pos = m.range.last + 1
         }
         if (pos < text.length) res.add(pos to text.length)
-        return res.filter { (s, e) -> text.substring(s, e).isNotBlank() }
+        // A heading line is its own paragraph even with no blank line around it — people
+        // write "## Rally points" directly above the text (found with the plan templates).
+        return res.flatMap { (s, e) -> isolateHeadings(text, s, e) }
+            .filter { (s, e) -> text.substring(s, e).isNotBlank() }
+    }
+
+    private val HEADING_LINE = Regex("(?m)^#{1,6}[ \\t]+\\S.*$")
+
+    private fun isolateHeadings(text: String, start: Int, end: Int): List<Pair<Int, Int>> {
+        val para = text.substring(start, end)
+        val heads = HEADING_LINE.findAll(para).toList()
+        if (heads.isEmpty()) return listOf(start to end)
+        val out = ArrayList<Pair<Int, Int>>()
+        var pos = 0
+        for (h in heads) {
+            if (h.range.first > pos) out.add(start + pos to start + h.range.first)
+            out.add(start + h.range.first to start + h.range.last + 1)
+            pos = h.range.last + 1
+        }
+        if (pos < para.length) out.add(start + pos to end)
+        return out
     }
 
     /** Splits [start, end) into pieces ≤ max at sentence ends, else at spaces. */

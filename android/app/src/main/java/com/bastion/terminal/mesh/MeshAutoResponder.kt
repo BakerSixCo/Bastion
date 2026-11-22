@@ -164,7 +164,8 @@ object MeshAutoResponder {
     private suspend fun handle(app: Context, job: Job) {
         val who = job.msg.sender
         _status.value = "Answering ${who}: “${job.question.take(60)}”…"
-        val passages = Retriever(app).retrieve(job.question)
+        // MESH scope: only packs the owner allowed to be answered over the radio.
+        val passages = Retriever(app).retrieve(job.question, com.bastion.terminal.data.Scope.MESH)
         val answer: String? = if (passages.isEmpty()) null else {
             // Don't run two generations at once: wait for an answer in the Ask tab to finish.
             val ask = AskSession.get(app)

@@ -33,13 +33,17 @@ class Retriever internal constructor(
     var lastChoice: String = ""
         private set
 
-    suspend fun retrieve(question: String): List<Passage> {
+    /**
+     * [scope]: who is asking. MESH (a question that arrived by radio) may only use packs the
+     * owner switched on for the mesh — plus the offline reference, which is public content.
+     */
+    suspend fun retrieve(question: String, scope: com.bastion.terminal.data.Scope = com.bastion.terminal.data.Scope.ASK): List<Passage> {
         val terms = Grounding.keyTerms(question)
         if (terms.isEmpty()) return emptyList()
         val aspect = Grounding.aspect(question)
         // With a known aspect, rank on the subject; the aspect is matched on headings.
         val rankTerms = if (aspect != null) Grounding.subjectTerms(question) else terms
-        val lib = store.retrieve(question)
+        val lib = store.retrieve(question, scope)
         val zimOpen = zim.currentInfos().isNotEmpty()
         // Exact-title articles first ("burn" → Burn), then the full-text top articles.
         // Only phrases that are most of the subject: "water" alone is not what a

@@ -22,7 +22,22 @@ data class DocMeta(
     val importedAt: Long,
     val sizeBytes: Long,
     val provenance: String,
-)
+    /** The pack this document belongs to; null = the general library. */
+    val packId: Long? = null,
+) {
+    /** Written on this phone with BASTION's editor (so it can be edited again). */
+    val isNote: Boolean get() = provenance.startsWith(LibraryStore.NOTE_PROVENANCE)
+}
+
+/**
+ * A named set of documents — a trip, a hunting plan, a bug-out plan, a contact list.
+ * [inAsk]: the Ask tab answers from it. [meshOk]: questions arriving over the mesh may be
+ * answered from it (off unless the owner switches it on).
+ */
+data class Pack(val id: Long, val name: String, val kind: String, val inAsk: Boolean, val meshOk: Boolean, val docCount: Int)
+
+/** Who is asking: decides which packs may be used. */
+enum class Scope { ASK, MESH, ALL }
 
 data class SearchHit(val docId: Long, val title: String, val snippet: String)
 
@@ -52,10 +67,11 @@ class LibraryStore private constructor(
                     "id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL," +
                     "filename TEXT NOT NULL, imported_at INTEGER NOT NULL," +
                     "size_bytes INTEGER NOT NULL, sha256 TEXT NOT NULL UNIQUE," +
-                    "provenance TEXT NOT NULL)"
+                    "provenance TEXT NOT NULL, pack_id INTEGER)"
             )
             db.execSQL("CREATE VIRTUAL TABLE doc_fts USING fts4(title, content)")
             createChunkTables(db)
+            createPackTable(db)
         }
 
         /** v1 → v2: add passage chunks and backfill them from the preserved originals. */
@@ -70,7 +86,20 @@ class LibraryStore private constructor(
                     if (txt.isFile) insertChunks(db, id, String(txt.readBytes(), Charsets.UTF_8))
                 }
             }
+            // v2 → v3: packs. Existing documents stay in the general library (pack_id NULL).
+            if (oldV < 3) {
+                db.execSQL("ALTER TABLE docs ADD COLUMN pack_id INTEGER")
+                createPackTable(db)
+            }
         }
+    }
+
+    private fun createPackTable(db: SQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS packs(id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL," +
+                "kind TEXT NOT NULL, in_ask INTEGER NOT NULL DEFAULT 1, mesh_ok INTEGER NOT NULL DEFAULT 0," +
+                "created_at INTEGER NOT NULL)"
+        )
     }
 
     /**
@@ -117,7 +146,7 @@ class LibraryStore private constructor(
 
     private fun libDir(): File = File(app.filesDir, libSubdir).apply { mkdirs() }
 
-    suspend fun importFromUri(uri: Uri): ImportResult = withContext(Dispatchers.IO) {
+    suspend fun importFromUri(uri: Uri, packId: Long? = null): ImportResult = withContext(Dispatchers.IO) {
         val resolver = app.contentResolver
         var name = "document.txt"
         var reportedSize: Long? = null
@@ -140,7 +169,7 @@ class LibraryStore private constructor(
         val bytes = runCatching { stream.use { TextUtil.readBounded(it, TextUtil.MAX_IMPORT_BYTES) } }
             .getOrElse { return@withContext unreadable }
             ?: return@withContext tooLarge(null)
-        indexBytes(bytes, name, "Imported via Android file picker")
+        indexBytes(bytes, name, "Imported via Android file picker", packId)
     }
 
     private fun tooLarge(size: Long?): ImportResult.Rejected {
@@ -163,10 +192,10 @@ class LibraryStore private constructor(
     }
 
     /** Imports raw bytes through the same checks/indexing as the picker (tests and evals). */
-    internal suspend fun importBytes(bytes: ByteArray, name: String, provenanceNote: String): ImportResult =
-        withContext(Dispatchers.IO) { indexBytes(bytes, name, provenanceNote) }
+    internal suspend fun importBytes(bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null): ImportResult =
+        withContext(Dispatchers.IO) { indexBytes(bytes, name, provenanceNote, packId) }
 
-    private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String): ImportResult {
+    private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null): ImportResult {
         if (bytes.isEmpty()) return ImportResult.Rejected("The file is empty.")
         if (bytes.size > TextUtil.MAX_IMPORT_BYTES) return tooLarge(bytes.size.toLong())
         val extracted = DocExtract.extract(bytes, name, ::pdfText)
@@ -198,6 +227,7 @@ class LibraryStore private constructor(
                 put("size_bytes", bytes.size.toLong())
                 put("sha256", sha)
                 put("provenance", provenance)
+                packId?.let { put("pack_id", it) }
             })
             db.insertOrThrow("doc_fts", null, ContentValues().apply {
                 put("docid", id)
@@ -213,17 +243,17 @@ class LibraryStore private constructor(
             db.endTransaction()
         }
         changeCounter.value = changeCounter.value + 1
-        return ImportResult.Ok(DocMeta(id, title, name, now, bytes.size.toLong(), provenance))
+        return ImportResult.Ok(DocMeta(id, title, name, now, bytes.size.toLong(), provenance, packId))
     }
 
     suspend fun listDocs(): List<DocMeta> = withContext(Dispatchers.IO) {
         helper.readableDatabase.rawQuery(
-            "SELECT id,title,filename,imported_at,size_bytes,provenance FROM docs ORDER BY imported_at DESC",
+            "SELECT id,title,filename,imported_at,size_bytes,provenance,pack_id FROM docs ORDER BY imported_at DESC",
             null
         ).use { c ->
             buildList {
                 while (c.moveToNext()) {
-                    add(DocMeta(c.getLong(0), c.getString(1), c.getString(2), c.getLong(3), c.getLong(4), c.getString(5)))
+                    add(DocMeta(c.getLong(0), c.getString(1), c.getString(2), c.getLong(3), c.getLong(4), c.getString(5), if (c.isNull(6)) null else c.getLong(6)))
                 }
             }
         }
@@ -236,7 +266,7 @@ class LibraryStore private constructor(
      * 3 per document, within a prompt-size budget. These exact passages are
      * shown to the user and given to the model.
      */
-    suspend fun retrieve(question: String): List<com.bastion.terminal.ai.Passage> =
+    suspend fun retrieve(question: String, scope: Scope = Scope.ASK): List<com.bastion.terminal.ai.Passage> =
         withContext(Dispatchers.IO) {
             val g = com.bastion.terminal.ai.Grounding
             val match = g.keywordQuery(question) ?: return@withContext emptyList()
@@ -260,7 +290,9 @@ class LibraryStore private constructor(
             } catch (_: Exception) {
                 emptyList()
             }
-            val chosen = Bm25.select(scored, { lengths[it] ?: 0 })
+            // Only documents the asker may use (packs switched on for Ask / for the mesh).
+            val allowed = allowedDocs(db, scope)
+            val chosen = Bm25.select(if (allowed == null) scored else scored.filter { it.docId in allowed }, { lengths[it] ?: 0 })
             // Phase 2: load text for the chosen passages only.
             chosen.mapIndexedNotNull { i, sc ->
                 db.rawQuery(
@@ -332,14 +364,111 @@ class LibraryStore private constructor(
 
     suspend fun docMeta(id: Long): DocMeta? = withContext(Dispatchers.IO) {
         helper.readableDatabase.rawQuery(
-            "SELECT id,title,filename,imported_at,size_bytes,provenance FROM docs WHERE id=?",
+            "SELECT id,title,filename,imported_at,size_bytes,provenance,pack_id FROM docs WHERE id=?",
             arrayOf(id.toString())
         ).use { c ->
             if (c.moveToFirst()) {
-                DocMeta(c.getLong(0), c.getString(1), c.getString(2), c.getLong(3), c.getLong(4), c.getString(5))
+                DocMeta(c.getLong(0), c.getString(1), c.getString(2), c.getLong(3), c.getLong(4), c.getString(5), if (c.isNull(6)) null else c.getLong(6))
             } else null
         }
     }
+
+    // ---- Packs -------------------------------------------------------------------------
+
+    private val prefs by lazy { app.getSharedPreferences("library_$dbName", Context.MODE_PRIVATE) }
+
+    /** The general library (documents in no pack): used by Ask unless switched off. */
+    fun generalInAsk(): Boolean = prefs.getBoolean("general_in_ask", true)
+
+    /** May mesh questions be answered from the general library? Off by default (privacy). */
+    fun generalMeshOk(): Boolean = prefs.getBoolean("general_mesh_ok", false)
+
+    fun setGeneral(inAsk: Boolean? = null, meshOk: Boolean? = null) {
+        prefs.edit().apply {
+            inAsk?.let { putBoolean("general_in_ask", it) }
+            meshOk?.let { putBoolean("general_mesh_ok", it) }
+        }.apply()
+        changeCounter.value = changeCounter.value + 1
+    }
+
+    /** Doc ids usable in [scope], or null for "all". */
+    private fun allowedDocs(db: SQLiteDatabase, scope: Scope): Set<Long>? {
+        if (scope == Scope.ALL) return null
+        val col = if (scope == Scope.MESH) "mesh_ok" else "in_ask"
+        val general = if (scope == Scope.MESH) generalMeshOk() else generalInAsk()
+        val sql = "SELECT d.id FROM docs d LEFT JOIN packs p ON p.id = d.pack_id WHERE " +
+            "(d.pack_id IS NOT NULL AND p.$col = 1)" + if (general) " OR d.pack_id IS NULL OR p.id IS NULL" else ""
+        return db.rawQuery(sql, null).use { c -> buildSet { while (c.moveToNext()) add(c.getLong(0)) } }
+    }
+
+    suspend fun listPacks(): List<Pack> = withContext(Dispatchers.IO) {
+        helper.readableDatabase.rawQuery(
+            "SELECT p.id, p.name, p.kind, p.in_ask, p.mesh_ok, (SELECT COUNT(*) FROM docs d WHERE d.pack_id = p.id) " +
+                "FROM packs p ORDER BY p.created_at DESC", null,
+        ).use { c ->
+            buildList { while (c.moveToNext()) add(Pack(c.getLong(0), c.getString(1), c.getString(2), c.getInt(3) == 1, c.getInt(4) == 1, c.getInt(5))) }
+        }
+    }
+
+    suspend fun createPack(name: String, kind: String): Long = withContext(Dispatchers.IO) {
+        helper.writableDatabase.insertOrThrow("packs", null, ContentValues().apply {
+            put("name", name.trim().take(60)); put("kind", kind); put("created_at", System.currentTimeMillis())
+        }).also { changeCounter.value = changeCounter.value + 1 }
+    }
+
+    suspend fun setPack(id: Long, inAsk: Boolean? = null, meshOk: Boolean? = null) = withContext(Dispatchers.IO) {
+        val v = ContentValues().apply {
+            inAsk?.let { put("in_ask", if (it) 1 else 0) }
+            meshOk?.let { put("mesh_ok", if (it) 1 else 0) }
+        }
+        if (v.size() > 0) helper.writableDatabase.update("packs", v, "id=?", arrayOf(id.toString()))
+        changeCounter.value = changeCounter.value + 1
+    }
+
+    /** Deletes the pack **and its documents** (a plan and its contents go together). */
+    suspend fun deletePack(id: Long) = withContext(Dispatchers.IO) {
+        val ids = helper.readableDatabase.rawQuery("SELECT id FROM docs WHERE pack_id=?", arrayOf(id.toString()))
+            .use { c -> buildList { while (c.moveToNext()) add(c.getLong(0)) } }
+        ids.forEach { deleteDocLocked(it) }
+        helper.writableDatabase.delete("packs", "id=?", arrayOf(id.toString()))
+        changeCounter.value = changeCounter.value + 1
+    }
+
+    suspend fun deleteDoc(id: Long) = withContext(Dispatchers.IO) {
+        deleteDocLocked(id)
+        changeCounter.value = changeCounter.value + 1
+    }
+
+    private fun deleteDocLocked(id: Long) {
+        val db = helper.writableDatabase
+        db.beginTransaction()
+        try {
+            db.execSQL("DELETE FROM chunk_fts WHERE docid IN (SELECT id FROM chunks WHERE doc_id=?)", arrayOf(id))
+            db.delete("chunks", "doc_id=?", arrayOf(id.toString()))
+            db.delete("doc_fts", "docid=?", arrayOf(id.toString()))
+            db.delete("docs", "id=?", arrayOf(id.toString()))
+            db.setTransactionSuccessful()
+        } finally {
+            db.endTransaction()
+        }
+        File(libDir(), "$id.orig").delete()
+        File(libDir(), "$id.txt").delete()
+    }
+
+    /**
+     * Saves text written on the phone as a Markdown document. [replaceDocId]: the note being
+     * edited — removed only after the new version is safely stored.
+     */
+    suspend fun saveNote(title: String, text: String, packId: Long?, replaceDocId: Long? = null): ImportResult =
+        withContext(Dispatchers.IO) {
+            val name = title.trim().replace(Regex("[\\/:*?\"<>|]"), " ").take(80).ifBlank { "Note" } + ".md"
+            val r = indexBytes(text.toByteArray(Charsets.UTF_8), name, NOTE_PROVENANCE, packId)
+            if (r is ImportResult.Ok && replaceDocId != null && replaceDocId != r.doc.id) {
+                deleteDocLocked(replaceDocId)
+                changeCounter.value = changeCounter.value + 1
+            }
+            r
+        }
 
     suspend fun stats(): Pair<Int, Long> = withContext(Dispatchers.IO) {
         helper.readableDatabase.rawQuery(
@@ -348,7 +477,8 @@ class LibraryStore private constructor(
     }
 
     companion object {
-        private const val DB_VERSION = 2
+        private const val DB_VERSION = 3
+        const val NOTE_PROVENANCE = "Written in BASTION"
         private const val MAX_CANDIDATES = 5000
 
         @Volatile

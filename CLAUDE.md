@@ -160,3 +160,16 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   127.0.0.1; no name lookups; no new network dependency. `NetworkGuardTest`
   enforces this — extend it, never weaken it. Android also adds
   `ACCESS_LOCAL_NETWORK` implicitly on Android 17.
+
+## Packs (Library)
+
+- A pack is a named set of documents with a kind (`data/PackTemplates`:
+  trip, hunting, bug-out, team, contacts, reference) and two switches:
+  `in_ask` (default on) and `mesh_ok` (default **off**). The general library
+  (no pack) has the same switches in prefs; mesh is off by default.
+- Retrieval is scoped: `LibraryStore.retrieve(q, Scope.ASK|MESH|ALL)`.
+  `MeshAutoResponder` must always use `Scope.MESH`. `PackScopeTest` guards
+  this — never loosen it.
+- Notes written on the phone go through the normal import path
+  (`saveNote`); provenance starts with `NOTE_PROVENANCE`, which is what makes
+  them editable.

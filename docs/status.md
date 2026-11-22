@@ -803,6 +803,55 @@ Not tested: importing BASTION's saved package through ATAK's own Import
 screen (ATAK was configured through its data-package folder here); chat or
 markers from ATAK reaching another node; real radios.
 
+### Packs — plans the AI can answer from (2026-11-22)
+
+Owner request: a briefing / "debrief package" the team can query, usable
+for a tactical plan, hunting plan, bug-out plan or contact list, and easy
+to understand.
+
+- **Packs** (Library tab): a named set of documents. "New pack" asks for a
+  name and a kind: Trip or outing, Hunting plan, Bug-out plan, Team plan,
+  Contact list, Reference. Each kind opens a **fill-in template** with
+  plain headings (Rally points, Check-ins, Emergency …).
+- **Write on the phone:** a simple editor ("Write plan" / "Write note" /
+  "Edit"). Notes are saved as Markdown through the same import path
+  (preserved, hashed, indexed). Files can also be imported into a pack.
+- **Two switches per pack:** "Use in Ask" (default on) and "Answer over the
+  mesh" (default **off**). The general library has the same switches and is
+  **off for the mesh by default**. This changes earlier behaviour:
+  auto-answer no longer draws on the whole library, only on packs switched
+  on for the mesh plus the public offline reference.
+- Deleting a pack deletes its documents (with a confirmation).
+- DB v3: `packs` table and `docs.pack_id`; existing documents stay in the
+  general library. `LibraryStore.retrieve(question, scope)` with
+  `Scope.ASK / MESH / ALL`.
+- Chunker fix found by the templates: a `## Heading` line is now its own
+  paragraph even with no blank line after it. Before, headings written
+  directly above text were not recognised.
+
+Evidence (emulator; simulated radios for the mesh part):
+- `PackScopeTest` (on device) ✅: the mesh sees nothing until a pack is
+  allowed, then only that pack; the Ask switch hides a pack; editing
+  replaces a note; deleting a pack removes its documents.
+- `RetrievalEvalTest` 13/13 and `ZimRetrievalEvalTest` 14/14 after the
+  chunker change ✅. The v2 → v3 upgrade ran on the emulator's existing
+  library with no crash and 6 documents intact ✅.
+- UI: created "Elk camp 2027" (Hunting plan), added "Bear Creek meadow,
+  gate code 4417" in the editor, saved, switched "Answer over the mesh" on
+  for that pack only.
+- Sim B sent `?what is the gate code at camp` on the private channel. 33 s
+  later it received "AI: The gate code at camp is 4417 for the Bear Creek
+  meadow." ✅
+
+Not tested: importing a file into a pack through the picker; the other
+templates end to end; the Edit button through the UI (covered by the device
+test only); moving a document between packs (not built).
+
+Limits:
+- Anyone holding the private channel key can query a mesh-enabled pack.
+- Answers are one short message.
+- No photos.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
