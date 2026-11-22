@@ -132,3 +132,17 @@ mode, can wipe. Stock Android; needs a one-time factory reset per phone.
 Build queue: ~~location + team navigation~~ (done) → approved-radio list →
 always-on service → two-model support → wipe PIN → device-manager mode →
 offline map → missed check-in alarm → structured reports → pack sharing.
+
+**Provisioning decision (owner asked for the single best option, 2026-11-22):**
+an **offline kit built by a PC setup tool**. The tool (on a PC with
+internet) downloads BASTION + companion apps at pinned, tested-together
+versions, the AI model and reference/map data, verifies each against a
+known SHA-256, then over USB enrols the factory-reset phone with BASTION as
+device owner, copies the kit and installs everything silently. The phone
+itself never connects to the internet; updates = run the tool again. Not
+chosen: a hand-assembled kit (error-prone) and a phone-side online setup
+mode (breaks "never connects to the internet", fails once the internet is
+gone). Before selling: licence review for redistributing companion apps
+(Meshtastic/Kiwix GPL-3.0; ATAK-CIV terms). Inside-app settings that device
+owner cannot press (e.g. Meshtastic's TAK server switch) stay guided steps
+unless those apps add managed configuration.
