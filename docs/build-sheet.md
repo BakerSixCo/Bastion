@@ -58,10 +58,13 @@ before configuring), GMRS handhelds, RTL-SDR, rugged phone case.
 
 **R&D buy scope (owner decision, 2026-11-22):** only the phone and the
 mesh/ATAK hardware for now — nothing else until R&D says otherwise.
-- **Phone:** 16 GB RAM, Snapdragon, ≥512 GB, big screen. Leading picks:
-  OnePlus 15 16/512 (7,300 mAh battery) or Galaxy S26 Ultra **16 GB** (1 TB
-  model only). Pixel 10 Pro XL deprioritized (Tensor is weaker for on-device
-  LLMs). Verify the exact SKU's RAM before buying.
+- **Phone:** cheapest phone that meets the floor — **not a flagship**
+  (owner decision, 2026-11-22). Floor: ≥8 GB RAM (12 preferred), Android 10+
+  64-bit, a mid-range chip (Dimensity 7300 / Snapdragon 6 Gen 3 class or
+  better), microSD slot preferred, 6.5"+ screen. Candidates: CMF Phone 2 Pro
+  (8/12 GB, microSD), Moto G Stylus 2025 (8 GB, microSD, IP68), or a used
+  12 GB flagship from 2022–23. The floor is a judgment from emulator numbers;
+  the phone pass decides whether it holds.
 - **Meshtastic:** two LoRa nodes (Wio Tracker L1 Pro candidate; US 915 MHz)
   so messaging can be tested end to end; the owner's iPhone can drive the
   second node via the Meshtastic iOS app.

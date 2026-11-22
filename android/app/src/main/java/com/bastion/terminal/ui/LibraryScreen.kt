@@ -83,7 +83,7 @@ fun LibraryScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit)
                 onClick = {
                     message = null
                     try {
-                        picker.launch(arrayOf("text/*", "application/octet-stream"))
+                        picker.launch(arrayOf("text/*", "application/pdf", "application/epub+zip", "application/octet-stream"))
                     } catch (_: ActivityNotFoundException) {
                         message = "This device has no file picker app, so documents cannot be imported here."
                     }
@@ -121,8 +121,8 @@ fun LibraryScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit)
                 if (docs.isEmpty()) {
                     item {
                         Text(
-                            "Library is empty. Import .txt or .md files; PDF, EPUB, and ZIM are " +
-                                "not supported yet and will be rejected with a clear message.",
+                            "Library is empty. Import .txt, .md, .pdf (with a text layer) or .epub " +
+                                "files. Wikipedia-style ZIM files go on Home as the offline reference.",
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }

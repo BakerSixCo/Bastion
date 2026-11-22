@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.litertlm.android)
     implementation(libs.libkiwix)
+    implementation(libs.pdfbox.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)

@@ -10,8 +10,10 @@ litertlm = "0.19.1"
 androidxTestRunner = "1.6.2"
 androidxTestExtJunit = "1.2.1"
 libkiwix = "2.7.0"
+pdfbox = "2.0.27.0"
 
 [libraries]
+pdfbox-android = { group = "com.tom-roush", name = "pdfbox-android", version.ref = "pdfbox" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

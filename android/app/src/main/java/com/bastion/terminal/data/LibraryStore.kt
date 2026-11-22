@@ -66,8 +66,8 @@ class LibraryStore private constructor(
                     buildList { while (c.moveToNext()) add(c.getLong(0)) }
                 }
                 for (id in ids) {
-                    val orig = File(libDir(), "$id.orig")
-                    if (orig.isFile) insertChunks(db, id, String(orig.readBytes(), Charsets.UTF_8))
+                    val txt = File(libDir(), "$id.txt").takeIf { it.isFile } ?: File(libDir(), "$id.orig")
+                    if (txt.isFile) insertChunks(db, id, String(txt.readBytes(), Charsets.UTF_8))
                 }
             }
         }
@@ -100,6 +100,18 @@ class LibraryStore private constructor(
                 put("docid", chunkId)
                 put("content", body)
             })
+        }
+    }
+
+    /** PDF text layer (PdfBox-Android). Pages and detected paragraphs become blank-line breaks for the chunker. */
+    private fun pdfText(bytes: ByteArray): String {
+        com.tom_roush.pdfbox.android.PDFBoxResourceLoader.init(app)
+        com.tom_roush.pdfbox.pdmodel.PDDocument.load(bytes).use { doc ->
+            val s = com.tom_roush.pdfbox.text.PDFTextStripper()
+            s.sortByPosition = true
+            s.paragraphEnd = "\n\n"
+            s.pageEnd = "\n\n"
+            return s.getText(doc)
         }
     }
 
@@ -157,13 +169,10 @@ class LibraryStore private constructor(
     private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String): ImportResult {
         if (bytes.isEmpty()) return ImportResult.Rejected("The file is empty.")
         if (bytes.size > TextUtil.MAX_IMPORT_BYTES) return tooLarge(bytes.size.toLong())
-        if (TextUtil.isLikelyBinary(bytes)) {
-            return ImportResult.Rejected(
-                "This looks like binary data. v0.1 indexes plain text and Markdown only; " +
-                    "PDF, EPUB, and ZIM support are planned, separate capabilities."
-            )
-        }
-        val text = String(bytes, Charsets.UTF_8)
+        val extracted = DocExtract.extract(bytes, name, ::pdfText)
+        if (extracted is DocExtract.Result.Rejected) return ImportResult.Rejected(extracted.reason)
+        extracted as DocExtract.Result.Ok
+        val text = extracted.text
         val sha = MessageDigest.getInstance("SHA-256").digest(bytes)
             .joinToString("") { "%02x".format(it) }
         val db = helper.writableDatabase
@@ -172,8 +181,13 @@ class LibraryStore private constructor(
         }
         val now = System.currentTimeMillis()
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date(now))
-        val title = name.removeSuffix(".md").removeSuffix(".txt")
-        val provenance = "$provenanceNote · $date · SHA-256 ${sha.take(12)}…"
+        val title = name.replace(Regex("(?i)\\.(md|txt|markdown|pdf|epub)$"), "")
+        val kindNote = when (extracted.kind) {
+            DocExtract.Kind.PDF -> " · PDF text layer extracted"
+            DocExtract.Kind.EPUB -> " · EPUB text extracted"
+            DocExtract.Kind.TEXT -> ""
+        }
+        val provenance = "$provenanceNote$kindNote · $date · SHA-256 ${sha.take(12)}…"
         val id: Long
         db.beginTransaction()
         try {
@@ -192,6 +206,8 @@ class LibraryStore private constructor(
             })
             insertChunks(db, id, text)
             File(libDir(), "$id.orig").writeBytes(bytes)
+            // Extracted text for the reader (PDF/EPUB originals aren't readable as text).
+            if (extracted.kind != DocExtract.Kind.TEXT) File(libDir(), "$id.txt").writeText(text)
             db.setTransactionSuccessful()
         } finally {
             db.endTransaction()
@@ -303,6 +319,8 @@ class LibraryStore private constructor(
      * 2026-11-21 with a 20 MB import). The DB path is only a fallback.
      */
     suspend fun docText(id: Long): String? = withContext(Dispatchers.IO) {
+        val txt = File(libDir(), "$id.txt")
+        if (txt.isFile) return@withContext txt.readText()
         val orig = File(libDir(), "$id.orig")
         if (orig.isFile) return@withContext String(orig.readBytes(), Charsets.UTF_8)
         runCatching {
