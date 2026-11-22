@@ -39,7 +39,8 @@ Milestone 4; nothing here re-opens the discarded 12V bus or home automation.
 | Offline guarantee | No INTERNET permission in the manifest | Implemented |
 | Local inference | **Provisional: Google LiteRT-LM 0.19.1** (official Kotlin artifact; MediaPipe LLM Inference is maintenance-only; MLC-LLM dropped). Behind the `LocalModel` interface; **llama.cpp** (GGUF via JNI) is the fallback adapter if model choice requires it | Spike works on the emulator (2026-11-21, see status.md); final after physical-phone measurements |
 | Model | **Provisional: Gemma 4 E2B** (`litert-community/gemma-4-E2B-it-litert-lm`, file `gemma-4-E2B-it.litertlm`, 2,588,147,712 bytes, **Apache-2.0**, not gated). User-imported, never bundled. Smaller fallback for 4 GB phones: Gemma 3 1B (Gemma license — review before use) | Emulator: ~1.5 GB app RAM; phone numbers pending |
-| Embeddings/reranking | Deferred — FTS keyword search first; add only when measured retrieval quality demands it | Deliberate |
+| Retrieval for AI answers | Paragraph-aligned passages (DB v2) ranked by BM25 × coordination + query-term coverage, from FTS4 `matchinfo` | Implemented 2026-11-21; 13/13 on `RetrievalEvalTest` |
+| Embeddings/reranking | Deferred — lexical retrieval first; add only when measured retrieval quality demands it (known gap: no synonyms) | Deliberate |
 | Companion apps | Kiwix Android, ATAK-CIV, Meshtastic, Organic Maps — detected & launched, no data integration claimed yet | v0.1 detects/launches |
 
 ## Hardware (owned vs. undecided)

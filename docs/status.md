@@ -180,9 +180,10 @@ verified). See build-sheet.md. CPU backend only so far.
   keyword query; numbered, delimited SOURCES prompt (document text marked as
   data, not instructions); citation check (`[n]` and `[1, 2]` lists,
   nonexistent sources, paraphrased refusals).
-- `LibraryStore.retrieve()`: top 4 passages (best 64-token FTS4 fragment per
-  document, ranked by distinct key-term hits). Ask shows these exact passages
-  as numbered sources *before* any generation; the model sees only them.
+- `LibraryStore.retrieve()`: originally the best 64-token FTS4 fragment per
+  document; replaced the same day by chunked BM25 retrieval (see "Retrieval
+  v2" below). Ask shows the exact passages as numbered sources *before* any
+  generation; the model sees only them.
 - Ask: "Answer from these sources" streams the answer, marks cited sources,
   warns on uncited / invalid citations, labels the answer as generated
   on-device and not fact-checked, shows measured stats; Stop cancels.
@@ -232,10 +233,66 @@ by Compose → explicit state); citation checker missed `[1, 2]` lists and
 paraphrased refusals.
 
 **Known limitations (spike):** CPU backend only (GPU/NPU untested — needs the
-phone); one fragment per document, ≤64 tokens, so answers spread across a
-long document can be missed; generation stops if you leave the Ask tab;
-answers aren't saved; only `.litertlm` models (llama.cpp adapter not built);
-no ZIM/Kiwix retrieval.
+phone); generation stops if you leave the Ask tab; answers aren't saved;
+only `.litertlm` models (llama.cpp adapter not built); no ZIM/Kiwix
+retrieval. (The one-64-token-fragment-per-document limit is fixed by
+Retrieval v2.)
+
+### Retrieval v2 — chunked BM25 (2026-11-21)
+
+**Change:**
+- Documents are split at import into paragraph-aligned passages (~700
+  chars target, 1,000 max; long paragraphs split at sentence ends), each
+  tagged with its nearest Markdown heading (`data/Chunker`). New tables
+  `chunks` + `chunk_fts` (DB v2); existing libraries are migrated on first
+  launch by re-chunking the preserved originals.
+- Ranking: BM25 (k1 1.2, b 0.75) from FTS4 `matchinfo('pcnalx')` × a
+  coordination factor (share of distinct query terms matched). Selection:
+  ≤5 passages, ≤3 per document, ≤3,000 chars, drop below 0.35 × best score,
+  then **query-term coverage** — any discriminative term (in ≤20% of
+  passages) not covered gets its best passage swapped in for the weakest pick.
+- Prompt and source cards show "Title — Heading".
+
+**Evaluation — `RetrievalEvalTest` (instrumented, isolated DB, on the
+hardware-accelerated emulator):** 13 questions over the sample, a 37.8 KB
+synthetic field manual with facts buried in sections 9–38, an injection doc,
+and 6 distractor docs that repeat "recommended water barrel … schedule".
+A question passes if the answer text is inside the passages given to the
+model.
+
+| | Old (one ≤64-token fragment/doc, term-count rank) | v2 |
+|---|---|---|
+| Hits | **11/13** | **13/13** |
+| Antenna procedure (6 steps) | ✗ only step 1 (fragment cut) | ✓ one 513-char passage, all steps |
+| "recommended bleach dose for a water barrel" | ✗ 4 distractor docs, manual absent | ✓ manual passage included (coverage) |
+| Avg passage chars sent | 1,022 (often 3–4 distractor docs) | 972 (mostly the relevant passages) |
+
+Intermediate steps (honest record): chunks + plain BM25 scored 11/13 —
+fixed the antenna case but not the distractor flood, and lost "rally point
+and radio schedule" (filler repeating "radios" outranked the schedule
+passage). Query-term coverage fixed the distractor case (12/13); the
+coordination factor fixed the radio case (13/13).
+
+**End to end on the emulator app:** installed the previous build (DB v1),
+imported sample + manual + injection doc + 1 distractor + the model, then
+upgraded in place → library intact ("4 document(s), 42.7 KB"), migration
+ran without error. Antenna question → source "[1] bastion-field-manual —
+Section 21 — Shelter"; model listed all six steps in order, each cited [1].
+Bleach question → sources [1][2] distractor passages + [3] manual Section 33;
+model: "…add 8 drops of plain unscented bleach per gallon of clear water,
+stir, and wait 30 minutes before drinking [3]." Speeds in that session were
+low (cold load 38.5 s after reinstall wiped the runtime cache; decode
+1.6–1.7 tok/s with the emulator busy) — not comparable to the spike table.
+
+**Test-process note:** `connectedDebugAndroidTest` uninstalls the app (and
+its data, including an imported model) when it finishes. Run evals with
+`-Pandroid.injected.androidTest.leaveApksInstalledAfterRun=true` (verified:
+app and model stay installed).
+
+**Still lexical:** no synonyms ("altitude" won't match "elevation"); the
+FTS index stores passage text twice (whole-doc index + passage index);
+candidate scoring is capped at 5,000 passages per query. Embeddings remain
+deferred until a measured failure needs them.
 
 Nothing above is simulated; pending means pending.
 
@@ -252,10 +309,10 @@ Nothing above is simulated; pending means pending.
    Kiwix, Meshtastic, Organic Maps (Play) and ATAK-CIV 5.5.1.8 (public SDK
    developer build, sideloaded).
 5. ~~M2 spike: runtime + model + grounded Ask on the emulator~~ — **done
-   2026-11-21** (LiteRT-LM + Gemma 4 E2B, see above). Remaining M2 work:
-   better retrieval (multiple fragments per document), keep generation alive
-   across tab switches, GPU backend, a small fixed QA question set for
-   regression, then phone numbers.
+   2026-11-21** (LiteRT-LM + Gemma 4 E2B, see above). ~~Better retrieval +
+   a fixed QA set for regression~~ — **done 2026-11-21** (Retrieval v2,
+   13/13 on `RetrievalEvalTest`). Remaining M2 work: keep generation alive
+   across tab switches, GPU backend, then phone numbers.
 6. **Last:** physical-phone pass (owner decision 2026-11-21) — install the
    APK, re-run the M1 checklist, ATAK-CIV, M2 performance numbers.
 
