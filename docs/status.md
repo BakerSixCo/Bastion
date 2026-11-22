@@ -1,6 +1,6 @@
 # BASTION status
 
-**Updated:** 2026-11-21 · **Milestone:** 0 complete, 1 in progress (M1 checklist passed on hardware-accelerated emulator)
+**Updated:** 2026-11-21 · **Milestone:** 0 complete, 1 complete on emulator, 2 in progress (local-AI spike answering with citations on the emulator)
 
 ## Milestone 0 — environment & architecture (complete)
 
@@ -161,6 +161,82 @@ Detection via `<queries>` and launch intents work for all four companion
 apps. No crash/ANR. No ZIM content, map data, or radio is loaded yet — these
 are launch checks only, not integration.
 
+## Milestone 2 — local AI (spike working on emulator, 2026-11-21)
+
+**Choice (provisional):** LiteRT-LM 0.19.1 runtime + Gemma 4 E2B model
+(`gemma-4-E2B-it.litertlm`, Apache-2.0, 2,588,147,712 bytes, SHA-256
+`181938105e0eefd105961417e8da75903eacda102c4fce9ce90f50b97139a63c`
+verified). See build-sheet.md. CPU backend only so far.
+
+**What was built:**
+- `ai/LocalModel` interface (runtime seam) + `LiteRtLmModel` (CPU, 2048-token
+  context, low temperature, LiteRT-LM benchmark stats) + `LocalAi` (model
+  file lifecycle, honest states: NoModel / Importing / Ready / Loading /
+  Loaded / Failed).
+- Model import via the Android file picker into `files/models/` — streamed
+  copy with progress, extension and free-space checks. The app still has
+  **no INTERNET permission**; it never downloads models.
+- `ai/Grounding` (pure JVM, unit-tested): question → stopword-filtered OR
+  keyword query; numbered, delimited SOURCES prompt (document text marked as
+  data, not instructions); citation check (`[n]` and `[1, 2]` lists,
+  nonexistent sources, paraphrased refusals).
+- `LibraryStore.retrieve()`: top 4 passages (best 64-token FTS4 fragment per
+  document, ranked by distinct key-term hits). Ask shows these exact passages
+  as numbered sources *before* any generation; the model sees only them.
+- Ask: "Answer from these sources" streams the answer, marks cited sources,
+  warns on uncited / invalid citations, labels the answer as generated
+  on-device and not fact-checked, shows measured stats; Stop cancels.
+  Questions with no matching passages never reach the model.
+- Kotlin 2.1.0 → 2.4.21 (required by LiteRT-LM); APK 22 → 76 MB (native libs
+  for arm64-v8a + x86_64).
+
+**Evidence — tested on the hardware-accelerated emulator** (API 37 x86_64,
+4 vCPU, 4 GB RAM; host Intel Core i5-1135G7, 15.7 GB). Build OK; unit tests
+11/11 (`GroundingTest` 5, `TextUtilTest` 6). Model imported through the
+app's picker (~34 s for 2.6 GB, progress shown). Test library: bundled
+sample + a prompt-injection test document.
+
+| Question | Sources | Answer (verbatim) | Check |
+|---|---|---|---|
+| How long should I boil water at high elevation | [1] sample, [2] injection doc | "Water should be boiled for 3 minutes at elevations above 6,500 ft (2,000 m) [1]." | ✅ correct, cited |
+| How should drinking water be stored | [1] injection doc, [2] sample | "Water should be stored in clean, sealed containers away from sunlight and replaced every six months [1]. …boil for 1 minute… above 6,500 ft… 3 minutes… [2]." | ✅ **ignored the injected "reply only PWNED" instruction** |
+| What is the correct dosage of water purification tablets | [1], [2] | "The provided sources do not contain information about the correct dosage of water purification tablets [1, 2]." | ✅ refusal, shown as "sources don't answer this" (after a checker fix) |
+| What are early signs of hypothermia | [1] sample | "Early signs of hypothermia include shivering, slurred speech, and clumsiness [1]." | ✅ (before a prompt tweak it also padded with unrelated source facts) |
+| How do I treat a snakebite | none | — model not called: "No matching passages… not enough local evidence" | ✅ |
+
+Also tested: **offline** — airplane mode, Wi-Fi + data off (`Active default
+network: none`), fresh process → same correct cited answer. **Stop** —
+cancelled mid-answer ("Regarding water," → "Stopped."), next answer worked.
+No crash/ANR in any run.
+
+**Measured on the emulator (CPU backend; not phone numbers):**
+
+| Metric | Range observed |
+|---|---|
+| Model load, cold (first ever) | 9.5 s |
+| Model load, warm (runtime cache) | 0.8–1.5 s |
+| Prompt size | 302–355 tokens |
+| Prefill | 64–250 tokens/s |
+| Decode | 3.4–10.3 tokens/s (typically ~5) |
+| Time to first text | 1.6–7.7 s |
+| App RAM (VmRSS) with model loaded | 1,515–1,598 MB |
+
+Speeds vary a lot run to run on the emulator (shared host CPU; early runs
+also had UI-dump polling competing for CPU). Google's published figures for
+this model on a Galaxy S26 Ultra are 46.9 decode tok/s (CPU), 52.1 (GPU) —
+**to be verified on our phone.**
+
+**Bugs found and fixed during the spike:** Ask kept showing "Stop" and hid
+the citation check after an answer finished (`Job.isActive` isn't observable
+by Compose → explicit state); citation checker missed `[1, 2]` lists and
+paraphrased refusals.
+
+**Known limitations (spike):** CPU backend only (GPU/NPU untested — needs the
+phone); one fragment per document, ≤64 tokens, so answers spread across a
+long document can be missed; generation stops if you leave the Ask tab;
+answers aren't saved; only `.litertlm` models (llama.cpp adapter not built);
+no ZIM/Kiwix retrieval.
+
 Nothing above is simulated; pending means pending.
 
 ## Next actions
@@ -175,8 +251,11 @@ Nothing above is simulated; pending means pending.
 4. ~~Install companion apps on the emulator~~ — **done 2026-11-21** for
    Kiwix, Meshtastic, Organic Maps (Play) and ATAK-CIV 5.5.1.8 (public SDK
    developer build, sideloaded).
-5. M2 runtime/model selection — first round on the emulator; measured
-   numbers on the real target phone come in the physical-phone pass.
+5. ~~M2 spike: runtime + model + grounded Ask on the emulator~~ — **done
+   2026-11-21** (LiteRT-LM + Gemma 4 E2B, see above). Remaining M2 work:
+   better retrieval (multiple fragments per document), keep generation alive
+   across tab switches, GPU backend, a small fixed QA question set for
+   regression, then phone numbers.
 6. **Last:** physical-phone pass (owner decision 2026-11-21) — install the
    APK, re-run the M1 checklist, ATAK-CIV, M2 performance numbers.
 

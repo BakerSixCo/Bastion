@@ -55,7 +55,17 @@ cd android
 ```
 
 Requires JDK 17+, Android SDK (platform 35, build-tools 35.0.0). Pinned:
-Gradle 8.14.3 (wrapper), AGP 8.7.3, Kotlin 2.1.0, Compose BOM 2024.12.01.
+Gradle 8.14.3 (wrapper), AGP 8.7.3, Kotlin 2.4.21, Compose BOM 2024.12.01,
+LiteRT-LM `com.google.ai.edge.litertlm:litertlm-android` 0.19.1 (M2 on-device
+inference; ships arm64-v8a + x86_64 native libs, adds ~50 MB to the APK).
+Kotlin moved 2.1.0 → 2.4.21 on 2026-11-21 because LiteRT-LM 0.19.x carries
+Kotlin 2.4 metadata (needs a Kotlin ≥ 2.3 compiler); this also required the
+`kotlin { compilerOptions { jvmTarget } }` DSL instead of `kotlinOptions`.
+Never use `latest.release` — pin versions.
+
+Model files (`.litertlm`) are managed assets: the user imports them into
+app storage (`files/models/`) via the file picker; the app never downloads
+them (no INTERNET permission) and they are never committed or bundled.
 
 Owner's Windows PC: Gradle 8.14.3 cannot run on Android Studio's bundled
 JDK 25 — set `JAVA_HOME` to the installed Temurin 21

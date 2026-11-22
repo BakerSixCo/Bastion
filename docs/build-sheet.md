@@ -33,12 +33,12 @@ Milestone 4; nothing here re-opens the discarded 12V bus or home automation.
 | Component | Choice | Status |
 |---|---|---|
 | App | Native Kotlin + Jetpack Compose, package `com.bastion.terminal` | Scaffolded; see status.md for build evidence |
-| Toolchain | Gradle 8.14.3 (wrapper) · AGP 8.7.3 · Kotlin 2.1.0 · Compose BOM 2024.12.01 · min SDK 29 / target 35 | Pinned in `android/gradle/libs.versions.toml` |
+| Toolchain | Gradle 8.14.3 (wrapper) · AGP 8.7.3 · Kotlin 2.4.21 · Compose BOM 2024.12.01 · min SDK 29 / target 35 | Pinned in `android/gradle/libs.versions.toml` (Kotlin raised from 2.1.0 for LiteRT-LM, 2026-11-21) |
 | Library index | SQLite FTS4, on-device; originals preserved + SHA-256 provenance | Implemented (v0.1) |
 | Import formats | `.txt`, `.md` via SAF picker | Implemented. PDF/EPUB/OCR/ZIM: separate, future capabilities |
 | Offline guarantee | No INTERNET permission in the manifest | Implemented |
-| Local inference | **Not decided.** Candidates: llama.cpp (JNI/Android bindings), Google MediaPipe LLM Inference, MLC-LLM | Milestone 2 decision, after measuring on real hardware |
-| Model | **Not decided.** Phone-RAM-dependent; file size ≠ runtime RAM; license review required before any bundling | Milestone 2 |
+| Local inference | **Provisional: Google LiteRT-LM 0.19.1** (official Kotlin artifact; MediaPipe LLM Inference is maintenance-only; MLC-LLM dropped). Behind the `LocalModel` interface; **llama.cpp** (GGUF via JNI) is the fallback adapter if model choice requires it | Spike works on the emulator (2026-11-21, see status.md); final after physical-phone measurements |
+| Model | **Provisional: Gemma 4 E2B** (`litert-community/gemma-4-E2B-it-litert-lm`, file `gemma-4-E2B-it.litertlm`, 2,588,147,712 bytes, **Apache-2.0**, not gated). User-imported, never bundled. Smaller fallback for 4 GB phones: Gemma 3 1B (Gemma license — review before use) | Emulator: ~1.5 GB app RAM; phone numbers pending |
 | Embeddings/reranking | Deferred — FTS keyword search first; add only when measured retrieval quality demands it | Deliberate |
 | Companion apps | Kiwix Android, ATAK-CIV, Meshtastic, Organic Maps — detected & launched, no data integration claimed yet | v0.1 detects/launches |
 
@@ -62,7 +62,8 @@ Milestone 2.
 ## Open decisions (tracked)
 
 1. Phone model/RAM/storage/Android version/quantity — after M2 measurements.
-2. Inference runtime + model + licensing — M2.
+2. Inference runtime + model + licensing — M2. Provisionally LiteRT-LM +
+   Gemma 4 E2B (Apache-2.0); confirm on the physical phone (CPU vs GPU).
 3. ZIM-wide search vs. selected imported documents first — current answer:
    selected documents first; ZIM retrieval is its own capability.
 4. Depth of ATAK/Meshtastic integration in first release — M3.
