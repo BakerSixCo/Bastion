@@ -40,6 +40,8 @@ fun BastionApp() {
     LaunchedEffect(Unit) { ZimLibrary.get(ctx).restore() }
     // Always-on service (if enabled): keeps the mesh inbox and auto-answer alive in the background.
     LaunchedEffect(Unit) { com.bastion.terminal.BastionService.sync(ctx) }
+    // Make sure the mesh inbox reader is actually connected (Android can leave it unbound).
+    LaunchedEffect(Unit) { com.bastion.terminal.mesh.MeshInbox.reconnect(ctx) }
 
     // App PIN, if one is set. The wipe PIN is typed in the same box.
     var locked by androidx.compose.runtime.remember {

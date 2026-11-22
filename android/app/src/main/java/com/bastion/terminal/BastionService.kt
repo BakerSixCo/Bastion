@@ -64,6 +64,7 @@ class BastionService : Service() {
             stopSelf()
             return START_NOT_STICKY
         }
+        com.bastion.terminal.mesh.MeshInbox.reconnect(this)
         LinkClient.get(this).start()
         LocationSource.get(this).start()
         return START_STICKY

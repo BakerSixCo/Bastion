@@ -1119,6 +1119,40 @@ iPhone test prepared: the owner added a Windows port-forward
 (192.168.128.33:4404 → simulated radio B) and a firewall rule limited to
 the local subnet. Radio B answers on that address. Result pending.
 
+### Second real device on the mesh: iPhone (2026-11-22)
+
+The owner's iPhone (Meshtastic iOS app) connected over Wi-Fi to simulated
+radio B (PC `192.168.128.33:4404` → WSL, via a port-forward and a
+local-subnet firewall rule the owner added). This is the first test with a
+second real device and a different client app. The radios are still
+simulated.
+
+Two failures found and fixed on the way:
+1. **WSL had idled out**, stopping both simulated radios, so the iPhone's
+   first attempts hit nothing. The launcher's keep-alive had a quoting bug
+   and exited at once. Fixed in `tools/bastion-pc.ps1`; a keep-alive is
+   running now.
+2. **BASTION's inbox reader was granted but not connected** after the app
+   was reinstalled: Android listed the listener as enabled but not live,
+   so messages reached the Meshtastic app and never reached BASTION, while
+   BASTION still said "Inbox on". Fixed: `MeshInbox.reconnect()` calls
+   `requestRebind` at every app and service start. Verified: the listener
+   is live again and the waiting messages were picked up.
+
+Observed:
+- The iPhone's message "How do I deal with a sucking chest wound?" arrived
+  on **LongFast (public)** with no "?" trigger → shown in BASTION's inbox
+  tagged "(public)" and correctly **not answered**.
+- A direct message from the iPhone to the other node failed on the iPhone
+  ("Could not send encrypted message"): the simulated nodes have not
+  exchanged per-node keys. Use the shared private channel.
+- `?where is base` from radio B on the private channel → BASTION replied
+  "NAV: BASTION (base, hq): 3.1 km at 183 deg S from you, …" (received by
+  radio B, the radio the iPhone is connected to).
+
+Pending: an AI answer to a "?question" typed on the iPhone in the Bastion
+channel; iTAK.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

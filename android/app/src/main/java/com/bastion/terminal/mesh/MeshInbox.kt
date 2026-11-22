@@ -71,6 +71,19 @@ class MeshInbox private constructor(app: Context) {
         fun get(context: Context): MeshInbox =
             inst ?: synchronized(this) { inst ?: MeshInbox(context.applicationContext).also { inst = it } }
 
+        /**
+         * Asks Android to (re)connect the inbox reader. After the app is updated or
+         * restarted Android can leave a notification listener granted but unbound, so
+         * messages silently stop arriving while BASTION still says "Inbox on" (found
+         * 2026-11-22 with a second phone on the mesh). Called at every start.
+         */
+        fun reconnect(context: Context) {
+            if (!accessGranted(context)) return
+            runCatching {
+                NotificationListenerService.requestRebind(ComponentName(context, MeshInboxService::class.java))
+            }
+        }
+
         /** Has the user granted BASTION notification access (Android special access)? */
         fun accessGranted(context: Context): Boolean {
             val me = ComponentName(context, MeshInboxService::class.java).flattenToString()
