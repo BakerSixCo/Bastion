@@ -130,7 +130,7 @@ providers that report no size is covered by the unit test only (DocumentsUI
 always reports a size).
 
 **Not tested:** any physical phone (deliberately last — see Next actions);
-ATAK-CIV launch; cancelling an import mid-way; process death during import.
+using ATAK past its EULA screen; cancelling an import mid-way; process death during import.
 
 ### Companion apps (2026-11-21) — tested on the hardware-accelerated emulator
 
@@ -143,13 +143,23 @@ account on the emulator; Play Pass upsell declined). Emulator ABIs
 | Kiwix (`org.kiwix.kiwixmobile`) | Installed (Kiwix Team, 15 MB) | "Open" shown | `KiwixMainActivity` comes to foreground |
 | Meshtastic (`com.geeksville.mesh`) | Installed (33 MB) | "Open" shown | `org.meshtastic.app.MainActivity` foreground |
 | Organic Maps (`app.organicmaps`) | Installed (78 MB) | "Open" shown | Organic Maps task foreground; its own location-permission prompt shown (dismissed, nothing granted) |
-| ATAK-CIV (`com.atakmap.app.civ`) | **Not installed** — Play: "Your device isn't compatible with this version." (TAK Product Center listing) | "not installed" (correct) | n/a |
+| ATAK-CIV (`com.atakmap.app.civ`) | Play: "Your device isn't compatible with this version." → **sideloaded** the developer build from the public SDK (see below) | "not installed" before install (correct), "Open" after | `com.atakmap.app.ATAKActivityCiv` foreground, showing ATAK's EULA screen |
 
-Detection via `<queries>` and launch intents work for all three installed
-apps; the missing app is reported honestly. No crash/ANR. No ZIM content,
-map data, or radio is loaded yet — these are launch checks only, not
-integration. ATAK-CIV options: sideload the APK from tak.gov (owner account
-required; may run under ARM translation) or verify on the physical phone.
+**ATAK-CIV source:** `ATAK-CIV-5.5.1.8-SDK.zip` from the official public
+repo [TAK-Product-Center/atak-civ](https://github.com/TAK-Product-Center/atak-civ/releases/tag/5.5.1.8)
+(downloaded by the owner; 468,620,462 bytes; SHA-256
+`c92139d4600f6684fcf9b640fc0fb67a6105940e9bdc2e578ae26f08f477bf56`
+verified against the GitHub release digest). Its `atak.apk`: package
+`com.atakmap.app.civ`, version `5.5.1.8 (7f381e4d)`, native libs for
+`arm64-v8a`, `armeabi-v7a`, `x86`, `x86_64` — so it runs natively on the
+x86_64 emulator (no ARM translation, no graphics crash observed). Installed
+with `adb install`; first screen is the EULA, which was **not accepted**
+(owner's decision). The SDK build is also the one that loads custom plugins
+(the Play build does not), which matters for later ATAK integration.
+
+Detection via `<queries>` and launch intents work for all four companion
+apps. No crash/ANR. No ZIM content, map data, or radio is loaded yet — these
+are launch checks only, not integration.
 
 Nothing above is simulated; pending means pending.
 
@@ -163,7 +173,8 @@ Nothing above is simulated; pending means pending.
 3. ~~M1 polish: size display, memory-safe size check, stale messages~~ —
    **done 2026-11-21** (cap now 20 MB decimal).
 4. ~~Install companion apps on the emulator~~ — **done 2026-11-21** for
-   Kiwix, Meshtastic, Organic Maps; ATAK-CIV blocked (Play: incompatible).
+   Kiwix, Meshtastic, Organic Maps (Play) and ATAK-CIV 5.5.1.8 (public SDK
+   developer build, sideloaded).
 5. M2 runtime/model selection — first round on the emulator; measured
    numbers on the real target phone come in the physical-phone pass.
 6. **Last:** physical-phone pass (owner decision 2026-11-21) — install the
@@ -173,7 +184,7 @@ Nothing above is simulated; pending means pending.
 
 - None for code progress. Physical-phone evidence needs a test phone
   (scheduled last).
-- ATAK-CIV on the emulator needs the APK from tak.gov (owner's account), or
-  waits for the physical phone.
+- ATAK-CIV EULA on the emulator: accepting it is the owner's call (needed
+  before ATAK can be used beyond launch).
 - Local builds on Windows: set `JAVA_HOME` to a JDK 17–24 (Temurin 21 is
   installed) — Android Studio's bundled JDK 25 does not work with Gradle 8.14.3.
