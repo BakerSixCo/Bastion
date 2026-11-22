@@ -41,7 +41,8 @@ Milestone 4; nothing here re-opens the discarded 12V bus or home automation.
 | Model | **Provisional: Gemma 4 E2B** (`litert-community/gemma-4-E2B-it-litert-lm`, file `gemma-4-E2B-it.litertlm`, 2,588,147,712 bytes, **Apache-2.0**, not gated). User-imported, never bundled. Smaller fallback for 4 GB phones: Gemma 3 1B (Gemma license — review before use) | Emulator: ~1.5 GB app RAM; phone numbers pending |
 | Retrieval for AI answers | Paragraph-aligned passages (DB v2) ranked by BM25 × coordination + query-term coverage, from FTS4 `matchinfo` | Implemented 2026-11-21; 13/13 on `RetrievalEvalTest` |
 | Embeddings/reranking | Deferred — lexical retrieval first; add only when measured retrieval quality demands it (known gap: no synonyms) | Deliberate |
-| Companion apps | Kiwix Android, ATAK-CIV, Meshtastic, Organic Maps — detected & launched, no data integration claimed yet | v0.1 detects/launches |
+| Offline reference in AI answers | libkiwix 2.7.0 reads a Kiwix ZIM from BASTION's folder; ZIM full-text search → article text → same chunking/BM25 as the library; cited articles open in BASTION's reader | Implemented 2026-11-21; tested with WikiMed (Wikipedia Medicine, 1.0 GB) on the emulator. Field target: `wikipedia_en_top1m_nopic` (16 GB) or full English |
+| Companion apps | Kiwix Android, ATAK-CIV, Meshtastic, Organic Maps — detected & launched; Kiwix's own ZIMs are not shared with BASTION (scoped storage), so a ZIM is placed in BASTION's folder too | v0.1 detects/launches |
 
 ## Hardware (owned vs. undecided)
 

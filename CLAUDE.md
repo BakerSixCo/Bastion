@@ -68,11 +68,22 @@ inference; ships arm64-v8a + x86_64 native libs, adds ~50 MB to the APK).
 Kotlin moved 2.1.0 → 2.4.21 on 2026-11-21 because LiteRT-LM 0.19.x carries
 Kotlin 2.4 metadata (needs a Kotlin ≥ 2.3 compiler); this also required the
 `kotlin { compilerOptions { jvmTarget } }` DSL instead of `kotlinOptions`.
-Never use `latest.release` — pin versions.
+libkiwix `org.kiwix:libkiwix` 2.7.0 (Kiwix's official libzim/libkiwix
+binding; ZIM reading + Xapian full-text search). The APK is limited to
+`abiFilters arm64-v8a, x86_64` — each extra ABI costs ~50 MB; the debug APK
+is ~182 MB with both. Never use `latest.release` — pin versions.
 
 Model files (`.litertlm`) are managed assets: the user imports them into
 app storage (`files/models/`) via the file picker; the app never downloads
 them (no INTERNET permission) and they are never committed or bundled.
+
+ZIM files (offline reference, e.g. Kiwix Wikipedia) live in BASTION's own
+app-specific folder `Android/media/com.bastion.terminal/zim/` and are opened
+**by path**: libzim's Xapian search re-opens files by path, which scoped
+storage denies for file-picker descriptors (`/dev/fd/N: Permission denied`).
+"Add ZIM file" copies a picked file there; very large ZIMs should be copied
+there over USB. Do not add MANAGE_EXTERNAL_STORAGE without an explicit,
+documented decision. One reference ZIM at a time (v1).
 
 Owner's Windows PC: Gradle 8.14.3 cannot run on Android Studio's bundled
 JDK 25 — set `JAVA_HOME` to the installed Temurin 21

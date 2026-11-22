@@ -1,6 +1,6 @@
 # BASTION status
 
-**Updated:** 2026-11-21 · **Milestone:** 0 complete, 1 complete on emulator, 2 in progress (local-AI spike answering with citations on the emulator)
+**Updated:** 2026-11-21 · **Milestone:** 0 complete, 1 complete on emulator, 2 in progress (local AI answers from the library + offline Wikipedia, with citations, on the emulator)
 
 ## Milestone 0 — environment & architecture (complete)
 
@@ -294,6 +294,83 @@ FTS index stores passage text twice (whole-doc index + passage index);
 candidate scoring is capped at 5,000 passages per query. Embeddings remain
 deferred until a measured failure needs them.
 
+### Offline reference (ZIM) in AI answers (2026-11-21)
+
+**What it does:** Ask searches the user's library **and** an offline Kiwix
+ZIM (e.g. Wikipedia) together; the local model answers from the best
+passages of either, with [n] citations; a cited article opens in BASTION's
+reader with provenance (ZIM title, date, file, article path).
+
+**Built:**
+- libkiwix 2.7.0 (Kiwix's official Android binding; arm64 + x86_64 native).
+  `ZimLibrary`: ZIM full-text search (all terms first; any-term fallback kept
+  only when the article title contains a key term), article HTML → text
+  (`HtmlText`: drops head/scripts/figures/footnote markers like "[12]" that
+  would clash with our citations, and References/External links sections;
+  keeps headings as "## …").
+- `Retriever`: library passages + chunks of the top 5 ZIM articles, re-scored
+  together (same BM25 × coordination + term coverage, in memory), each
+  passage scored *with its article title and heading*, plus a title prior
+  (up to +50% when the article title names the question's terms).
+- Question terms: light suffix stripping (steps→step, boiling→boil,
+  batteries→batter) + more filler stopwords (up, per, get, use…). Library
+  eval stayed 13/13 and prompts shrank (avg 972 → 790 chars).
+- `AskSession`: Ask's state and generation are app-scoped — answers survive
+  tab switches, leaving the app, and opening/closing a cited source
+  (verified). Fixes the "generation stops if you leave the Ask tab" limit.
+- Home "Offline reference (ZIM)" card (honest states, copy progress,
+  Remove deletes BASTION's copy only). Reader renders "## " headings as
+  bold titles; highlights key terms only (it used to highlight "the", "of"
+  inside words — fixed).
+
+**Storage decision (found on the emulator):** opening a picked ZIM by file
+descriptor works for reading, but libzim's Xapian search re-opens the file
+by path → `Error opening file: /dev/fd/138: Permission denied` (scoped
+storage). Same constraint as the Kiwix Play build, same answer: ZIMs live in
+BASTION's app folder `Android/media/com.bastion.terminal/zim/` (no
+permission needed). "Add ZIM file" copies there (1.05 GB: ~26 s on the
+emulator); large ZIMs go there over USB. MANAGE_EXTERNAL_STORAGE ("all
+files access") was **not** added.
+
+**Evidence — tested on the hardware-accelerated emulator** with
+`wikipedia_en_medicine_nopic_2026-10.zim` (WikiMed Medical Encyclopedia,
+2026-10-10; 1,047,708,415 bytes; SHA-256 verified against Kiwix's
+published hash; downloaded by Claude with owner approval — Wikimedia
+rate-limited 8 parallel connections (HTTP 429), completed with 2).
+Opened with full-text index; "371,615 articles" (libzim's article count).
+
+Retrieval (sources shown before any generation, after the fixes above):
+
+| Question | Top sources |
+|---|---|
+| How do I treat a snakebite | Snakebite — Treatment (×2), Epidemiology of snakebites, Snakebite — Outmoded |
+| What are the symptoms of hypothermia | Hypothermia — Moderate, Hypothermia — Signs and symptoms (×2), Shapiro syndrome (×2) |
+| What causes altitude sickness | Altitude sickness — Cause, — Other methods, — lead; Decompression sickness (×2) |
+| How much bleach per gallon to treat water | **field manual §33 (library)**, Sodium hypochlorite — Disinfection, 2 weaker WikiMed passages |
+| What are the steps to set up the field antenna | **field manual §21 (library) only** — WikiMed noise (Photosynthesis, Anatomy) removed by the title rule + stemming |
+| How long should I boil water at high elevation | Portable water purification — Heat (boiling) (×3), sample notes (library) |
+
+End-to-end answers (Gemma 4 E2B, CPU):
+- Hypothermia symptoms → "Symptoms of hypothermia can include amnesia,
+  confusion, slurred speech, decreased reflexes, and loss of fine motor
+  skills… [1] … appear pale and feel cold to touch [2] …" — cites [1], [2],
+  both Hypothermia sections. ✅
+- Snakebite treatment → cites [3][4][5]; correct ("tourniquets, incisions,
+  suction, application of cold… considered of no use or harmful [4]") but
+  thin on positive first-aid steps and drifted into a black-mamba detail. 🟡
+- Opening a WikiMed citation shows the article with provenance; returning
+  keeps the answer. No crash/ANR.
+
+Emulator speed with ~670-token prompts: 100–117 s per answer (prefill
+~20 tok/s, decode ~2 tok/s, app RAM ~1.65 GB) — the emulator is far slower
+than the published phone figures; phone numbers pending.
+
+**Known gaps:** ZIM retrieval has no automated eval yet (needs a test ZIM
+on the device; the library `RetrievalEvalTest` doesn't cover it); "how to
+treat X" questions can miss the most practical paragraph; one reference ZIM
+at a time; Kiwix-app ZIMs aren't shared (copy needed); APK ~182 MB debug
+(split per ABI for release).
+
 Nothing above is simulated; pending means pending.
 
 ## Next actions
@@ -311,8 +388,10 @@ Nothing above is simulated; pending means pending.
 5. ~~M2 spike: runtime + model + grounded Ask on the emulator~~ — **done
    2026-11-21** (LiteRT-LM + Gemma 4 E2B, see above). ~~Better retrieval +
    a fixed QA set for regression~~ — **done 2026-11-21** (Retrieval v2,
-   13/13 on `RetrievalEvalTest`). Remaining M2 work: keep generation alive
-   across tab switches, GPU backend, then phone numbers.
+   13/13 on `RetrievalEvalTest`). ~~Keep generation alive across tab
+   switches~~ — **done** (`AskSession`). ~~Offline Wikipedia (ZIM) in
+   answers~~ — **done 2026-11-21** (WikiMed on the emulator). Remaining:
+   ZIM retrieval eval, GPU backend, then phone numbers.
 6. **Last:** physical-phone pass (owner decision 2026-11-21) — install the
    APK, re-run the M1 checklist, ATAK-CIV, M2 performance numbers.
 
