@@ -770,8 +770,14 @@ with its position ✅. "Merged build radio check" sent → Sim B decoded a
 port-72 packet on the private channel ✅. All unit tests pass, including
 `NetworkGuardTest` ✅.
 
-Not re-run after the merge: the on-device evals (13/13, 14/14, DocImport) and
-the release (R8) build — R8 keep rules may need checking for the TLS code.
+Re-run after the merge (emulator): `RetrievalEvalTest` 13/13,
+`ZimRetrievalEvalTest` 14/14, `DocImportTest` ✅. Release (R8) build: arm64
+APK 36 MB; installed on the emulator, the TAK connection came up
+("Connected", Sim B shown) with no crash ✅ — no extra keep rules needed.
+Not re-checked in the release build: AI answers, PDF import, mesh inbox.
+
+**Dedicated device (owner, 2026-11-22):** the BASTION phone is not a
+daily-use phone, which is the basis for the one-app decision.
 
 ## Next actions
 

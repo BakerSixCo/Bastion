@@ -60,6 +60,9 @@ before configuring), GMRS handhelds, RTL-SDR, rugged phone case.
 
 **R&D buy scope (owner decision, 2026-11-22):** only the phone and the
 mesh/ATAK hardware for now — nothing else until R&D says otherwise.
+- **Dedicated device (owner, 2026-11-22):** the BASTION phone is not a daily-use
+  phone. Keep it in airplane mode except during setup and updates; this is why
+  one app holding the loopback-only network permission is acceptable.
 - **Phone:** cheapest phone that meets the floor — **not a flagship**
   (owner decision, 2026-11-22). Floor: ≥8 GB RAM (12 preferred), Android 10+
   64-bit, a mid-range chip (Dimensity 7300 / Snapdragon 6 Gen 3 class or
