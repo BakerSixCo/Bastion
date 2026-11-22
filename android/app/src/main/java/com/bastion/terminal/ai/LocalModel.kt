@@ -35,3 +35,6 @@ interface LocalModel : AutoCloseable {
     /** Stops an in-flight generation. */
     fun cancel()
 }
+
+/** Which compute unit runs the model. AUTO = GPU if it starts, otherwise CPU. */
+enum class ModelBackend { AUTO, GPU, CPU }

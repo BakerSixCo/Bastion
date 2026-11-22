@@ -18,7 +18,8 @@ sealed class AiState {
     /** Model file present; weights load on first use. */
     data class Ready(val file: File) : AiState()
     data class Loading(val file: File) : AiState()
-    data class Loaded(val file: File, val label: String, val loadSeconds: Double) : AiState()
+    /** [note]: e.g. why AUTO fell back from GPU to CPU (plain words), else null. */
+    data class Loaded(val file: File, val label: String, val loadSeconds: Double, val note: String? = null) : AiState()
     data class Failed(val file: File?, val reason: String) : AiState()
 }
 
@@ -35,6 +36,18 @@ class LocalAi private constructor(private val app: Context) {
 
     private val lock = Mutex()
     private var model: LocalModel? = null
+
+    private val prefs = app.getSharedPreferences("local_ai", Context.MODE_PRIVATE)
+
+    /** Saved compute-unit preference (default AUTO: GPU if it starts, else CPU). */
+    fun backend(): ModelBackend =
+        runCatching { ModelBackend.valueOf(prefs.getString("backend", null) ?: "AUTO") }.getOrDefault(ModelBackend.AUTO)
+
+    /** Saves the preference; a loaded model is unloaded so the next answer uses it. */
+    suspend fun setBackend(b: ModelBackend) = lock.withLock {
+        prefs.edit().putString("backend", b.name).apply()
+        unloadLocked()
+    }
 
     private fun modelDir(): File = File(app.filesDir, "models").apply { mkdirs() }
 
@@ -122,11 +135,14 @@ class LocalAi private constructor(private val app: Context) {
             return@withLock null
         }
         _state.value = AiState.Loading(file)
-        val m = LiteRtLmModel(file, File(app.cacheDir, "litertlm").apply { mkdirs() })
+        val m = LiteRtLmModel(file, File(app.cacheDir, "litertlm").apply { mkdirs() }, backend())
         try {
             m.load()
             model = m
-            _state.value = AiState.Loaded(file, m.label, m.lastLoadSeconds())
+            _state.value = AiState.Loaded(
+                file, m.label, m.lastLoadSeconds(),
+                m.fallbackReason?.let { "GPU unavailable, using CPU ($it)" },
+            )
             m
         } catch (t: Throwable) {
             runCatching { m.close() }

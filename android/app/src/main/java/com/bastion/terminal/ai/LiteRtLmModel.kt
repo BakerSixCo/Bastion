@@ -17,8 +17,10 @@ import kotlinx.coroutines.withContext
 import java.io.File
 
 /**
- * LiteRT-LM implementation (CPU backend for now: the emulator has no usable
- * OpenCL GPU; GPU/NPU are a physical-phone experiment).
+ * LiteRT-LM implementation. Backend per [ModelBackend]: AUTO tries the GPU
+ * (OpenCL) first and falls back to the CPU if it can't start — the emulator
+ * has no usable OpenCL, so it always lands on CPU there; phones with an
+ * Adreno/Mali GPU are where GPU pays off. The label says which one ran.
  *
  * Uses LiteRT-LM's experimental benchmark API (prefill/decode token rates),
  * because measured numbers are the point of M2. If a future LiteRT-LM drops
@@ -28,9 +30,19 @@ import java.io.File
 class LiteRtLmModel(
     private val modelFile: File,
     private val cacheDir: File,
+    private val preference: ModelBackend = ModelBackend.AUTO,
 ) : LocalModel {
 
-    override val label = "LiteRT-LM $RUNTIME_VERSION · ${modelFile.nameWithoutExtension} · CPU"
+    /** Which backend actually loaded (CPU until [load] succeeds). */
+    var activeBackend: ModelBackend = ModelBackend.CPU
+        private set
+
+    /** Why the GPU was not used, when AUTO fell back (shown to the user). */
+    var fallbackReason: String? = null
+        private set
+
+    override val label: String
+        get() = "LiteRT-LM $RUNTIME_VERSION · ${modelFile.nameWithoutExtension} · ${activeBackend.name}"
 
     private var engine: Engine? = null
     private var loadSeconds: Double? = null
@@ -40,23 +52,43 @@ class LiteRtLmModel(
     override suspend fun load() = withContext(Dispatchers.IO) {
         if (engine != null) return@withContext
         ExperimentalFlags.enableBenchmark = true
-        val t0 = System.nanoTime()
-        val e = Engine(
-            EngineConfig(
-                modelPath = modelFile.absolutePath,
-                backend = Backend.CPU(),
-                maxNumTokens = MAX_CONTEXT_TOKENS,
-                cacheDir = cacheDir.absolutePath,
-            )
-        )
-        try {
-            e.initialize()
-        } catch (t: Throwable) {
-            runCatching { e.close() }
-            throw t
+        val order = when (preference) {
+            ModelBackend.AUTO -> listOf(ModelBackend.GPU, ModelBackend.CPU)
+            else -> listOf(preference)
         }
-        engine = e
-        loadSeconds = (System.nanoTime() - t0) / 1e9
+        var lastError: Throwable? = null
+        for (b in order) {
+            val t0 = System.nanoTime()
+            var e: Engine? = null
+            try {
+                e = Engine(
+                    EngineConfig(
+                        modelPath = modelFile.absolutePath,
+                        backend = if (b == ModelBackend.GPU) Backend.GPU() else Backend.CPU(),
+                        maxNumTokens = MAX_CONTEXT_TOKENS,
+                        cacheDir = cacheDir.absolutePath,
+                    )
+                )
+                e.initialize()
+                // The GPU path can initialize fine and only fail at first use ("Can not find
+                // OpenCL library" — seen on emulator), so prove it with a one-token run.
+                if (b == ModelBackend.GPU) {
+                    e.createConversation(ConversationConfig(maxOutputToken = 1)).use { it.sendMessage("ok") }
+                }
+            } catch (t: Throwable) {
+                runCatching { e?.close() }
+                lastError = t
+                if (b == ModelBackend.GPU) fallbackReason = t.message?.lineSequence()?.firstOrNull()?.take(160) ?: t.javaClass.simpleName
+                android.util.Log.w("BastionAI", "backend $b failed: ${t.message}")
+                continue
+            }
+            engine = e
+            activeBackend = b
+            if (b == ModelBackend.GPU) fallbackReason = null
+            loadSeconds = (System.nanoTime() - t0) / 1e9
+            return@withContext
+        }
+        throw lastError ?: IllegalStateException("no backend")
     }
 
     override fun generate(systemInstruction: String, userPrompt: String, maxOutputTokens: Int): Flow<String> = flow {

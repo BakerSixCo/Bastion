@@ -20,6 +20,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.FilterChip
+import com.bastion.terminal.ai.ModelBackend
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -200,6 +202,24 @@ private fun LocalAiCard() {
                     OutlinedButton(onClick = { scope.launch { ai.unload() } }) { Text("Unload") }
                 }
             }
+            if (state !is AiState.NoModel) {
+                var backend by remember { mutableStateOf(ai.backend()) }
+                Text("Compute: " + when (backend) {
+                    ModelBackend.AUTO -> "Auto (GPU if available, else CPU)"
+                    ModelBackend.GPU -> "GPU only"
+                    ModelBackend.CPU -> "CPU only"
+                }, style = MaterialTheme.typography.bodySmall)
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    ModelBackend.entries.forEach { b ->
+                        FilterChip(
+                            selected = backend == b,
+                            enabled = !busy,
+                            onClick = { backend = b; scope.launch { ai.setBackend(b) } },
+                            label = { Text(if (b == ModelBackend.AUTO) "Auto" else b.name) },
+                        )
+                    }
+                }
+            }
             message?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
@@ -221,7 +241,7 @@ private fun localAiBody(s: AiState): String = when (s) {
         "Not loaded yet — it loads on the first question in Ask."
     is AiState.Loading -> "Loading ${s.file.name} into memory…"
     is AiState.Loaded -> "Loaded: ${s.label} (load took ${"%.1f".format(java.util.Locale.US, s.loadSeconds)} s). " +
-        "Ask can answer from your library with citations."
+        "Ask can answer from your library with citations." + (s.note?.let { "\n$it" } ?: "")
     is AiState.Failed -> s.reason + (s.file?.let { " File: ${it.name}." } ?: "")
 }
 
