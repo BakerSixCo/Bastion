@@ -57,12 +57,11 @@ class ZimRetrievalEvalTest {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
         val zim = ZimLibrary.get(ctx)
         zim.restore()
-        val info = zim.currentInfo()
-        assumeTrue("no ZIM in ${zim.folder()} — skipped", info != null)
-        assumeTrue(
-            "ZIM ${info!!.fileName} is not WikiMed — cases don't apply, skipped",
-            info.fileName.startsWith("wikipedia_en_medicine"),
-        )
+        // Cases are written for WikiMed alone; with other ZIMs open too the ranking differs, so skip.
+        val zims = zim.currentInfos()
+        assumeTrue("needs exactly WikiMed in the reference folders (found ${zims.map { it.fileName }}) — skipped",
+            zims.size == 1 && zims[0].fileName.startsWith("wikipedia_en_medicine"))
+        val info = zims[0]
 
         val testAssets = InstrumentationRegistry.getInstrumentation().context.assets
         val store = LibraryStore.isolated(ctx, "zim-eval")

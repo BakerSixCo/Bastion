@@ -39,7 +39,7 @@ import com.bastion.terminal.ai.Passage
 fun AskScreen(
     modifier: Modifier = Modifier,
     onOpen: (Long, String) -> Unit,
-    onOpenZim: (String, String) -> Unit,
+    onOpenZim: (zimFile: String, path: String, query: String) -> Unit,
 ) {
     val ctx = LocalContext.current
     val ai = remember { LocalAi.get(ctx) }
@@ -100,7 +100,8 @@ fun AskScreen(
                     val path = p.zimPath
                     // Highlight the key terms (not "the", "of" … from the raw question).
                     val hl = Grounding.keyTerms(s.askedFor).joinToString(" ")
-                    if (path != null) onOpenZim(path, hl) else onOpen(p.docId, hl)
+                    val file = p.zimFile
+                    if (path != null && file != null) onOpenZim(file, path, hl) else onOpen(p.docId, hl)
                 }
             }
             item {
@@ -120,7 +121,8 @@ fun AskScreen(
 }
 
 private fun zimIntro(z: ZimState): String = when (z) {
-    is ZimState.Ready -> "Offline reference: “${z.info.title}” (${z.info.articleCount} articles) is searched too."
+    is ZimState.Ready -> "Offline reference searched too: " +
+        z.zims.joinToString { "“${it.title}” (${"%,d".format(it.articleCount)} articles)" } + "."
     is ZimState.Opening -> "Opening the offline reference…"
     is ZimState.Copying -> "Copying the offline reference into BASTION (see Home)…"
     is ZimState.Failed -> "Offline reference unavailable: ${z.reason}"

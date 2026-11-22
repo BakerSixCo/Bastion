@@ -40,28 +40,32 @@ class Retriever internal constructor(
         // With a known aspect, rank on the subject; the aspect is matched on headings.
         val rankTerms = if (aspect != null) Grounding.subjectTerms(question) else terms
         val lib = store.retrieve(question)
-        val zimInfo = zim.currentInfo()
+        val zimOpen = zim.currentInfos().isNotEmpty()
         // Exact-title articles first ("burn" → Burn), then the full-text top articles.
         // Only phrases that are most of the subject: "water" alone is not what a
         // bleach-per-gallon question is about.
         val phrases = Grounding.subjectPhrases(question).filter { p ->
             2 * Grounding.keyTerms(p).count { it in rankTerms } >= rankTerms.size
         }
-        val titleHits = if (zimInfo != null) zim.titleLookup(phrases) else emptyList()
-        val textHits = if (zimInfo != null) zim.search(rankTerms, MAX_ARTICLES) else emptyList()
-        val hits = (titleHits + textHits).distinctBy { it.path }
-        val aboutPaths = titleHits.map { it.path }.toSet()
+        val titleHits = if (zimOpen) zim.titleLookup(phrases) else emptyList()
+        val textHits = if (zimOpen) zim.search(rankTerms, MAX_ARTICLES) else emptyList()
+        // Same article in two ZIMs (WikiMed is a subset of full Wikipedia): keep one, from the
+        // larger file (opened first), so duplicates don't crowd out other sources.
+        val hits = (titleHits + textHits).distinctBy { it.title.lowercase() }
+        val aboutPaths = titleHits.map { it.zim + "|" + it.path }.toSet()
         lastZimArticles = titleHits.map { "${it.title} (title)" } + textHits.map { "${it.title} (${it.score}%)" }
         if (hits.isEmpty()) return lib
 
         data class Cand(
             val title: String, val heading: String?, val text: String, val docId: Long, val zimPath: String?,
+            val zimFile: String? = null,
             val opensSection: Boolean = false,
         )
         val cands = ArrayList<Cand>()
         lib.forEach { cands += Cand(it.title, it.heading, it.plainText, it.docId, null) }
         hits.forEachIndexed { i, h ->
-            val article = zim.article(h.path) ?: return@forEachIndexed
+            val article = zim.article(h.zim, h.path) ?: return@forEachIndexed
+            val zimTitle = zim.infoFor(h.zim)?.title ?: "Offline reference"
             val text = article.text
             var prevHeading: String? = "0000"
             for (ch in Chunker.chunk(text)) {
@@ -70,7 +74,7 @@ class Retriever internal constructor(
                 val opens = ch.heading != prevHeading
                 prevHeading = ch.heading
                 // Negative ids keep ZIM articles distinct from library doc ids for the per-doc cap.
-                cands += Cand("${zimInfo!!.title}: ${article.title}", ch.heading, body, -(i + 1L), article.path, opens)
+                cands += Cand("$zimTitle: ${article.title}", ch.heading, body, -(i + 1L), article.path, h.zim, opens)
             }
         }
         // Score each passage with its title and heading ("Snakebite — Treatment"): a section
@@ -92,7 +96,7 @@ class Retriever internal constructor(
             val articleTitle = if (c.zimPath != null) c.title.substringAfter(": ") else c.title
             val titleWords = Regex("[\\p{L}\\p{N}]+").findAll(articleTitle.lowercase()).map { it.value }.toList()
             val inTitle = rankTerms.count { t -> titleWords.any { it.startsWith(t) } }
-            val titlePrior = if (c.zimPath in aboutPaths) 1.0 + TITLE_BOOST + ABOUT_BOOST
+            val titlePrior = if (c.zimPath != null && "${c.zimFile}|${c.zimPath}" in aboutPaths) 1.0 + TITLE_BOOST + ABOUT_BOOST
             else 1.0 + TITLE_BOOST * inTitle / rankTerms.size
             val section = Grounding.aspectWeight(aspect, c.heading, articleTitle) * (if (c.opensSection) 1.1 else 1.0)
             sc.copy(score = sc.score * titlePrior * section)
@@ -111,6 +115,7 @@ class Retriever internal constructor(
                 markedText = Grounding.markTerms(c.text, terms),
                 heading = c.heading,
                 zimPath = c.zimPath,
+                zimFile = c.zimFile,
             )
         }
     }

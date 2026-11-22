@@ -13,6 +13,8 @@ data class Passage(
     val heading: String? = null,
     /** Set when the passage comes from a ZIM article (offline reference) instead of the library. */
     val zimPath: String? = null,
+    /** Which ZIM file (absolute path) [zimPath] belongs to — several can be open. */
+    val zimFile: String? = null,
 ) {
     val isZim: Boolean get() = zimPath != null
 

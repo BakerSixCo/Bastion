@@ -32,15 +32,16 @@ fun BastionApp() {
     var readerDocId by rememberSaveable { mutableLongStateOf(-1L) }
     var readerQuery by rememberSaveable { mutableStateOf("") }
     var readerZimPath by rememberSaveable { mutableStateOf<String?>(null) }
+    var readerZimFile by rememberSaveable { mutableStateOf("") }
 
-    // Re-open the remembered offline reference ZIM (in place, never copied).
+    // Open every ZIM in BASTION's reference folders (phone storage and SD card).
     val ctx = LocalContext.current
     LaunchedEffect(Unit) { ZimLibrary.get(ctx).restore() }
 
     readerZimPath?.let { path ->
         BackHandler { readerZimPath = null }
         Surface(color = MaterialTheme.colorScheme.background) {
-            ZimReaderScreen(path = path, query = readerQuery, onClose = { readerZimPath = null })
+            ZimReaderScreen(zimFile = readerZimFile, path = path, query = readerQuery, onClose = { readerZimPath = null })
         }
         return
     }
@@ -94,7 +95,8 @@ fun BastionApp() {
             Tab.ASK -> AskScreen(
                 Modifier.padding(pad),
                 onOpen = open,
-                onOpenZim = { path, q ->
+                onOpenZim = { file, path, q ->
+                    readerZimFile = file
                     readerZimPath = path
                     readerQuery = q
                 },

@@ -15,7 +15,7 @@ import org.kiwix.libzim.Query
 import org.kiwix.libzim.Searcher
 import java.io.File
 
-/** What the opened ZIM is, for honest display and citations. */
+/** What an opened ZIM is, for honest display and citations. [file] is its absolute path (the ZIM's key). */
 data class ZimInfo(
     val title: String,
     val fileName: String,
@@ -23,69 +23,98 @@ data class ZimInfo(
     val articleCount: Int,
     val sizeBytes: Long,
     val hasFulltextIndex: Boolean,
+    val file: String = "",
+    val onSdCard: Boolean = false,
 )
 
 sealed class ZimState {
     data object NoZim : ZimState()
     data class Copying(val copiedBytes: Long, val totalBytes: Long?) : ZimState()
     data object Opening : ZimState()
-    data class Ready(val info: ZimInfo) : ZimState()
+    /** At least one ZIM is searchable. [problems]: files that could not be used, in plain words. */
+    data class Ready(val zims: List<ZimInfo>, val problems: List<String> = emptyList()) : ZimState()
     data class Failed(val reason: String) : ZimState()
 }
 
-data class ZimHit(val title: String, val path: String, val score: Int = 0)
-data class ZimArticle(val title: String, val path: String, val text: String)
+/** A search/title hit. [zim] is the ZIM's file path (which archive the [path] belongs to). */
+data class ZimHit(val title: String, val path: String, val score: Int = 0, val zim: String = "")
+data class ZimArticle(val title: String, val path: String, val text: String, val zim: String = "")
+
+/** Where a new ZIM can be copied: internal shared storage or a removable SD card. */
+data class ZimFolder(val dir: File, val removable: Boolean) {
+    val label: String get() = if (removable) "SD card" else "phone storage"
+}
 
 /**
- * One offline reference ZIM (e.g. Kiwix Wikipedia), kept in BASTION's own
- * reference folder — `Android/media/com.bastion.terminal/zim/` — and opened
- * **by path**.
+ * Offline reference ZIMs (e.g. Kiwix Wikipedia), kept in BASTION's own
+ * reference folders — `Android/media/com.bastion.terminal/zim/` on phone
+ * storage **and on each SD card** — and opened **by path**. Every ZIM found
+ * there is opened and searched together.
  *
- * Why a folder and not the picked file in place: libzim's full-text search
+ * Why folders and not the picked file in place: libzim's full-text search
  * (Xapian) re-opens the file by path ("/dev/fd/N"), which Android's scoped
  * storage denies for file-picker descriptors (seen on emulator 2026-11-21).
- * App-specific storage needs no permission. Same approach as Kiwix's Play
- * build. Large files (tens of GB) can be placed in the folder over USB
- * instead of being copied by the app. Read-only; no network.
+ * App-specific folders need no permission (including on SD cards, via
+ * `externalMediaDirs`). Same approach as Kiwix's Play build. Large files
+ * (tens of GB) can be placed in a folder over USB instead of being copied by
+ * the app. Read-only; no network.
  */
 class ZimLibrary private constructor(private val app: Context) {
 
     private val _state = MutableStateFlow<ZimState>(ZimState.NoZim)
     val state: StateFlow<ZimState> = _state
 
+    private class Open(val file: File, val archive: Archive, val searcher: Searcher?, val info: ZimInfo)
+
     private val lock = Mutex()
-    private var archive: Archive? = null
-    private var searcher: Searcher? = null
-    private var info: ZimInfo? = null
-    private var openFile: File? = null
+    private val open = LinkedHashMap<String, Open>()
+    private val problems = LinkedHashMap<String, String>()
     private val articleCache = object : LinkedHashMap<String, ZimArticle>(16, 0.75f, true) {
         override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, ZimArticle>?) = size > 24
     }
 
-    /** BASTION's reference folder (app-specific; visible over USB as Android/media/…/zim). */
-    fun folder(): File {
-        val base = app.externalMediaDirs.firstOrNull { it != null } ?: app.getExternalFilesDir(null) ?: app.filesDir
-        return File(base, "zim").apply { mkdirs() }
+    /** All of BASTION's reference folders: phone storage first, then any SD cards. */
+    fun folders(): List<ZimFolder> {
+        val dirs = app.externalMediaDirs.filterNotNull()
+        val out = dirs.mapIndexed { i, d ->
+            val removable = runCatching { android.os.Environment.isExternalStorageRemovable(d) }.getOrDefault(i > 0)
+            ZimFolder(File(d, "zim").apply { mkdirs() }, removable)
+        }.filter { it.dir.isDirectory }
+        return out.ifEmpty { listOf(ZimFolder(File(app.getExternalFilesDir(null) ?: app.filesDir, "zim").apply { mkdirs() }, false)) }
     }
 
-    private fun zimsInFolder(): List<File> =
-        folder().listFiles { f -> f.isFile && f.name.endsWith(".zim", ignoreCase = true) }?.toList().orEmpty()
+    /** The phone-storage reference folder (shown in messages). */
+    fun folder(): File = folders().first().dir
 
-    /** Opens the ZIM in the reference folder, if any (call at startup, off the main thread). */
+    fun sdFolder(): ZimFolder? = folders().firstOrNull { it.removable }
+
+    private fun zimsInFolders(): List<File> = folders().flatMap { f ->
+        f.dir.listFiles { x -> x.isFile && x.name.endsWith(".zim", ignoreCase = true) }?.toList().orEmpty()
+    }
+
+    /** Opens every ZIM in the reference folders not yet open (startup, after USB copies). */
     suspend fun restore() = withContext(Dispatchers.IO) {
         lock.withLock {
-            if (archive != null) return@withLock
             if (_state.value is ZimState.Copying) return@withLock
-            val f = zimsInFolder().maxByOrNull { it.length() }
-            if (f == null) _state.value = ZimState.NoZim else openLocked(f)
+            val present = zimsInFolders().map { it.absolutePath }.toSet()
+            // Files deleted over USB: close them.
+            (open.keys - present).forEach { closeLocked(it) }
+            problems.clear() // Rescan retries files that failed before.
+            val toOpen = zimsInFolders().filter { it.absolutePath !in open && it.absolutePath !in problems }
+                .sortedByDescending { it.length() }
+            if (toOpen.isNotEmpty()) _state.value = ZimState.Opening
+            toOpen.forEach { openLocked(it) }
+            publishLocked()
         }
     }
 
     /**
-     * Copies a picked .zim into the reference folder (streamed, with progress
-     * and a free-space check), then opens it. Replaces any previous copy.
+     * Copies a picked .zim into a reference folder (streamed, with progress
+     * and a free-space check), then opens it alongside the others. A file of
+     * the same name is replaced. [toSdCard] uses the SD card's folder if one
+     * exists.
      */
-    suspend fun add(uri: Uri): String = withContext(Dispatchers.IO) {
+    suspend fun add(uri: Uri, toSdCard: Boolean = false): String = withContext(Dispatchers.IO) {
         lock.withLock {
             val resolver = app.contentResolver
             var name: String? = null
@@ -104,14 +133,21 @@ class ZimLibrary private constructor(private val app: Context) {
             if (!fileName.endsWith(".zim", ignoreCase = true)) {
                 return@withLock "Not a ZIM file: expected .zim, got \"$fileName\"."
             }
-            val dir = folder()
-            size?.let { if (it > dir.usableSpace - SPACE_MARGIN) {
-                return@withLock "Not enough storage to copy it: needs ${it / 1_000_000} MB, " +
-                    "${dir.usableSpace / 1_000_000} MB free. Large ZIMs can be placed in ${dir.absolutePath} over USB instead."
-            } }
-            closeLocked()
+            val dest = (if (toSdCard) sdFolder() else null) ?: folders().first()
+            val dir = dest.dir
+            size?.let {
+                if (it > dir.usableSpace - SPACE_MARGIN) {
+                    val hint = if (dest.removable) "Use a larger SD card, or Add ZIM to phone storage."
+                    else "Free up space" + (sdFolder()?.let { ", or Add to SD card" } ?: "") + "."
+                    return@withLock "Not enough space on ${dest.label} to copy it: needs ${it / 1_000_000} MB, " +
+                        "${dir.usableSpace / 1_000_000} MB free. $hint"
+                }
+            }
             val tmp = File(dir, "$fileName.part")
             val target = File(dir, fileName)
+            // Replacing a file of the same name: close it first.
+            closeLocked(target.absolutePath)
+            problems.remove(target.absolutePath)
             try {
                 _state.value = ZimState.Copying(0, size)
                 val input = resolver.openInputStream(uri) ?: return@withLock "Could not open the selected file."
@@ -129,92 +165,102 @@ class ZimLibrary private constructor(private val app: Context) {
                         }
                     }
                 }
-                // One reference ZIM at a time (v1): remove other copies to save space.
-                zimsInFolder().filter { it.name != fileName }.forEach { it.delete() }
                 target.delete()
                 check(tmp.renameTo(target)) { "rename failed" }
             } catch (t: Throwable) {
                 tmp.delete()
-                _state.value = ZimState.Failed("Copy failed: ${t.message ?: t.javaClass.simpleName}")
+                publishLocked()
                 return@withLock "Copy failed: ${t.message ?: t.javaClass.simpleName}"
             }
+            _state.value = ZimState.Opening
             openLocked(target)
-            when (val s = _state.value) {
-                is ZimState.Ready -> "Added “${s.info.title}” (${"%,d".format(s.info.articleCount)} articles)."
-                is ZimState.Failed -> s.reason
-                else -> "Could not open the ZIM file."
-            }
+            publishLocked()
+            open[target.absolutePath]?.info?.let {
+                if (it.hasFulltextIndex) "Added “${it.title}” (${"%,d".format(it.articleCount)} articles) on ${dest.label}."
+                else "Added “${it.title}”, but it has no full-text index, so Ask cannot search it."
+            } ?: problems[target.absolutePath] ?: "Could not open the ZIM file."
         }
     }
 
-    /** Closes and deletes BASTION's copy (the original picked file is untouched). */
-    suspend fun remove(): String = withContext(Dispatchers.IO) {
+    /** Closes and deletes BASTION's copy of one ZIM (any original elsewhere is untouched). */
+    suspend fun remove(file: String): String = withContext(Dispatchers.IO) {
         lock.withLock {
-            val f = openFile
-            closeLocked()
-            val deleted = zimsInFolder().onEach { it.delete() }
-            _state.value = ZimState.NoZim
-            if (deleted.isEmpty() && f == null) "Nothing to remove."
-            else "Removed BASTION's copy (${deleted.joinToString { it.name }}). Any original file elsewhere is untouched."
+            val f = File(file)
+            if (folders().none { f.parentFile?.absolutePath == it.dir.absolutePath }) return@withLock "Not one of BASTION's ZIMs."
+            val title = open[file]?.info?.title ?: f.name
+            closeLocked(file)
+            problems.remove(file)
+            val ok = f.delete()
+            publishLocked()
+            if (ok) "Removed “$title” (BASTION's copy). Any original file elsewhere is untouched." else "Could not delete ${f.name}."
         }
     }
 
-    fun currentInfo(): ZimInfo? = info
+    fun currentInfos(): List<ZimInfo> = (state.value as? ZimState.Ready)?.zims.orEmpty()
+
+    fun infoFor(file: String): ZimInfo? = currentInfos().firstOrNull { it.file == file }
 
     /**
-     * Full-text search (the ZIM's own Xapian index). All key terms together
-     * first (trusted). If that finds too little, any term — but those looser
-     * hits are kept only when the article *title* contains a key term, so an
-     * antenna question doesn't pull in "Photosynthesis" (seen on emulator).
+     * Full-text search (each ZIM's own Xapian index), up to [max] hits per ZIM.
+     * All key terms together first (trusted). If that finds too little, any
+     * term — but those looser hits are kept only when the article *title*
+     * contains a key term, so an antenna question doesn't pull in
+     * "Photosynthesis" (seen on emulator).
      */
     suspend fun search(terms: List<String>, max: Int = 5): List<ZimHit> = withContext(Dispatchers.IO) {
         lock.withLock {
-            val s = searcher ?: return@withLock emptyList()
             if (terms.isEmpty()) return@withLock emptyList()
-            val strict = runSearch(s, terms.joinToString(" "), max)
-            if (strict.size >= max) return@withLock strict
-            val loose = runSearch(s, terms.joinToString(" OR "), max * 2)
-                .filter { hit -> titleMatches(hit.title, terms) }
-            (strict + loose).distinctBy { it.path }.take(max)
+            open.values.flatMap { o ->
+                val s = o.searcher ?: return@flatMap emptyList()
+                val strict = runSearch(s, terms.joinToString(" "), max, o.info.file)
+                if (strict.size >= max) return@flatMap strict
+                val loose = runSearch(s, terms.joinToString(" OR "), max * 2, o.info.file)
+                    .filter { hit -> titleMatches(hit.title, terms) }
+                (strict + loose).distinctBy { it.path }.take(max)
+            }
         }
     }
 
     /**
-     * Exact article-title lookup ("burn" → *Burn*, "CPR" → redirect →
-     * *Cardiopulmonary resuscitation*). Full-text ranking alone can bury the
-     * main article under longer ones that repeat the words ("First aid kit"
-     * for "first aid for a burn" — seen on emulator). Redirects are followed;
-     * only HTML articles count.
+     * Exact article-title lookup in every ZIM ("burn" → *Burn*, "CPR" →
+     * redirect → *Cardiopulmonary resuscitation*). Full-text ranking alone can
+     * bury the main article under longer ones that repeat the words ("First
+     * aid kit" for "first aid for a burn" — seen on emulator). Redirects are
+     * followed; only HTML articles count. Up to [max] per ZIM.
      */
     suspend fun titleLookup(phrases: List<String>, max: Int = 2): List<ZimHit> = withContext(Dispatchers.IO) {
         lock.withLock {
-            val a = archive ?: return@withLock emptyList()
-            val out = ArrayList<ZimHit>()
-            for (p in phrases) {
-                if (out.size >= max) break
-                val variants = linkedSetOf(
-                    p.replaceFirstChar { it.uppercase() },
-                    p.lowercase().replaceFirstChar { it.uppercase() },
-                    p.uppercase(),
-                )
-                if (p.length > 4 && p.endsWith("s", ignoreCase = true)) variants += p.dropLast(1).replaceFirstChar { it.uppercase() }
-                for (v in variants) {
-                    val hit = runCatching {
-                        if (!a.hasEntryByTitle(v)) return@runCatching null
-                        var e = a.getEntryByTitle(v)
-                        var hops = 0
-                        while (e.isRedirect && hops++ < 5) e = e.redirectEntry
-                        if (e.isRedirect || !e.getItem(true).mimetype.startsWith("text/html")) null
-                        else ZimHit(e.title, e.path, 100)
-                    }.getOrNull()
-                    if (hit != null) {
-                        if (out.none { it.path == hit.path }) out += hit
-                        break
+            val all = ArrayList<ZimHit>()
+            for (o in open.values) {
+                val a = o.archive
+                val out = ArrayList<ZimHit>()
+                for (p in phrases) {
+                    if (out.size >= max) break
+                    val variants = linkedSetOf(
+                        p.replaceFirstChar { it.uppercase() },
+                        p.lowercase().replaceFirstChar { it.uppercase() },
+                        p.uppercase(),
+                    )
+                    if (p.length > 4 && p.endsWith("s", ignoreCase = true)) variants += p.dropLast(1).replaceFirstChar { it.uppercase() }
+                    for (v in variants) {
+                        val hit = runCatching {
+                            if (!a.hasEntryByTitle(v)) return@runCatching null
+                            var e = a.getEntryByTitle(v)
+                            var hops = 0
+                            while (e.isRedirect && hops++ < 5) e = e.redirectEntry
+                            if (e.isRedirect || !e.getItem(true).mimetype.startsWith("text/html")) null
+                            else ZimHit(e.title, e.path, 100, o.info.file)
+                        }.getOrNull()
+                        if (hit != null) {
+                            if (out.none { it.path == hit.path }) out += hit
+                            break
+                        }
                     }
                 }
+                all += out
             }
-            android.util.Log.i("BastionZim", "titleLookup $phrases → ${out.map { it.title }}")
-            out
+            android.util.Log.i("BastionZim", "titleLookup $phrases → ${all.map { it.title }}")
+            all
         }
     }
 
@@ -223,37 +269,34 @@ class ZimLibrary private constructor(private val app: Context) {
         return terms.any { t -> words.any { it.startsWith(t) } }
     }
 
-    private fun runSearch(s: Searcher, q: String, max: Int): List<ZimHit> = runCatching {
+    private fun runSearch(s: Searcher, q: String, max: Int, zim: String): List<ZimHit> = runCatching {
         val it = s.search(Query(q)).getResults(0, max)
         val out = ArrayList<ZimHit>()
-        var aligned = 0
         while (it.hasNext()) {
-            val prePath = runCatching { it.path }.getOrNull()
-            val preScore = runCatching { it.score }.getOrDefault(0)
+            val score = runCatching { it.score }.getOrDefault(0)
             val e = it.next()
-            if (prePath == e.path) aligned++
-            out.add(ZimHit(e.title, e.path, preScore))
+            out.add(ZimHit(e.title, e.path, score, zim))
         }
-        android.util.Log.i("BastionZim", "query=[$q] results=${out.size} iteratorAligned=$aligned")
+        android.util.Log.i("BastionZim", "query=[$q] zim=${File(zim).name} results=${out.size}")
         out
     }.getOrDefault(emptyList())
 
-    /** Article as plain text with Markdown headings (cached). */
-    suspend fun article(path: String): ZimArticle? = withContext(Dispatchers.IO) {
+    /** Article as plain text with Markdown headings (cached). [zim] is the ZIM's file path. */
+    suspend fun article(zim: String, path: String): ZimArticle? = withContext(Dispatchers.IO) {
         lock.withLock {
-            articleCache[path]?.let { return@withLock it }
-            val a = archive ?: return@withLock null
+            val key = "$zim|$path"
+            articleCache[key]?.let { return@withLock it }
+            val a = open[zim]?.archive ?: return@withLock null
             runCatching {
                 val entry = a.getEntryByPath(path)
                 val item = entry.getItem(true)
                 if (!item.mimetype.startsWith("text/html")) return@runCatching null
-                ZimArticle(entry.title, path, HtmlText.extract(String(item.data.data, Charsets.UTF_8)))
-            }.getOrNull()?.also { articleCache[path] = it }
+                ZimArticle(entry.title, path, HtmlText.extract(String(item.data.data, Charsets.UTF_8)), zim)
+            }.getOrNull()?.also { articleCache[key] = it }
         }
     }
 
     private fun openLocked(file: File) {
-        _state.value = ZimState.Opening
         try {
             ensureNative(app)
             val a = Archive(file.absolutePath)
@@ -264,29 +307,30 @@ class ZimLibrary private constructor(private val app: Context) {
                 articleCount = a.articleCount,
                 sizeBytes = a.filesize,
                 hasFulltextIndex = a.hasFulltextIndex(),
+                file = file.absolutePath,
+                onSdCard = folders().any { it.removable && file.parentFile?.absolutePath == it.dir.absolutePath },
             )
-            archive = a
-            info = zi
-            openFile = file
             if (!zi.hasFulltextIndex) {
-                _state.value = ZimState.Failed("“${zi.title}” has no full-text index, so it cannot be searched.")
+                problems[file.absolutePath] = "“${zi.title}” (${file.name}) has no full-text index, so it cannot be searched."
                 return
             }
-            searcher = Searcher(a)
-            _state.value = ZimState.Ready(zi)
+            open[file.absolutePath] = Open(file, a, Searcher(a), zi)
         } catch (t: Throwable) {
-            closeLocked()
-            _state.value = ZimState.Failed("Could not open ${file.name}: ${t.message ?: t.javaClass.simpleName}")
+            problems[file.absolutePath] = "Could not open ${file.name}: ${t.message ?: t.javaClass.simpleName}"
         }
     }
 
-    private fun closeLocked() {
-        runCatching { searcher?.dispose() }
-        searcher = null
-        archive = null
-        info = null
-        openFile = null
-        articleCache.clear()
+    private fun closeLocked(key: String) {
+        open.remove(key)?.let { runCatching { it.searcher?.dispose() } }
+        articleCache.keys.removeAll { it.startsWith("$key|") }
+    }
+
+    private fun publishLocked() {
+        _state.value = when {
+            open.isNotEmpty() -> ZimState.Ready(open.values.map { it.info }, problems.values.toList())
+            problems.isNotEmpty() -> ZimState.Failed(problems.values.joinToString("\n"))
+            else -> ZimState.NoZim
+        }
     }
 
     private fun meta(a: Archive, key: String): String? =

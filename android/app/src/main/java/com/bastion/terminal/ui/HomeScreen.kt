@@ -232,8 +232,20 @@ private fun ZimCard() {
     val state by zim.state.collectAsState()
     val scope = rememberCoroutineScope()
     var message by remember { mutableStateOf<String?>(null) }
+    var toSd by remember { mutableStateOf(false) }
+    val sd = remember(state) { zim.sdFolder() }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        if (uri != null) scope.launch { message = zim.add(uri) }
+        if (uri != null) scope.launch { message = zim.add(uri, toSdCard = toSd) }
+    }
+    val busy = state is ZimState.Opening || state is ZimState.Copying
+    fun pick(sdCard: Boolean) {
+        message = null
+        toSd = sdCard
+        try {
+            picker.launch(arrayOf("*/*"))
+        } catch (_: ActivityNotFoundException) {
+            message = "This device has no file picker app, so a ZIM cannot be added here."
+        }
     }
 
     Card {
@@ -244,21 +256,45 @@ private fun ZimCard() {
                 style = MaterialTheme.typography.titleMedium,
                 color = if (ok) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
             )
-            Text(
-                when (val s = state) {
-                    is ZimState.NoZim -> "None added. Add a Kiwix .zim file (e.g. offline Wikipedia) and Ask " +
-                        "will search it alongside your library, citing the articles it uses. Large files can " +
-                        "instead be copied over USB into ${zim.folder().absolutePath}."
-                    is ZimState.Copying -> "Copying into BASTION's reference folder... ${TextUtil.formatSize(s.copiedBytes)}" +
-                        (s.totalBytes?.let { " of ${TextUtil.formatSize(it)}" } ?: "")
-                    is ZimState.Opening -> "Opening…"
-                    is ZimState.Ready -> "“${s.info.title}”" + (s.info.date?.let { " ($it)" } ?: "") +
-                        " — ${"%,d".format(s.info.articleCount)} articles, ${TextUtil.formatSize(s.info.sizeBytes)}. " +
-                        "File: ${s.info.fileName} in BASTION's reference folder."
-                    is ZimState.Failed -> s.reason
-                },
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            when (val s = state) {
+                is ZimState.Ready -> {
+                    Text(
+                        "Ask searches ${if (s.zims.size == 1) "this file" else "all ${s.zims.size} files"} alongside your library:",
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    s.zims.forEach { z ->
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                "“${z.title}”" + (z.date?.let { " ($it)" } ?: "") +
+                                    " — ${"%,d".format(z.articleCount)} articles, ${TextUtil.formatSize(z.sizeBytes)}" +
+                                    (if (z.onSdCard) " · SD card" else " · phone storage") + "\n${z.fileName}",
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.weight(1f),
+                            )
+                            TextButton(enabled = !busy, onClick = { scope.launch { message = zim.remove(z.file) } }) {
+                                Text("Remove")
+                            }
+                        }
+                    }
+                    s.problems.forEach {
+                        Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                    }
+                }
+                else -> Text(
+                    when (s) {
+                        is ZimState.NoZim -> "None added. Add a Kiwix .zim file (e.g. offline Wikipedia) and Ask " +
+                            "will search it alongside your library, citing the articles it uses. Several can be added. " +
+                            "Large files can instead be copied over USB into ${zim.folder().absolutePath}" +
+                            (sd?.let { " or, on the SD card, ${it.dir.absolutePath}" } ?: "") + ", then Rescan."
+                        is ZimState.Copying -> "Copying into BASTION's reference folder... ${TextUtil.formatSize(s.copiedBytes)}" +
+                            (s.totalBytes?.let { " of ${TextUtil.formatSize(it)}" } ?: "")
+                        is ZimState.Opening -> "Opening…"
+                        is ZimState.Failed -> s.reason
+                        is ZimState.Ready -> ""
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
             (state as? ZimState.Copying)?.let { c ->
                 val total = c.totalBytes
                 if (total != null && total > 0) LinearProgressIndicator(progress = { c.copiedBytes.toFloat() / total }, modifier = Modifier.fillMaxWidth())
@@ -266,22 +302,12 @@ private fun ZimCard() {
             }
             if (state is ZimState.Opening) LinearProgressIndicator(Modifier.fillMaxWidth())
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(
-                    enabled = state !is ZimState.Opening && state !is ZimState.Copying,
-                    onClick = {
-                        message = null
-                        try {
-                            picker.launch(arrayOf("*/*"))
-                        } catch (_: ActivityNotFoundException) {
-                            message = "This device has no file picker app, so a ZIM cannot be added here."
-                        }
-                    },
-                ) { Text(if (state is ZimState.NoZim) "Add ZIM file" else "Replace ZIM") }
-                if (state is ZimState.Ready || state is ZimState.Failed) {
-                    OutlinedButton(onClick = { scope.launch { message = zim.remove() } }) {
-                        Text("Remove")
-                    }
-                }
+                OutlinedButton(enabled = !busy, onClick = { pick(false) }) { Text("Add ZIM") }
+                if (sd != null) OutlinedButton(enabled = !busy, onClick = { pick(true) }) { Text("Add to SD card") }
+                TextButton(enabled = !busy, onClick = {
+                    message = null
+                    scope.launch { zim.restore(); message = "Rescanned the reference folders." }
+                }) { Text("Rescan") }
             }
             message?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

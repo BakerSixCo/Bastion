@@ -47,18 +47,18 @@ fun ReaderScreen(docId: Long, query: String, onClose: () -> Unit) {
     ReaderLayout(meta?.title, meta?.provenance, text, query, onClose)
 }
 
-/** An article from the offline reference ZIM, read in place (never copied). */
+/** An article from one of the offline reference ZIMs in BASTION's reference folders. */
 @Composable
-fun ZimReaderScreen(path: String, query: String, onClose: () -> Unit) {
+fun ZimReaderScreen(zimFile: String, path: String, query: String, onClose: () -> Unit) {
     val ctx = LocalContext.current
     val zim = remember { ZimLibrary.get(ctx) }
     var article by remember { mutableStateOf<ZimArticle?>(null) }
     var missing by remember { mutableStateOf(false) }
-    LaunchedEffect(path) {
-        article = zim.article(path)
+    LaunchedEffect(zimFile, path) {
+        article = zim.article(zimFile, path)
         missing = article == null
     }
-    val provenance = zim.currentInfo()?.let {
+    val provenance = zim.infoFor(zimFile)?.let {
         "Offline reference “${it.title}”" + (it.date?.let { d -> " ($d)" } ?: "") +
             " · ${it.fileName} · article $path"
     }
