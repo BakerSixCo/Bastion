@@ -1,6 +1,9 @@
 package com.bastion.terminal.ui
 
+import android.content.ActivityNotFoundException
 import android.os.StatFs
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -21,13 +26,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.bastion.terminal.ai.AiState
+import com.bastion.terminal.ai.LocalAi
 import com.bastion.terminal.data.LibraryStore
+import kotlinx.coroutines.launch
 import com.bastion.terminal.data.TextUtil
 
 private data class CompanionApp(val label: String, val pkg: String, val role: String)
@@ -76,13 +86,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             },
         )
 
-        StatusCard(
-            title = "Local AI",
-            ok = false,
-            body = "Not installed. No model file is present and no inference runtime ships in v0.1 — " +
-                "the Ask tab returns matching library passages only. Nothing is sent to any cloud " +
-                "service: this app does not declare the Internet permission at all.",
-        )
+        LocalAiCard()
 
         Card {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -144,4 +148,75 @@ private fun StatusCard(title: String, ok: Boolean, body: String) {
             Text(body, style = MaterialTheme.typography.bodyMedium)
         }
     }
+}
+
+@Composable
+private fun LocalAiCard() {
+    val ctx = LocalContext.current
+    val ai = remember { LocalAi.get(ctx) }
+    val state by ai.state.collectAsState()
+    val scope = rememberCoroutineScope()
+    var message by remember { mutableStateOf<String?>(null) }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) scope.launch { message = ai.importModel(uri) }
+    }
+    val busy = state is AiState.Importing || state is AiState.Loading
+
+    Card {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            val ok = state is AiState.Ready || state is AiState.Loaded
+            Text(
+                (if (ok) "● " else "○ ") + "Local AI",
+                style = MaterialTheme.typography.titleMedium,
+                color = if (ok) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+            )
+            Text(localAiBody(state), style = MaterialTheme.typography.bodyMedium)
+            (state as? AiState.Importing)?.let { s ->
+                val total = s.totalBytes
+                if (total != null && total > 0) {
+                    LinearProgressIndicator(progress = { s.copiedBytes.toFloat() / total }, modifier = Modifier.fillMaxWidth())
+                } else {
+                    LinearProgressIndicator(Modifier.fillMaxWidth())
+                }
+            }
+            if (state is AiState.Loading) LinearProgressIndicator(Modifier.fillMaxWidth())
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(
+                    enabled = !busy,
+                    onClick = {
+                        message = null
+                        try {
+                            picker.launch(arrayOf("*/*"))
+                        } catch (_: ActivityNotFoundException) {
+                            message = "This device has no file picker app, so a model cannot be imported here."
+                        }
+                    },
+                ) { Text(if (state is AiState.NoModel) "Import model file" else "Replace model") }
+                if (state is AiState.Loaded) {
+                    OutlinedButton(onClick = { scope.launch { ai.unload() } }) { Text("Unload") }
+                }
+            }
+            message?.let {
+                Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+            Text(
+                "Nothing is sent to any cloud service: this app does not declare the Internet permission at all.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+private fun localAiBody(s: AiState): String = when (s) {
+    is AiState.NoModel -> "Not installed. No model file is present, so Ask returns matching library " +
+        "passages only. Import a LiteRT-LM model (.litertlm), e.g. Gemma 4 E2B, copied onto this phone."
+    is AiState.Importing -> "Importing model… ${TextUtil.formatSize(s.copiedBytes)}" +
+        (s.totalBytes?.let { " of ${TextUtil.formatSize(it)}" } ?: "")
+    is AiState.Ready -> "Model file present: ${s.file.name} (${TextUtil.formatSize(s.file.length())}). " +
+        "Not loaded yet — it loads on the first question in Ask."
+    is AiState.Loading -> "Loading ${s.file.name} into memory…"
+    is AiState.Loaded -> "Loaded: ${s.label} (load took ${"%.1f".format(java.util.Locale.US, s.loadSeconds)} s). " +
+        "Ask can answer from your library with citations."
+    is AiState.Failed -> s.reason + (s.file?.let { " File: ${it.name}." } ?: "")
 }

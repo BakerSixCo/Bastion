@@ -161,6 +161,32 @@ class LibraryStore private constructor(private val app: Context) {
         }
     }
 
+    /**
+     * Retrieval for grounded answers: matches ANY key term of a natural-language
+     * question, takes FTS4's best ~64-token fragment per document, and ranks by
+     * how many distinct key terms each fragment contains. These exact passages
+     * are shown to the user and given to the model.
+     */
+    suspend fun retrieve(question: String, limit: Int = 4): List<com.bastion.terminal.ai.Passage> =
+        withContext(Dispatchers.IO) {
+            val g = com.bastion.terminal.ai.Grounding
+            val match = g.keywordQuery(question) ?: return@withContext emptyList()
+            val terms = g.keyTerms(question)
+            val sql = "SELECT f.docid, d.title, " +
+                "snippet(doc_fts, '${TextUtil.MARK_START}', '${TextUtil.MARK_END}', ' … ', -1, 64) " +
+                "FROM doc_fts f JOIN docs d ON d.id = f.docid WHERE doc_fts MATCH ? LIMIT 50"
+            val rows = try {
+                helper.readableDatabase.rawQuery(sql, arrayOf(match)).use { c ->
+                    buildList { while (c.moveToNext()) add(Triple(c.getLong(0), c.getString(1), c.getString(2))) }
+                }
+            } catch (_: Exception) {
+                emptyList()
+            }
+            rows.sortedByDescending { (_, _, snip) -> g.termHits(snip, terms) }
+                .take(limit)
+                .mapIndexed { i, (id, title, snip) -> com.bastion.terminal.ai.Passage(i + 1, id, title, snip) }
+        }
+
     suspend fun search(raw: String): List<SearchHit> = withContext(Dispatchers.IO) {
         val match = TextUtil.ftsQuery(raw) ?: return@withContext emptyList()
         val sql = "SELECT f.docid, d.title, " +
