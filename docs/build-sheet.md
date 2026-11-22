@@ -124,6 +124,11 @@ multiple units and level 2 hits a wall (GrapheneOS is Pixel-only; patching
 burden). Emulator graphics: ATAK crashes in every hardware-GPU mode on this
 PC, so the emulator runs software graphics when ATAK is needed.
 
-Build queue from these: location + team navigation → approved-radio list →
-always-on service → two-model support → wipe PIN → offline map → missed
-check-in alarm → structured reports → pack sharing.
+**Device-manager mode approved (owner, 2026-11-22):** BASTION as Android device
+owner on the dedicated phone — home screen, installs/updates companion apps,
+grants their permissions, locks the phone to chosen apps, enforces airplane
+mode, can wipe. Stock Android; needs a one-time factory reset per phone.
+
+Build queue: ~~location + team navigation~~ (done) → approved-radio list →
+always-on service → two-model support → wipe PIN → device-manager mode →
+offline map → missed check-in alarm → structured reports → pack sharing.
