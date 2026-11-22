@@ -953,6 +953,61 @@ Known gaps:
 Not built yet from the queue: two-model support; device-manager mode (needs
 a clean emulator).
 
+### Device-manager mode and the PC setup tool (2026-11-22)
+
+Owner decisions: BASTION as device manager (Android device owner); setup by
+a PC tool that puts an offline kit on the phone; open source under GPL-3.0
+(`LICENSE` added — exact licences of libkiwix and ATAK's public release
+still to be confirmed before publishing).
+
+- `device/DeviceManager` + `BastionAdmin`. With the role, BASTION:
+  - installs every `.apk` in `Android/media/com.bastion.terminal/kit/`
+    silently;
+  - grants its own and the companion apps' permissions;
+  - becomes the home screen (through a separate `HomeAlias` entry that
+    stays disabled on ordinary installs);
+  - can lock the phone to BASTION + companions + Settings + the file picker
+    (kiosk);
+  - can give the role back ("Stop managing this phone").
+
+  Without the role, every function is a no-op that says so.
+- `tools/provision.ps1` (PC, over USB): checks the phone has no accounts,
+  installs BASTION, runs `dpm set-device-owner`, grants mesh-inbox
+  notification access (a device manager cannot grant that itself), and
+  copies `tools/kit/` (apps, ZIMs, model) to the phone.
+
+Evidence — a second, clean emulator (`Bastion_Clean`, created from the
+installed Android 17 image; 0 accounts):
+- `provision.ps1` → "Success: Device owner set to package
+  com.bastion.terminal" ✅
+- "Install kit apps" → a small test APK installed with **no prompt**
+  (log: "install test-app.apk: ok"; package present) ✅
+- "Apply setup" → "BASTION: 4 permission(s) granted" (location,
+  notifications; shown as policy-fixed) and "BASTION is the home screen";
+  the Home key lands on `com.bastion.terminal/.HomeAlias` ✅
+- "Lock phone to BASTION" → `mLockTaskModeState=LOCKED`; opening a web page
+  was blocked ("Activity not started"); Settings (allowed) opened; Home
+  returns to BASTION; switched off → `NONE` ✅
+
+Not tested:
+- the real companion apps installed from a kit (they aren't in `tools/kit`
+  yet);
+- permissions granted to Meshtastic/ATAK ("not installed" on the clean
+  emulator);
+- "Stop managing this phone";
+- a real phone;
+- provisioning by QR code.
+
+Not built:
+- the tool **downloading** the kit at pinned, verified versions — today it
+  installs from files placed in `tools/kit/`;
+- enforcing airplane mode;
+- the factory-reset option on the wipe PIN.
+
+Limits: settings inside other apps (Meshtastic's TAK server switch) still
+need guided taps. ATAK-CIV has no public direct download the tool can fetch
+without an account, so that file may stay a manual download.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

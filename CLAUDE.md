@@ -190,3 +190,16 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   erases everything except `KEEP_FILE_DIRS` / `KEEP_PREFS` — keep it a
   keep-list so new private data is wiped by default. Never run the wipe in
   an instrumented test (it would erase the device's real data).
+
+## Device-manager mode (`device/`) and provisioning
+
+- BASTION can be Android **device owner** on a dedicated phone
+  (`tools/provision.ps1` sets it over USB; needs a device with no accounts).
+  Test it on the clean AVD `Bastion_Clean`, never by removing the account
+  from the main AVD.
+- `DeviceManager` installs APKs only from the kit folder on the phone — it
+  never downloads. Downloading/verifying the kit is the PC tool's job.
+- The home-screen entry is the `HomeAlias` activity-alias, disabled unless
+  device owner. Keep it that way so ordinary installs get no launcher prompt.
+- Licence: GPL-3.0 (`LICENSE`), owner decision 2026-11-22 (open source, not
+  for sale; libkiwix is GPL).

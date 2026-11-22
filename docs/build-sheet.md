@@ -146,3 +146,10 @@ gone). Before selling: licence review for redistributing companion apps
 (Meshtastic/Kiwix GPL-3.0; ATAK-CIV terms). Inside-app settings that device
 owner cannot press (e.g. Meshtastic's TAK server switch) stay guided steps
 unless those apps add managed configuration.
+
+**Open source (owner, 2026-11-22):** BASTION will be open source, not sold —
+GPL-3.0 (`LICENSE`). The setup tool downloads companion apps and data from
+their official sources rather than redistributing them. To confirm before
+publishing: libkiwix's exact licence, ATAK-CIV's public-release terms, a
+notices page listing bundled libraries, and trademark-safe wording ("works
+with Meshtastic and ATAK").

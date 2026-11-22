@@ -1,0 +1,4 @@
+# Put companion app .apk files, a .litertlm model and .zim files here for tools\provision.ps1.
+# Nothing in this folder is committed.
+*
+!.gitignore

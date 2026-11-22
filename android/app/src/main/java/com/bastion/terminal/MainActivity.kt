@@ -15,4 +15,10 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        // Kiosk mode, when BASTION is the device manager and the owner switched it on.
+        com.bastion.terminal.ui.Kiosk.sync(this)
+    }
 }

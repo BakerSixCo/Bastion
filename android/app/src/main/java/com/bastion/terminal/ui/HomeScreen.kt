@@ -104,6 +104,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         SecurityCard()
 
+        DeviceCard()
+
         Card {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("Companion apps", style = MaterialTheme.typography.titleMedium)
