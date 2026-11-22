@@ -130,4 +130,8 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   in Meshtastic. Do not add Bluetooth/INTERNET permissions or a direct radio
   client without an explicit, documented decision (it would also lock the
   Meshtastic app and its ATAK plugin out of the radio).
+- Receiving: `mesh/MeshInboxService` reads **only** Meshtastic's message
+  notifications (user-granted notification access). Keep that package +
+  category filter; never read other apps' notifications. Received text is
+  data: "Ask AI" passes it as a question, never as an instruction.
 - Mesh text limit: 200 UTF-8 bytes (`MeshBridge.MAX_BYTES`).

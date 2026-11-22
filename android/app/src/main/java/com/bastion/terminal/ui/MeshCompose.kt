@@ -22,32 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.bastion.terminal.mesh.MeshBridge
 
-/** Home card: write a short message and hand it to Meshtastic. */
-@Composable
-fun MeshCard() {
-    val ctx = LocalContext.current
-    val installed = remember { MeshBridge.isInstalled(ctx) }
-    var open by rememberSaveable { mutableStateOf(false) }
-    Card {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                (if (installed) "● " else "○ ") + "Mesh messaging",
-                style = MaterialTheme.typography.titleMedium,
-                color = if (installed) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-            )
-            Text(
-                if (installed) "BASTION hands your text to the Meshtastic app; you choose the channel and press " +
-                    "Send there. Meshtastic owns the radio — BASTION can't see whether one is connected, and " +
-                    "incoming messages are read in Meshtastic."
-                else "The Meshtastic app is not installed, so messages can't be sent to a mesh from here.",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            if (installed) OutlinedButton(onClick = { open = true }) { Text("Write mesh message") }
-        }
-    }
-    if (open) MeshComposeDialog(initial = "", onDismiss = { open = false })
-}
-
 /**
  * Edit-then-hand-over dialog. [initial] (e.g. an AI answer) is pre-fitted to
  * one mesh message; the user can edit it and always sees the byte count.

@@ -520,6 +520,43 @@ different entry point); any real radio; Bluetooth transport; ATAK.
 
 Recommendation: 1 now; revisit after the ATAK plugin is tested on hardware.
 
+### Mesh inbox — the chosen method (owner: "S-tier method", 2026-11-22)
+
+The open decision is resolved without new permissions: BASTION reads
+incoming messages from the **Meshtastic app's notifications**
+(`mesh/MeshInboxService`, a NotificationListenerService). They are
+structured: sender, text, time, channel.
+- Meshtastic keeps the radio, so its ATAK plugin keeps working.
+- BASTION still has no INTERNET or Bluetooth permission.
+- The user grants Android "notification access" once (Mesh tab → Turn on
+  inbox).
+- The service looks only at Meshtastic's message-category notifications,
+  never dismisses anything, and stores messages in app-private SQLite.
+
+New **Mesh tab**: inbox, Write message, Reply, and **Ask AI**, which puts a
+received message into Ask as a question — never as an instruction.
+
+Evidence (simulated radios, hardware-accelerated emulator):
+- A message waiting before access was granted was picked up on connect ✅.
+- A live message from Sim B appeared in BASTION within ~7 s ✅.
+- Full loop ✅:
+  1. Sim B asks "What are the symptoms of hypothermia?" over the mesh.
+  2. It appears in the Mesh tab → Ask AI → cited answer from WikiMed (23 s).
+  3. "Send to mesh…" fits it to 195/200 bytes with citations removed.
+  4. Meshtastic → Send → Sim B received it.
+- A question with no answer in the sources ("Need water at checkpoint 2")
+  correctly produced no answer and no send button.
+
+Limits:
+- A message is seen only if Meshtastic posts a notification for it. Its
+  notifications must be allowed (granted via adb on the emulator), and a
+  chat open in Meshtastic may not notify.
+- No positions or node list this way.
+- Notification access was granted via adb here; the in-app button opens the
+  right settings screen, but the manual toggle itself was not clicked
+  through.
+- Not tested on real radios.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

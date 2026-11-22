@@ -3,6 +3,7 @@ package com.bastion.terminal.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Search
@@ -24,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.bastion.terminal.kiwix.ZimLibrary
 
-private enum class Tab { HOME, ASK, LIBRARY }
+private enum class Tab { HOME, ASK, MESH, LIBRARY }
 
 @Composable
 fun BastionApp() {
@@ -82,6 +83,12 @@ fun BastionApp() {
                     label = { Text("Ask") },
                 )
                 NavigationBarItem(
+                    selected = tab == Tab.MESH,
+                    onClick = { tab = Tab.MESH },
+                    icon = { Icon(Icons.Filled.Email, contentDescription = "Mesh") },
+                    label = { Text("Mesh") },
+                )
+                NavigationBarItem(
                     selected = tab == Tab.LIBRARY,
                     onClick = { tab = Tab.LIBRARY },
                     icon = { Icon(Icons.Filled.List, contentDescription = "Library") },
@@ -99,6 +106,13 @@ fun BastionApp() {
                     readerZimFile = file
                     readerZimPath = path
                     readerQuery = q
+                },
+            )
+            Tab.MESH -> MeshScreen(
+                Modifier.padding(pad),
+                onAsk = { text ->
+                    com.bastion.terminal.ai.AskSession.get(ctx).query = text
+                    tab = Tab.ASK
                 },
             )
             Tab.LIBRARY -> LibraryScreen(Modifier.padding(pad), onOpen = open)
