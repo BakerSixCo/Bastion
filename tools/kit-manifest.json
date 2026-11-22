@@ -45,10 +45,10 @@
       "default": true,
       "file": "atak-civ.apk",
       "url": "",
-      "sha256": "",
-      "bytes": 0,
+      "sha256": "cbb51757d8adaa5c24186d17153472c7a6df40f3c923aa9b5d8f3c69f748d007",
+      "bytes": 373369530,
       "licence": "See TAK Product Center terms",
-      "note": "Not pinned, and may stay manual: tak.gov downloads need an account. BASTION was tested with ATAK-CIV 5.5.1.8 (SDK developer build)."
+      "note": "Manual file (no direct download: tak.gov needs an account). Pinned to atak.apk from ATAK-CIV-5.5.1.8-SDK.zip — the SDK developer build BASTION was tested with. Copy it into the kit folder as atak-civ.apk; the builder verifies it. It shows a DEVELOPER BUILD watermark; the store build is the one for real use."
     },
     {
       "id": "app-organicmaps",
