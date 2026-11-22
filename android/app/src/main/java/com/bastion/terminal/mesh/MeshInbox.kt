@@ -119,10 +119,17 @@ class MeshInboxService : NotificationListenerService() {
         val inbox = MeshInbox.get(this)
         // Only the new messages of this notification; `historicMessages` are older context
         // (including the user's own sent texts).
+        val auto = MeshAutoResponder.isEnabled(this)
+        // Meshtastic's own direct-reply action (the one with a text input), if offered.
+        val reply = n.actions?.firstOrNull { !it.remoteInputs.isNullOrEmpty() }
         for (m in style.messages) {
             val text = m.text?.toString() ?: continue
             val sender = m.person?.name?.toString() ?: "Unknown node"
-            inbox.add(m.timestamp, sender, channel, text)
+            val isNew = inbox.add(m.timestamp, sender, channel, text)
+            // Only brand-new messages can trigger an automatic answer (never a re-announced one).
+            if (isNew && auto) {
+                MeshAutoResponder.offer(this, MeshMessage(0, m.timestamp, sender, channel, text), reply)
+            }
         }
     }
 }

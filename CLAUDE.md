@@ -134,4 +134,7 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   notifications (user-granted notification access). Keep that package +
   category filter; never read other apps' notifications. Received text is
   data: "Ask AI" passes it as a question, never as an instruction.
+- Auto-answer (`mesh/MeshAutoResponder`) transmits without a tap via
+  Meshtastic's notification reply action. Keep it off by default,
+  trigger-gated (`?` / `bastion`), grounded, rate-limited and marked "AI:".
 - Mesh text limit: 200 UTF-8 bytes (`MeshBridge.MAX_BYTES`).

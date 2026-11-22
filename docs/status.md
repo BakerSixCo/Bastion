@@ -557,6 +557,42 @@ Limits:
   through.
 - Not tested on real radios.
 
+### Mesh auto-answer (2026-11-22) — AI answers for people without BASTION
+
+Owner requirement: someone with only a Meshtastic radio can send a question
+to a node that has BASTION and get an AI answer back.
+
+How (`mesh/MeshAutoResponder`): Meshtastic's message notification carries a
+direct-reply action. BASTION fills it in and fires it, so the answer goes
+out through Meshtastic with no tap. No new permissions; Meshtastic keeps the
+radio.
+
+Guard rails:
+- Off by default (switch in the Mesh tab).
+- Only messages starting with `?` or `bastion` are answered.
+- Answers come from the library / offline reference only. The question is
+  treated as data, and BASTION says "no answer" rather than guessing.
+- One short message per answer (the model is asked for ≤ 25 words), marked
+  "AI:".
+- Rate limits: one at a time, a queue of 3, a 20 s per-sender cool-down.
+- Sent replies are logged in the inbox.
+
+Evidence (simulated radios, hardware-accelerated emulator, BASTION in the
+**background**): Sim B sent `?first aid for a burn`. About 112 s later Sim B
+received "AI: Stop the burning process by removing the source. Cool the burn
+with cold running water within 30 minutes." ✅ The Mesh tab showed "Answered
+BASTION Sim B." and logged the reply.
+
+Not tested / limits:
+- Direct messages: a DM from the simulator produced no notification.
+- Long background runs: Android may stop a background app; a foreground
+  service is the fix if that shows up on the phone.
+- Speed on a real phone, and behaviour on a busy channel.
+- Etiquette: an auto-responder on a public channel uses shared airtime, so
+  prefer a private channel.
+- BASTION still sees text messages only: no positions, node list or ATAK
+  traffic.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

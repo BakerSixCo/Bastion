@@ -30,7 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import com.bastion.terminal.mesh.MeshAutoResponder
 import com.bastion.terminal.mesh.MeshBridge
+import androidx.compose.material3.Switch
 import com.bastion.terminal.mesh.MeshInbox
 import com.bastion.terminal.mesh.MeshMessage
 import kotlinx.coroutines.launch
@@ -99,6 +101,24 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                         }) { Text("Turn on inbox") }
                     }
                     note?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error) }
+                    if (installed && access) {
+                        var auto by remember { mutableStateOf(MeshAutoResponder.isEnabled(ctx)) }
+                        val autoStatus by MeshAutoResponder.status.collectAsState()
+                        Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                            Column(Modifier.weight(1f)) {
+                                Text("Auto-answer questions", style = MaterialTheme.typography.titleSmall)
+                                Text(
+                                    "Anyone on the mesh can send “?question” (or “bastion, question”) and BASTION " +
+                                        "replies by itself with one short AI answer from your library and offline " +
+                                        "reference. This transmits on your node without you pressing Send.",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
+                            Switch(checked = auto, onCheckedChange = { auto = it; MeshAutoResponder.setEnabled(ctx, it) })
+                        }
+                        if (autoStatus.isNotBlank()) Text(autoStatus, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                    }
                 }
             }
         }
