@@ -1181,6 +1181,48 @@ Android → BASTION → answer back the same way.
 - After the changes: 6 device tests ✅, evals 13/13 and 14/14 ✅; the inbox
   reader reconnects by itself about 5 s after a reinstall ✅.
 
+### "Tell me what to do": steps over the mesh (2026-11-22)
+
+Owner feedback after the first iPhone answer ("Check for air escaping
+through a sucking chest wound…"): technically correct, missed the point;
+give the steps, in several messages if needed.
+
+Three causes found, three fixes:
+1. **The right article was never read.** In WikiMed, "Sucking chest wound"
+   is a 19-character HTML stub (meta refresh) pointing at *Pneumothorax*.
+   BASTION read the stub and fell back to "Field dressing" and "Sucking
+   blister". Fix: `ZimLibrary.followHtmlRedirect` +
+   `HtmlText.redirectTarget` follow HTML-level redirects for title lookups
+   and article reads.
+2. **The right section still lost.** *Pneumothorax › Treatment* never says
+   "sucking" or "wound", so it scored zero. Fix: passages of an exact-title
+   article get a score floor (`ABOUT_FLOOR`), so the aspect weight
+   (Treatment for a "deal with / treat" question) decides.
+3. **One 25-word message can't hold steps.** Fix: the mesh prompt asks for
+   numbered actions and forbids describing the problem;
+   `MeshBridge.split` sends up to 4 numbered messages ("AI 1/2: …"), 4 s
+   apart.
+
+Evidence (emulator, simulated radios; sent from radio B, no "?" trigger):
+- Sources now: *Pneumothorax — Treatment* (×3) and *Field dressing*.
+- Radio B received, ~20 s after asking:
+  - "AI 1/2: 1. Cover the wound with an airtight seal. 2. Ideally, utilize
+    the Asherman seal. 3. Place a waterproof wrapper of a field dressing
+    over the hole."
+  - "AI 2/2: 4. Keep the clean inside of the wrapper against the wound.
+    5. Tape the sides and top of the wrapper, leaving the bottom edge
+    free." ✅
+- Meshtastic's notification reply action can be fired more than once (both
+  parts arrived).
+- After the changes: 6 device tests ✅, evals 13/13 and 14/14 ✅.
+
+Caveats:
+- Answers are only as good as the reference. This one comes from two
+  Wikipedia articles and is not medical guidance vetted by anyone.
+- One question does not prove general quality. The mesh answers have no
+  eval set of their own yet.
+- Not re-sent from the iPhone after the fix.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

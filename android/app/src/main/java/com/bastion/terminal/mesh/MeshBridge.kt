@@ -68,6 +68,47 @@ object MeshBridge {
         return (out.trimEnd() + ell) to true
     }
 
+    /**
+     * Splits an answer into at most [maxParts] mesh messages, each within
+     * [MAX_BYTES] including its prefix ("AI 1/3: "). Breaks between lines
+     * (numbered steps) and then between sentences, never inside a word or a
+     * multi-byte character. If it still doesn't fit, the last part ends with
+     * "…". Citation markers are removed like in [fit]. [prefix] gets the part
+     * number and the total.
+     */
+    fun split(text: String, maxParts: Int, prefix: (Int, Int) -> String): List<String> {
+        val clean = fit(text, Int.MAX_VALUE).first
+        // Units that should stay whole: lines, and sentences inside long lines.
+        val units = clean.split('\n').filter { it.isNotBlank() }.flatMap { line ->
+            if (byteLength(line) <= MAX_BYTES - 10) listOf(line.trim())
+            else line.split(Regex("(?<=[.!?;])\\s+")).map { it.trim() }.filter { it.isNotEmpty() }
+        }
+        fun pack(total: Int): List<String> {
+            val out = ArrayList<String>()
+            var cur = ""
+            for (u in units) {
+                val budget = MAX_BYTES - byteLength(prefix(out.size + 1, total))
+                val joined = if (cur.isEmpty()) u else "$cur $u"
+                if (byteLength(joined) <= budget) { cur = joined; continue }
+                if (cur.isNotEmpty()) { out += cur; cur = "" }
+                // A single unit longer than one message: cut it at a word.
+                cur = if (byteLength(u) <= budget) u else fit(u, budget).first
+            }
+            if (cur.isNotEmpty()) out += cur
+            return out
+        }
+        var bodies = pack(maxParts)
+        if (bodies.size > maxParts) {
+            val head = bodies.take(maxParts - 1)
+            val budget = MAX_BYTES - byteLength(prefix(maxParts, maxParts))
+            val last = fit(bodies.drop(maxParts - 1).joinToString(" "), budget).first.trimEnd('…', ' ') + "…"
+            bodies = head + fit(last, budget).first
+        }
+        val n = bodies.size.coerceAtLeast(1)
+        return if (bodies.isEmpty()) listOf(prefix(1, 1).trim())
+        else bodies.mapIndexed { i, b -> prefix(i + 1, n) + b }
+    }
+
     /** Hands [text] to the Meshtastic app's share screen. False if it can't be opened. */
     fun share(context: Context, text: String): Boolean {
         val intent = Intent(Intent.ACTION_SEND)

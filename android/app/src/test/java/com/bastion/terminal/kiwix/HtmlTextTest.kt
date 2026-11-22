@@ -41,4 +41,13 @@ class HtmlTextTest {
         assertEquals("a & b < c ° — x", HtmlText.decodeEntities("a &amp; b &lt; c &deg; &#x2014; x"))
         assertEquals("&bogus; stays", HtmlText.decodeEntities("&bogus; stays"))
     }
+
+    @Test
+    fun redirectTarget_findsMetaRefreshStubs() {
+        org.junit.Assert.assertEquals("Pneumothorax", HtmlText.redirectTarget("<html><head><meta http-equiv=\"refresh\" content=\"0;url=Pneumothorax\"></head></html>"))
+        org.junit.Assert.assertEquals("Pneumothorax", HtmlText.redirectTarget("<meta http-equiv='refresh' content='0; URL=./Pneumothorax#Open'>"))
+        org.junit.Assert.assertEquals("Café au lait", HtmlText.redirectTarget("<meta http-equiv=\"refresh\" content=\"0;url=../A/Caf%C3%A9 au lait\">")?.substringAfter("A/"))
+        org.junit.Assert.assertNull(HtmlText.redirectTarget("<html><body><h1>Burn</h1><p>Text.</p></body></html>"))
+        org.junit.Assert.assertNull(HtmlText.redirectTarget("<meta http-equiv=\"refresh\" content=\"0;url=https://example.com/x\">"))
+    }
 }

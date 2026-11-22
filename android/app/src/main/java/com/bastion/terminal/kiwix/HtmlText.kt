@@ -45,6 +45,34 @@ object HtmlText {
         return dropTrailingSections(s.trim())
     }
 
+    /**
+     * The target of an HTML-level redirect page (`<meta http-equiv="refresh"
+     * content="0;url=Pneumothorax">`), as a path relative to the page, or null
+     * for a normal page. Percent-decoded, without "./" or an anchor.
+     */
+    fun redirectTarget(html: String): String? {
+        val m = Regex(
+            "(?is)<meta\\b[^>]*http-equiv\\s*=\\s*[\"']?refresh[\"']?[^>]*content\\s*=\\s*[\"'][^\"'>]*?url\\s*=\\s*['\"]?([^\"'>]+)",
+        ).find(html) ?: return null
+        var t = m.groupValues[1].trim().substringBefore('#')
+        while (t.startsWith("./")) t = t.drop(2)
+        while (t.startsWith("../")) t = t.drop(3)
+        return percentDecode(t).takeIf { it.isNotBlank() && !it.contains("://") }
+    }
+
+    /** "%C3%A9" → "é". Done by hand: no networking classes outside link/TakClient (NetworkGuardTest). */
+    private fun percentDecode(s: String): String {
+        if ('%' !in s) return s
+        val out = java.io.ByteArrayOutputStream()
+        var i = 0
+        while (i < s.length) {
+            val c = s[i]
+            val hex = if (c == '%' && i + 2 < s.length) s.substring(i + 1, i + 3).toIntOrNull(16) else null
+            if (hex != null) { out.write(hex); i += 3 } else { out.write(c.toString().toByteArray(Charsets.UTF_8)); i++ }
+        }
+        return String(out.toByteArray(), Charsets.UTF_8)
+    }
+
     private fun stripTags(s: String) = s.replace(Regex("(?s)<[^>]+>"), "")
 
     /** Removes "## References"-style sections (to the next heading of the same or higher level). */

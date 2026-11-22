@@ -95,7 +95,15 @@ class Retriever internal constructor(
         // otherwise "First aid kit" wins on two of three words; seen on emulator).
         // Section prior: see [Grounding.aspectWeight] (Treatment / First aid for "how to treat",
         // Signs and symptoms for symptoms …). Section openers usually summarise: +10%.
-        val boosted = scored.map { sc ->
+        // When the question names an article outright, that article is the subject even if
+        // its sections never repeat the asker's words: "sucking chest wound" resolves to
+        // "Pneumothorax", whose Treatment section mentions neither "sucking" nor "wound" and
+        // so scored zero (found 2026-11-22). Its passages get a floor, so the section the
+        // question is after (aspect weight below) can win on what it is, not on word overlap.
+        val topScore = scored.maxOfOrNull { it.score } ?: 0.0
+        val boosted = scored.map { scRaw ->
+            val about = cands[scRaw.id.toInt()].let { it.zimPath != null && "${it.zimFile}|${it.zimPath}" in aboutPaths }
+            val sc = if (about) scRaw.copy(score = maxOf(scRaw.score, topScore * ABOUT_FLOOR)) else scRaw
             val c = cands[sc.id.toInt()]
             val articleTitle = if (c.zimPath != null) c.title.substringAfter(": ") else c.title
             val titleWords = Regex("[\\p{L}\\p{N}]+").findAll(articleTitle.lowercase()).map { it.value }.toList()
@@ -131,5 +139,7 @@ class Retriever internal constructor(
         const val TITLE_BOOST = 0.5
         /** Extra for the article found by exact title over ones that merely contain the word ("Burn" vs "Pediatric burn"). */
         const val ABOUT_BOOST = 0.5
+        /** Share of the best lexical score every passage of an exact-title article gets at least. */
+        const val ABOUT_FLOOR = 0.6
     }
 }

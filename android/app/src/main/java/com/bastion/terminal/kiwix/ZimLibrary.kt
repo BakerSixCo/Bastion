@@ -249,7 +249,7 @@ class ZimLibrary private constructor(private val app: Context) {
                             var hops = 0
                             while (e.isRedirect && hops++ < 5) e = e.redirectEntry
                             if (e.isRedirect || !e.getItem(true).mimetype.startsWith("text/html")) null
-                            else ZimHit(e.title, e.path, 100, o.info.file)
+                            else followHtmlRedirect(a, e).let { t -> ZimHit(t.title, t.path, 100, o.info.file) }
                         }.getOrNull()
                         if (hit != null) {
                             if (out.none { it.path == hit.path }) out += hit
@@ -262,6 +262,32 @@ class ZimLibrary private constructor(private val app: Context) {
             android.util.Log.i("BastionZim", "titleLookup $phrases → ${all.map { it.title }}")
             all
         }
+    }
+
+    /**
+     * Some ZIMs store a redirect as a tiny HTML page (meta refresh) instead of
+     * a real redirect entry: in WikiMed "Sucking chest wound" is a 19-character
+     * stub pointing at "Pneumothorax". Reading the stub gave the AI nothing
+     * (found 2026-11-22). Follows up to 3 such hops; returns [e] if it is a
+     * normal article.
+     */
+    private fun followHtmlRedirect(a: Archive, e: org.kiwix.libzim.Entry): org.kiwix.libzim.Entry {
+        var cur = e
+        repeat(3) {
+            val item = runCatching { cur.getItem(true) }.getOrNull() ?: return cur
+            if (!item.mimetype.startsWith("text/html") || item.size > 4096) return cur
+            val target = HtmlText.redirectTarget(String(item.data.data, Charsets.UTF_8)) ?: return cur
+            val base = cur.path.substringBeforeLast('/', "")
+            val candidates = listOf(
+                target, if (base.isEmpty()) target else "$base/$target", target.replace('_', ' '),
+            )
+            cur = candidates.firstNotNullOfOrNull { p ->
+                runCatching { a.getEntryByPath(p) }.getOrNull() ?: runCatching { a.getEntryByTitle(p) }.getOrNull()
+            } ?: return cur
+            var hops = 0
+            while (cur.isRedirect && hops++ < 5) cur = cur.redirectEntry
+        }
+        return cur
     }
 
     private fun titleMatches(title: String, terms: List<String>): Boolean {
@@ -288,7 +314,7 @@ class ZimLibrary private constructor(private val app: Context) {
             articleCache[key]?.let { return@withLock it }
             val a = open[zim]?.archive ?: return@withLock null
             runCatching {
-                val entry = a.getEntryByPath(path)
+                val entry = followHtmlRedirect(a, a.getEntryByPath(path))
                 val item = entry.getItem(true)
                 if (!item.mimetype.startsWith("text/html")) return@runCatching null
                 ZimArticle(entry.title, path, HtmlText.extract(String(item.data.data, Charsets.UTF_8)), zim)
