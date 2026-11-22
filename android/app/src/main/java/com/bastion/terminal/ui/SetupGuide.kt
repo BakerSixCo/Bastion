@@ -52,6 +52,7 @@ data class SetupStatus(
     val kiwixInstalled: Boolean,
     val mapsInstalled: Boolean,
     val deviceSecure: Boolean = false,
+    val linkInstalled: Boolean = false,
 ) {
     /** The steps BASTION needs to be useful: AI model, something to answer from, mesh. */
     val coreDone: Int
@@ -92,6 +93,7 @@ fun rememberSetupStatus(): SetupStatus {
             atakInstalled = installed(ctx, PKG_ATAK),
             kiwixInstalled = installed(ctx, PKG_KIWIX),
             mapsInstalled = installed(ctx, PKG_MAPS),
+            linkInstalled = installed(ctx, "com.bastion.link"),
             deviceSecure = (ctx.getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager)?.isDeviceSecure == true,
         )
     }
@@ -282,6 +284,17 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             ),
             actions = if (status.kiwixInstalled) listOf("Open Kiwix" to { launch(PKG_KIWIX, "Kiwix") })
             else listOf("Get Kiwix" to { store(PKG_KIWIX, "Kiwix") }),
+        )
+        Step(
+            n = 12, title = "BASTION Link (units and TAK chat inside BASTION)", done = status.linkInstalled, optional = true,
+            state = if (status.linkInstalled) "BASTION Link is installed. The Mesh tab shows whether it is connected." else "BASTION Link is not installed.",
+            steps = listOf(
+                "BASTION Link is a separate small app. Android requires the Internet permission even for a connection inside this phone, so Link holds it — and none of your data — while BASTION holds your data and no Internet permission. Link only connects to this phone (127.0.0.1), and only BASTION can talk to it.",
+                "Install BASTION Link from the same place you got BASTION (they must be the same build).",
+                "In Meshtastic → Settings → Advanced → TAK Server: switch on the server and “Mesh to CoT Converter”, set the TAK channel to your private channel, then “Export TAK Data Package”.",
+                "Open BASTION Link → “Import TAK data package” → pick that .zip. Then open BASTION → Mesh: units and TAK chat appear there.",
+            ),
+            actions = if (status.linkInstalled) listOf("Open BASTION Link" to { launch("com.bastion.link", "BASTION Link") }) else emptyList(),
         )
         Text(
             "Before you rely on it: switch on airplane mode and ask BASTION a question. If it answers with sources, " +

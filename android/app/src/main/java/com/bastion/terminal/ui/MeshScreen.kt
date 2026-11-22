@@ -138,6 +138,7 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                 }
             }
         }
+        item { TakCard() }
         if (access && messages.isEmpty()) {
             item { Text("No messages received yet.", color = MaterialTheme.colorScheme.onSurfaceVariant) }
         }

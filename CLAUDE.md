@@ -141,3 +141,16 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   auto-answer private-channel-only by default (`isPublicChannel`); never log
   message text or keys. Simulator private channel: `tools/meshsim/private-channel.sh`.
 - Mesh text limit: 200 UTF-8 bytes (`MeshBridge.MAX_BYTES`).
+
+## BASTION Link (`android/link`, package `com.bastion.link`)
+
+- The **only** component allowed the INTERNET permission. It exists so
+  `:app` never needs it: Android requires INTERNET even for loopback, and
+  the Meshtastic app's local TAK server (127.0.0.1:8089, mTLS) is TCP-only.
+- Keep it tiny and data-free: no library, AI, inbox or UI beyond setup. It
+  connects only to a literal 127.0.0.1 (`TakConfig.requireLoopback`,
+  `TakClient`). Never add another network destination or dependency.
+- `:app` talks to it through a bound Messenger service guarded by the
+  signature permission `com.bastion.permission.LINK` (both APKs must be
+  signed with the same key). Never add INTERNET to `:app`.
+- Build/install both: `./gradlew :app:installDebug :link:installDebug`.

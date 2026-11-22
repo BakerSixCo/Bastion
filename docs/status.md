@@ -693,6 +693,54 @@ client inside BASTION would see positions, chat and markers and could send
 them. But loopback sockets need Android's INTERNET permission, which is an
 explicit decision against the current no-INTERNET guarantee.
 
+### BASTION Link — units and TAK inside BASTION (2026-11-22)
+
+Owner requirement: BASTION is the centre and sees everything, including the
+TAK picture, without giving up the offline guarantee.
+
+Design (owner asked for the strongest option, decided 2026-11-22):
+- **BASTION** (`com.bastion.terminal`): still **no INTERNET permission**.
+  Verified on the installed build — its only requested permission is the
+  signature-level `com.bastion.permission.LINK`.
+- **BASTION Link** (`com.bastion.link`, new Gradle module `:link`, 2.7 MB
+  debug APK): the only component with INTERNET.
+  - It holds no library, AI or message data.
+  - It connects by mutual TLS to the Meshtastic app's local TAK server at a
+    literal `127.0.0.1` and refuses any other address in the package or the
+    code.
+  - It relays CoT events to and from BASTION over a bound service protected
+    by the signature permission (same signing key required).
+- BASTION parses CoT as data (`link/Cot`, unit-tested with a captured
+  event). Mesh tab → "Units and TAK": units with position, team, battery
+  and age; TAK chat; send TAK chat.
+
+Protocol facts found by probing the server through an adb tunnel: an XML CoT
+stream (TAK protocol version 0); the server sends `takPong` keep-alives; the
+Mesh to CoT Converter emits `a-f-G-U-C` contacts with uid `MESHTASTIC-<node>`;
+a GeoChat (`b-t-f`) written to the server goes out on the TAK mesh channel
+as Meshtastic port 72 (ATAK). Plain Meshtastic text does **not** appear on
+this stream; it still arrives through the notification inbox.
+
+Evidence (simulated radios, emulator):
+- Link imported `Meshtastic_TAK_Server.zip` through its file picker ✅.
+- BASTION → Mesh showed "Connected" and "SIMB - BASTION Sim B · Green ·
+  100% · 39.76724, -104.98867 · mesh node" ✅. Meshtastic logged "TAK client
+  accepted" and "Mesh-to-CoT: sent 1 of 1".
+- "BASTION to all units: radio check" sent from BASTION → Sim B decoded a
+  port-72 packet on the private channel (Ch 1) ✅.
+- Bug found and fixed: `InetAddress.getLoopbackAddress()` did not reach the
+  IPv4-only server; a literal 127.0.0.1 is used now.
+
+Not tested: receiving TAK chat or markers from a real ATAK user (ATAK on the
+emulator is not yet connected to the server); a fresh install where Link is
+installed after BASTION; release builds of Link; real radios.
+
+Limits:
+- No map in BASTION yet — units are a list.
+- BASTION does not announce its own position (it has no location
+  permission).
+- TAK chat reaches TAK users only.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
