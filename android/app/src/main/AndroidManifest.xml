@@ -29,6 +29,12 @@
         <package android:name="com.geeksville.mesh" />
         <package android:name="com.atakmap.app.civ" />
         <package android:name="app.organicmaps" />
+        <!-- Device manager's "Hide other apps" needs to see every app that has a launcher
+             icon; Android otherwise hides most installed apps from BASTION. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
     </queries>
 
     <application

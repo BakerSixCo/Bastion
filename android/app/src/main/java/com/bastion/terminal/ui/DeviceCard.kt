@@ -83,6 +83,22 @@ fun DeviceCard() {
                         (ctx as? Activity)?.let(Kiosk::sync)
                     })
                 }
+                var hide by remember(tick) { mutableStateOf(DeviceManager.hiddenApps(ctx).isNotEmpty()) }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(Modifier.weight(1f)) {
+                        Text("Hide other apps", style = MaterialTheme.typography.titleSmall)
+                        Text(
+                            "Hides the browser, app store, mail, video and every other app that isn't BASTION or " +
+                                "one of its companions. Hidden apps can't run or update. Switch off to bring them back.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Switch(checked = hide, onCheckedChange = {
+                        hide = it
+                        lines = listOf(if (it) DeviceManager.hideOtherApps(ctx) else DeviceManager.showHiddenApps(ctx))
+                    })
+                }
                 TextButton(onClick = { confirmRelease = true }) { Text("Stop managing this phone") }
             }
             lines.forEach { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }

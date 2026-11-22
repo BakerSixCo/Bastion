@@ -135,8 +135,63 @@ val alias = ComponentName(c.packageName, c.packageName + ".HomeAlias")
         }
     }
 
+    /**
+     * Apps that keep their icon when "Hide other apps" is on, besides BASTION and
+     * its companions: things the phone can't be operated without.
+     */
+    private val ESSENTIAL = setOf(
+        "com.android.settings", "com.android.documentsui", "com.google.android.documentsui",
+        "com.android.bluetooth", "com.google.android.permissioncontroller", "com.android.permissioncontroller",
+    )
+
+    private fun hiddenPrefs(c: Context) = c.getSharedPreferences("device", Context.MODE_PRIVATE)
+
+    /** Packages BASTION has hidden (so exactly those can be brought back). */
+    fun hiddenApps(c: Context): Set<String> = hiddenPrefs(c).getStringSet("hidden", emptySet()).orEmpty()
+
+    /**
+     * Hides every app that has a launcher icon and is not BASTION, a
+     * companion or an essential — browser, store, mail, video and so on. A
+     * hidden app cannot run or update and uses no battery. Built-in apps are
+     * hidden, not deleted (Android keeps them in a read-only area), which on
+     * a dedicated device comes to the same thing. System parts without an
+     * icon (keyboard, Bluetooth, the launcher that draws the recent-apps
+     * screen) are never touched. Also blocks adding accounts.
+     */
+    fun hideOtherApps(c: Context): String {
+        if (!isOwner(c)) return "BASTION is not this phone's device manager, so it cannot hide apps."
+        val keep = ESSENTIAL + COMPANIONS.keys + c.packageName
+        val launcher = Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_LAUNCHER)
+        val withIcons = c.packageManager.queryIntentActivities(launcher, 0).map { it.activityInfo.packageName }.toSet()
+        val hidden = HashSet(hiddenApps(c))
+        var count = 0
+        for (pkg in withIcons - keep) {
+            if (runCatching { dpm(c).setApplicationHidden(admin(c), pkg, true) }.getOrDefault(false)) {
+                hidden += pkg; count++
+            }
+        }
+        hiddenPrefs(c).edit().putStringSet("hidden", hidden).apply()
+        runCatching { dpm(c).addUserRestriction(admin(c), android.os.UserManager.DISALLOW_MODIFY_ACCOUNTS) }
+        Log.i(TAG, "hid $count app(s)")
+        return "Hid $count app(s). ${hidden.size} hidden in total; adding accounts is blocked."
+    }
+
+    /** Brings back every app BASTION hid and allows accounts again. */
+    fun showHiddenApps(c: Context): String {
+        if (!isOwner(c)) return "BASTION is not this phone's device manager."
+        val hidden = hiddenApps(c)
+        val restored = hidden.count { pkg ->
+            runCatching { dpm(c).setApplicationHidden(admin(c), pkg, false) }.isSuccess
+        }
+        hiddenPrefs(c).edit().remove("hidden").apply()
+        runCatching { dpm(c).clearUserRestriction(admin(c), android.os.UserManager.DISALLOW_MODIFY_ACCOUNTS) }
+        return "Brought back $restored app(s)."
+    }
+
     /** Gives the role back, so the phone can be used normally again without a factory reset. */
     fun release(c: Context): String = if (!isOwner(c)) "BASTION is not the device manager." else runCatching {
+        // Never leave apps hidden with nothing able to bring them back.
+        showHiddenApps(c)
         dpm(c).clearPackagePersistentPreferredActivities(admin(c), c.packageName)
         c.packageManager.setComponentEnabledSetting(
             ComponentName(c.packageName, c.packageName + ".HomeAlias"),
