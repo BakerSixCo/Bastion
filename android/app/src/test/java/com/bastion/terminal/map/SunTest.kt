@@ -53,16 +53,4 @@ class SunTest {
         // With the sun down everything is in shade.
         assertTrue(dem.shaded(45, 10, 90.0, -2.0))
     }
-
-    @Test
-    fun aspect_isTheWayTheSlopeFaces() {
-        // Ground rising to the east faces west; rising to the south faces north.
-        val w = 10; val h = 10
-        val x0 = Geo.tileX(-114.9, 12) * Geo.TILE; val y0 = Geo.tileY(44.1, 12) * Geo.TILE
-        val risesEast = Dem(12, x0, y0, w, h, FloatArray(w * h) { i -> (i % w) * 20f })
-        val risesSouth = Dem(12, x0, y0, w, h, FloatArray(w * h) { i -> (i / w) * 20f })
-        assertEquals(270f, risesEast.aspectDeg(5, 5)!!, 1f)
-        assertEquals(0f, risesSouth.aspectDeg(5, 5)!!.let { if (it > 180) it - 360 else it }, 1f)
-        assertEquals(null, Dem(12, x0, y0, w, h, FloatArray(w * h)).aspectDeg(5, 5))
-    }
 }

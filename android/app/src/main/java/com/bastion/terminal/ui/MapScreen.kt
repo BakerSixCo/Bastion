@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RangeSlider
+
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -136,12 +136,11 @@ private const val SHADE = "shade"
 private const val GRID = "grid"
 private const val SAT = "sat"
 private const val SUN = "sun"
-private const val FILTER = "filter"
+private const val TRAILS = "trails"
+private const val MOTO = "mototrails"
 
-/** Slope bands offered by the terrain filter, degrees. */
-private val FILTER_SLOPES = listOf("Any slope" to (0f to 90f), "Under 10°" to (0f to 10f), "10–25°" to (10f to 25f), "Over 25°" to (25f to 90f))
-private val FILTER_FACINGS = listOf(-1 to "Any facing", 0 to "N", 90 to "E", 180 to "S", 270 to "W")
-
+/** Pack layers that sit under "Extras" in the Layers list and start switched off. */
+private val EXTRAS = setOf("military")
 private data class LayerStyle(val color: Color, val width: Float, val dash: Boolean = false, val fill: Color? = null)
 
 private val STYLES = mapOf(
@@ -199,8 +198,8 @@ private class MapData(private val scope: CoroutineScope) {
         fetch("${pack.name}/$id/$x/$y", cells) { pack.cell(id, x, y) }
 
     private fun render(pack: MapPack, kind: String, z: Int, x: Int, y: Int): ImageBitmap? {
-        if (kind == SLOPE || kind == SHADE || kind.startsWith(SUN) || kind.startsWith(FILTER)) {
-            // "sun@azimuth,elevation" and "filter@slopeLow,slopeHigh,facing,elevLow,elevHigh" carry their settings.
+        if (kind == SLOPE || kind == SHADE || kind.startsWith(SUN)) {
+            // "sun@azimuth,elevation" carries its settings.
             val arg = kind.substringAfter('@', "").split(',').mapNotNull { it.toDoubleOrNull() }
             // The tile and its neighbours, so slopes are right across tile edges.
             val dem = pack.demTiles(x - 1, y - 1, x + 1, y + 1) ?: return null
@@ -211,13 +210,6 @@ private class MapData(private val scope: CoroutineScope) {
                 px[j * Geo.TILE + i] = if (kind == SLOPE) Dem.slopeColor(dem.slopeDeg(ox + i, oy + j)) else if (kind.startsWith(SUN)) {
                     // Shade as a blue-grey veil; sunlit ground is left as the map shows it.
                     if (dem.shaded(ox + i, oy + j, arg[0], arg[1])) 0x73101C40 else 0
-                } else if (kind.startsWith(FILTER)) {
-                    val x = ox + i; val y = oy + j
-                    val slope = dem.slopeDeg(x, y); val e = dem.at(x, y)
-                    val facing = if (arg[2] < 0) true else dem.aspectDeg(x, y)?.let { a ->
-                        val d = kotlin.math.abs(a - arg[2].toFloat()) % 360; minOf(d, 360 - d) <= 45
-                    } ?: false
-                    if (slope >= arg[0] && slope <= arg[1] && e >= arg[3] && e <= arg[4] && facing) 0x8800C853.toInt() else 0
                 } else {
                     // Dark where the hill faces away from the light, clear where it is lit.
                     val s = dem.hillshade(ox + i, oy + j)
@@ -276,21 +268,26 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
         buildList {
             if (packs.any { it.sat != null }) add(SAT to "Satellite")
             if (packs.any { it.land != null }) add("land" to "Public land")
-            packs.flatMap { it.layers }.distinctBy { it.id }.forEach { add(it.id to it.title) }
-            if (packs.any { it.elevZoom != null }) {
-                add(SLOPE to "Steepness"); add(SHADE to "Shaded relief")
-                add(SUN to "Sun and shade"); add(FILTER to "Terrain filter")
-            }
+            // Motor trails have no switch of their own: they show with Trails, in their own colour.
+            val lines = packs.flatMap { it.layers }.distinctBy { it.id }.filterNot { it.id == MOTO || it.id in EXTRAS }
+            lines.forEach { add(it.id to it.title) }
+            if (lines.none { it.id == TRAILS } && packs.any { p -> p.layers.any { it.id == MOTO } }) add(TRAILS to "Trails")
+            if (packs.any { it.elevZoom != null }) { add(SLOPE to "Steepness"); add(SHADE to "Shaded relief") }
             add(GRID to "Military grid (MGRS)")
             add("team" to "Team positions")
+            // Extras: there when wanted, off until then.
+            if (packs.any { it.elevZoom != null }) add(SUN to "Sun and shade")
+            packs.flatMap { it.layers }.distinctBy { it.id }.filter { it.id in EXTRAS }.forEach { add(it.id to it.title) }
         }
     }
+    /** The layers to draw for one switch: Trails also draws motor trails. */
+    fun drawn(id: String): List<String> = if (id == TRAILS) listOf(MOTO, TRAILS) else listOf(id)
     var on by remember(packs) {
-        mutableStateOf(allLayers.map { it.first }.filter { prefs.getBoolean("layer_$it", it in setOf("roads", "trails", "mototrails", "team", "places", "military", SHADE)) }.toSet())
+        mutableStateOf(allLayers.map { it.first }.filter { prefs.getBoolean("layer_$it", it in setOf("roads", TRAILS, "team", "places", SHADE)) }.toSet())
     }
     var showLayers by remember { mutableStateOf(false) }
 
-    // Sun and shade: a time today on this phone's clock, in half hours. Terrain filter: slope band, facing, height band.
+    // Sun and shade: a time today on this phone's clock, in half hours.
     var sunMinutes by remember {
         mutableStateOf(java.util.Calendar.getInstance().let { it.get(java.util.Calendar.HOUR_OF_DAY) * 60 + it.get(java.util.Calendar.MINUTE) } / 30 * 30)
     }
@@ -300,10 +297,6 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
         }
         com.bastion.terminal.map.Sun.position(cal.timeInMillis, Geo.lat(cy), Geo.lon(cx))
     }
-    var filterSlope by remember { mutableStateOf(1) }
-    var filterFacing by remember { mutableStateOf(-1) }
-    var filterHeight by remember { mutableStateOf(0f..4500f) }
-
     // Routing.
     var picked by remember { mutableStateOf<Picked?>(null) }
     var start by remember { mutableStateOf<Pair<Double, Double>?>(null) }
@@ -441,16 +434,11 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                 if (SUN in on && want >= ez - 1 && sunAt.elevation > 0) {
                     raster(p, "$SUN@${sunAt.azimuth.roundToInt()},${sunAt.elevation.roundToInt()}", ez, ez, 1f, true)
                 }
-                if (FILTER in on && want >= ez - 1) {
-                    val (lo, hi) = FILTER_SLOPES[filterSlope].second
-                    raster(p, "$FILTER@$lo,$hi,$filterFacing,${filterHeight.start},${filterHeight.endInclusive}", ez, ez, 1f, false)
-                }
             }
             if ("land" in on) visible.forEach { p -> p.land?.let { raster(p, "land", it.minZoom, it.maxZoom, 0.45f, true) } }
 
             // Line and area layers, read cell by cell as they come into view.
-            for ((id, _) in allLayers) {
-                if (id !in on) continue
+            for (id in allLayers.filter { it.first in on }.flatMap { drawn(it.first) }) {
                 if (id == "places") {
                     // Dots when zoomed out, lettered markers closer in, names closest.
                     val seen = HashSet<Long>()
@@ -701,6 +689,9 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
         text = {
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 allLayers.forEach { (id, title) ->
+                    if (id == allLayers.firstOrNull { it.first == SUN || it.first in EXTRAS }?.first) {
+                        Text("Extras", style = MaterialTheme.typography.titleSmall, modifier = Modifier.padding(top = 8.dp))
+                    }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(title, Modifier.weight(1f))
                         Switch(checked = id in on, onCheckedChange = { v ->
@@ -718,25 +709,6 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         Slider(
                             value = sunMinutes.toFloat(), onValueChange = { sunMinutes = (it / 30).roundToInt() * 30 },
                             valueRange = 0f..1410f, steps = 46,
-                        )
-                    }
-                    if (id == FILTER && FILTER in on) Column(Modifier.padding(start = 8.dp, bottom = 4.dp)) {
-                        Text("Ground that fits all three is drawn green.", style = MaterialTheme.typography.bodySmall)
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            FILTER_SLOPES.forEachIndexed { i, s -> FilterChip(selected = filterSlope == i, onClick = { filterSlope = i }, label = { Text(s.first) }) }
-                        }
-                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            FILTER_FACINGS.forEach { (a, name) -> FilterChip(selected = filterFacing == a, onClick = { filterFacing = a }, label = { Text(name) }) }
-                        }
-                        Text(
-                            "Height ${filterHeight.start.roundToInt()}–${filterHeight.endInclusive.roundToInt()} m " +
-                                "(${(filterHeight.start * 3.28084f).roundToInt()}–${(filterHeight.endInclusive * 3.28084f).roundToInt()} ft)",
-                            style = MaterialTheme.typography.bodySmall,
-                        )
-                        RangeSlider(
-                            value = filterHeight,
-                            onValueChange = { filterHeight = (it.start / 100).roundToInt() * 100f..(it.endInclusive / 100).roundToInt() * 100f },
-                            valueRange = 0f..4500f,
                         )
                     }
                     if (id == SLOPE && SLOPE in on) Dem.SLOPE_CLASSES.drop(1).forEach { (_, argb, what) ->

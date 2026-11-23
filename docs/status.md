@@ -1667,6 +1667,50 @@ once and then shut down. BASTION itself logged one slow start (an ANR at
 launch while the system was overloaded); not reproduced on a healthy emulator.
 The emulator needs starting again before the next test.
 
+## Trimmed: smaller state maps, shorter Layers list, leaner kit (2026-11-22)
+
+Owner's decisions, one at a time, each with what it cost and saved.
+
+**State maps.** Elevation in a state pack is now 55 m (was 27 m) and public
+land stops one zoom level short of the map. All seven states rebuilt, no
+warnings:
+
+| State | Before | After |
+|---|---|---|
+| Idaho | 2.09 GB | 1.34 GB |
+| Montana | 2.48 | 1.56 |
+| Nevada | 1.60 | 0.99 |
+| Oregon | 1.51 | 0.96 |
+| Washington | 1.19 | 0.75 |
+| Wyoming | 1.20 | 0.74 |
+| Utah | 1.05 | 0.67 |
+| **Total** | **11.1 GB** | **7.0 GB** |
+
+Rebuild took 20 minutes because the map tiles were reused. Local packs are
+unchanged (14 m elevation, full land detail). Tested on emulator with the new
+Idaho pack: steepness is blockier but readable, elevation readout works, a
+long-press route gave 2.7 km / 55 min along the road and up to the point. The
+other six rebuilt packs were not opened.
+
+**Layers list.** Terrain filter removed. Motor trails have no switch of their
+own; they draw with Trails in their own colour. Sun and shade and Military
+areas sit under an "Extras" heading and start off. Tested on emulator (the
+Sawtooths pack has no military areas, so that entry under Extras was not seen
+on screen).
+
+**Kit.** Dropped Ready.gov (2.0 GB) and the four small PDF bundles (207 MB,
+duplicated inside the post-disaster collection). Cooking, Woodworking and
+Sustainable Living stay. Seventeen references remain, about 12 GB, plus the two
+models.
+
+**Satellite.** Statewide Idaho imagery was built, judged too blurry at that
+detail and deleted. Full detail for a local area is clear (trees, roads,
+buildings; `docs/screens/map-satellite-local.png`) and tiny. `-Satellite` stays
+as a per-area option.
+
+**PC disk.** The builder's working folders were deleted after the rebuild:
+70 GB free, up from 51. A future state rebuild downloads from scratch.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

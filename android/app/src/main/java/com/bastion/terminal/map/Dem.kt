@@ -73,19 +73,6 @@ class Dem(val zoom: Int, val x0: Int, val y0: Int, val w: Int, val h: Int, val e
     }
 
     /**
-     * The way the slope at a cell faces (the downhill direction), degrees from
-     * north clockwise; null where the ground is close to flat (under 2°).
-     */
-    fun aspectDeg(px: Int, py: Int): Float? {
-        val m = cellMeters(py)
-        val dzdx = (at(px + 1, py) - at(px - 1, py)) / (2 * m) // rise towards the east
-        val dzdy = (at(px, py + 1) - at(px, py - 1)) / (2 * m) // rise towards the south
-        if (sqrt(dzdx * dzdx + dzdy * dzdy) < 0.035) return null
-        // Downhill points west where it rises to the east, north where it rises to the south.
-        return ((Math.toDegrees(kotlin.math.atan2(-dzdx, dzdy)) + 360) % 360).toFloat()
-    }
-
-    /**
      * Whether a cell is in shade with the sun at [azimuthDeg] (from north,
      * clockwise) and [elevationDeg] above the horizon: the slope faces away
      * from the sun, or higher ground towards the sun stands in the way

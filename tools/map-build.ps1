@@ -112,12 +112,14 @@ $kmH = ($North - $South) * 111.32
 $areaKm2 = $kmW * $kmH
 if ($kind -eq 'local' -and $areaKm2 -gt 20000) { $kind = 'state' }   # a big box is treated like a state
 
-# Detail by kind of pack. Elevation cells: zoom 13 is about 14 m, 12 about 27 m, 9 about 220 m.
-$defaults = @{ local = @(9, 15, 13); state = @(8, 13, 12); overview = @(4, 9, 0) }[$kind]
+# Detail by kind of pack. Elevation cells: zoom 13 is about 14 m, 12 about 27 m, 11 about 55 m.
+# A state carries 55 m elevation: at 27 m it was half the pack (1 GB of Idaho's 2.1 GB). Local packs keep 14 m.
+$defaults = @{ local = @(9, 15, 13); state = @(8, 13, 11); overview = @(4, 9, 0) }[$kind]
 if ($MinZoom -eq 0) { $MinZoom = $defaults[0] }
 if ($MaxZoom -eq 0) { $MaxZoom = $defaults[1] }
 if ($ElevZoom -eq 0) { $ElevZoom = $defaults[2] }
-$LandMax = [math]::Min(13, $MaxZoom)
+# Public land stops one level short of the map in a state pack: its top level was 140 MB per state for slightly sharper edges.
+$LandMax = [math]::Min($(if ($kind -eq 'state') { 12 } else { 13 }), $MaxZoom)
 $withLayers = $kind -ne 'overview' -and -not $Satellite
 $withStreams = $withLayers -and -not $NoStreams -and ($Streams -or $kind -eq 'local')
 $GridZoom = 9   # line layers are cut into cells of this zoom (about 55 km) so the phone reads only what is on screen
