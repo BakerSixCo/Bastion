@@ -2,6 +2,7 @@ package com.bastion.terminal.map
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.util.LruCache
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,18 +12,28 @@ import org.json.JSONObject
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
+import kotlin.math.cos
+import kotlin.math.max
 
 /**
  * One offline map pack (`.bmap`, built on a PC by `tools/map-build.ps1`): a
- * zip holding map tiles, elevation tiles and line/area layers for one area.
- * Read-only; BASTION never downloads map data itself.
+ * zip holding map tiles, elevation tiles and line/area layers for one area —
+ * a valley, a state, or a low-detail overview of the whole country. Several
+ * packs on the phone are drawn together as one map. Read-only; BASTION never
+ * downloads map data itself.
+ *
+ * A pack can be far larger than memory, so nothing is loaded whole: elevation
+ * is read for the window that is needed ([dem]) and line layers are stored in
+ * grid cells and read cell by cell ([cell]).
  *
  * Everything in a pack is **data to draw**, never instructions.
  */
 class MapPack private constructor(val file: File, private val zip: ZipFile, private val entries: Map<String, ZipEntry>, json: JSONObject) {
 
     data class Raster(val minZoom: Int, val maxZoom: Int, val ext: String)
-    data class LayerInfo(val id: String, val title: String, val area: Boolean, val path: String, val count: Int)
+
+    /** [grid]: the zoom of the cells a line layer is cut into, or null if it is one file ([path]). */
+    data class LayerInfo(val id: String, val title: String, val area: Boolean, val path: String, val grid: Int?)
 
     /** A line or outline: world-fraction x,y pairs, with its bounds for quick skipping. */
     class Feature(val name: String, val detail: String, val xy: DoubleArray) {
@@ -49,17 +60,26 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
     private val elevExt = json.optJSONObject("elev")?.optString("ext", "png") ?: "png"
     val layers: List<LayerInfo>
 
+    /** Rough ground area, km² — used to prefer the most local pack. */
+    val areaKm2: Double
+
     init {
         val b = json.getJSONArray("bbox")
         west = b.getDouble(0); south = b.getDouble(1); east = b.getDouble(2); north = b.getDouble(3)
+        areaKm2 = (east - west) * 111.32 * cos(Math.toRadians((south + north) / 2)) * (north - south) * 111.32
         val arr = json.optJSONArray("layers") ?: JSONArray()
-        layers = (0 until arr.length()).map { arr.getJSONObject(it) }.map {
-            LayerInfo(it.getString("id"), it.optString("title", it.getString("id")), it.optString("kind") == "area", it.getString("file"), it.optInt("count"))
-        }.filter { it.path in entries && it.count > 0 }
+        layers = (0 until arr.length()).map { arr.getJSONObject(it) }.filter { it.optInt("count", 1) > 0 }.map {
+            LayerInfo(
+                it.getString("id"), it.optString("title", it.getString("id")), it.optString("kind") == "area",
+                it.optString("file"), if (it.has("grid")) it.getInt("grid") else null,
+            )
+        }.filter { it.grid != null || it.path in entries }
     }
 
     private fun raster(o: JSONObject?): Raster? =
         o?.let { Raster(it.getInt("minZoom"), it.getInt("maxZoom"), it.optString("ext", "png")) }
+
+    fun contains(lat: Double, lon: Double): Boolean = lat in south..north && lon in west..east
 
     private fun bytes(path: String): ByteArray? {
         val e = entries[path] ?: return null
@@ -72,73 +92,137 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
         return bytes("$kind/$z/$x/$y.$ext")
     }
 
-    private val featureCache = HashMap<String, List<Feature>>()
+    // ---- line and area layers ----
 
-    /** A layer's lines or outlines (parsed once, then kept). */
-    fun features(id: String): List<Feature> = synchronized(featureCache) {
-        featureCache.getOrPut(id) {
-            val info = layers.firstOrNull { it.id == id } ?: return@getOrPut emptyList()
-            val text = bytes(info.path)?.toString(Charsets.UTF_8) ?: return@getOrPut emptyList()
-            runCatching { parseGeoJson(text) }.getOrDefault(emptyList())
+    private val wholeLayers = HashMap<String, List<Feature>>()
+
+    /**
+     * The features of one grid cell of a layer (cell x, y at the layer's grid
+     * zoom); for a layer stored as one file, all of it whatever the cell.
+     * Reads and parses the file: call off the main thread.
+     */
+    fun cell(id: String, x: Int, y: Int): List<Feature> {
+        val info = layers.firstOrNull { it.id == id } ?: return emptyList()
+        if (info.grid == null) return synchronized(wholeLayers) {
+            wholeLayers.getOrPut(id) { parse(info.path) }
         }
+        return parse("layers/$id/$x/$y.geojson")
     }
 
-    @Volatile private var demCache: Dem? = null
+    private fun parse(path: String): List<Feature> {
+        val text = bytes(path)?.toString(Charsets.UTF_8) ?: return emptyList()
+        return runCatching { parseGeoJson(text) }.getOrDefault(emptyList())
+    }
 
-    /** The pack's elevation as one block (decoded once, about 11 MB for a 20 km pack), or null if it has none. */
-    suspend fun dem(): Dem? = withContext(Dispatchers.Default) {
-        demCache?.let { return@withContext it }
-        val z = elevZoom ?: return@withContext null
-        synchronized(this@MapPack) {
-            demCache?.let { return@synchronized it }
-            val tx0 = Geo.tileX(west, z); val tx1 = Geo.tileX(east, z)
-            val ty0 = Geo.tileY(north, z); val ty1 = Geo.tileY(south, z)
-            val w = (tx1 - tx0 + 1) * Geo.TILE; val h = (ty1 - ty0 + 1) * Geo.TILE
-            if (w.toLong() * h > 16_000_000L) return@synchronized null // a pack far larger than intended
-            val el = FloatArray(w * h)
-            val row = IntArray(Geo.TILE * Geo.TILE)
-            val opts = BitmapFactory.Options().apply { inPreferredConfig = android.graphics.Bitmap.Config.ARGB_8888; inScaled = false }
-            var any = false
-            for (ty in ty0..ty1) for (tx in tx0..tx1) {
-                val data = bytes("elev/$z/$tx/$ty.$elevExt") ?: continue
-                val bmp = BitmapFactory.decodeByteArray(data, 0, data.size, opts) ?: continue
-                if (bmp.width != Geo.TILE || bmp.height != Geo.TILE) { bmp.recycle(); continue }
-                bmp.getPixels(row, 0, Geo.TILE, 0, 0, Geo.TILE, Geo.TILE)
-                bmp.recycle()
-                val ox = (tx - tx0) * Geo.TILE; val oy = (ty - ty0) * Geo.TILE
-                for (y in 0 until Geo.TILE) for (x in 0 until Geo.TILE) {
-                    val p = row[y * Geo.TILE + x]
-                    el[(oy + y) * w + ox + x] = Geo.terrarium((p shr 16) and 255, (p shr 8) and 255, p and 255)
-                }
-                any = true
+    /** Roads and trails (world-fraction lines) touching a lat/lon box — what a route may walk along. */
+    private fun routableLines(w: Double, s: Double, e: Double, n: Double): List<DoubleArray> {
+        val out = ArrayList<DoubleArray>()
+        val x0 = Geo.x(w); val x1 = Geo.x(e); val y0 = Geo.y(n); val y1 = Geo.y(s)
+        for (info in layers) {
+            if (info.id !in ROUTABLE) continue
+            val cells = if (info.grid == null) listOf(0 to 0) else {
+                val k = Geo.tilesAcross(info.grid)
+                ((x0 * k).toInt()..(x1 * k).toInt()).flatMap { cx -> ((y0 * k).toInt()..(y1 * k).toInt()).map { cy -> cx to cy } }
             }
-            if (!any) null else Dem(z, tx0 * Geo.TILE, ty0 * Geo.TILE, w, h, el).also { demCache = it }
+            if (cells.size > 64) continue // a window this large is not routed anyway
+            for ((cx, cy) in cells) for (f in cell(info.id, cx, cy)) {
+                if (f.maxX < x0 || f.minX > x1 || f.maxY < y0 || f.minY > y1) continue
+                out += f.xy
+            }
         }
+        return out
     }
 
-    @Volatile private var maskCache: BooleanArray? = null
+    // ---- elevation ----
 
-    /** Cells of the elevation block that a road or trail in this pack passes through (worked out once). */
-    suspend fun trailMask(): BooleanArray? = withContext(Dispatchers.Default) {
-        maskCache ?: dem()?.let { d ->
-            val lines = ROUTABLE.flatMap { id -> features(id).map { it.xy } }
-            TerrainRoute.trailMask(d, lines).also { maskCache = it }
+    private val elevTiles = LruCache<Long, FloatArray>(40) // 256 KB each
+    private val pixels = IntArray(Geo.TILE * Geo.TILE)
+
+    private fun elevTile(tx: Int, ty: Int): FloatArray? {
+        val z = elevZoom ?: return null
+        val key = tx.toLong() shl 32 or (ty.toLong() and 0xffffffffL)
+        elevTiles.get(key)?.let { return it }
+        val data = bytes("elev/$z/$tx/$ty.$elevExt") ?: return null
+        val opts = BitmapFactory.Options().apply { inPreferredConfig = android.graphics.Bitmap.Config.ARGB_8888; inScaled = false }
+        val bmp = BitmapFactory.decodeByteArray(data, 0, data.size, opts) ?: return null
+        if (bmp.width != Geo.TILE || bmp.height != Geo.TILE) { bmp.recycle(); return null }
+        val out = FloatArray(Geo.TILE * Geo.TILE)
+        synchronized(pixels) {
+            bmp.getPixels(pixels, 0, Geo.TILE, 0, 0, Geo.TILE, Geo.TILE)
+            for (i in out.indices) { val p = pixels[i]; out[i] = Geo.terrarium((p shr 16) and 255, (p shr 8) and 255, p and 255) }
         }
+        bmp.recycle()
+        elevTiles.put(key, out)
+        return out
     }
 
-    fun contains(lat: Double, lon: Double): Boolean = lat in south..north && lon in west..east
+    /** The elevation tile range this pack was built with. */
+    private fun elevRange(): IntArray? {
+        val z = elevZoom ?: return null
+        return intArrayOf(Geo.tileX(west, z), Geo.tileY(north, z), Geo.tileX(east, z), Geo.tileY(south, z))
+    }
 
-    /** A walking route inside this pack, or null if an end is outside it or no way is found. */
+    /**
+     * Elevation for whole tiles tx0..tx1 × ty0..ty1 (clamped to the pack), or
+     * null if the pack has none there or the block would exceed [MAX_CELLS].
+     */
+    fun demTiles(tx0: Int, ty0: Int, tx1: Int, ty1: Int): Dem? {
+        val z = elevZoom ?: return null
+        val r = elevRange() ?: return null
+        val ax = max(tx0, r[0]); val ay = max(ty0, r[1]); val bx = minOf(tx1, r[2]); val by = minOf(ty1, r[3])
+        if (ax > bx || ay > by) return null
+        val w = (bx - ax + 1) * Geo.TILE; val h = (by - ay + 1) * Geo.TILE
+        if (w.toLong() * h > MAX_CELLS) return null
+        val el = FloatArray(w * h)
+        var any = false
+        for (ty in ay..by) for (tx in ax..bx) {
+            val t = elevTile(tx, ty) ?: continue
+            val ox = (tx - ax) * Geo.TILE; val oy = (ty - ay) * Geo.TILE
+            for (y in 0 until Geo.TILE) System.arraycopy(t, y * Geo.TILE, el, (oy + y) * w + ox, Geo.TILE)
+            any = true
+        }
+        return if (any) Dem(z, ax * Geo.TILE, ay * Geo.TILE, w, h, el) else null
+    }
+
+    /** Elevation covering a lat/lon box (whole tiles), or null — see [demTiles]. */
+    fun dem(w: Double, s: Double, e: Double, n: Double): Dem? {
+        val z = elevZoom ?: return null
+        return demTiles(Geo.tileX(w, z), Geo.tileY(n, z), Geo.tileX(e, z), Geo.tileY(s, z))
+    }
+
+    /** Ground elevation in metres at a position, or null if the pack has none there. */
+    suspend fun elevation(lat: Double, lon: Double): Float? = withContext(Dispatchers.Default) {
+        if (!contains(lat, lon)) null else dem(lon, lat, lon, lat)?.elevation(lat, lon)
+    }
+
+    /**
+     * A walking route inside this pack, or null if an end is outside it or no
+     * way is found. Searches the ground around the two ends first, then a
+     * wider block if that finds nothing (the way round a ridge can be far off
+     * to the side).
+     */
     suspend fun route(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double): TerrainRoute.Route? =
         withContext(Dispatchers.Default) {
-            if (!contains(fromLat, fromLon) || !contains(toLat, toLon)) return@withContext null
-            val d = dem() ?: return@withContext null
-            TerrainRoute.route(d, fromLat, fromLon, toLat, toLon, trailMask())
+            if (elevZoom == null || !contains(fromLat, fromLon) || !contains(toLat, toLon)) return@withContext null
+            val midLat = (fromLat + toLat) / 2
+            val kmLat = 111.32; val kmLon = 111.32 * cos(Math.toRadians(midLat))
+            val spanKm = max(kotlin.math.abs(toLat - fromLat) * kmLat, kotlin.math.abs(toLon - fromLon) * kmLon)
+            for (padKm in listOf(max(1.5, 0.5 * spanKm), max(6.0, 1.5 * spanKm))) {
+                val w = minOf(fromLon, toLon) - padKm / kmLon; val e = maxOf(fromLon, toLon) + padKm / kmLon
+                val s = minOf(fromLat, toLat) - padKm / kmLat; val n = maxOf(fromLat, toLat) + padKm / kmLat
+                val d = dem(w, s, e, n) ?: continue
+                val mask = TerrainRoute.trailMask(d, routableLines(w, s, e, n))
+                TerrainRoute.route(d, fromLat, fromLon, toLat, toLon, mask)?.let { return@withContext it }
+            }
+            null
         }
 
     fun close() = runCatching { zip.close() }
 
     companion object {
+        /** Largest elevation block held at once: about 46 MB, a 55 km square at 14 m cells. */
+        const val MAX_CELLS = 12_000_000L
+
         /** Opens a pack, or returns null with the reason in [problem] if the file is not a usable pack. */
         fun open(file: File, problem: (String) -> Unit = {}): MapPack? = runCatching {
             val zip = ZipFile(file)
@@ -149,14 +233,14 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
             val meta = entries["pack.json"] ?: run { zip.close(); problem("no pack.json inside"); return null }
             if (meta.size > 1_000_000) { zip.close(); problem("pack.json is too large"); return null }
             val json = JSONObject(zip.getInputStream(meta).use { it.readBytes() }.toString(Charsets.UTF_8))
-            if (json.optInt("format") != 1) { zip.close(); problem("made for a different BASTION version"); return null }
+            if (json.optInt("format") !in 1..2) { zip.close(); problem("made for a different BASTION version"); return null }
             MapPack(file, zip, entries, json)
         }.getOrElse { problem(it.message ?: "cannot be read"); null }
 
         /** Layers a person can walk along. */
         val ROUTABLE = listOf("roads", "mototrails", "trails")
 
-        private val NAME_KEYS =listOf("name", "trail_name", "wildernessname", "gnis_name")
+        private val NAME_KEYS = listOf("name", "trail_name", "wildernessname", "gnis_name")
         private val DETAIL_KEYS = listOf(
             "id", "trail_no", "mvum_symbol_name", "surfacetype", "trail_type", "typical_trail_grade",
             "passengervehicle_datesopen", "highclearancevehicle_datesopen", "atv_datesopen", "motorcycle_datesopen",
@@ -192,10 +276,12 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
     }
 }
 
-/** The map packs in BASTION's "maps" folders (phone storage and SD card). */
+/** The map packs in BASTION's "maps" folders (phone storage and SD card), used together as one map. */
 class MapPacks private constructor(private val app: Context) {
 
     private val _packs = MutableStateFlow<List<MapPack>>(emptyList())
+
+    /** Coarsest first, most detailed last — the order they are drawn in. */
     val packs: StateFlow<List<MapPack>> = _packs
 
     private val _problems = MutableStateFlow<List<String>>(emptyList())
@@ -204,25 +290,36 @@ class MapPacks private constructor(private val app: Context) {
     fun folders(): List<File> =
         app.externalMediaDirs.filterNotNull().map { File(it, "maps").apply { mkdirs() } }.filter { it.isDirectory }
 
-    /** Opens every pack not yet open and drops ones whose file is gone. */
+    /** Opens every pack not yet open and drops ones whose file is gone or replaced. */
     suspend fun rescan() = withContext(Dispatchers.IO) {
         synchronized(this@MapPacks) {
             val files = folders().flatMap { d -> d.listFiles { f -> f.isFile && f.name.endsWith(".bmap", true) }?.toList().orEmpty() }
-            val keep = _packs.value.filter { p -> files.any { it.absolutePath == p.file.absolutePath && it.lastModified() == p.file.lastModified() } }
-            _packs.value.filter { it !in keep }.forEach { it.close() }
+            val stamp = { f: File -> f.absolutePath + "|" + f.length() + "|" + f.lastModified() }
+            val keep = _packs.value.filter { p -> stamps[p] in files.map(stamp) }
+            _packs.value.filter { it !in keep }.forEach { it.close(); stamps.remove(it) }
             val problems = ArrayList<String>()
-            val added = files.filter { f -> keep.none { it.file.absolutePath == f.absolutePath } }
-                .mapNotNull { f -> MapPack.open(f) { problems += "${f.name}: $it" } }
-            _packs.value = (keep + added).sortedBy { it.name }
+            val added = files.filter { f -> keep.none { stamps[it] == stamp(f) } }
+                .mapNotNull { f -> MapPack.open(f) { problems += "${f.name}: $it" }?.also { stamps[it] = stamp(f) } }
+            _packs.value = (keep + added).sortedWith(compareBy<MapPack> { it.topo?.maxZoom ?: 0 }.thenByDescending { it.areaKm2 })
             _problems.value = problems
         }
     }
 
-    /** A walking route using whichever pack on the phone covers both ends, or null. */
+    private val stamps = HashMap<MapPack, String>()
+
+    /** The most local pack with elevation that covers every given position. */
+    private fun best(vararg at: Pair<Double, Double>): MapPack? =
+        _packs.value.filter { p -> p.elevZoom != null && at.all { p.contains(it.first, it.second) } }
+            .sortedWith(compareByDescending<MapPack> { it.elevZoom }.thenBy { it.areaKm2 }).firstOrNull()
+
+    fun covers(lat: Double, lon: Double): Boolean = _packs.value.any { it.contains(lat, lon) }
+
+    suspend fun elevation(lat: Double, lon: Double): Float? = best(lat to lon)?.elevation(lat, lon)
+
+    /** A walking route using the most detailed pack on the phone that covers both ends, or null. */
     suspend fun routeBetween(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double): TerrainRoute.Route? {
         if (_packs.value.isEmpty()) rescan()
-        val pack = _packs.value.firstOrNull { it.contains(fromLat, fromLon) && it.contains(toLat, toLon) } ?: return null
-        return pack.route(fromLat, fromLon, toLat, toLon)
+        return best(fromLat to fromLon, toLat to toLon)?.route(fromLat, fromLon, toLat, toLon)
     }
 
     companion object {

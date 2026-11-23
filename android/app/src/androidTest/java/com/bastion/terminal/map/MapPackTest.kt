@@ -28,7 +28,7 @@ class MapPackTest {
         val pack = store.packs.value.firstOrNull { it.name == "sawtooths" }
         assumeTrue("needs the sawtooths map pack (found ${store.packs.value.map { it.name }}, problems ${store.problems.value}) — skipped", pack != null)
         pack!!
-        Log.i(TAG, "pack ${pack.name} built ${pack.built} topo=${pack.topo} land=${pack.land} elevZoom=${pack.elevZoom} layers=${pack.layers.map { "${it.id}:${it.count}" }}")
+        Log.i(TAG, "pack ${pack.name} built ${pack.built} topo=${pack.topo} land=${pack.land} elevZoom=${pack.elevZoom} layers=${pack.layers.map { "${it.id}:grid${it.grid}" }}")
         assertNotNull(pack.topo); assertNotNull(pack.elevZoom)
 
         // A tile in the middle of the pack exists and is an image.
@@ -39,7 +39,7 @@ class MapPackTest {
         assertNotNull(android.graphics.BitmapFactory.decodeByteArray(tile, 0, tile!!.size))
 
         val t0 = System.nanoTime()
-        val dem = pack.dem()
+        val dem = pack.dem(pack.west, pack.south, pack.east, pack.north)
         assertNotNull("elevation", dem); dem!!
         Log.i(TAG, "dem ${dem.w}x${dem.h} at zoom ${dem.zoom} in ${(System.nanoTime() - t0) / 1_000_000} ms")
 
@@ -50,13 +50,10 @@ class MapPackTest {
         assertEquals(1900f, stanley, 40f)
         assertEquals(1996f, redfish, 15f)
 
-        val lines = listOf("roads", "mototrails", "trails").flatMap { id -> pack.features(id).map { it.xy } }
-        Log.i(TAG, "trail/road lines: ${lines.size}")
-        val mask = TerrainRoute.trailMask(dem, lines)
 
         // Redfish Lake lodge up to the Bench Lakes: a real hike with a trail and about 250 m of climb.
         val t1 = System.nanoTime()
-        val r = TerrainRoute.route(dem, 44.1447, -114.9170, 44.1227, -114.9560, mask)
+        val r = store.routeBetween(44.1447, -114.9170, 44.1227, -114.9560)
         val ms = (System.nanoTime() - t1) / 1_000_000
         assertNotNull("route", r); r!!
         Log.i(TAG, "ROUTE lodge→Bench Lakes in $ms ms: ${r.summary()}")

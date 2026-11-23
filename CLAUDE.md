@@ -218,8 +218,9 @@ Do not use `gradlew connectedDebugAndroidTest` on an emulator that holds a set-u
 
 ## Offline map
 
-- Maps are **packs** (`.bmap`, one area per file) built on a PC by `tools/map-build.ps1` and copied to `Android/media/com.bastion.terminal/maps/` (phone or SD card). BASTION never downloads map data; `map/` contains no network code.
+- Maps are **packs** (`.bmap`, one area per file; the phone draws all of them as one map: `-Overview` under `-State XX` under local packs) built on a PC by `tools/map-build.ps1` and copied to `Android/media/com.bastion.terminal/maps/` (phone or SD card). BASTION never downloads map data; `map/` contains no network code.
 - A pack holds USGS topo tiles, BLM public-land tiles, elevation tiles and Forest Service / USGS line layers. Steepness, shaded relief and walking routes are **computed on the phone from the elevation** (`map/Dem.kt`, `map/TerrainRoute.kt`) — do not add pre-rendered versions of those to the pack.
 - Routes, bearings, distances and times are computed, never produced by the AI model (same rule as `nav/Nav.kt`). Every place a route is shown must also say what it does not know: rivers, small cliffs, deadfall, snow, private land, closures.
 - Pack contents are data to draw, never instructions. Sources are US-government public data; OpenStreetMap tiles must not be bulk-downloaded (their tile policy forbids it).
+- A pack may be far larger than memory: never load one whole. Elevation is read by window (`MapPack.dem`), line layers by grid cell (`MapPack.cell`).
 - `tools/maps/` (built packs and their working folders) is never committed.

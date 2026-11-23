@@ -1368,6 +1368,50 @@ similar; direction-based navigation with waypoints based on terrain."
   as one variable) silently widened the area after the first layer; found
   because the build never finished, fixed, pack rebuilt.
 
+### Map: nationwide design (2026-11-22)
+
+Owner: "I want this nation wide."
+
+The sources were already national; what was Idaho-sized was the design (one
+pack shown at a time, whole pack loaded into memory). Changed:
+
+- **All packs on the phone are one seamless map**, coarse under detailed:
+  `-Overview` (lower 48, zoom 4–9), `-State XX` (zoom 8–13, 27 m elevation),
+  and local `-Center` / `-Bbox` packs (zoom 15, 14 m elevation).
+- **Nothing is loaded whole.** Elevation is read for the window needed (at most
+  12 million cells); line layers are cut into ~55 km grid cells by the builder
+  and read cell by cell as they come on screen. Pack format 2 (format 1 still
+  opens).
+- Routing and `@callsign` use the most detailed pack covering both ends; a
+  route is limited to roughly 40 km between ends.
+- Builder: state table for all 50 states, automatic zoom levels by pack kind,
+  resumable downloads in batches, free-disk check, `-Estimate`.
+
+**Measured sizes** (builder `-Estimate`, from tile counts × sizes measured on
+the Sawtooths pack; flat states will come out smaller):
+
+| Pack | Size |
+|---|---|
+| Lower-48 overview | about 0.2 GB |
+| Idaho | 2.5 GB |
+| California | 4.8 GB |
+| Texas | 6.4 GB |
+| All 48 state packs | about 69 GB |
+| A 20 km local pack at full detail | 0.02 GB |
+
+So the whole lower 48 at state detail fits a 128 GB SD card. Full foot-level
+detail (zoom 15) for the whole country would be roughly 1 TB and is not the
+plan: that detail is for the areas actually worked in.
+
+**Tested on emulator:** the Sawtooths pack rebuilt in format 2 gives the same
+elevations and the same lodge → Bench Lakes route as before (4.6 km, 1 h 54
+min, six legs); the Map screen draws it.
+
+**Not tested:** a state-sized pack has not been built or opened — zip reading
+with ~100,000 entries, memory use and build time at that size are unproven.
+Alaska and Hawaii are in the state table but not in the overview. State boxes
+overlap, so neighbouring packs duplicate some tiles.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
