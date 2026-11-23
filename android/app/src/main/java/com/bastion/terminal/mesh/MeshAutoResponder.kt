@@ -285,6 +285,8 @@ object MeshAutoResponder {
         val now = System.currentTimeMillis()
         val open = synchronized(topics) { topics[who]?.takeIf { now - it.time <= TOPIC_MS } }
         _status.value = "Answering $who: “${question.take(60)}”…"
+        // The reference library is opened by the app's screen or by the service; make sure it is open here too.
+        com.bastion.terminal.kiwix.ZimLibrary.get(app).let { if (it.currentInfos().isEmpty()) it.restore() }
         val retriever = Retriever(app)
         // MESH scope: only packs the owner allowed to be answered over the radio.
         val passages = retriever.retrieve(question, Scope.MESH, context = open?.question)

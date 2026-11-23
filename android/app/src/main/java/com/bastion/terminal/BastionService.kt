@@ -13,6 +13,7 @@ import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import kotlinx.coroutines.launch
 import com.bastion.terminal.link.LinkClient
 import com.bastion.terminal.nav.LocationSource
 
@@ -67,6 +68,14 @@ class BastionService : Service() {
         com.bastion.terminal.mesh.MeshInbox.reconnect(this)
         LinkClient.get(this).start()
         LocationSource.get(this).start()
+        // After a restart of the phone this service is all that runs: nobody has opened BASTION, so nothing has
+        // opened the reference library or the maps. Without this a radio question got "no answer in my offline
+        // library" until someone opened the app (found on emulator 2026-11-23).
+        val app = applicationContext
+        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+            runCatching { com.bastion.terminal.kiwix.ZimLibrary.get(app).restore() }
+            runCatching { com.bastion.terminal.map.MapPacks.get(app).rescan() }
+        }
         return START_STICKY
     }
 

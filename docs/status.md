@@ -1711,6 +1711,22 @@ as a per-area option.
 **PC disk.** The builder's working folders were deleted after the rebuild:
 70 GB free, up from 51. A future state rebuild downloads from scratch.
 
+## Radio questions unanswered after a restart — fixed (2026-11-23)
+
+Owner reported the radios "not responding". The simulated radios and the
+Meshtastic link were fine; BASTION replied, but to "?how do I treat a burn" it
+said there was no answer in its library. Cause: after the phone restarts, only
+BASTION's background service runs, and the reference library and maps were
+opened only by the app's screen. The service now opens both, and the mesh
+answer path opens the library itself if it finds it closed.
+
+- **Tested on emulator:** BASTION's process killed and restarted by Android as
+  a service only (no screen opened), then "?how do I treat a burn" from the
+  simulated radio: answered from the library in four messages.
+- **Still limited:** after a restart with the app never opened, Android does
+  not give a background service the phone's position, so `@base` cannot give
+  this phone's location until BASTION has been opened once.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
