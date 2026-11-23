@@ -104,6 +104,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
         SecurityCard()
 
+        ScreenCard()
+
         DeviceCard()
 
         Card {

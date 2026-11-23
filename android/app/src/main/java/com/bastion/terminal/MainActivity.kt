@@ -9,6 +9,7 @@ import com.bastion.terminal.ui.BastionTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        com.bastion.terminal.ui.ScreenTurn.apply(this)
         setContent {
             BastionTheme {
                 BastionApp()

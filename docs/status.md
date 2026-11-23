@@ -1429,6 +1429,18 @@ overlap, so neighbouring packs duplicate some tiles.
   build. It now runs under a watchdog (stopped after a minute of no work) and
   uses Windows' own curl; a re-run fetches anything missed.
 
+## Screen direction (2026-11-22)
+
+Home has a "Screen" card: Upright (default), Sideways, or Turns with the phone.
+BASTION opens that way and stays that way. Sideways, the tabs move to the left
+edge so the map and text keep the height.
+
+- **Tested on emulator:** Sideways holds after a restart with the phone upright;
+  Upright holds with the phone turned and after a restart while turned. Home and
+  Map checked sideways.
+- **Not tested:** Ask, Mesh and Library layouts sideways with the keyboard open;
+  a physical phone.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

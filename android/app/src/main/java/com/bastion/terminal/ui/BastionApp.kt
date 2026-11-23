@@ -1,7 +1,13 @@
 package com.bastion.terminal.ui
 
 import androidx.activity.compose.BackHandler
+import android.content.res.Configuration
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.NavigationRail
+import androidx.compose.material3.NavigationRailItem
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
@@ -81,62 +87,63 @@ fun BastionApp() {
         readerQuery = q
     }
 
+    val items = listOf(
+        Triple(Tab.HOME, "Home", Icons.Filled.Home),
+        Triple(Tab.ASK, "Ask", Icons.Filled.Search),
+        Triple(Tab.MAP, "Map", Icons.Filled.Place),
+        Triple(Tab.MESH, "Mesh", Icons.Filled.Email),
+        Triple(Tab.LIBRARY, "Library", Icons.Filled.List),
+    )
+    // Sideways there is little height to spare, so the tabs move to the left edge.
+    val sideways = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
     Scaffold(
         bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    selected = tab == Tab.HOME,
-                    onClick = { tab = Tab.HOME },
-                    icon = { Icon(Icons.Filled.Home, contentDescription = "Home") },
-                    label = { Text("Home") },
-                )
-                NavigationBarItem(
-                    selected = tab == Tab.ASK,
-                    onClick = { tab = Tab.ASK },
-                    icon = { Icon(Icons.Filled.Search, contentDescription = "Ask") },
-                    label = { Text("Ask") },
-                )
-                NavigationBarItem(
-                    selected = tab == Tab.MAP,
-                    onClick = { tab = Tab.MAP },
-                    icon = { Icon(Icons.Filled.Place, contentDescription = "Map") },
-                    label = { Text("Map") },
-                )
-                NavigationBarItem(
-                    selected = tab == Tab.MESH,
-                    onClick = { tab = Tab.MESH },
-                    icon = { Icon(Icons.Filled.Email, contentDescription = "Mesh") },
-                    label = { Text("Mesh") },
-                )
-                NavigationBarItem(
-                    selected = tab == Tab.LIBRARY,
-                    onClick = { tab = Tab.LIBRARY },
-                    icon = { Icon(Icons.Filled.List, contentDescription = "Library") },
-                    label = { Text("Library") },
-                )
+            if (!sideways) NavigationBar {
+                items.forEach { (t, name, icon) ->
+                    NavigationBarItem(
+                        selected = tab == t,
+                        onClick = { tab = t },
+                        icon = { Icon(icon, contentDescription = name) },
+                        label = { Text(name) },
+                    )
+                }
             }
         }
     ) { pad ->
-        when (tab) {
-            Tab.HOME -> HomeScreen(Modifier.padding(pad))
-            Tab.ASK -> AskScreen(
-                Modifier.padding(pad),
-                onOpen = open,
-                onOpenZim = { file, path, q ->
-                    readerZimFile = file
-                    readerZimPath = path
-                    readerQuery = q
-                },
-            )
-            Tab.MAP -> MapScreen(Modifier.padding(pad))
-            Tab.MESH -> MeshScreen(
-                Modifier.padding(pad),
-                onAsk = { text ->
-                    com.bastion.terminal.ai.AskSession.get(ctx).query = text
-                    tab = Tab.ASK
-                },
-            )
-            Tab.LIBRARY -> LibraryScreen(Modifier.padding(pad), onOpen = open)
+        Row(Modifier.padding(pad)) {
+            if (sideways) NavigationRail {
+                items.forEach { (t, name, icon) ->
+                    NavigationRailItem(
+                        selected = tab == t,
+                        onClick = { tab = t },
+                        icon = { Icon(icon, contentDescription = name) },
+                        label = { Text(name) },
+                    )
+                }
+            }
+            val page = Modifier.weight(1f).fillMaxHeight()
+            when (tab) {
+                Tab.HOME -> HomeScreen(page)
+                Tab.ASK -> AskScreen(
+                    page,
+                    onOpen = open,
+                    onOpenZim = { file, path, q ->
+                        readerZimFile = file
+                        readerZimPath = path
+                        readerQuery = q
+                    },
+                )
+                Tab.MAP -> MapScreen(page)
+                Tab.MESH -> MeshScreen(
+                    page,
+                    onAsk = { text ->
+                        com.bastion.terminal.ai.AskSession.get(ctx).query = text
+                        tab = Tab.ASK
+                    },
+                )
+                Tab.LIBRARY -> LibraryScreen(page, onOpen = open)
+            }
         }
     }
 }
