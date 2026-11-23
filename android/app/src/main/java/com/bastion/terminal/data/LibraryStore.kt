@@ -8,6 +8,8 @@ import android.net.Uri
 import android.provider.OpenableColumns
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.security.MessageDigest
@@ -195,9 +197,68 @@ class LibraryStore private constructor(
     internal suspend fun importBytes(bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null): ImportResult =
         withContext(Dispatchers.IO) { indexBytes(bytes, name, provenanceNote, packId) }
 
-    private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null): ImportResult {
+    // ---- Kit documents: the docs folder and document bundles ----------------------------
+
+    /** What the last kit import did, for the Home screen; blank when there is nothing to say. */
+    val bulkStatus = MutableStateFlow("")
+    private val bulkLock = Mutex()
+    private val bulkPrefs by lazy { app.getSharedPreferences("library_bulk_$dbName", Context.MODE_PRIVATE) }
+
+    /** BASTION's "docs" folders (phone storage and SD card): files copied here are added to the library. */
+    fun docFolders(): List<File> =
+        app.externalMediaDirs.filterNotNull().map { File(it, "docs").apply { mkdirs() } }.filter { it.isDirectory }
+
+    /**
+     * Adds what the kit brought that is not in the library yet: documents in the
+     * docs folders, and PDFs inside references that are bundles of documents.
+     * Each file is tried once; a file with no readable text is remembered and skipped.
+     */
+    suspend fun importKit(zims: com.bastion.terminal.kiwix.ZimLibrary) = withContext(Dispatchers.IO) {
+        bulkLock.withLock {
+            var added = 0
+            val problems = ArrayList<String>()
+            fun record(key: String, label: String, r: ImportResult) {
+                bulkPrefs.edit().putString(key, if (r is ImportResult.Ok) "ok" else (r as ImportResult.Rejected).reason).apply()
+                if (r is ImportResult.Ok) added++
+                else if (!(r as ImportResult.Rejected).reason.startsWith("Already")) problems += "$label: ${r.reason}"
+            }
+            val files = docFolders().flatMap { d ->
+                d.listFiles { f -> f.isFile && f.extension.lowercase() in DOC_TYPES }?.toList().orEmpty()
+            }.sortedBy { it.length() }
+            for (f in files) {
+                val key = "file|${f.name}|${f.length()}"
+                if (bulkPrefs.contains(key)) continue
+                bulkStatus.value = "Adding ${f.name} to the library…"
+                record(key, f.name, runCatching {
+                    if (f.length() > BULK_MAX_BYTES) ImportResult.Rejected("larger than ${TextUtil.formatSize(BULK_MAX_BYTES)}")
+                    else indexBytes(f.readBytes(), f.name, "From BASTION's docs folder", bulk = true)
+                }.getOrElse { ImportResult.Rejected("could not be read (${it.javaClass.simpleName})") })
+            }
+            for (zi in zims.currentInfos()) {
+                for ((path, title) in zims.pdfPaths(zi.file)) {
+                    val key = "zim|${zi.fileName}|$path"
+                    if (bulkPrefs.contains(key)) continue
+                    val name = title.ifBlank { path.substringAfterLast('/') }.replace(Regex("(?i)\\.pdf$"), "") + ".pdf"
+                    bulkStatus.value = "Adding $name from ${zi.title}…"
+                    record(key, name, runCatching {
+                        val bytes = zims.fileBytes(zi.file, path, BULK_MAX_BYTES)
+                        if (bytes == null) ImportResult.Rejected("could not be read from ${zi.fileName}")
+                        else indexBytes(bytes, name, "From “${zi.title}” (${zi.fileName})", bulk = true)
+                    }.getOrElse { ImportResult.Rejected("could not be read (${it.javaClass.simpleName})") })
+                }
+            }
+            bulkStatus.value = when {
+                added == 0 && problems.isEmpty() -> ""
+                else -> "Added $added document(s) from the docs folder and document collections." +
+                    (if (problems.isEmpty()) "" else " Not added: " + problems.take(6).joinToString("; ") +
+                        (if (problems.size > 6) "; and ${problems.size - 6} more" else "") + ".")
+            }
+        }
+    }
+
+    private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null, bulk: Boolean = false): ImportResult {
         if (bytes.isEmpty()) return ImportResult.Rejected("The file is empty.")
-        if (bytes.size > TextUtil.MAX_IMPORT_BYTES) return tooLarge(bytes.size.toLong())
+        if (!bulk && bytes.size > TextUtil.MAX_IMPORT_BYTES) return tooLarge(bytes.size.toLong())
         val extracted = DocExtract.extract(bytes, name, ::pdfText)
         if (extracted is DocExtract.Result.Rejected) return ImportResult.Rejected(extracted.reason)
         extracted as DocExtract.Result.Ok
@@ -210,7 +271,13 @@ class LibraryStore private constructor(
         }
         val now = System.currentTimeMillis()
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date(now))
-        val title = name.replace(Regex("(?i)\\.(md|txt|markdown|pdf|epub)$"), "")
+        val base = name.replace(Regex("(?i)\\.(md|txt|markdown|pdf|epub)$"), "")
+        // A bundled PDF is often just numbered ("files/Water (6)"); its own first line says what it is.
+        val title = if (bulk && GENERIC_NAME.matches(base)) {
+            text.lineSequence().map { it.trim().replace(Regex("\\s+"), " ") }
+                .firstOrNull { l -> l.length in 8..90 && l.count { it.isLetter() } >= 6 }
+                ?.let { "$it (${base.substringAfterLast('/')})" } ?: base.substringAfterLast('/')
+        } else base
         val kindNote = when (extracted.kind) {
             DocExtract.Kind.PDF -> " · PDF text layer extracted"
             DocExtract.Kind.EPUB -> " · EPUB text extracted"
@@ -235,7 +302,8 @@ class LibraryStore private constructor(
                 put("content", text)
             })
             insertChunks(db, id, text)
-            File(libDir(), "$id.orig").writeBytes(bytes)
+            // A kit PDF stays where it came from (the docs folder or its reference); only its text is kept here.
+            if (!bulk || extracted.kind == DocExtract.Kind.TEXT) File(libDir(), "$id.orig").writeBytes(bytes)
             // Extracted text for the reader (PDF/EPUB originals aren't readable as text).
             if (extracted.kind != DocExtract.Kind.TEXT) File(libDir(), "$id.txt").writeText(text)
             db.setTransactionSuccessful()
@@ -478,6 +546,9 @@ class LibraryStore private constructor(
 
     companion object {
         private const val DB_VERSION = 3
+        private val DOC_TYPES = setOf("pdf", "md", "markdown", "txt", "epub")
+        private const val BULK_MAX_BYTES = 200L * 1024 * 1024
+        private val GENERIC_NAME = Regex(".*\\(\\d+\\)$")
         const val NOTE_PROVENANCE = "Written in BASTION"
         private const val MAX_CANDIDATES = 5000
 

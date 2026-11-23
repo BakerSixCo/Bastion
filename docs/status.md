@@ -1471,6 +1471,40 @@ Full nation estimate (extrapolated from Idaho, not measured): lower 48 at state
 detail about 75 GB and 2.5 to 3 days of downloading. Alaska at the same detail
 is about as large again; build it one zoom coarser.
 
+## More references and kit documents (2026-11-22)
+
+**Downloaded to `tools/kit` (each checked against Kiwix's SHA-256):** post-disaster,
+water, food, knots and medical PDF collections; military medicine; MedlinePlus;
+NHS medicines; CDC travel health; Ready.gov; Energypedia; Stack Exchange Q&A for
+home improvement, outdoors, amateur radio, cooking, woodworking and sustainable
+living; iFixit. About 11 GB. Not yet in `kit-manifest.json`.
+
+**Documents in `tools/kit/docs`:** five Idaho Fish and Game seasons-and-rules
+brochures, the Forest Service guide to forest plants of northern Idaho, Special
+Forest Products of the Pacific Northwest, Wild Edible Mushrooms in the Blue
+Mountains, the Army Survival Manual, the Special Operations Forces Medical
+Handbook, the USDA home canning guide, and a list of every NOAA Weather Radio
+transmitter in the country (1,035 stations, with a by-county index) built from
+the National Weather Service's station data.
+
+**New in the app:** files copied to BASTION's `docs` folder are added to the
+library when it starts, and PDFs inside a reference that is only a bundle of
+documents (the Kiwix "zimgit" collections show as 1 article) are indexed too.
+A bundled PDF with a numbered name is titled from its own first line.
+`tools/provision.ps1` copies `kit\docs` to the phone.
+
+- **Tested on emulator:** 12 documents and 43 bundled PDFs imported (about 8
+  minutes); `KitDocsEvalTest` 13/13 with one known gap ("how do I can tomatoes"
+  reads "can" as the everyday verb); `SelfRelianceEvalTest` still 14/14.
+- **Not tested:** the larger new references (post-disaster, MedlinePlus,
+  Ready.gov, Energypedia, the Q&A sites, iFixit, military medicine, CDC) — the
+  emulator has no room for them alongside the rest; a model-written answer from
+  the new documents; a physical phone.
+- **Limits:** scanned PDFs with no text layer are skipped (3 of the bundled
+  ones). Regulations are read as running text, so tables can come out jumbled.
+  Amateur repeater lists need a RepeaterBook account key and were not fetched.
+  Full Wikipedia (49 GB) waits for disk space.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

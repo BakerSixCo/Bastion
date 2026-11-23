@@ -44,7 +44,11 @@ fun BastionApp() {
 
     // Open every ZIM in BASTION's reference folders (phone storage and SD card).
     val ctx = LocalContext.current
-    LaunchedEffect(Unit) { ZimLibrary.get(ctx).restore() }
+    // Then add the kit's documents (the docs folder, and PDFs inside document bundles) to the library.
+    LaunchedEffect(Unit) {
+        ZimLibrary.get(ctx).restore()
+        com.bastion.terminal.data.LibraryStore.get(ctx).importKit(ZimLibrary.get(ctx))
+    }
     // Always-on service (if enabled): keeps the mesh inbox and auto-answer alive in the background.
     LaunchedEffect(Unit) { com.bastion.terminal.BastionService.sync(ctx) }
     // Make sure the mesh inbox reader is actually connected (Android can leave it unbound).

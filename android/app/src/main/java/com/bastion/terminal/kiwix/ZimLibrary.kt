@@ -351,6 +351,36 @@ class ZimLibrary private constructor(private val app: Context) {
         }
     }
 
+    /**
+     * The PDF files inside a reference that is a bundle of documents behind one
+     * index page (so it has almost no articles to search): path and title.
+     */
+    suspend fun pdfPaths(zim: String): List<Pair<String, String>> = withContext(Dispatchers.IO) {
+        lock.withLock {
+            val o = open[zim] ?: return@withLock emptyList()
+            if (o.info.articleCount > BUNDLE_MAX_ARTICLES) return@withLock emptyList()
+            runCatching {
+                val out = ArrayList<Pair<String, String>>()
+                val it = o.archive.iterByPath()
+                while (it.hasNext()) {
+                    val e = it.next()
+                    if (!e.isRedirect && e.path.endsWith(".pdf", ignoreCase = true)) out += e.path to e.title
+                }
+                out
+            }.getOrDefault(emptyList())
+        }
+    }
+
+    /** One file from a reference, or null if it is missing or larger than [max] bytes. */
+    suspend fun fileBytes(zim: String, path: String, max: Long): ByteArray? = withContext(Dispatchers.IO) {
+        lock.withLock {
+            runCatching {
+                val item = open[zim]!!.archive.getEntryByPath(path).getItem(true)
+                if (item.size > max) null else item.data.data
+            }.getOrNull()
+        }
+    }
+
     private fun openLocked(file: File) {
         try {
             ensureNative(app)
@@ -393,6 +423,9 @@ class ZimLibrary private constructor(private val app: Context) {
 
     companion object {
         private const val SPACE_MARGIN = 200L * 1_000_000
+
+        /** A reference with this few articles is treated as a bundle of documents. */
+        const val BUNDLE_MAX_ARTICLES = 200
 
         @Volatile private var inst: ZimLibrary? = null
         @Volatile private var nativeLoaded = false

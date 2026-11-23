@@ -66,6 +66,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     val tick by store.changeCounter.collectAsState()
     var docCount by remember { mutableIntStateOf(0) }
     var docBytes by remember { mutableLongStateOf(0L) }
+    val bulk by store.bulkStatus.collectAsState()
     LaunchedEffect(tick) {
         val (c, b) = store.stats()
         docCount = c
@@ -95,7 +96,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 "$docCount document(s), ${TextUtil.formatSize(docBytes)} indexed. Full-text search works fully offline."
             } else {
                 "No documents yet. Import text, Markdown, PDF or EPUB files in the Library tab."
-            },
+            } + (if (bulk.isBlank()) "" else "\n$bulk"),
         )
 
         LocalAiCard()

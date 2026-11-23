@@ -76,6 +76,15 @@ if (Test-Path $Kit) {
                             A push $f.FullName "/sdcard/Download/$($f.Name)" | Select-Object -Last 1 }
         }
     }
+    # Documents (PDF, text, Markdown, EPUB) in kit\docs: BASTION adds them to its library when it starts.
+    $docs = Join-Path $Kit 'docs'
+    if (Test-Path $docs) {
+        $docDir = $zimDir -replace '/zim$', '/docs'
+        A shell mkdir -p "$docDir" | Out-Null
+        foreach ($f in Get-ChildItem $docs -File) {
+            Write-Host "Document: $($f.Name)"; A push $f.FullName "$docDir/$($f.Name)" | Select-Object -Last 1
+        }
+    }
 } else {
     Write-Host "No kit folder at $Kit - skipping companion apps."
 }
