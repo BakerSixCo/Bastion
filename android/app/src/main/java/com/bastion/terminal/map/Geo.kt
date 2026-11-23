@@ -17,6 +17,13 @@ import kotlin.math.tan
  */
 object Geo {
     const val TILE = 256
+
+    /** Ground distance in metres between two positions (good to well under 1% at these ranges). */
+    fun meters(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Double {
+        val x = Math.toRadians(lon2 - lon1) * cos(Math.toRadians((lat1 + lat2) / 2))
+        val y = Math.toRadians(lat2 - lat1)
+        return kotlin.math.sqrt(x * x + y * y) * EARTH_CIRCUMFERENCE_M / (2 * PI)
+    }
     private const val EARTH_CIRCUMFERENCE_M = 40_075_016.686
 
     /** Longitude → world fraction 0..1. */

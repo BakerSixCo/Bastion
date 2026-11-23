@@ -24,6 +24,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -135,6 +137,19 @@ private val STYLES = mapOf(
     "trails" to LayerStyle(Color(0xFFD50000), 2.5f, dash = true),
     "water" to LayerStyle(Color(0xFF1565C0), 1.6f),
     "wilderness" to LayerStyle(Color(0xFF1B5E20), 3f, fill = Color(0x221B5E20)),
+    "military" to LayerStyle(Color(0xFF4E342E), 3f, dash = true),
+)
+
+/** Letter and colour for each kind of place. */
+private val PLACE_MARKS = mapOf(
+    "Fuel" to ("F" to Color(0xFF5D4037)), "Groceries" to ("G" to Color(0xFF2E7D32)),
+    "Convenience store" to ("S" to Color(0xFF558B2F)), "Water" to ("W" to Color(0xFF1565C0)),
+    "Pharmacy" to ("P" to Color(0xFFAD1457)), "Hospital" to ("H" to Color(0xFFD50000)),
+    "Clinic" to ("C" to Color(0xFFE53935)), "Ambulance" to ("A" to Color(0xFFD50000)),
+    "Fire station" to ("FD" to Color(0xFFBF360C)), "Police" to ("PD" to Color(0xFF283593)),
+    "Ranger station" to ("R" to Color(0xFF33691E)), "Vet" to ("V" to Color(0xFF6A1B9A)),
+    "Hardware" to ("T" to Color(0xFF455A64)), "Vehicle repair" to ("M" to Color(0xFF37474F)),
+    "Outdoor gear" to ("O" to Color(0xFF00695C)), "Campground" to ("▲" to Color(0xFF795548)),
 )
 
 /**
@@ -188,7 +203,7 @@ private class MapData(private val scope: CoroutineScope) {
     }
 }
 
-private class Picked(val lat: Double, val lon: Double, val elevation: Float?)
+private class Picked(val lat: Double, val lon: Double, val elevation: Float?, val name: String = "", val detail: String = "")
 
 @Composable
 private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
@@ -237,7 +252,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
         }
     }
     var on by remember(packs) {
-        mutableStateOf(allLayers.map { it.first }.filter { prefs.getBoolean("layer_$it", it in setOf("roads", "trails", "mototrails", "team", SHADE)) }.toSet())
+        mutableStateOf(allLayers.map { it.first }.filter { prefs.getBoolean("layer_$it", it in setOf("roads", "trails", "mototrails", "team", "places", "military", SHADE)) }.toSet())
     }
     var showLayers by remember { mutableStateOf(false) }
 
@@ -249,6 +264,8 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     var route by remember { mutableStateOf<TerrainRoute.Route?>(null) }
     var routeNote by remember { mutableStateOf("") }
     var showGoTo by remember { mutableStateOf(false) }
+    var nearKind by remember { mutableStateOf("") }
+    var nearList by remember { mutableStateOf<List<MapPacks.Place>?>(null) }
     var showLegs by remember { mutableStateOf(false) }
 
     fun bearingText(a: Pair<Double, Double>, b: Pair<Double, Double>): String {
@@ -290,7 +307,27 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                     }
                 }
                 .pointerInput(packs) {
-                    detectTapGestures(onLongPress = { at ->
+                    detectTapGestures(onTap = { at ->
+                        // A tap on a place marker says what it is.
+                        if ("places" !in on) return@detectTapGestures
+                        val s = Geo.TILE * 2.0.pow(zoom) * density
+                        val wx = cx + (at.x - size.width / 2) / s; val wy = cy + (at.y - size.height / 2) / s
+                        val reach = 22 * density / s
+                        var hit: MapPack.Feature? = null; var best = reach * reach
+                        for (p in packs) {
+                            val info = p.layers.firstOrNull { it.point && it.grid != null } ?: continue
+                            if (zoom < info.grid!! + 0.5) continue
+                            val k = Geo.tilesAcross(info.grid)
+                            for (f in data.cell(p, info.id, floor(wx * k).toInt(), floor(wy * k).toInt()).orEmpty()) {
+                                val d = (f.xy[0] - wx) * (f.xy[0] - wx) + (f.xy[1] - wy) * (f.xy[1] - wy)
+                                if (d < best) { best = d; hit = f }
+                            }
+                        }
+                        hit?.let { f ->
+                            val lat = Geo.lat(f.xy[1]); val lon = Geo.lon(f.xy[0])
+                            picked = Picked(lat, lon, null, f.name.ifBlank { f.cat }, listOf(f.cat, f.detail).filter { it.isNotBlank() }.joinToString(" · "))
+                        }
+                    }, onLongPress = { at ->
                         val s = Geo.TILE * 2.0.pow(zoom) * density
                         val lat = Geo.lat(cy + (at.y - size.height / 2) / s)
                         val lon = Geo.lon(cx + (at.x - size.width / 2) / s)
@@ -347,6 +384,30 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
             // Line and area layers, read cell by cell as they come into view.
             for ((id, _) in allLayers) {
                 if (id !in on) continue
+                if (id == "places") {
+                    // Dots when zoomed out, lettered markers closer in, names closest.
+                    val seen = HashSet<Long>()
+                    for (p in visible) {
+                        val info = p.layers.firstOrNull { it.id == id && it.point && it.grid != null } ?: continue
+                        if (zoom < info.grid!! + 0.5) continue
+                        val k = Geo.tilesAcross(info.grid)
+                        val c0 = floor(vx0 * k).toInt(); val c1 = floor(vx1 * k).toInt()
+                        val r0 = floor(vy0 * k).toInt(); val r1 = floor(vy1 * k).toInt()
+                        if ((c1 - c0 + 1) * (r1 - r0 + 1) > 16) continue
+                        for (c in c0..c1) for (r in r0..r1) for (f in data.cell(p, id, c, r).orEmpty()) {
+                            if (f.minX < vx0 || f.minX > vx1 || f.minY < vy0 || f.minY > vy1) continue
+                            val x = sx(f.xy[0]); val y = sy(f.xy[1])
+                            if (!seen.add((x / (4 * density)).toLong() * 100_000 + (y / (4 * density)).toLong())) continue // same place from two maps
+                            val (letter, color) = PLACE_MARKS[f.cat] ?: ("•" to Color.DarkGray)
+                            if (zoom < 11.5) { drawCircle(Color.White, 4f * density, Offset(x, y)); drawCircle(color, 3f * density, Offset(x, y)) }
+                            else {
+                                marker(text, x, y, color, letter, density)
+                                if (zoom >= 13.5 && f.name.isNotBlank()) label(text, f.name, x + 12 * density, y - 8 * density)
+                            }
+                        }
+                    }
+                    continue
+                }
                 val st = STYLES[id] ?: continue
                 if (id == "water" && zoom < 12.5) continue // too dense to read when zoomed out
                 val path = Path()
@@ -379,6 +440,17 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         pathEffect = if (st.dash) PathEffect.dashPathEffect(floatArrayOf(8f * density, 5f * density)) else null,
                     ),
                 )
+                if (id == "military" && zoom >= 8.5) {
+                    // One name per area, in the middle of its outline.
+                    val boxes = LinkedHashMap<String, DoubleArray>()
+                    for (p in visible) for (f in data.cell(p, id, 0, 0).orEmpty()) {
+                        if (f.name.isBlank() || p.layers.none { it.id == id }) continue
+                        val b = boxes.getOrPut(f.name) { doubleArrayOf(f.minX, f.maxX, f.minY, f.maxY) }
+                        if (f.minX < b[0]) b[0] = f.minX; if (f.maxX > b[1]) b[1] = f.maxX
+                        if (f.minY < b[2]) b[2] = f.minY; if (f.maxY > b[3]) b[3] = f.maxY
+                    }
+                    boxes.forEach { (name, b) -> label(text, name, sx((b[0] + b[1]) / 2) - name.length * 3.2f * density, sy((b[2] + b[3]) / 2)) }
+                }
             }
 
             // Route.
@@ -474,12 +546,16 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     picked?.let { p ->
         AlertDialog(
             onDismissRequest = { picked = null },
-            title = { Text(String.format(Locale.US, "%.5f, %.5f", p.lat, p.lon)) },
+            title = { Text(p.name.ifBlank { String.format(Locale.US, "%.5f, %.5f", p.lat, p.lon) }) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    if (p.name.isNotBlank()) {
+                        if (p.detail.isNotBlank()) Text(p.detail)
+                        Text(String.format(Locale.US, "%.5f, %.5f", p.lat, p.lon), style = MaterialTheme.typography.bodySmall)
+                    }
                     p.elevation?.let { Text("Elevation ${it.roundToInt()} m (${(it * 3.28084f).roundToInt()} ft)") }
                     fix?.let { f -> Text("From you: ${bearingText(f.lat to f.lon, p.lat to p.lon)} (straight line)") }
-                    Button(onClick = { dest = p.lat to p.lon; destName = ""; picked = null; plan() }, Modifier.fillMaxWidth()) { Text("Route to here") }
+                    Button(onClick = { dest = p.lat to p.lon; destName = p.name; picked = null; plan() }, Modifier.fillMaxWidth()) { Text("Route to here") }
                     OutlinedButton(onClick = { start = p.lat to p.lon; picked = null; if (dest != null) plan() else routeNote = "Start set. Long-press where you want to go." }, Modifier.fillMaxWidth()) { Text("Start here") }
                 }
             },
@@ -533,6 +609,43 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
             text = {
                 Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     Text("Or long-press anywhere on the map.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    if (packs.any { p -> p.layers.any { it.point } }) {
+                        // Nearest place of a kind: from this phone, or from the middle of the map with no GPS.
+                        val f = fix
+                        val from = if (f != null && store.covers(f.lat, f.lon)) f.lat to f.lon else Geo.lat(cy) to Geo.lon(cx)
+                        Text(
+                            "Nearest to " + (if (f != null && store.covers(f.lat, f.lon)) "you" else "the middle of the map"),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            MapPack.PLACE_KINDS.forEach { kind ->
+                                FilterChip(selected = nearKind == kind, label = { Text(kind) }, onClick = {
+                                    nearKind = kind; nearList = null
+                                    scope.launch { nearList = store.nearest(from.first, from.second, kind) }
+                                })
+                            }
+                        }
+                        if (nearKind.isNotBlank()) nearList.let { list ->
+                            if (list == null) Text("Looking…")
+                            else if (list.isEmpty()) Text("None on these maps within about 100 km.")
+                            else list.forEach { pl ->
+                                TextButton(onClick = {
+                                    dest = pl.lat to pl.lon; destName = pl.name; showGoTo = false
+                                    cx = Geo.x(pl.lon); cy = Geo.y(pl.lat); plan()
+                                }) {
+                                    Column {
+                                        Text(pl.name + " — " + bearingText(from, pl.lat to pl.lon))
+                                        if (pl.detail.isNotBlank()) Text(pl.detail, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
+                                }
+                            }
+                            Text(
+                                "From OpenStreetMap as of the map's build date. Shops close and move; distances are straight lines.",
+                                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Text("Team", style = MaterialTheme.typography.titleSmall)
+                    }
                     if (units.isEmpty()) Text("No team positions known yet (they come from the TAK link on the Mesh tab).")
                     units.forEach { c: TakContact ->
                         val inside = store.covers(c.lat, c.lon)

@@ -33,10 +33,10 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
     data class Raster(val minZoom: Int, val maxZoom: Int, val ext: String)
 
     /** [grid]: the zoom of the cells a line layer is cut into, or null if it is one file ([path]). */
-    data class LayerInfo(val id: String, val title: String, val area: Boolean, val path: String, val grid: Int?)
+    data class LayerInfo(val id: String, val title: String, val area: Boolean, val path: String, val grid: Int?, val point: Boolean = false)
 
     /** A line or outline: world-fraction x,y pairs, with its bounds for quick skipping. */
-    class Feature(val name: String, val detail: String, val xy: DoubleArray) {
+    class Feature(val name: String, val detail: String, val xy: DoubleArray, val cat: String = "") {
         val minX: Double; val maxX: Double; val minY: Double; val maxY: Double
         init {
             var a = 1.0; var b = 0.0; var c = 1.0; var d = 0.0
@@ -71,7 +71,7 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
         layers = (0 until arr.length()).map { arr.getJSONObject(it) }.filter { it.optInt("count", 1) > 0 }.map {
             LayerInfo(
                 it.getString("id"), it.optString("title", it.getString("id")), it.optString("kind") == "area",
-                it.optString("file"), if (it.has("grid")) it.getInt("grid") else null,
+                it.optString("file"), if (it.has("grid")) it.getInt("grid") else null, it.optString("kind") == "point",
             )
         }.filter { it.grid != null || it.path in entries }
     }
@@ -107,6 +107,19 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
             wholeLayers.getOrPut(id) { parse(info.path) }
         }
         return parse("layers/$id/$x/$y.geojson")
+    }
+
+    /** Places of one kind in the grid cells around a position ([rings] cells each way). Reads files: call off the main thread. */
+    fun placesNear(lat: Double, lon: Double, cat: String, rings: Int = 2): List<Feature> {
+        val info = layers.firstOrNull { it.point && it.grid != null } ?: return emptyList()
+        val g = info.grid!!
+        val x = Geo.tileX(lon, g); val y = Geo.tileY(lat, g)
+        val out = ArrayList<Feature>()
+        for (cx in x - rings..x + rings) for (cy in y - rings..y + rings) {
+            if ("layers/${info.id}/$cx/$cy.geojson" !in entries) continue
+            parse("layers/${info.id}/$cx/$cy.geojson").filterTo(out) { it.cat == cat }
+        }
+        return out
     }
 
     private fun parse(path: String): List<Feature> {
@@ -240,10 +253,17 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
         /** Layers a person can walk along. */
         val ROUTABLE = listOf("roads", "mototrails", "trails")
 
+        /** The kinds of place a pack can hold, in the order they are offered. */
+        val PLACE_KINDS = listOf(
+            "Fuel", "Groceries", "Convenience store", "Water", "Pharmacy", "Hospital", "Clinic", "Ambulance",
+            "Fire station", "Police", "Ranger station", "Vet", "Hardware", "Vehicle repair", "Outdoor gear", "Campground",
+        )
+
         private val NAME_KEYS = listOf("name", "trail_name", "wildernessname", "gnis_name")
         private val DETAIL_KEYS = listOf(
             "id", "trail_no", "mvum_symbol_name", "surfacetype", "trail_type", "typical_trail_grade",
             "passengervehicle_datesopen", "highclearancevehicle_datesopen", "atv_datesopen", "motorcycle_datesopen",
+            "addr", "phone", "hours",
         )
 
         internal fun parseGeoJson(text: String): List<Feature> {
@@ -266,6 +286,7 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
                     if (xy.size >= 4) out += Feature(name, detail, xy)
                 }
                 when (g.optString("type")) {
+                    "Point" -> out += Feature(name, detail, doubleArrayOf(Geo.x(c.getDouble(0)), Geo.y(c.getDouble(1))), p?.optString("cat").orEmpty())
                     "LineString" -> line(c)
                     "MultiLineString", "Polygon" -> for (j in 0 until c.length()) line(c.getJSONArray(j))
                     "MultiPolygon" -> for (j in 0 until c.length()) { val poly = c.getJSONArray(j); for (k in 0 until poly.length()) line(poly.getJSONArray(k)) }
@@ -315,6 +336,20 @@ class MapPacks private constructor(private val app: Context) {
     fun covers(lat: Double, lon: Double): Boolean = _packs.value.any { it.contains(lat, lon) }
 
     suspend fun elevation(lat: Double, lon: Double): Float? = best(lat to lon)?.elevation(lat, lon)
+
+    class Place(val name: String, val cat: String, val detail: String, val lat: Double, val lon: Double, val meters: Double)
+
+    /** The closest places of one kind, nearest first, from every map on the phone (about 100 km around). */
+    suspend fun nearest(lat: Double, lon: Double, cat: String, max: Int = 6): List<Place> = withContext(Dispatchers.Default) {
+        if (_packs.value.isEmpty()) rescan()
+        _packs.value.flatMap { it.placesNear(lat, lon, cat) }
+            .map { f ->
+                val la = Geo.lat(f.xy[1]); val lo = Geo.lon(f.xy[0])
+                Place(f.name.ifBlank { cat }, f.cat, f.detail, la, lo, Geo.meters(lat, lon, la, lo))
+            }
+            .distinctBy { "${it.name}|${(it.lat * 5000).toLong()}|${(it.lon * 5000).toLong()}" }
+            .sortedBy { it.meters }.take(max)
+    }
 
     /** A walking route using the most detailed pack on the phone that covers both ends, or null. */
     suspend fun routeBetween(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double): TerrainRoute.Route? {
