@@ -46,6 +46,9 @@ param(
     [string] $State,
     # Or: the lower 48 states at low detail.
     [switch] $Overview,
+    # Build the satellite-imagery companion of a pack instead of the pack itself: same area and
+    # zoom levels, imagery only, named <name>-sat. BASTION shows it as the "Satellite" layer.
+    [switch] $Satellite,
     # Zoom levels. Left at 0 they are chosen from the size of the area.
     [int] $MinZoom = 0,
     [int] $MaxZoom = 0,
@@ -101,6 +104,7 @@ if ($Overview) {
 if (-not $bb -or $bb.Count -ne 4) { throw 'Give -Bbox west,south,east,north, or -Center lat,lon [-RadiusKm n], or -State XX, or -Overview.' }
 $West, $South, $East, $North = $bb
 if ($West -ge $East -or $South -ge $North) { throw 'Bbox must be west,south,east,north.' }
+if ($Satellite -and $Name) { $Name = "$Name-sat" }
 if ($Name -notmatch '^[a-z0-9][a-z0-9-]{0,30}$') { throw 'Give -Name: lowercase letters, digits and dashes only.' }
 
 $kmW = ($East - $West) * 111.32 * [math]::Cos(($South + $North) / 2 * [math]::PI / 180)
@@ -114,7 +118,7 @@ if ($MinZoom -eq 0) { $MinZoom = $defaults[0] }
 if ($MaxZoom -eq 0) { $MaxZoom = $defaults[1] }
 if ($ElevZoom -eq 0) { $ElevZoom = $defaults[2] }
 $LandMax = [math]::Min(13, $MaxZoom)
-$withLayers = $kind -ne 'overview'
+$withLayers = $kind -ne 'overview' -and -not $Satellite
 $withStreams = $withLayers -and -not $NoStreams -and ($Streams -or $kind -eq 'local')
 $GridZoom = 9   # line layers are cut into cells of this zoom (about 55 km) so the phone reads only what is on screen
 
@@ -192,9 +196,13 @@ function RunCurl([string]$config) {
 }
 $script:stalls = 0
 Write-Host 'Downloading tiles (already downloaded ones are skipped) ...'
+if ($Satellite) {
+    FetchTiles 'sat' 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSImageryOnly/MapServer/tile' 'jpg' $MinZoom $MaxZoom $false
+} else {
 FetchTiles 'topo' 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile' 'jpg' $MinZoom $MaxZoom $false
 FetchTiles 'land' 'https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_SMA_Cached_without_PriUnk/MapServer/tile' 'png' $MinZoom $LandMax $false
 if ($ElevZoom -gt 0) { FetchTiles 'elev' 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium' 'png' $ElevZoom $ElevZoom $true }
+}
 # A tile outside a service's coverage can come back empty; an empty file is not a tile.
 Get-ChildItem $work -Recurse -File | Where-Object { $_.Length -eq 0 } | Remove-Item
 if ($script:stalls) { Write-Warning "The downloader stalled $($script:stalls) time(s) and was restarted. Run the same command again to fetch anything it missed." }
@@ -414,6 +422,7 @@ $pack = [ordered]@{
 }
 if (HasFiles 'topo') { $pack.topo = [ordered]@{ minZoom = $MinZoom; maxZoom = $MaxZoom; ext = 'jpg' } }
 if (HasFiles 'land') { $pack.land = [ordered]@{ minZoom = $MinZoom; maxZoom = $LandMax; ext = 'png' } }
+if (HasFiles 'sat')  { $pack.sat = [ordered]@{ minZoom = $MinZoom; maxZoom = $MaxZoom; ext = 'jpg' }; $pack.credits = 'Imagery: USDA and USGS The National Map, Orthoimagery.' }
 if (HasFiles 'elev') { $pack.elev = [ordered]@{ zoom = $ElevZoom; ext = 'png'; encoding = 'terrarium' } }
 [IO.File]::WriteAllText((Join-Path $work 'pack.json'), ($pack | ConvertTo-Json -Depth 6), (New-Object Text.UTF8Encoding $false))
 

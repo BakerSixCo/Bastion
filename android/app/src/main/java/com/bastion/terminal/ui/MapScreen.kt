@@ -134,6 +134,7 @@ fun MapScreen(modifier: Modifier = Modifier) {
 private const val SLOPE = "slope"
 private const val SHADE = "shade"
 private const val GRID = "grid"
+private const val SAT = "sat"
 private const val SUN = "sun"
 private const val FILTER = "filter"
 
@@ -273,6 +274,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     // Layers on/off (remembered between starts).
     val allLayers = remember(packs) {
         buildList {
+            if (packs.any { it.sat != null }) add(SAT to "Satellite")
             if (packs.any { it.land != null }) add("land" to "Public land")
             packs.flatMap { it.layers }.distinctBy { it.id }.forEach { add(it.id to it.title) }
             if (packs.any { it.elevZoom != null }) {
@@ -427,6 +429,8 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
             // Packs are ordered coarsest first, so detailed maps are drawn over coarse ones.
             val visible = packs.filter(::onScreen)
             visible.forEach { p -> p.topo?.let { raster(p, "topo", it.minZoom, it.maxZoom, 1f, true) } }
+            // Satellite imagery replaces the drawn map where a pack has it; lines, places and the grid still go on top.
+            if (SAT in on) visible.forEach { p -> p.sat?.let { raster(p, SAT, it.minZoom, it.maxZoom, 1f, true) } }
             // Computed layers come from the most detailed elevation at the centre only (no double shading).
             val withElev = visible.filter { it.elevZoom != null }
             val here = withElev.filter { it.contains(Geo.lat(cy), Geo.lon(cx)) }.maxByOrNull { it.elevZoom!! * 1000.0 - it.areaKm2 / 1e7 }
@@ -750,7 +754,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                     }) { Text("${p.name} — detail to zoom ${p.topo?.maxZoom ?: "-"}, built ${p.built}") }
                 }
                 Text(
-                    packs.last().credits + " Lines (roads, trails) appear when zoomed in.",
+                    packs.map { it.credits }.filter { it.isNotBlank() }.distinct().joinToString(" ") + " Lines (roads, trails) appear when zoomed in.",
                     style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 4.dp),
                 )

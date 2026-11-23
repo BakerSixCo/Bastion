@@ -1644,6 +1644,29 @@ five were not.
 returns blank screenshots; stopping idle Gradle daemons (`gradlew --stop`) and
 restarting the app fixes it.
 
+## Satellite imagery (2026-11-22)
+
+`tools/map-build.ps1 … -Satellite` builds an imagery-only companion pack
+(`<name>-sat`) from USGS/USDA orthoimagery. BASTION shows it as a "Satellite"
+layer in place of the drawn map; roads, trails, places, pins and the grid stay
+on top.
+
+- **Idaho, state detail (zoom 8–13):** 784 MB, 45,911 tiles, about 12 minutes.
+  Tested on emulator: it draws, but at about 14 m per pixel it only tells lake,
+  forest and open ground apart. Not worth carrying at this detail.
+- **Sawtooths, local detail (zoom 9–15):** 17.5 MB for 20 x 20 km. On the
+  emulator it showed individual trees, roads and buildings, but the only
+  capture has a system "not responding" notice over it (see below), so there
+  is no clean screenshot.
+- With "Public land" on, the land tint washes the imagery green; switch it off
+  when using satellite.
+
+**Test bench:** the emulator ran out of disk (97%) and the PC out of memory
+during this; Android's own system process hung and the emulator was restarted
+once and then shut down. BASTION itself logged one slow start (an ANR at
+launch while the system was overloaded); not reproduced on a healthy emulator.
+The emulator needs starting again before the next test.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

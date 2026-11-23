@@ -56,6 +56,8 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
     val west: Double; val south: Double; val east: Double; val north: Double
     val topo: Raster? = raster(json.optJSONObject("topo"))
     val land: Raster? = raster(json.optJSONObject("land"))
+    /** Satellite imagery, in packs built with -Satellite. */
+    val sat: Raster? = raster(json.optJSONObject("sat"))
     val elevZoom: Int? = json.optJSONObject("elev")?.optInt("zoom")
     private val elevExt = json.optJSONObject("elev")?.optString("ext", "png") ?: "png"
     val layers: List<LayerInfo>
@@ -88,7 +90,7 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
 
     /** The image bytes of one tile of [kind] ("topo" or "land"), or null if the pack has none there. */
     fun tile(kind: String, z: Int, x: Int, y: Int): ByteArray? {
-        val ext = (if (kind == "topo") topo else land)?.ext ?: return null
+        val ext = (when (kind) { "topo" -> topo; "sat" -> sat; else -> land })?.ext ?: return null
         return bytes("$kind/$z/$x/$y.$ext")
     }
 
