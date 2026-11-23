@@ -1441,6 +1441,36 @@ edge so the map and text keep the height.
 - **Not tested:** Ask, Mesh and Library layouts sideways with the keyboard open;
   a physical phone.
 
+## State pack, places and military areas (2026-11-22)
+
+**Idaho state pack** (`tools/map-build.ps1 -State ID`): 2.1 GB, 45,911 topo and
+45,911 land tiles, 8,687 elevation tiles, 16,388 forest roads, 4,352 motor
+trails, 14,794 trails, 24 wilderness areas, 6,971 places, 131 military areas.
+About 2 hours of downloading, across three runs: two stopped on a dropped
+connection (now a failed request skips that cell and is reported).
+
+- **Tested on emulator:** the pack opens beside the overview and the Sawtooths
+  pack (three maps, about 190 MB of memory); the state draws at 100 km scale
+  with land and wilderness; Mountain Home Air Force Base draws as a named
+  outline; "nearest Hospital" from the base lists four with address and phone;
+  a long-press route on the state's 27 m elevation gave 11 km, 3 h 37 min.
+- **Not tested:** a physical phone; speed of panning across the state; states
+  larger than Idaho; Alaska and Hawaii.
+
+**Places** (OpenStreetMap, ODbL): fuel, groceries, convenience stores, water,
+pharmacy, hospital, clinic, ambulance, fire, police, ranger stations, vets,
+hardware, vehicle repair, outdoor gear, campgrounds. Markers on the map, tap
+for details, and Go to lists the nearest of a kind (about 100 km around) with a
+route. Results carry the note that the data is as of the map's build date.
+Not built: asking for the nearest place over the radio.
+
+**Military areas** (OpenStreetMap): named outlines. The data includes small
+armouries and missile launch sites in neighbouring states, not only bases.
+
+Full nation estimate (extrapolated from Idaho, not measured): lower 48 at state
+detail about 75 GB and 2.5 to 3 days of downloading. Alaska at the same detail
+is about as large again; build it one zoom coarser.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

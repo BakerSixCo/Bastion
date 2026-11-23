@@ -24,7 +24,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
@@ -205,6 +206,7 @@ private class MapData(private val scope: CoroutineScope) {
 
 private class Picked(val lat: Double, val lon: Double, val elevation: Float?, val name: String = "", val detail: String = "")
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     val ctx = LocalContext.current
@@ -617,7 +619,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                             "Nearest to " + (if (f != null && store.covers(f.lat, f.lon)) "you" else "the middle of the map"),
                             style = MaterialTheme.typography.titleSmall,
                         )
-                        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                             MapPack.PLACE_KINDS.forEach { kind ->
                                 FilterChip(selected = nearKind == kind, label = { Text(kind) }, onClick = {
                                     nearKind = kind; nearList = null

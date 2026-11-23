@@ -381,7 +381,7 @@ if ($withLayers) {
         foreach ($el in (ReadJson $raw)['elements']) {
             $rings = @()
             if ($el['type'] -eq 'way' -and $el.ContainsKey('geometry')) { $rings = @(, $el['geometry']) }
-            elseif ($el['type'] -eq 'relation') { $rings = @($el['members'] | Where-Object { $_['type'] -eq 'way' -and $_['role'] -ne 'inner' -and $_.ContainsKey('geometry') } | ForEach-Object { , $_['geometry'] }) }
+            elseif ($el['type'] -eq 'relation') { $rings = @($el['members'] | Where-Object { $_ -and $_['type'] -eq 'way' -and $_['role'] -ne 'inner' -and $_.ContainsKey('geometry') } | ForEach-Object { , $_['geometry'] }) }
             $lines = @()
             foreach ($r in $rings) {
                 $pts = @($r | Where-Object { $_ } | ForEach-Object { '[' + (Num ([double]$_['lon'])) + ',' + (Num ([double]$_['lat'])) + ']' })
