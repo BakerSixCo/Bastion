@@ -169,20 +169,35 @@ function FetchTiles([string]$what, [string]$urlBase, [string]$ext, [int]$z0, [in
         # Batches keep one failure from stopping a long run, and keep progress visible.
         for ($i = 0; $i -lt $lines.Count; $i += 20000) {
             [IO.File]::WriteAllLines($cfg, $lines.GetRange($i, [math]::Min(20000, $lines.Count - $i)))
-            & curl.exe --silent --show-error --fail --location --parallel --parallel-max 6 --retry 3 --retry-delay 2 --connect-timeout 20 --max-time 120 --config $cfg 2>$null
-            if ($LASTEXITCODE -ne 0) { $script:tileProblems++ }
+            RunCurl $cfg
         }
         Remove-Item $cfg -ErrorAction SilentlyContinue
     }
 }
 $script:tileProblems = 0
+# curl has been seen to finish its downloads and then never exit (twice on 2026-11-22), which would hang a
+# long build. It is watched: if it does no work for a minute it is stopped; missing tiles are picked up by
+# the next run because finished ones are skipped.
+$CurlExe = Join-Path (Join-Path $env:SystemRoot 'System32') 'curl.exe'
+if (-not (Test-Path $CurlExe)) { $CurlExe = 'curl.exe' }
+function RunCurl([string]$config) {
+    $p = Start-Process -FilePath $CurlExe -NoNewWindow -PassThru -ArgumentList @('--silent', '--fail', '--location', '--parallel', '--parallel-max', '6', '--retry', '2', '--retry-delay', '2', '--connect-timeout', '20', '--max-time', '90', '--config', ('"' + $config + '"'))
+    $last = [TimeSpan]::Zero; $idle = 0
+    while (-not $p.WaitForExit(5000)) {
+        $p.Refresh()
+        $cpu = $p.TotalProcessorTime
+        if ($cpu -eq $last) { $idle += 5 } else { $idle = 0; $last = $cpu }
+        if ($idle -ge 60) { try { $p.Kill() } catch { }; $script:stalls++; break }
+    }
+}
+$script:stalls = 0
 Write-Host 'Downloading tiles (already downloaded ones are skipped) ...'
 FetchTiles 'topo' 'https://basemap.nationalmap.gov/arcgis/rest/services/USGSTopo/MapServer/tile' 'jpg' $MinZoom $MaxZoom $false
 FetchTiles 'land' 'https://gis.blm.gov/arcgis/rest/services/lands/BLM_Natl_SMA_Cached_without_PriUnk/MapServer/tile' 'png' $MinZoom $LandMax $false
 if ($ElevZoom -gt 0) { FetchTiles 'elev' 'https://s3.amazonaws.com/elevation-tiles-prod/terrarium' 'png' $ElevZoom $ElevZoom $true }
 # A tile outside a service's coverage can come back empty; an empty file is not a tile.
 Get-ChildItem $work -Recurse -File | Where-Object { $_.Length -eq 0 } | Remove-Item
-if ($script:tileProblems) { Write-Warning 'Some tiles could not be downloaded (outside coverage, or a network hiccup). Run the same command again to fetch any that are missing.' }
+if ($script:stalls) { Write-Warning "The downloader stalled $($script:stalls) time(s) and was restarted. Run the same command again to fetch anything it missed." }
 
 # --- line and area layers ---
 function Query([string]$url, [string]$fields, [double]$w, [double]$s, [double]$e, [double]$n, [string]$extra) {

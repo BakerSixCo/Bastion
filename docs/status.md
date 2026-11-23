@@ -1412,6 +1412,23 @@ with ~100,000 entries, memory use and build time at that size are unproven.
 Alaska and Hawaii are in the state table but not in the overview. State boxes
 overlap, so neighbouring packs duplicate some tiles.
 
+**Update, same day — overview pack and mesh route**
+
+- Lower-48 overview built: 5,052 topo + public-land tiles, **125 MB** (263
+  ocean/border tiles do not exist on the server). **Seen on emulator:** zoomed
+  out to a 100 km scale bar the overview fills in around the Sawtooths pack,
+  with public-land colours and the local pack's wilderness outline on top — two
+  packs drawn as one map.
+- `@callsign` route **run over the simulated radios**: radio B placed at Stanley
+  sent `@base` on the private channel; BASTION answered with the position
+  ("9.2 km at 163 deg SSE from you") and then three route messages (10 km, about
+  2 h 47 min, eight legs; log `nav-route parts=3 legs=8`). What was not checked:
+  that radio B actually received all parts (the simulator's delivery reports are
+  unreliable).
+- Builder: curl twice finished its downloads and never exited, hanging the
+  build. It now runs under a watchdog (stopped after a minute of no work) and
+  uses Windows' own curl; a re-run fetches anything missed.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
