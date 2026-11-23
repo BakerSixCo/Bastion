@@ -50,6 +50,8 @@ class Retriever internal constructor(
         question: String,
         scope: com.bastion.terminal.data.Scope = com.bastion.terminal.data.Scope.ASK,
         context: String? = null,
+        /** 0 = the passages to answer from. Above 0 = a wider pool of that many candidates, for a second ranking step. */
+        wide: Int = 0,
     ): List<Passage> {
         lastContinuedTopic = false
         val ownTerms = Grounding.keyTerms(question)
@@ -84,14 +86,14 @@ class Retriever internal constructor(
         }
         val terms = if (lastContinuedTopic) rankTerms else ownTerms
         if (rankTerms.isEmpty()) return emptyList()
-        val lib = store.retrieve(libQuestion, scope)
-        val textHits = if (zimOpen) zim.search(rankTerms, MAX_ARTICLES) else emptyList()
+        val lib = store.retrieve(libQuestion, scope, wide)
+        val textHits = if (zimOpen) zim.search(rankTerms, if (wide > 0) MAX_ARTICLES * 2 else MAX_ARTICLES) else emptyList()
         // Same article in two ZIMs (WikiMed is a subset of full Wikipedia): keep one, from the
         // larger file (opened first), so duplicates don't crowd out other sources.
         val hits = (titleHits + textHits).distinctBy { it.title.lowercase() }
         val aboutPaths = titleHits.map { it.zim + "|" + it.path }.toSet()
         lastZimArticles = titleHits.map { "${it.title} (title)" } + textHits.map { "${it.title} (${it.score}%)" }
-        if (hits.isEmpty()) return lib
+        if (hits.isEmpty()) return lib.take(if (wide > 0) wide else lib.size)
 
         data class Cand(
             val title: String, val heading: String?, val text: String, val docId: Long, val zimPath: String?,
@@ -148,7 +150,8 @@ class Retriever internal constructor(
             val section = Grounding.aspectWeight(aspect, c.heading, articleTitle) * (if (c.opensSection) 1.1 else 1.0) * answers
             sc.copy(score = sc.score * titlePrior * section)
         }
-        val chosen = Bm25.select(boosted, { cands[it.toInt()].text.length })
+        val chosen = if (wide > 0) Bm25.select(boosted, { cands[it.toInt()].text.length }, k = wide, perDoc = wide, charBudget = wide * 2000, relCutoff = 0.0)
+        else Bm25.select(boosted, { cands[it.toInt()].text.length })
         lastChoice = chosen.joinToString(" ; ") { sc ->
             val c = cands[sc.id.toInt()]
             "${c.title.takeLast(28)}|${c.heading?.take(20)} s=${"%.2f".format(sc.score)} tf=${sc.termTf.toList()}"

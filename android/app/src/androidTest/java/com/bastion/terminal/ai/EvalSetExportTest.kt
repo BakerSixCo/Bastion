@@ -76,9 +76,11 @@ class EvalSetExportTest {
         val zim = ZimLibrary.get(ctx)
         zim.restore()
         val retriever = Retriever(LibraryStore.get(ctx), zim)
+        // "-e wide 30": the wider candidate pool, for testing a second ranking step.
+        val wide = InstrumentationRegistry.getArguments().getString("wide")?.toIntOrNull() ?: 0
         val out = JSONArray()
         for ((n, c) in cases.withIndex()) {
-            val passages = retriever.retrieve(c.question)
+            val passages = retriever.retrieve(c.question, wide = wide)
             val o = JSONObject()
             o.put("id", "r%02d".format(n + 1)); o.put("cat", c.cat); o.put("question", c.question)
             o.put("expect", JSONArray(c.expect))
@@ -91,7 +93,7 @@ class EvalSetExportTest {
             Log.i(TAG, "${c.cat} | ${c.question} | passages=${passages.size} chars=${passages.sumOf { it.plainText.length }}")
         }
         val doc = JSONObject().put("system", Grounding.SYSTEM_INSTRUCTION).put("noAnswer", Grounding.NO_ANSWER).put("cases", out)
-        val file = File(ctx.externalMediaDirs.first(), "evalset.json")
+        val file = File(ctx.externalMediaDirs.first(), if (wide > 0) "evalpool.json" else "evalset.json")
         file.writeText(doc.toString(1))
         Log.i(TAG, "WROTE ${file.absolutePath} cases=${out.length()} bytes=${file.length()}")
     }

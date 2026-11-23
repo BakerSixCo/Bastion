@@ -1779,6 +1779,33 @@ App change from this work: a reply is now treated as "no answer" only when its o
 
 Not done: any phone measurement (load time, speed, memory, heat), LiteRT-LM builds of E4B and Qwen, a larger question set.
 
+## Search fix: where it stands (stopped 2026-11-23, PC shut down mid-task)
+
+Goal: stop the search handing the model wrong-topic passages. All measurements below are on the development PC in llama.cpp (CPU), on the 50-case set in `tools/model-eval`. Nothing was built into the app yet and nothing ran on a phone.
+
+Measured so far:
+
+- **A "no answer" gate does not catch the hard cases.** Three relevance models were scored on every question-passage pair (`relevance.pl`, `strict.pl`):
+  - EmbeddingGemma 2 (embedding similarity): answerable and unanswerable questions overlap; no usable cut-off.
+  - Qwen3-Reranker 0.6B: cleanly rejects off-topic passages (best score under 0.65 for 9 of 15 unanswerable questions, against 0.93 or more for every answerable one), but scores the welding passages 0.999.
+  - The same reranker with a strict "must directly answer the question" instruction: welding still 0.98.
+  - The 9 questions it rejects are ones the answer model already refuses, so the gate adds nothing on this set. **Not worth building.**
+- **Three questions fail because the search misses, not the model:** flat tire, fire in the rain, bowline. For "fire in the rain" the 30-passage candidate pool holds no passage from the Army survival manual at all (28 of 30 are Appropedia pages about rainwater), so reranking the pool cannot rescue it. The miss is earlier, where articles and library passages are picked.
+
+Code added (builds, unit tests pass, installed on emulator):
+
+- `Retriever.retrieve(..., wide = N)` and `LibraryStore.retrieve(..., wide = N)`: return a wider candidate pool for a second ranking step. Normal behaviour is unchanged when `wide` is 0.
+- `EvalSetExportTest` takes `-e wide 30` and writes `evalpool.json`.
+- `tools/model-eval`: `relevance.pl`, `relevance.sh`, `strict.pl`, `poolrank.pl`, `evalpool.json` and the relevance scores in `results/`.
+
+Next, in this order:
+
+1. Rerun `poolrank.pl` (the first run was stopped unfinished at shutdown; allow 30 minutes or more on this laptop; it writes `evalset-reranked.json`): do the reranker's best five passages beat the current five? Then run the answer models on that file to measure the effect on answers.
+2. Question restating before the search (owner's idea, 2026-11-23): the model rewrites the question in a standard form ("can I weld with a car battery" to "using car batteries as a welding power source"), and the search uses that. Measure on the same 50 cases.
+3. Find why the survival manual does not reach the pool for "how do I build a fire in the rain" (library search step).
+
+To resume the PC tests: start nothing on the emulator; models and the llama.cpp build are in `tools/kit/pc-eval/` (not committed). See `tools/model-eval/README.md`.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

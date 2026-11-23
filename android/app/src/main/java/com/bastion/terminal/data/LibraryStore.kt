@@ -338,7 +338,8 @@ class LibraryStore private constructor(
      * 3 per document, within a prompt-size budget. These exact passages are
      * shown to the user and given to the model.
      */
-    suspend fun retrieve(question: String, scope: Scope = Scope.ASK): List<com.bastion.terminal.ai.Passage> =
+    /** [wide]: 0 = the normal few best passages; above 0 = that many candidates, for a second ranking step. */
+    suspend fun retrieve(question: String, scope: Scope = Scope.ASK, wide: Int = 0): List<com.bastion.terminal.ai.Passage> =
         withContext(Dispatchers.IO) {
             val g = com.bastion.terminal.ai.Grounding
             val match = g.keywordQuery(question) ?: return@withContext emptyList()
@@ -364,7 +365,9 @@ class LibraryStore private constructor(
             }
             // Only documents the asker may use (packs switched on for Ask / for the mesh).
             val allowed = allowedDocs(db, scope)
-            val chosen = Bm25.select(if (allowed == null) scored else scored.filter { it.docId in allowed }, { lengths[it] ?: 0 })
+            val usable = if (allowed == null) scored else scored.filter { it.docId in allowed }
+            val chosen = if (wide > 0) Bm25.select(usable, { lengths[it] ?: 0 }, k = wide, perDoc = wide, charBudget = wide * 2000, relCutoff = 0.0)
+            else Bm25.select(usable, { lengths[it] ?: 0 })
             // Phase 2: load text for the chosen passages only.
             chosen.mapIndexedNotNull { i, sc ->
                 db.rawQuery(
