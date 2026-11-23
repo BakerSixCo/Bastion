@@ -19,6 +19,19 @@ class GroundingTest {
     }
 
     @Test
+    fun isTable_spotsRowsOfValuesButNotProse() {
+        assertTrue(Grounding.isTable("Style Jar Process 0- 2,001-\nHot Pints 20 min 11 lb 12 lb 13 lb 14 lb\nRaw Quarts 25 11 12 13 14"))
+        assertFalse(Grounding.isTable("Add 16 drops of bleach to each gallon of water.\nWait 30 minutes before drinking."))
+    }
+
+    @Test
+    fun keyTerms_readCanAsCanningWhenItIsTheVerb() {
+        assertEquals(listOf("cann", "tomatoe", "safely"), Grounding.keyTerms("How do I can tomatoes safely"))
+        // Ordinary "can" stays filler.
+        assertEquals(listOf("dog", "eat", "tomatoe"), Grounding.keyTerms("Can dogs eat tomatoes"))
+    }
+
+    @Test
     fun keyTerms_stemsForPrefixMatchingAndDropsFiller() {
         assertEquals(listOf("step", "set", "field", "antenna"), Grounding.keyTerms("What are the steps to set up the field antenna"))
         assertEquals(listOf("bleach", "gallon", "treat", "water"), Grounding.keyTerms("How much bleach per gallon to treat water"))

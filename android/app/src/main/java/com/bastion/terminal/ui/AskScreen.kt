@@ -215,6 +215,11 @@ private fun AnswerCard(
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
+                if (check.tables.isNotEmpty()) Text(
+                    Grounding.TABLE_NOTE + " Table source: " + check.tables.sorted().joinToString { "[$it]" } + ".",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
                 if (check.invalid.isNotEmpty()) Text(
                     "Warning: cites nonexistent source(s) ${check.invalid.sorted().joinToString { "[$it]" }}.",
                     color = MaterialTheme.colorScheme.error,

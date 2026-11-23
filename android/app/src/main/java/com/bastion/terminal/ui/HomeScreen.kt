@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
@@ -221,9 +222,34 @@ private fun LocalAiCard() {
                             message = "This device has no file picker app, so a model cannot be imported here."
                         }
                     },
-                ) { Text(if (state is AiState.NoModel) "Import model file" else "Replace model") }
+                ) { Text(if (state is AiState.NoModel) "Import model file" else "Add another model") }
                 if (state is AiState.Loaded) {
                     OutlinedButton(onClick = { scope.launch { ai.unload() } }) { Text("Unload") }
+                }
+            }
+            // Which model to use, when there is more than one.
+            val models = remember(state) { ai.models() }
+            if (models.size > 1) {
+                var chosen by remember(state) { mutableStateOf(ai.chosenName()) }
+                Text("Model: " + (ai.currentModelFile()?.nameWithoutExtension ?: "-") + (if (chosen == null) " (chosen for this phone)" else ""),
+                    style = MaterialTheme.typography.bodySmall)
+                Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    FilterChip(selected = chosen == null, enabled = !busy, label = { Text("Choose for me") },
+                        onClick = { chosen = null; scope.launch { ai.select(null) } })
+                    models.forEach { f ->
+                        FilterChip(selected = chosen == f.name, enabled = !busy,
+                            label = { Text(f.nameWithoutExtension + " · " + TextUtil.formatSize(f.length())) },
+                            onClick = { chosen = f.name; scope.launch { ai.select(f.name) } })
+                    }
+                }
+                ai.currentModelFile()?.takeIf { !ai.fitsMemory(it) }?.let { f ->
+                    Text(
+                        "${f.nameWithoutExtension} is large for this phone's ${TextUtil.formatSize(ai.phoneMemory())} of memory: it may be slow or be stopped by Android.",
+                        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error,
+                    )
+                }
+                chosen?.let { name ->
+                    TextButton(enabled = !busy, onClick = { scope.launch { ai.remove(name) } }) { Text("Remove ${name.removeSuffix(LocalAi.MODEL_EXT)} from this phone") }
                 }
             }
             if (state !is AiState.NoModel) {

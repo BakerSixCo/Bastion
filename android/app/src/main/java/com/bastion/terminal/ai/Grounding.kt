@@ -51,12 +51,42 @@ object Grounding {
     )
 
     /**
+     * "Can" is dropped as filler, but "how do I can tomatoes" is about canning
+     * (seen on emulator: gardening threads won). Where "can" is plainly the
+     * verb for preserving food, say so before the filler is removed.
+     */
+    private val CAN_VERB = Regex(
+        "\\b(how (?:do|should|would|can) (?:i|we|you)|how to|want to|need to|safe to|safely|pressure|water bath) can\\b",
+        RegexOption.IGNORE_CASE,
+    )
+
+    /**
+     * Everyday names the references file under another word (the USDA guide
+     * lists green beans as "Beans, snap"; medicine references use generic drug
+     * names). The reference's word is added beside the asker's own.
+     */
+    private val ALSO_CALLED = listOf(
+        Regex("\\bgreen beans?\\b", RegexOption.IGNORE_CASE) to "snap beans",
+        Regex("\\btylenol\\b", RegexOption.IGNORE_CASE) to "paracetamol",
+        Regex("\\b(advil|motrin)\\b", RegexOption.IGNORE_CASE) to "ibuprofen",
+        Regex("\\bbenadryl\\b", RegexOption.IGNORE_CASE) to "diphenhydramine",
+    )
+
+    /** The question with its plain words made findable; used for searching, never shown or sent to the model. */
+    fun plain(question: String): String {
+        var q = CAN_VERB.replace(question) { it.groupValues[1] + " canning" }
+        for ((re, also) in ALSO_CALLED) q = re.replace(q) { it.value + " " + also }
+        return q
+    }
+
+
+    /**
      * Meaningful lowercase terms of a natural-language question, in order,
      * deduplicated, lightly stemmed for prefix matching ("steps" must match
      * "Step 1"; seen on emulator).
      */
     fun keyTerms(question: String, max: Int = 8): List<String> =
-        question.lowercase()
+        plain(question).lowercase()
             .split(Regex("[^\\p{L}\\p{N}]+"))
             .filter { it.length >= 2 && it !in STOPWORDS }
             .map(::stem)
@@ -86,7 +116,7 @@ object Grounding {
             if (cur.size in 1..4) runs += cur.joinToString(" ")
             cur.clear()
         }
-        for (w in question.split(Regex("[^\\p{L}\\p{N}'-]+"))) {
+        for (w in plain(question).split(Regex("[^\\p{L}\\p{N}'-]+"))) {
             val lw = w.lowercase()
             if (w.isEmpty() || lw in STOPWORDS || lw in ASPECT_WORDS) flush() else cur += w
         }
@@ -221,11 +251,30 @@ object Grounding {
         - Use only facts stated in the sources. Do not use outside knowledge.
         - Cite every claim with the source number in square brackets, like [1] or [2].
         - Answer only the question asked. Leave out source content that does not answer it.
+        - Never substitute. If the question is about one thing (a food, a drug, an animal, a
+          place, a model) and the sources only cover a different one, do not give the other
+          one's numbers; say the sources do not cover what was asked.
+        - Sources may contain tables flattened into lines: a header line naming the columns,
+          then one line per row with the values in the same order. Read a value only with
+          its own column name (for example "Process Time" is minutes, "Canner Pressure" is
+          pounds). A row that omits units uses the units of the row above it. If you cannot
+          tell which column a number belongs to, do not state it; tell the reader to open
+          that source and read the table.
+        - Give every number with its unit and what it applies to. If two sources give
+          different numbers, give both and say which source says which.
         - If the question asks what to do or how to treat something, give the practical
           actions first as short "- " bullet points, then what NOT to do if the sources say.
         - Be concise: a few sentences, or at most 6 bullet points.
         - If the sources do not contain the answer, reply exactly: $NO_ANSWER
     """.trimIndent()
+
+    /**
+     * A passage as the model should read it. PDF tables arrive with odd space
+     * characters between the words of a cell (seen in the USDA canning tables),
+     * which a small model reads as noise; they become ordinary spaces.
+     */
+    fun forModel(text: String): String =
+        text.trim().replace(Regex("[\\uFFFD\\u00A0\\u2000-\\u200B\\u202F]"), " ").replace(Regex("[ \t]{2,}"), " ")
 
     /** The user turn: delimited sources followed by the question. */
     fun userPrompt(question: String, passages: List<Passage>): String = buildString {
@@ -233,7 +282,7 @@ object Grounding {
         for (p in passages) {
             appendLine()
             appendLine("[${p.index}] ${p.label}")
-            appendLine(p.plainText.trim())
+            appendLine(forModel(p.plainText))
         }
         appendLine()
         appendLine("END OF SOURCES")
@@ -241,7 +290,32 @@ object Grounding {
         append("QUESTION: ").append(question.trim())
     }
 
-    data class CitationCheck(val cited: Set<Int>, val invalid: Set<Int>, val isNoAnswer: Boolean)
+    /** [tables]: cited sources that are tables, when the answer states numbers (see [isTable]). */
+    data class CitationCheck(val cited: Set<Int>, val invalid: Set<Int>, val isNoAnswer: Boolean, val tables: Set<Int> = emptySet())
+
+    /** Shown with any answer that takes numbers from a table. */
+    const val TABLE_NOTE = "Numbers here come from a table. A small model can mix up table columns: open the source and read the row yourself before relying on them."
+
+    /**
+     * Whether a passage is mostly a table: at least two lines that are rows of
+     * values (three or more numbers, making up two fifths of the line or more). A small model reads
+     * such rows unreliably — it gave a canner's pressure as the minutes to
+     * process (seen on emulator, USDA canning tables) — so answers built on
+     * them carry [TABLE_NOTE].
+     */
+    fun isTable(text: String): Boolean =
+        text.lineSequence().count { line ->
+            val items = line.trim().split(Regex("\\s+")).filter { it.isNotEmpty() }
+            val numbers = items.count { it.any(Char::isDigit) }
+            numbers >= 3 && numbers * 5 >= items.size * 2
+        } >= 2
+
+    /** [checkCitations] with the sources themselves, so table-based answers are flagged. */
+    fun checkCitations(answer: String, passages: List<Passage>): CitationCheck {
+        val c = checkCitations(answer, passages.size)
+        if (c.isNoAnswer || answer.none(Char::isDigit)) return c
+        return c.copy(tables = passages.filter { it.index in c.cited && isTable(it.plainText) }.map { it.index }.toSet())
+    }
 
     // Models paraphrase the refusal ("The provided sources do not contain…"), so
     // match the shape, not only the exact sentence (seen on emulator 2026-11-21).

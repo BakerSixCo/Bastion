@@ -1505,6 +1505,42 @@ A bundled PDF with a numbered name is titled from its own first line.
   Amateur repeater lists need a RepeaterBook account key and were not fetched.
   Full Wikipedia (49 GB) waits for disk space.
 
+## Making answers better (2026-11-22)
+
+**Measured first.** `AnswerEvalTest` runs the whole Ask path with the real model
+on 18 real questions (13 answerable, 5 traps) and logs every answer. Gemma 4 E2B
+on the emulator: 12/13 on the first set; 16/18 on the harder set after the
+changes below.
+
+**Changed, tested on emulator:**
+- Word senses: "how do I can tomatoes" now searches for canning; green beans
+  also search "snap beans" (the USDA guide's name); Tylenol, Advil and Benadryl
+  also search their generic names.
+- Instructions: never substitute a different item's numbers; give numbers with
+  units; report disagreeing sources; how to read flattened tables.
+- Tables: the model still misreads them (it gave a canner's pressure as the
+  minutes to process). So any answer that takes numbers from a table now carries
+  a warning to read the source row, in Ask and in mesh replies. PDF table text
+  is cleaned of odd space characters before the model sees it.
+- Model start: about 750 MB of free storage is needed for the model's working
+  cache. With less, loading failed with an obscure error; it now says how much
+  space is needed.
+
+**Still failing (2 of 18):** quart jars of green beans (reads the wrong table
+column; warned by the table note) and a question about a vegetable the canning
+guide does not list (it answers with general canner pressure instead of saying
+it is not covered).
+
+**Two models.** BASTION keeps more than one model and uses the largest that
+fits the phone's memory (a model up to about a third of memory), or the owner's
+pick. Gemma 4 E4B (3.7 GB) is in the kit and the manifest.
+- **Not tested:** E4B itself. The emulator has 4 GB of memory and the PC cannot
+  give it more. The model choice screen was compiled but not exercised with two
+  models. Needs a physical phone with 12 GB of memory or more.
+
+**Not done:** fine-tuning (not justified until a bigger model and these fixes
+have been tried on a phone); keeping table rows intact at import time.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

@@ -87,7 +87,7 @@ class AskSession private constructor(context: Context) {
                 model.generate(Grounding.SYSTEM_INSTRUCTION, Grounding.userPrompt(question, sources), MAX_ANSWER_TOKENS)
                     .collect { answer += it }
                 stats = model.lastStats()
-                check = Grounding.checkCitations(answer, sources.size)
+                check = Grounding.checkCitations(answer, sources)
                 // One line per answer for benchmarking (no document text logged).
                 Log.i(
                     TAG,
@@ -113,7 +113,7 @@ class AskSession private constructor(context: Context) {
 
     companion object {
         const val TAG = "BastionAI"
-        private const val MAX_ANSWER_TOKENS = 384
+        internal const val MAX_ANSWER_TOKENS = 384
 
         @Volatile private var inst: AskSession? = null
 

@@ -286,6 +286,8 @@ object MeshAutoResponder {
             val sb = StringBuilder()
             model.generate(SYSTEM_INSTRUCTION, prompt, MAX_TOKENS).collect { sb.append(it) }
             sb.toString().trim().takeUnless { it.isBlank() || Grounding.checkCitations(it, passages.size).isNoAnswer }
+                // A table-based number sent over the radio cannot be checked by the reader, so say it needs checking.
+                ?.let { a -> if (Grounding.checkCitations(a, passages).tables.isNotEmpty()) "$a (From a table: verify before use.)" else a }
         }
         val body = answer ?: "no answer to that in my offline library."
         // Steps don't fit one 200-byte message: send up to MAX_PARTS numbered parts, spaced out

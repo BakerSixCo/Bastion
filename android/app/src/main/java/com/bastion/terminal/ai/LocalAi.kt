@@ -51,8 +51,49 @@ class LocalAi private constructor(private val app: Context) {
 
     private fun modelDir(): File = File(app.filesDir, "models").apply { mkdirs() }
 
-    fun currentModelFile(): File? =
-        modelDir().listFiles { f -> f.isFile && f.name.endsWith(MODEL_EXT) }?.maxByOrNull { it.lastModified() }
+    /** Every model on this phone, smallest first. */
+    fun models(): List<File> =
+        modelDir().listFiles { f -> f.isFile && f.name.endsWith(MODEL_EXT) }?.sortedBy { it.length() }.orEmpty()
+
+    /** This phone's memory, in bytes. */
+    fun phoneMemory(): Long = android.app.ActivityManager.MemoryInfo().also {
+        (app.getSystemService(Context.ACTIVITY_SERVICE) as android.app.ActivityManager).getMemoryInfo(it)
+    }.totalMem
+
+    /**
+     * Whether a model is expected to run well here. A model needs its own size
+     * in memory plus working room, beside Android and the other apps; a model
+     * over about a third of the phone's memory tends to be killed or crawl.
+     */
+    fun fitsMemory(f: File): Boolean = f.length() <= phoneMemory() * MEMORY_SHARE
+
+    /** The model the owner picked by name, or null for "choose for me". */
+    fun chosenName(): String? = prefs.getString("model", null)?.takeIf { n -> models().any { it.name == n } }
+
+    /** Picks the model to use; a loaded model is unloaded so the next answer uses the choice. Null = choose for me. */
+    suspend fun select(name: String?) = lock.withLock {
+        prefs.edit().apply { if (name == null) remove("model") else putString("model", name) }.apply()
+        unloadLocked()
+    }
+
+    /** Deletes a model file from this phone. */
+    suspend fun remove(name: String) = lock.withLock {
+        unloadLocked()
+        models().firstOrNull { it.name == name }?.delete()
+        if (prefs.getString("model", null) == name) prefs.edit().remove("model").apply()
+        unloadLocked()
+    }
+
+    /**
+     * The model in use: the owner's pick, else the largest one that fits this
+     * phone's memory (a bigger model reads sources better), else the smallest.
+     */
+    fun currentModelFile(): File? {
+        val all = models()
+        if (all.isEmpty()) return null
+        chosenName()?.let { n -> return all.first { it.name == n } }
+        return all.lastOrNull(::fitsMemory) ?: all.first()
+    }
 
     /** Re-derives state from disk (call at startup). Does not load weights. */
     fun refresh() {
@@ -64,7 +105,7 @@ class LocalAi private constructor(private val app: Context) {
 
     /**
      * Copies a picked .litertlm file into app storage, streaming (the file is
-     * GBs; it is never held in memory). Replaces any previous model.
+     * GBs; it is never held in memory). Other models stay; see [currentModelFile].
      */
     suspend fun importModel(uri: Uri): String = withContext(Dispatchers.IO) {
         lock.withLock {
@@ -111,14 +152,15 @@ class LocalAi private constructor(private val app: Context) {
                         }
                     }
                 }
-                // One model at a time: remove older ones to save space.
-                modelDir().listFiles { f -> f.name.endsWith(MODEL_EXT) && f.name != fileName }?.forEach { it.delete() }
+
                 if (!tmp.renameTo(target)) {
                     target.delete()
                     check(tmp.renameTo(target)) { "rename failed" }
                 }
-                _state.value = AiState.Ready(target)
-                "Imported model “$fileName” (${target.length() / 1_000_000} MB). It loads on first question."
+                _state.value = AiState.Ready(currentModelFile() ?: target)
+                "Imported model “$fileName” (${target.length() / 1_000_000} MB)." +
+                    (if (currentModelFile()?.name == fileName) " It loads on first question."
+                    else " BASTION keeps using “${currentModelFile()?.nameWithoutExtension}”, which suits this phone's memory better; you can pick the other one above.")
             } catch (t: Throwable) {
                 tmp.delete()
                 _state.value = currentModelFile()?.let { AiState.Ready(it) } ?: AiState.NoModel
@@ -134,8 +176,20 @@ class LocalAi private constructor(private val app: Context) {
             _state.value = AiState.NoModel
             return@withLock null
         }
+        // The runtime writes a working cache the first time (about 750 MB for Gemma 4 E2B, seen on emulator).
+        // Android clears that cache when storage runs low, and without room to rebuild it the load fails obscurely.
+        val cache = File(app.cacheDir, "litertlm").apply { mkdirs() }
+        val free = cache.usableSpace
+        if (cache.list().isNullOrEmpty() && free < file.length() / 3) {
+            _state.value = AiState.Failed(
+                file,
+                "Not enough free storage to start the model: it needs about ${file.length() / 3 / 1_000_000} MB free on the phone " +
+                    "and there is ${free / 1_000_000} MB. Free some space (references can go on the SD card) and try again.",
+            )
+            return@withLock null
+        }
         _state.value = AiState.Loading(file)
-        val m = LiteRtLmModel(file, File(app.cacheDir, "litertlm").apply { mkdirs() }, backend())
+        val m = LiteRtLmModel(file, cache, backend())
         try {
             m.load()
             model = m
@@ -162,6 +216,7 @@ class LocalAi private constructor(private val app: Context) {
     companion object {
         const val MODEL_EXT = ".litertlm"
         private const val SPACE_MARGIN = 200L * 1_000_000
+        private const val MEMORY_SHARE = 0.35
 
         @Volatile
         private var inst: LocalAi? = null

@@ -61,6 +61,8 @@ class LiteRtLmModel(
             val t0 = System.nanoTime()
             var e: Engine? = null
             try {
+                // Android clears app caches when storage runs low: make sure the folder is there for every attempt.
+                cacheDir.mkdirs()
                 e = Engine(
                     EngineConfig(
                         modelPath = modelFile.absolutePath,
