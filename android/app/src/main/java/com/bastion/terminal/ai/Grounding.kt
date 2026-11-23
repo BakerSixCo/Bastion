@@ -143,7 +143,13 @@ object Grounding {
         TREATMENT(Regex("treatment|management|first aid|therapy|prehospital|initial care|emergency", RegexOption.IGNORE_CASE)),
         SYMPTOMS(Regex("sign|symptom|presentation|clinical features", RegexOption.IGNORE_CASE)),
         CAUSE(Regex("cause|etiology|aetiology|risk factor|pathophysiology|mechanism", RegexOption.IGNORE_CASE)),
-        PREVENTION(Regex("prevention|prophylaxis", RegexOption.IGNORE_CASE)),
+        PREVENTION(Regex("prevention|prophylaxis|prevent|avoid|protect", RegexOption.IGNORE_CASE)),
+        /** "How much / how often do I take X": the dosing part of a medicine page (added for the NHS and MedlinePlus references). */
+        DOSE(Regex("dos(e|age|ing)|how much|how to take|how and when|how to use|how often", RegexOption.IGNORE_CASE)),
+        /** "How does X work / what is X": the explanation, not the upkeep or the case studies. */
+        OVERVIEW(Regex("overview|introduction|basics|principle|how .{0,20}works?|function|definition|what is|description|background", RegexOption.IGNORE_CASE)),
+        /** "Who should not take X": the cautions part. */
+        CAUTION(Regex("who can|cannot|should not|caution|warning|contraindic|precaution|before taking", RegexOption.IGNORE_CASE)),
         /** "How do I build / make X": the construction part, not examples or history (added for the self-reliance references). */
         BUILD(Regex("construct|build|design|instruction|how to|step|procedure|method|materials|assembl|install|making", RegexOption.IGNORE_CASE)),
     }
@@ -188,7 +194,10 @@ object Grounding {
             Regex("\\b(symptoms?|signs?|how do i know|recogni[sz]e)\\b").containsMatchIn(q) -> Aspect.SYMPTOMS
             Regex("\\b(caus\\w*|why does|risk factors?)\\b").containsMatchIn(q) -> Aspect.CAUSE
             Regex("\\b(prevent\\w*|avoid)\\b").containsMatchIn(q) -> Aspect.PREVENTION
+            Regex("\\b(who (should|can|must)(n't| not)|is it safe (for|to)|safe to take|can i take)\\b").containsMatchIn(q) -> Aspect.CAUTION
+            Regex("\\b(dos(e|age)|how (much|many|often)\\b.{0,40}\\b(take|give|use)|maximum)\\b").containsMatchIn(q) -> Aspect.DOSE
             Regex("\\b(build\\w*|make|making|construct\\w*|assemble)\\b").containsMatchIn(q) -> Aspect.BUILD
+            Regex("^\\s*(how (does|do)\\b.{0,60}\\bwork|what (is|are) (a |an |the )?\\w)").containsMatchIn(q) -> Aspect.OVERVIEW
             else -> null
         }
     }
@@ -292,6 +301,23 @@ object Grounding {
 
     /** [tables]: cited sources that are tables, when the answer states numbers (see [isTable]). */
     data class CitationCheck(val cited: Set<Int>, val invalid: Set<Int>, val isNoAnswer: Boolean, val tables: Set<Int> = emptySet())
+
+    private val LINK_LINE = Regex("^[-*•]\\s+.{3,140}\\([^()]{3,90}\\)\\s*$")
+    private val SITE_BANNER = Regex("skip navigation|official websites use \\.gov|go to slide \\d+ out of", RegexOption.IGNORE_CASE)
+
+    /**
+     * Whether a passage is a website's furniture rather than its content: a
+     * site banner, slide-show controls, or a list of links to other pages
+     * ("- Stroke Symptoms and Warning Signs (American Stroke Association)").
+     * MedlinePlus topic pages are mostly such lists under promising headings
+     * like "Symptoms"; they crowded out the page's real summary (seen on
+     * emulator).
+     */
+    fun isPageFurniture(text: String): Boolean {
+        if (SITE_BANNER.containsMatchIn(text)) return true
+        val lines = text.lines().map { it.trim() }.filter { it.isNotEmpty() }
+        return lines.size >= 2 && lines.count { LINK_LINE.matches(it) } * 5 >= lines.size * 4
+    }
 
     /** Shown with any answer that takes numbers from a table. */
     const val TABLE_NOTE = "Numbers here come from a table. A small model can mix up table columns: open the source and read the row yourself before relying on them."

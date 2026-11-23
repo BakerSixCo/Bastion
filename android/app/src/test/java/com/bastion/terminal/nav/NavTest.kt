@@ -51,4 +51,25 @@ class NavTest {
         // Without our own position: coordinates only, no invented distance.
         assertTrue(!Nav.answer("sim b", contacts, null, "BASTION", 2_000L).contains(" km"))
     }
+
+    @Test
+    fun placeKind_readsEverydayWordsAndLeavesCallsignsAlone() {
+        assertEquals("Fuel", Nav.placeKind("gas"))
+        assertEquals("Fuel", Nav.placeKind("nearest gas station"))
+        assertEquals("Hospital", Nav.placeKind("the hospital"))
+        assertEquals("Pharmacy", Nav.placeKind("a pharmacy"))
+        assertEquals(null, Nav.placeKind("bravo"))
+        assertEquals(null, Nav.placeKind("base"))
+    }
+
+    @Test
+    fun placeAnswer_givesNearestThenNextWithMapDate() {
+        val a = Nav.placeAnswer(
+            "Fuel",
+            listOf(Nav.NearPlace("Mountain Village", 8100.0, 351, "+1-208-774-3367"), Nav.NearPlace("Jerry's", 12400.0, 20)),
+            "you", "2026-11-23",
+        )
+        assertEquals("Nearest fuel to you: Mountain Village, 8.1 km at 351° N (tel +1-208-774-3367). Next: Jerry's, 12 km at 020° NNE. Map data 2026-11-23.", a)
+        assertEquals("No hospital on my maps within about 100 km of you.", Nav.placeAnswer("Hospital", emptyList(), "you", ""))
+    }
 }

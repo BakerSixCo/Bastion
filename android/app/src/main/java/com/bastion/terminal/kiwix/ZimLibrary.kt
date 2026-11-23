@@ -276,6 +276,11 @@ class ZimLibrary private constructor(private val app: Context) {
                             break
                         }
                     }
+                    // Sites saved as they are name their pages "Malaria | CDC Yellow Book 2024" or
+                    // "Ibuprofen for adults: painkiller - NHS": no title is exactly the subject.
+                    if (out.none { it.title.startsWith(p, ignoreCase = true) }) siteTitle(a, p)?.let { e ->
+                        if (out.none { it.path == e.path }) out += ZimHit(e.title, e.path, 100, o.info.file)
+                    }
                 }
                 all += out
             }
@@ -283,6 +288,31 @@ class ZimLibrary private constructor(private val app: Context) {
             all
         }
     }
+
+    /**
+     * The page of a website-style reference whose title is [phrase] followed
+     * only by the site's own trimmings — " | Site", ": subtitle",
+     * " for adults", " (brand names)". Among several, the one for adults, then
+     * the shortest. Null when there is none (a forum's "Tourniquet question
+     * about…" is not the article on tourniquets).
+     */
+    private fun siteTitle(a: Archive, phrase: String): org.kiwix.libzim.Entry? = runCatching {
+        if (phrase.length < 4) return@runCatching null
+        val found = ArrayList<Pair<String, String>>()
+        val search = org.kiwix.libzim.SuggestionSearcher(a).suggest(phrase)
+        val it = search.getResults(0, 25)
+        while (it.hasNext()) { val s = it.next(); found += s.title to s.path }
+        found.filter { (title, _) ->
+            title.startsWith(phrase, ignoreCase = true) && SITE_TRIM.containsMatchIn(title.substring(phrase.length))
+        }.sortedWith(compareBy({ !it.first.substring(phrase.length).startsWith(" for adults", ignoreCase = true) }, { it.first.length }))
+            .firstNotNullOfOrNull { (_, path) ->
+                runCatching { a.getEntryByPath(path) }.getOrNull()?.takeIf { e ->
+                    !e.isRedirect && e.getItem(true).mimetype.startsWith("text/html")
+                }
+            }
+    }.getOrNull()
+
+    private val SITE_TRIM = Regex("^(s|es)?( for adults\\b| \\||:| \\()")
 
     /**
      * Some ZIMs store a redirect as a tiny HTML page (meta refresh) instead of

@@ -42,6 +42,9 @@ class KitDocsEvalTest {
         Case("how do I identify a morel mushroom", "Mushroom", listOf("morel")),
         Case("how do I tie a bowline knot", "Knots", listOf("bowline")),
         Case("how many drops of bleach to purify a gallon of water", "", listOf("drops", "bleach", "chlorine")),
+        Case("how do I apply a tourniquet", "", listOf("tourniquet")),
+        Case("how do I splint a broken leg", "", listOf("splint")),
+        Case("how do I signal for rescue", "", listOf("mirror", "signal fire", "smoke", "whistle", "ground-to-air")),
     )
 
     @Test
@@ -54,6 +57,7 @@ class KitDocsEvalTest {
         assumeTrue("needs the kit documents in the library (found ${titles.size}) — skipped",
             titles.any { it.contains("NOAA") } && titles.any { it.contains("Canning") })
         Log.i(TAG, "library: ${titles.size} documents")
+        store.listDocs().groupingBy { it.provenance.substringBefore(" · ").take(60) }.eachCount().forEach { (k, v) -> Log.i(TAG, "  $v from: $k") }
 
         val retriever = Retriever(store, zim)
         var hits = 0

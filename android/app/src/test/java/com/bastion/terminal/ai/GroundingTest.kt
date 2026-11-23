@@ -19,6 +19,14 @@ class GroundingTest {
     }
 
     @Test
+    fun isPageFurniture_dropsLinkListsAndBannersButKeepsContent() {
+        assertTrue(Grounding.isPageFurniture("- Stroke Signs and Symptoms (National Institute of Neurological Disorders and Stroke)\n- Stroke Symptoms and Warning Signs (American Stroke Association)"))
+        assertTrue(Grounding.isPageFurniture("Skip navigation Official websites use .gov A .gov website belongs to an official government organization"))
+        assertFalse(Grounding.isPageFurniture("- Sudden numbness of the face, arm or leg (especially on one side)\n- Sudden confusion or trouble speaking\n- Sudden trouble seeing"))
+        assertFalse(Grounding.isPageFurniture("A stroke happens when blood flow to part of the brain stops."))
+    }
+
+    @Test
     fun isTable_spotsRowsOfValuesButNotProse() {
         assertTrue(Grounding.isTable("Style Jar Process 0- 2,001-\nHot Pints 20 min 11 lb 12 lb 13 lb 14 lb\nRaw Quarts 25 11 12 13 14"))
         assertFalse(Grounding.isTable("Add 16 drops of bleach to each gallon of water.\nWait 30 minutes before drinking."))

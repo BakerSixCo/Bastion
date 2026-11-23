@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -141,6 +142,9 @@ private val STYLES = mapOf(
     "military" to LayerStyle(Color(0xFF4E342E), 3f, dash = true),
 )
 
+/** The kinds of place still shown when zoomed well out. */
+private val FAR_KINDS = setOf("Hospital", "Fuel", "Pharmacy", "Water", "Police", "Fire station", "Ranger station")
+
 /** Letter and colour for each kind of place. */
 private val PLACE_MARKS = mapOf(
     "Fuel" to ("F" to Color(0xFF5D4037)), "Groceries" to ("G" to Color(0xFF2E7D32)),
@@ -204,7 +208,7 @@ private class MapData(private val scope: CoroutineScope) {
     }
 }
 
-private class Picked(val lat: Double, val lon: Double, val elevation: Float?, val name: String = "", val detail: String = "")
+private class Picked(val lat: Double, val lon: Double, val elevation: Float?, val name: String = "", val detail: String = "", val pinId: Long? = null)
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -266,6 +270,10 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     var route by remember { mutableStateOf<TerrainRoute.Route?>(null) }
     var routeNote by remember { mutableStateOf("") }
     var showGoTo by remember { mutableStateOf(false) }
+    val pinStore = remember { com.bastion.terminal.map.Pins.get(ctx) }
+    val pins by pinStore.pins.collectAsState()
+    var pinName by remember { mutableStateOf("") }
+    var sharePin by remember { mutableStateOf<String?>(null) }
     var nearKind by remember { mutableStateOf("") }
     var nearList by remember { mutableStateOf<List<MapPacks.Place>?>(null) }
     var showLegs by remember { mutableStateOf(false) }
@@ -310,11 +318,17 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                 }
                 .pointerInput(packs) {
                     detectTapGestures(onTap = { at ->
-                        // A tap on a place marker says what it is.
-                        if ("places" !in on) return@detectTapGestures
+                        // A tap on a pin or a place marker says what it is.
                         val s = Geo.TILE * 2.0.pow(zoom) * density
                         val wx = cx + (at.x - size.width / 2) / s; val wy = cy + (at.y - size.height / 2) / s
                         val reach = 22 * density / s
+                        pins.minByOrNull { p -> (Geo.x(p.lon) - wx).let { it * it } + (Geo.y(p.lat) - wy).let { it * it } }
+                            ?.takeIf { p -> (Geo.x(p.lon) - wx).let { it * it } + (Geo.y(p.lat) - wy).let { it * it } < reach * reach }
+                            ?.let { p ->
+                                picked = Picked(p.lat, p.lon, null, p.name, if (p.from.isBlank()) "Your pin" else "Pin from ${p.from}", p.id)
+                                return@detectTapGestures
+                            }
+                        if ("places" !in on) return@detectTapGestures
                         var hit: MapPack.Feature? = null; var best = reach * reach
                         for (p in packs) {
                             val info = p.layers.firstOrNull { it.point && it.grid != null } ?: continue
@@ -401,7 +415,11 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                             val x = sx(f.xy[0]); val y = sy(f.xy[1])
                             if (!seen.add((x / (4 * density)).toLong() * 100_000 + (y / (4 * density)).toLong())) continue // same place from two maps
                             val (letter, color) = PLACE_MARKS[f.cat] ?: ("•" to Color.DarkGray)
-                            if (zoom < 11.5) { drawCircle(Color.White, 4f * density, Offset(x, y)); drawCircle(color, 3f * density, Offset(x, y)) }
+                            if (zoom < 11.5) {
+                                // Zoomed out over a town every shop would bury the map: only what matters in a hurry.
+                                if (f.cat !in FAR_KINDS) continue
+                                drawCircle(Color.White, 4f * density, Offset(x, y)); drawCircle(color, 3f * density, Offset(x, y))
+                            }
                             else {
                                 marker(text, x, y, color, letter, density)
                                 if (zoom >= 13.5 && f.name.isNotBlank()) label(text, f.name, x + 12 * density, y - 8 * density)
@@ -467,6 +485,13 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                 r.legs.forEachIndexed { i, leg ->
                     if (i > 0) marker(text, sx(Geo.x(leg.from.lon)), sy(Geo.y(leg.from.lat)), Color(0xFF0D47A1), "$i", density)
                 }
+            }
+            // Pins.
+            pins.forEach { p ->
+                val x = sx(Geo.x(p.lon)); val y = sy(Geo.y(p.lat))
+                if (x < -40 || y < -40 || x > size.width + 40 || y > size.height + 40) return@forEach
+                marker(text, x, y, Color(0xFFF57F17), "★", density)
+                if (zoom >= 10.5) label(text, p.name, x + 12 * density, y - 8 * density)
             }
             start?.let { (la, lo) -> marker(text, sx(Geo.x(lo)), sy(Geo.y(la)), Color(0xFF2E7D32), "S", density) }
             dest?.let { (la, lo) -> marker(text, sx(Geo.x(lo)), sy(Geo.y(la)), Color(0xFFC62828), "X", density) }
@@ -559,11 +584,25 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                     fix?.let { f -> Text("From you: ${bearingText(f.lat to f.lon, p.lat to p.lon)} (straight line)") }
                     Button(onClick = { dest = p.lat to p.lon; destName = p.name; picked = null; plan() }, Modifier.fillMaxWidth()) { Text("Route to here") }
                     OutlinedButton(onClick = { start = p.lat to p.lon; picked = null; if (dest != null) plan() else routeNote = "Start set. Long-press where you want to go." }, Modifier.fillMaxWidth()) { Text("Start here") }
+                    if (p.pinId != null) {
+                        OutlinedButton(onClick = { sharePin = com.bastion.terminal.map.Pins.shareText(p.name, p.lat, p.lon); picked = null }, Modifier.fillMaxWidth()) { Text("Send pin to mesh…") }
+                        TextButton(onClick = { pinStore.remove(p.pinId); picked = null }) { Text("Delete pin") }
+                    } else {
+                        OutlinedTextField(
+                            value = pinName, onValueChange = { pinName = it.take(24) }, singleLine = true,
+                            label = { Text("Pin name") }, modifier = Modifier.fillMaxWidth(),
+                        )
+                        OutlinedButton(onClick = {
+                            pinStore.add(pinName.ifBlank { p.name.ifBlank { "Pin" } }, p.lat, p.lon); pinName = ""; picked = null
+                        }, Modifier.fillMaxWidth()) { Text("Save as pin") }
+                    }
                 }
             },
             confirmButton = { TextButton(onClick = { picked = null }) { Text("Cancel") } },
         )
     }
+
+    sharePin?.let { line -> MeshComposeDialog(initial = line, onDismiss = { sharePin = null }) }
 
     if (showLayers) AlertDialog(
         onDismissRequest = { showLayers = false },
@@ -645,6 +684,16 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                                 "From OpenStreetMap as of the map's build date. Shops close and move; distances are straight lines.",
                                 style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
+                        }
+                        Text("Team", style = MaterialTheme.typography.titleSmall)
+                    }
+                    if (pins.isNotEmpty()) {
+                        Text("Pins", style = MaterialTheme.typography.titleSmall)
+                        pins.asReversed().forEach { p ->
+                            TextButton(onClick = {
+                                dest = p.lat to p.lon; destName = p.name; showGoTo = false
+                                cx = Geo.x(p.lon); cy = Geo.y(p.lat); plan()
+                            }) { Text("★ " + p.name + (if (p.from.isBlank()) "" else "  (from ${p.from})")) }
                         }
                         Text("Team", style = MaterialTheme.typography.titleSmall)
                     }

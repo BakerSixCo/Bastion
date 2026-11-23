@@ -64,6 +64,52 @@ object Nav {
         return m.groupValues[1].trim().removePrefix("the ").trim().takeIf { it.isNotEmpty() }
     }
 
+    /** Everyday words for the kinds of place a map pack holds (see MapPack.PLACE_KINDS). */
+    private val PLACE_WORDS = mapOf(
+        "Fuel" to listOf("fuel", "gas", "gas station", "petrol", "diesel", "gasoline"),
+        "Groceries" to listOf("groceries", "grocery", "grocery store", "food", "supermarket", "market"),
+        "Convenience store" to listOf("store", "convenience store", "shop"),
+        "Water" to listOf("water", "drinking water"),
+        "Pharmacy" to listOf("pharmacy", "drugstore", "drug store", "chemist", "medicine"),
+        "Hospital" to listOf("hospital", "er", "emergency room"),
+        "Clinic" to listOf("clinic", "doctor", "doctors", "urgent care"),
+        "Ambulance" to listOf("ambulance", "ems"),
+        "Fire station" to listOf("fire", "fire station", "fire department"),
+        "Police" to listOf("police", "sheriff", "cops"),
+        "Ranger station" to listOf("ranger", "ranger station", "rangers"),
+        "Vet" to listOf("vet", "veterinarian", "animal hospital"),
+        "Hardware" to listOf("hardware", "hardware store", "tools"),
+        "Vehicle repair" to listOf("mechanic", "repair", "tire", "tires", "tyres", "garage", "car repair"),
+        "Outdoor gear" to listOf("gear", "outdoor store", "outfitter"),
+        "Campground" to listOf("camp", "campground", "campsite", "camping"),
+    )
+
+    /**
+     * The kind of place a locate request names — "gas", "nearest hospital",
+     * "a pharmacy" — or null if it is not one (it is then a callsign).
+     */
+    fun placeKind(target: String): String? {
+        val t = target.lowercase().trim().removePrefix("nearest ").removePrefix("closest ")
+            .removePrefix("the ").removePrefix("a ").removePrefix("an ").trim()
+        return PLACE_WORDS.entries.firstOrNull { (_, words) -> t in words }?.key
+    }
+
+    /** One place for [placeAnswer]: its name, how far, which way, and a phone number if known. */
+    data class NearPlace(val name: String, val meters: Double, val bearing: Int, val phone: String? = null)
+
+    /**
+     * The one-message answer to "nearest fuel", computed (never generated).
+     * [built]: the date of the map data, because shops close and move.
+     */
+    fun placeAnswer(kind: String, places: List<NearPlace>, fromName: String, built: String): String {
+        if (places.isEmpty()) return "No ${kind.lowercase()} on my maps within about 100 km of $fromName."
+        fun one(p: NearPlace) = "${p.name}, ${distanceText(p.meters)} at ${String.format(Locale.US, "%03d", p.bearing)}° ${compass(p.bearing)}" +
+            (p.phone?.let { " (tel $it)" } ?: "")
+        return "Nearest ${kind.lowercase()} to $fromName: ${one(places[0])}." +
+            (places.getOrNull(1)?.let { " Next: ${one(it.copy(phone = null))}." } ?: "") +
+            (if (built.isNotBlank()) " Map data $built." else "")
+    }
+
     /** Best contact for a spoken name: exact, then word-prefix, then substring match on the callsign. */
     fun findContact(name: String, contacts: List<TakContact>): TakContact? {
         val n = name.lowercase()

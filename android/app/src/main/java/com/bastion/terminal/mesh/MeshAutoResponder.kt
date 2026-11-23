@@ -33,6 +33,8 @@ import kotlinx.coroutines.withTimeoutOrNull
  * BASTION; everything else is ordinary chat and is never answered.**
  *   `?question`  ask the AI (library / offline reference)
  *   `@callsign`  where is that unit — `@base` for this phone (computed, not AI)
+ *   `@gas`       the nearest place of a kind on the offline maps (fuel, hospital, pharmacy, water…)
+ *   `+Name lat,lon`  save this pin on the map (nothing is sent back)
  * New actions get a new symbol; a word or a "looks like a question" guess is
  * never a trigger. (That guess was tried for an hour and withdrawn.)
  *
@@ -76,6 +78,8 @@ object MeshAutoResponder {
     sealed class Command {
         data class Ask(val question: String) : Command()
         data class Locate(val target: String) : Command()
+        /** "+Name lat,lon": save this pin on the map. Nothing is sent back. */
+        data class AddPin(val name: String, val lat: Double, val lon: Double) : Command()
     }
 
     /**
@@ -88,6 +92,7 @@ object MeshAutoResponder {
         return when {
             t.startsWith("?") -> t.drop(1).trim().trimEnd('?', ' ').takeIf { it.length >= 3 }?.let { Command.Ask(it) }
             t.startsWith("@") -> t.drop(1).trim().takeIf { it.length in 2..40 }?.let { Command.Locate(it) }
+            t.startsWith("+") -> com.bastion.terminal.map.Pins.parse(t)?.let { (n, la, lo) -> Command.AddPin(n, la, lo) }
             else -> null
         }
     }
@@ -172,6 +177,13 @@ object MeshAutoResponder {
             _status.value = "Not answered: “${msg.sender}” is not an approved radio. Approve it below to answer its questions."
             return
         }
+        if (command is Command.AddPin) {
+            // A pin needs no answer and no AI: save it and say so on the Mesh tab.
+            com.bastion.terminal.map.Pins.get(context).add(command.name, command.lat, command.lon, msg.sender)
+            _status.value = "Saved pin “${command.name}” from ${msg.sender}. It is on the Map."
+            Log.i(TAG, "pin-saved sender=${msg.sender}")
+            return
+        }
         if (reply == null) {
             _status.value = "Message from ${msg.sender}, but Meshtastic offered no reply action — not answered."
             return
@@ -210,6 +222,7 @@ object MeshAutoResponder {
     private suspend fun handle(app: Context, job: Job) {
         when (val c = job.command) {
             is Command.Locate -> locate(app, job, c.target)
+            is Command.AddPin -> Unit // saved when it arrived
             // "?where is base" still works: a navigation question is computed, not generated.
             is Command.Ask -> Nav.targetOf(c.question)?.let { locate(app, job, it) } ?: ask(app, job, c.question)
         }
@@ -230,6 +243,12 @@ object MeshAutoResponder {
         }
         val from = asker?.let { Nav.Fix(it.lat, it.lon) } ?: mine
         val known = contacts.filterNot { it.uid == asker?.uid } + listOfNotNull(self)
+        // "@gas", "@hospital": the nearest place of that kind on the offline maps — unless a unit goes by that name.
+        val kind = Nav.placeKind(target)
+        if (kind != null && Nav.findContact(target, known) == null) {
+            nearest(app, job, kind, from, if (asker != null) "you" else "BASTION")
+            return
+        }
         val body = Nav.answer(
             target, known, from,
             if (asker != null) "you" else "BASTION", System.currentTimeMillis(),
@@ -306,6 +325,44 @@ object MeshAutoResponder {
         _status.value = "Answered $who" + (if (followUp) " (same topic)" else "") +
             (if (parts.size > 1) " in ${parts.size} messages" else "") +
             if (answer == null) " — nothing in the library on that." else "."
+    }
+
+    /** Answers "@gas": the nearest places of one kind, then a walking route to the first if the maps can work one out. */
+    private suspend fun nearest(app: Context, job: Job, kind: String, from: Nav.Fix?, fromName: String) {
+        val who = job.msg.sender
+        val maps = com.bastion.terminal.map.MapPacks.get(app)
+        val found = if (from == null) emptyList() else runCatching { maps.nearest(from.lat, from.lon, kind, 2) }.getOrDefault(emptyList())
+        val body = when {
+            from == null -> "I have no position for you or for BASTION, so I cannot find the nearest ${kind.lowercase()}."
+            maps.packs.value.none { p -> p.layers.any { it.point } } -> "My maps have no places on them."
+            else -> Nav.placeAnswer(
+                kind,
+                found.map { p ->
+                    Nav.NearPlace(
+                        p.name, p.meters, Nav.bearingDeg(from.lat, from.lon, p.lat, p.lon),
+                        Regex("\\+?[0-9][0-9 ()-]{6,}").find(p.detail)?.value?.trim(),
+                    )
+                },
+                fromName, maps.packs.value.lastOrNull { p -> p.layers.any { it.point } }?.built.orEmpty(),
+            )
+        }
+        val text = MeshBridge.fit(NAV_PREFIX + body.replace("°", " deg")).first
+        send(app, job.reply, text)
+        MeshInbox.get(app).add(System.currentTimeMillis(), "BASTION NAV → $who", job.msg.channel, text)
+        Log.i(TAG, "nav-nearest sender=$who kind=$kind found=${found.size} bytes=${MeshBridge.byteLength(text)}")
+        _status.value = "Sent $who the nearest ${kind.lowercase()}."
+        val to = found.firstOrNull() ?: return
+        val route = runCatching { maps.routeBetween(from!!.lat, from.lon, to.lat, to.lon) }.getOrNull() ?: return
+        if (route.meters <= 150) return
+        val steps = "Route on foot to ${to.name}: " + route.summary() + ".\n" +
+            route.legs.mapIndexed { i, leg -> leg.text(i + 1) }.joinToString("\n")
+        val parts = MeshBridge.split(steps.replace("°", " deg"), 3) { i, n -> "NAV ${i + 1}/${n + 1}: " }
+        for (part in parts) {
+            delay(PART_GAP_MS)
+            send(app, job.reply, part)
+            MeshInbox.get(app).add(System.currentTimeMillis(), "BASTION NAV → $who", job.msg.channel, part)
+        }
+        Log.i(TAG, "nav-route sender=$who parts=${parts.size} legs=${route.legs.size}")
     }
 
     /** Fires Meshtastic's own direct-reply action with [text]. */

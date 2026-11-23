@@ -107,7 +107,7 @@ class Retriever internal constructor(
             var prevHeading: String? = "0000"
             for (ch in Chunker.chunk(text)) {
                 val body = text.substring(ch.start, ch.end).trim()
-                if (body.length < MIN_ZIM_CHARS) continue
+                if (body.length < MIN_ZIM_CHARS || Grounding.isPageFurniture(body)) continue
                 val opens = ch.heading != prevHeading
                 prevHeading = ch.heading
                 // Negative ids keep ZIM articles distinct from library doc ids for the per-doc cap.

@@ -1541,6 +1541,66 @@ pick. Gemma 4 E4B (3.7 GB) is in the kit and the manifest.
 **Not done:** fine-tuning (not justified until a bigger model and these fixes
 have been tried on a phone); keeping table rows intact at import time.
 
+## Larger references, radio "nearest", pins, neighbour states (2026-11-22)
+
+**Every kit reference has now been loaded in BASTION on the emulator** (in
+batches; the emulator cannot hold them together). `MoreRefsEvalTest`, real
+questions per reference:
+
+| Reference | Result |
+|---|---|
+| Outdoors Q&A | 3/3 |
+| Cooking Q&A | 2/2 |
+| Woodworking Q&A | 1/1 |
+| Sustainable Living Q&A | 1/1 |
+| Amateur Radio Q&A | 1/1, one known gap (dipole length) |
+| Energypedia | 1/1, one known gap (how a biogas digester works) |
+| CDC travel health | 2/2 |
+| NHS medicines | 2/2 |
+| MedlinePlus | 3/3 |
+| Home Improvement Q&A | 3/3 |
+| Ready.gov | 3/3 |
+| iFixit | 3/3 |
+
+Post-disaster and Military Medicine are PDF bundles: BASTION indexed 76 more
+documents from them (131 in the library; 13 scanned PDFs skipped), and
+`KitDocsEvalTest` is 17/17 including tourniquet, splinting and rescue signals.
+
+Fixed on the way, all tested on emulator:
+- Website-style references title their pages "Malaria | CDC Yellow Book 2024"
+  or "Ibuprofen for adults: … - NHS"; the subject lookup now finds them.
+- "How much / how often do I take X" and "who should not take X" pick the
+  dosing and cautions sections; "how does X work" prefers the explanation.
+- MedlinePlus topic pages are mostly lists of links under headings like
+  "Symptoms"; link lists, site banners and slide-show controls are dropped.
+
+**Nearest place over the radio.** `@gas`, `@hospital`, `@pharmacy`, `@water`
+and the other kinds return the nearest one on the offline maps with distance,
+bearing, phone and the map's date, then a walking route when the maps can work
+one out. A unit with that callsign still wins. Tested over the simulated
+radios: `@gas` from Sim B logged `nav-nearest kind=Fuel found=1` and a
+three-part route. The reply text itself was checked by unit test, not read off
+the other radio.
+
+**Pins.** Long-press the map and "Save as pin"; pins show as stars, are listed
+in Go to, can be routed to, deleted, and sent to the mesh as one line
+(`+Camp 44.14470,-114.91700`, 31 bytes). The same line from an approved radio
+saves the pin on this phone; nothing is sent back. Tested on emulator both ways
+(sending opens Meshtastic's compose screen; the transmit itself was not
+pressed). Not built: GPX import and export, pin notes, renaming.
+
+**Map:** zoomed out, only hospitals, fuel, pharmacies, water, police, fire and
+ranger stations are dotted, so a town does not bury the map.
+
+**Neighbour states built:** Montana 2.5 GB, Wyoming 1.2 GB, Utah 1.1 GB, Nevada
+1.6 GB, all with roads, trails, wilderness, places and military areas and no
+build warnings. Utah opened on the emulator: Hill Air Force Base outlined and
+named, nearest hospitals listed. Oregon and Washington still building.
+
+**Known limits:** bundled PDFs are titled from their first line, which is
+sometimes boilerplate ("DISTRIBUTION RESTRICTION:"). Nothing here has run on a
+physical phone.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

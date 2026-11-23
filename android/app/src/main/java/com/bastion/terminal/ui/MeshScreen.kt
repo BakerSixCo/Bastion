@@ -137,6 +137,8 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                                         "?question — ask the AI (your mesh-enabled packs and the offline reference). " +
                                         "A follow-up ? within 10 minutes continues the same topic.\n" +
                                         "@callsign — where is that unit (@base for this phone).\n" +
+                                        "@gas, @hospital, @pharmacy, @water… — the nearest one on the offline maps.\n" +
+                                        "+Name 44.12345,-114.12345 — saves that pin on this phone's map.\n" +
                                         "This transmits on your node without you pressing Send.",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
