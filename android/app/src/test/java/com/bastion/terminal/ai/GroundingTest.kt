@@ -27,6 +27,19 @@ class GroundingTest {
     }
 
     @Test
+    fun carryUnits_givesBareRowsTheUnitsOfTheRowAbove() {
+        val table = "Style Jar Process 0- 2,001-\nHot Pints 20 min 11 lb 12 lb 13 lb 14 lb\nand\nRaw Quarts 25 11 12 13 14"
+        assertEquals(
+            "Style Jar Process 0- 2,001-\nHot Pints 20 min 11 lb 12 lb 13 lb 14 lb\nand\nRaw Quarts 25 min 11 lb 12 lb 13 lb 14 lb",
+            Grounding.carryUnits(table),
+        )
+        // Prose and rows of a different shape are left alone.
+        val prose = "Add 16 drops of bleach per gallon.\nWait 30 minutes, then 60 if cloudy."
+        assertEquals(prose, Grounding.carryUnits(prose))
+        assertEquals("A 5 min 10 lb\nB 7 8 9", Grounding.carryUnits("A 5 min 10 lb\nB 7 8 9"))
+    }
+
+    @Test
     fun isTable_spotsRowsOfValuesButNotProse() {
         assertTrue(Grounding.isTable("Style Jar Process 0- 2,001-\nHot Pints 20 min 11 lb 12 lb 13 lb 14 lb\nRaw Quarts 25 11 12 13 14"))
         assertFalse(Grounding.isTable("Add 16 drops of bleach to each gallon of water.\nWait 30 minutes before drinking."))

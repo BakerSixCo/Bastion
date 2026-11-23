@@ -29,6 +29,8 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.RangeSlider
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -72,6 +74,7 @@ import com.bastion.terminal.link.TakContact
 import com.bastion.terminal.map.Dem
 import com.bastion.terminal.map.Geo
 import com.bastion.terminal.map.MapPack
+import com.bastion.terminal.map.Mgrs
 import com.bastion.terminal.map.MapPacks
 import com.bastion.terminal.map.TerrainRoute
 import com.bastion.terminal.nav.LocationSource
@@ -130,6 +133,13 @@ fun MapScreen(modifier: Modifier = Modifier) {
 /** Raster layers the map computes itself from a pack's elevation. */
 private const val SLOPE = "slope"
 private const val SHADE = "shade"
+private const val GRID = "grid"
+private const val SUN = "sun"
+private const val FILTER = "filter"
+
+/** Slope bands offered by the terrain filter, degrees. */
+private val FILTER_SLOPES = listOf("Any slope" to (0f to 90f), "Under 10°" to (0f to 10f), "10–25°" to (10f to 25f), "Over 25°" to (25f to 90f))
+private val FILTER_FACINGS = listOf(-1 to "Any facing", 0 to "N", 90 to "E", 180 to "S", 270 to "W")
 
 private data class LayerStyle(val color: Color, val width: Float, val dash: Boolean = false, val fill: Color? = null)
 
@@ -188,14 +198,26 @@ private class MapData(private val scope: CoroutineScope) {
         fetch("${pack.name}/$id/$x/$y", cells) { pack.cell(id, x, y) }
 
     private fun render(pack: MapPack, kind: String, z: Int, x: Int, y: Int): ImageBitmap? {
-        if (kind == SLOPE || kind == SHADE) {
+        if (kind == SLOPE || kind == SHADE || kind.startsWith(SUN) || kind.startsWith(FILTER)) {
+            // "sun@azimuth,elevation" and "filter@slopeLow,slopeHigh,facing,elevLow,elevHigh" carry their settings.
+            val arg = kind.substringAfter('@', "").split(',').mapNotNull { it.toDoubleOrNull() }
             // The tile and its neighbours, so slopes are right across tile edges.
             val dem = pack.demTiles(x - 1, y - 1, x + 1, y + 1) ?: return null
             val ox = x * Geo.TILE - dem.x0; val oy = y * Geo.TILE - dem.y0
             if (z != dem.zoom || ox < 0 || oy < 0 || ox + Geo.TILE > dem.w || oy + Geo.TILE > dem.h) return null
             val px = IntArray(Geo.TILE * Geo.TILE)
             for (j in 0 until Geo.TILE) for (i in 0 until Geo.TILE) {
-                px[j * Geo.TILE + i] = if (kind == SLOPE) Dem.slopeColor(dem.slopeDeg(ox + i, oy + j)) else {
+                px[j * Geo.TILE + i] = if (kind == SLOPE) Dem.slopeColor(dem.slopeDeg(ox + i, oy + j)) else if (kind.startsWith(SUN)) {
+                    // Shade as a blue-grey veil; sunlit ground is left as the map shows it.
+                    if (dem.shaded(ox + i, oy + j, arg[0], arg[1])) 0x73101C40 else 0
+                } else if (kind.startsWith(FILTER)) {
+                    val x = ox + i; val y = oy + j
+                    val slope = dem.slopeDeg(x, y); val e = dem.at(x, y)
+                    val facing = if (arg[2] < 0) true else dem.aspectDeg(x, y)?.let { a ->
+                        val d = kotlin.math.abs(a - arg[2].toFloat()) % 360; minOf(d, 360 - d) <= 45
+                    } ?: false
+                    if (slope >= arg[0] && slope <= arg[1] && e >= arg[3] && e <= arg[4] && facing) 0x8800C853.toInt() else 0
+                } else {
                     // Dark where the hill faces away from the light, clear where it is lit.
                     val s = dem.hillshade(ox + i, oy + j)
                     ((0.75f - s).coerceIn(0f, 0.75f) * 255 * 0.9f).toInt() shl 24
@@ -253,7 +275,11 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
         buildList {
             if (packs.any { it.land != null }) add("land" to "Public land")
             packs.flatMap { it.layers }.distinctBy { it.id }.forEach { add(it.id to it.title) }
-            if (packs.any { it.elevZoom != null }) { add(SLOPE to "Steepness"); add(SHADE to "Shaded relief") }
+            if (packs.any { it.elevZoom != null }) {
+                add(SLOPE to "Steepness"); add(SHADE to "Shaded relief")
+                add(SUN to "Sun and shade"); add(FILTER to "Terrain filter")
+            }
+            add(GRID to "Military grid (MGRS)")
             add("team" to "Team positions")
         }
     }
@@ -261,6 +287,20 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
         mutableStateOf(allLayers.map { it.first }.filter { prefs.getBoolean("layer_$it", it in setOf("roads", "trails", "mototrails", "team", "places", "military", SHADE)) }.toSet())
     }
     var showLayers by remember { mutableStateOf(false) }
+
+    // Sun and shade: a time today on this phone's clock, in half hours. Terrain filter: slope band, facing, height band.
+    var sunMinutes by remember {
+        mutableStateOf(java.util.Calendar.getInstance().let { it.get(java.util.Calendar.HOUR_OF_DAY) * 60 + it.get(java.util.Calendar.MINUTE) } / 30 * 30)
+    }
+    val sunAt = remember(sunMinutes, (cx * 200).toInt(), (cy * 200).toInt()) {
+        val cal = java.util.Calendar.getInstance().apply {
+            set(java.util.Calendar.HOUR_OF_DAY, sunMinutes / 60); set(java.util.Calendar.MINUTE, sunMinutes % 60); set(java.util.Calendar.SECOND, 0)
+        }
+        com.bastion.terminal.map.Sun.position(cal.timeInMillis, Geo.lat(cy), Geo.lon(cx))
+    }
+    var filterSlope by remember { mutableStateOf(1) }
+    var filterFacing by remember { mutableStateOf(-1) }
+    var filterHeight by remember { mutableStateOf(0f..4500f) }
 
     // Routing.
     var picked by remember { mutableStateOf<Picked?>(null) }
@@ -394,6 +434,13 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                 val ez = p.elevZoom!!
                 if (SHADE in on && want >= ez - 2) raster(p, SHADE, ez, ez, 1f, true)
                 if (SLOPE in on && want >= ez - 1) raster(p, SLOPE, ez, ez, 0.6f, false)
+                if (SUN in on && want >= ez - 1 && sunAt.elevation > 0) {
+                    raster(p, "$SUN@${sunAt.azimuth.roundToInt()},${sunAt.elevation.roundToInt()}", ez, ez, 1f, true)
+                }
+                if (FILTER in on && want >= ez - 1) {
+                    val (lo, hi) = FILTER_SLOPES[filterSlope].second
+                    raster(p, "$FILTER@$lo,$hi,$filterFacing,${filterHeight.start},${filterHeight.endInclusive}", ez, ez, 1f, false)
+                }
             }
             if ("land" in on) visible.forEach { p -> p.land?.let { raster(p, "land", it.minZoom, it.maxZoom, 0.45f, true) } }
 
@@ -470,6 +517,44 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         if (f.minY < b[2]) b[2] = f.minY; if (f.maxY > b[3]) b[3] = f.maxY
                     }
                     boxes.forEach { (name, b) -> label(text, name, sx((b[0] + b[1]) / 2) - name.length * 3.2f * density, sy((b[2] + b[3]) / 2)) }
+                }
+            }
+
+            // Military grid for the UTM zone at the middle of the screen: lines every 1, 10 or 100 km.
+            if (GRID in on) {
+                val zn = Mgrs.zone(Geo.lon(cx))
+                val step = when { zoom >= 12.5 -> 1_000.0; zoom >= 9.0 -> 10_000.0; else -> 100_000.0 }
+                val corners = listOf(vx0 to vy0, vx1 to vy0, vx0 to vy1, vx1 to vy1).map { (x, y) -> Mgrs.toUtm(Geo.lat(y), Geo.lon(x), zn) }
+                val e0 = floor(corners.minOf { it.easting } / step) * step; val e1 = corners.maxOf { it.easting }
+                val n0 = floor(corners.minOf { it.northing } / step) * step; val n1 = corners.maxOf { it.northing }
+                if ((e1 - e0) / step <= 60 && (n1 - n0) / step <= 60) {
+                    val ink = Color(0xCC1A237E)
+                    fun pt(e: Double, n: Double): Offset {
+                        val (la, lo) = Mgrs.toLatLon(zn, e, n)
+                        return Offset(sx(Geo.x(lo)), sy(Geo.y(la)))
+                    }
+                    fun figures(v: Double) = String.format(Locale.US, "%02d", (v / 1000).toInt() % 100)
+                    fun weight(v: Double) = (if (v % (step * 10) == 0.0) 1.8f else 0.9f) * density
+                    var e = e0
+                    while (e <= e1) {
+                        val a = pt(e, n0); val b = pt(e, n1 + step)
+                        drawLine(ink, a, b, strokeWidth = weight(e))
+                        val yAt = size.height - 64 * density
+                        val f = (yAt - a.y) / (b.y - a.y)
+                        if (step < 100_000 && f in 0f..1f) label(text, figures(e), a.x + (b.x - a.x) * f + 2 * density, yAt)
+                        e += step
+                    }
+                    var n = n0
+                    while (n <= n1) {
+                        val a = pt(e0, n); val b = pt(e1 + step, n)
+                        drawLine(ink, a, b, strokeWidth = weight(n))
+                        val xAt = 4 * density
+                        val f = (xAt - a.x) / (b.x - a.x)
+                        if (step < 100_000 && f in 0f..1f) label(text, figures(n), xAt, a.y + (b.y - a.y) * f - 18 * density)
+                        n += step
+                    }
+                    // The zone and 100 km square the figures belong to.
+                    label(text, Mgrs.format(Geo.lat(cy), Geo.lon(cx), 0).trim() + " · lines every " + (if (step >= 1000) "${(step / 1000).toInt()} km" else "") , 44 * density, 8 * density)
                 }
             }
 
@@ -580,6 +665,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         if (p.detail.isNotBlank()) Text(p.detail)
                         Text(String.format(Locale.US, "%.5f, %.5f", p.lat, p.lon), style = MaterialTheme.typography.bodySmall)
                     }
+                    Mgrs.format(p.lat, p.lon).takeIf { it.isNotBlank() }?.let { Text("Grid $it") }
                     p.elevation?.let { Text("Elevation ${it.roundToInt()} m (${(it * 3.28084f).roundToInt()} ft)") }
                     fix?.let { f -> Text("From you: ${bearingText(f.lat to f.lon, p.lat to p.lon)} (straight line)") }
                     Button(onClick = { dest = p.lat to p.lon; destName = p.name; picked = null; plan() }, Modifier.fillMaxWidth()) { Text("Route to here") }
@@ -617,6 +703,37 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                             on = if (v) on + id else on - id
                             prefs.edit().putBoolean("layer_$id", v).apply()
                         })
+                    }
+                    if (id == SUN && SUN in on) Column(Modifier.padding(start = 8.dp, bottom = 4.dp)) {
+                        Text(
+                            String.format(Locale.US, "%02d:%02d today: ", sunMinutes / 60, sunMinutes % 60) +
+                                (if (sunAt.elevation > 0) "sun ${sunAt.elevation.roundToInt()}° up, to the ${Nav.compass(sunAt.azimuth.roundToInt())}. Shade is drawn blue-grey."
+                                else "the sun is down."),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        Slider(
+                            value = sunMinutes.toFloat(), onValueChange = { sunMinutes = (it / 30).roundToInt() * 30 },
+                            valueRange = 0f..1410f, steps = 46,
+                        )
+                    }
+                    if (id == FILTER && FILTER in on) Column(Modifier.padding(start = 8.dp, bottom = 4.dp)) {
+                        Text("Ground that fits all three is drawn green.", style = MaterialTheme.typography.bodySmall)
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            FILTER_SLOPES.forEachIndexed { i, s -> FilterChip(selected = filterSlope == i, onClick = { filterSlope = i }, label = { Text(s.first) }) }
+                        }
+                        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            FILTER_FACINGS.forEach { (a, name) -> FilterChip(selected = filterFacing == a, onClick = { filterFacing = a }, label = { Text(name) }) }
+                        }
+                        Text(
+                            "Height ${filterHeight.start.roundToInt()}–${filterHeight.endInclusive.roundToInt()} m " +
+                                "(${(filterHeight.start * 3.28084f).roundToInt()}–${(filterHeight.endInclusive * 3.28084f).roundToInt()} ft)",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        RangeSlider(
+                            value = filterHeight,
+                            onValueChange = { filterHeight = (it.start / 100).roundToInt() * 100f..(it.endInclusive / 100).roundToInt() * 100f },
+                            valueRange = 0f..4500f,
+                        )
                     }
                     if (id == SLOPE && SLOPE in on) Dem.SLOPE_CLASSES.drop(1).forEach { (_, argb, what) ->
                         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(start = 8.dp, bottom = 2.dp)) {

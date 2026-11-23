@@ -283,7 +283,43 @@ object Grounding {
      * which a small model reads as noise; they become ordinary spaces.
      */
     fun forModel(text: String): String =
-        text.trim().replace(Regex("[\\uFFFD\\u00A0\\u2000-\\u200B\\u202F]"), " ").replace(Regex("[ \t]{2,}"), " ")
+        carryUnits(text.trim().replace(Regex("[\\uFFFD\\u00A0\\u2000-\\u200B\\u202F]"), " ").replace(Regex("[ \t]{2,}"), " "))
+
+    private val TABLE_NUMBER = Regex("^\\d[\\d,./–-]*$")
+    private val TABLE_UNIT = Regex("^[A-Za-z%°]{1,6}$")
+
+    /**
+     * Tables often give units only on their first row:
+     *
+     *     Hot Pints 20 min 11 lb 12 lb 13 lb 14 lb
+     *     Raw Quarts 25 11 12 13 14
+     *
+     * A small model then takes the bare 11 for minutes (seen on emulator: it
+     * gave canner pressure as the process time). A row of bare numbers that
+     * follows a row with the same count of numbers, each with a unit, gets
+     * that row's units: "Raw Quarts 25 min 11 lb 12 lb 13 lb 14 lb". A line of
+     * plain words between the two ("and") does not break the link.
+     */
+    fun carryUnits(text: String): String {
+        var units: List<String>? = null
+        var wordLines = 0
+        return text.lines().joinToString("\n") { line ->
+            val t = line.trim().split(' ').filter { it.isNotEmpty() }
+            val numbers = t.indices.filter { TABLE_NUMBER.matches(t[it]) }
+            val withUnit = numbers.filter { it + 1 < t.size && TABLE_UNIT.matches(t[it + 1]) }
+            val u = units
+            when {
+                numbers.size >= 2 && withUnit.size == numbers.size -> { units = withUnit.map { t[it + 1] }; wordLines = 0; line }
+                u != null && numbers.size == u.size && withUnit.isEmpty() -> {
+                    wordLines = 0
+                    var k = 0
+                    t.indices.joinToString(" ") { i -> if (i in numbers) t[i] + " " + u[k++] else t[i] }
+                }
+                t.isEmpty() -> line // a blank line between rows changes nothing
+                else -> { if (numbers.isNotEmpty() || ++wordLines > 2) units = null; line }
+            }
+        }
+    }
 
     /** The user turn: delimited sources followed by the question. */
     fun userPrompt(question: String, passages: List<Passage>): String = buildString {

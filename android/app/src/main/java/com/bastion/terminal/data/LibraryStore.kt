@@ -135,9 +135,14 @@ class LibraryStore private constructor(
     }
 
     /** PDF text layer (PdfBox-Android). Pages and detected paragraphs become blank-line breaks for the chunker. */
+    /** The title written into the PDF most recently read by [pdfText] (imports run one at a time). */
+    @Volatile private var lastPdfTitle: String? = null
+
     private fun pdfText(bytes: ByteArray): String {
+        lastPdfTitle = null
         com.tom_roush.pdfbox.android.PDFBoxResourceLoader.init(app)
         com.tom_roush.pdfbox.pdmodel.PDDocument.load(bytes).use { doc ->
+            lastPdfTitle = runCatching { doc.documentInformation?.title }.getOrNull()
             val s = com.tom_roush.pdfbox.text.PDFTextStripper()
             s.sortByPosition = true
             s.paragraphEnd = "\n\n"
@@ -259,6 +264,7 @@ class LibraryStore private constructor(
     private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null, bulk: Boolean = false): ImportResult {
         if (bytes.isEmpty()) return ImportResult.Rejected("The file is empty.")
         if (!bulk && bytes.size > TextUtil.MAX_IMPORT_BYTES) return tooLarge(bytes.size.toLong())
+        lastPdfTitle = null
         val extracted = DocExtract.extract(bytes, name, ::pdfText)
         if (extracted is DocExtract.Result.Rejected) return ImportResult.Rejected(extracted.reason)
         extracted as DocExtract.Result.Ok
@@ -274,9 +280,7 @@ class LibraryStore private constructor(
         val base = name.replace(Regex("(?i)\\.(md|txt|markdown|pdf|epub)$"), "")
         // A bundled PDF is often just numbered ("files/Water (6)"); its own first line says what it is.
         val title = if (bulk && GENERIC_NAME.matches(base)) {
-            text.lineSequence().map { it.trim().replace(Regex("\\s+"), " ") }
-                .firstOrNull { l -> l.length in 8..90 && l.count { it.isLetter() } >= 6 }
-                ?.let { "$it (${base.substringAfterLast('/')})" } ?: base.substringAfterLast('/')
+            DocTitle.pick(if (extracted.kind == DocExtract.Kind.PDF) lastPdfTitle else null, text, base.substringAfterLast('/'))
         } else base
         val kindNote = when (extracted.kind) {
             DocExtract.Kind.PDF -> " · PDF text layer extracted"

@@ -1601,6 +1601,49 @@ named, nearest hospitals listed. Oregon and Washington still building.
 sometimes boilerplate ("DISTRIBUTION RESTRICTION:"). Nothing here has run on a
 physical phone.
 
+## Tables, titles, grid, sun and shade, terrain filter; all seven states (2026-11-22)
+
+**Tables.** A table row of bare numbers under a row that gives units now gets
+those units before the model reads it ("Raw Quarts 25 11 12 13 14" becomes
+"Raw Quarts 25 min 11 lb …"). `AnswerEvalTest` on Gemma 4 E2B: 17/18, and the
+quart-jar green bean question now answers "25 minutes". The one miss moves
+between the two green-bean table questions from run to run, so the table
+warning stays on.
+
+**Bundled PDF titles.** Taken from the title written into the PDF when it reads
+like one, else the first heading-like line, skipping notices. Re-imported two
+bundles on the emulator: "Wound Closure Manual", "Where There Is No Doctor
+2011", "Sea Scout Knots", "HHS Pandemic Influenza Plan". Some are still weak
+(an author's name, half a title). A last filter for file-name titles
+("Cuta4394.tmp", "Unknown") is unit-tested but was added after that re-import.
+
+**Military grid (MGRS / USNG).** Long-press shows the grid ("Grid 11T PJ 6624
+8951"). The Grid layer draws lines every 1, 10 or 100 km with their figures
+and names the 100 km square. The maths is checked against published values
+(the CN Tower UTM example within 2 m; the Washington Monument's square and
+figures). Tested on emulator. Standard zones only: fine for the United States.
+
+**Sun and shade.** A time-of-day slider; ground in shade at that time today is
+veiled blue-grey — slopes facing away from the sun and ground in the shadow of
+higher terrain. Sun position checked against midsummer and midwinter noon.
+Tested on emulator at 16:30 on 22 November: sun 5° up to the south-west, the
+Sawtooth peaks shading most of Redfish Lake. Today's date only.
+
+**Terrain filter.** Slope band, facing and height band; matching ground is
+drawn green. Tested on emulator with "under 10°".
+
+**Not built:** satellite imagery (a large extra download per state), separate
+contour lines, gates, per-road open dates on tap, GPX.
+
+**Seven states built, no warnings:** Idaho 2.1 GB, Montana 2.5, Nevada 1.6,
+Oregon 1.5, Washington 1.2, Wyoming 1.2, Utah 1.1 — 11.1 GB. About 3.5 hours
+for the six neighbours. Idaho and Utah were opened on the emulator; the other
+five were not.
+
+**Test-bench note:** with under 1 GB of memory free on the PC the emulator
+returns blank screenshots; stopping idle Gradle daemons (`gradlew --stop`) and
+restarting the app fixes it.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
