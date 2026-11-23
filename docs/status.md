@@ -1311,6 +1311,63 @@ Honest limits:
   `adb shell am instrument`, which leaves the app in place. The references
   were restored; the model, PINs and approved radio need setting up again.
 
+### Offline map with layers and terrain routes (2026-11-22)
+
+Owner request after reviewing Rut & Route: "same layers offered in BASTION or
+similar; direction-based navigation with waypoints based on terrain."
+
+**What exists now**
+
+- `tools/map-build.ps1` builds one **map pack** per area on the PC (`.bmap`,
+  one file): USGS topo tiles, BLM public-land tiles, elevation tiles, and
+  Forest roads, motor trails, trails, wilderness and streams as line layers.
+  `-Estimate` prints tile counts and size first; `-Push` / `-Sd` copies it to
+  the phone or its SD card. US coverage only (all sources are US government).
+- **Map tab** in BASTION draws the pack with no network code: pan, pinch or
+  +/− zoom, scale bar, GPS dot, team positions from the TAK link, and a Layers
+  switch list (remembered). **Steepness** (with a legend) and **shaded relief**
+  are computed on the phone from the elevation tiles.
+- **Terrain routes**: long-press → "Route to here" / "Start here", or "Go to" a
+  team member. The route is the quickest walk over the real ground (Tobler's
+  hiking function on a ~14 m elevation grid, slower off trail, ground over 40°
+  not crossed, trails and roads in the pack preferred), cut into at most nine
+  compass legs: bearing, distance, climb, time. Computed, never AI-generated.
+- **Over the mesh**: `@callsign` now follows its position reply with the
+  walking route (up to three more messages) when a pack covers both ends.
+
+**Evidence**
+
+- Unit tests (`TerrainRouteTest`, 9): tile maths, walking speed, straight route
+  on flat ground, detour round a wall, no route when walled in, trail preferred
+  when quicker, steepness and shading. All 63 unit tests pass.
+- **Tested on emulator** with a real pack, "sawtooths" (20 × 20 km around
+  Stanley, Idaho; 802 topo + 70 land + 42 elevation tiles, 5 layers, 20.9 MB):
+  `MapPackTest` reads the pack, decodes elevation (1792 × 1536 cells in
+  275 ms), and checks it against known ground — Stanley 1,910 m, Redfish Lake
+  1,997 m. Redfish Lake lodge → Bench Lakes: 4.6 km, about 1 h 54 min, up
+  409 m, six legs, three of them "on trail", worked out in 0.4 s.
+- Seen on the emulator screen: map with shaded relief, roads and trails; GPS dot
+  at the simulated position; long-press → route line with numbered waypoints
+  and the steps list; public land, wilderness, streams and steepness layers.
+
+**Not tested / limits**
+
+- Not on a physical phone; pinch-zoom not exercised (emulator driven by taps).
+- The `@callsign` mesh route is **built and compiles but has not been run**
+  over the simulated radios.
+- Route times are a model (Tobler), not measured. The route does not know
+  rivers, small cliffs, deadfall, snow, private land or closures; the app says
+  so next to every route.
+- Not built yet from the Rut & Route layer list: satellite imagery, 10 ft
+  contours as a separate layer (the topo map already has contour lines), sun
+  and shade by time of day, terrain filter (slope / aspect / elevation), USNG
+  grid, gates, tap-a-road for its open dates, help-nearby points, saved pins
+  and GPX. Live layers (weather, fires, snow, road reports) need the internet
+  and are out of scope.
+- A bug in the first build of the pack tool (PowerShell treats `$n` and `$N`
+  as one variable) silently widened the area after the first layer; found
+  because the build never finished, fixed, pack rebuilt.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

@@ -216,7 +216,7 @@ object MeshAutoResponder {
     }
 
     /** `@callsign`: a computed position, measured from the asker's own position when known. */
-    private fun locate(app: Context, job: Job, target: String) {
+    private suspend fun locate(app: Context, job: Job, target: String) {
         val who = job.msg.sender
         val contacts = LinkClient.get(app).contacts.value
         val asker = contacts.firstOrNull { it.hasPosition && it.callsign.contains(who, ignoreCase = true) }
@@ -229,8 +229,9 @@ object MeshAutoResponder {
             )
         }
         val from = asker?.let { Nav.Fix(it.lat, it.lon) } ?: mine
+        val known = contacts.filterNot { it.uid == asker?.uid } + listOfNotNull(self)
         val body = Nav.answer(
-            target, contacts.filterNot { it.uid == asker?.uid } + listOfNotNull(self), from,
+            target, known, from,
             if (asker != null) "you" else "BASTION", System.currentTimeMillis(),
         )
         // Plain ASCII for radio screens: the degree sign showed as "##" on the simulated node.
@@ -239,6 +240,24 @@ object MeshAutoResponder {
         MeshInbox.get(app).add(System.currentTimeMillis(), "BASTION NAV → $who", job.msg.channel, text)
         Log.i(TAG, "nav-answered sender=$who bytes=${MeshBridge.byteLength(text)}")
         _status.value = "Sent $who a position for “$target”."
+        // If an offline map covers both ends, follow with a walking route worked out from the
+        // ground (computed like the bearing above — the AI model is not involved).
+        val to = Nav.findContact(target, known)?.takeIf { it.hasPosition }
+        val route = if (from != null && to != null) {
+            runCatching { com.bastion.terminal.map.MapPacks.get(app).routeBetween(from.lat, from.lon, to.lat, to.lon) }.getOrNull()
+        } else null
+        if (route != null && route.meters > 150) {
+            val steps = "Route on foot: " + route.summary() + ".\n" +
+                route.legs.mapIndexed { i, leg -> leg.text(i + 1) }.joinToString("\n")
+            val parts = MeshBridge.split(steps.replace("°", " deg"), 3) { i, n -> "NAV ${i + 1}/${n + 1}: " }
+            for (part in parts) {
+                delay(PART_GAP_MS)
+                send(app, job.reply, part)
+                MeshInbox.get(app).add(System.currentTimeMillis(), "BASTION NAV → $who", job.msg.channel, part)
+            }
+            Log.i(TAG, "nav-route sender=$who parts=${parts.size} legs=${route.legs.size}")
+            _status.value = "Sent $who a position and a walking route for “$target”."
+        }
     }
 
     /** `?question`: a grounded AI answer, continuing the open topic with this radio if there is one. */

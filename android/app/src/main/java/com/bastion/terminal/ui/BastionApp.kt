@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.bastion.terminal.kiwix.ZimLibrary
 
-private enum class Tab { HOME, ASK, MESH, LIBRARY }
+private enum class Tab { HOME, ASK, MAP, MESH, LIBRARY }
 
 @Composable
 fun BastionApp() {
@@ -96,6 +97,12 @@ fun BastionApp() {
                     label = { Text("Ask") },
                 )
                 NavigationBarItem(
+                    selected = tab == Tab.MAP,
+                    onClick = { tab = Tab.MAP },
+                    icon = { Icon(Icons.Filled.Place, contentDescription = "Map") },
+                    label = { Text("Map") },
+                )
+                NavigationBarItem(
                     selected = tab == Tab.MESH,
                     onClick = { tab = Tab.MESH },
                     icon = { Icon(Icons.Filled.Email, contentDescription = "Mesh") },
@@ -121,6 +128,7 @@ fun BastionApp() {
                     readerQuery = q
                 },
             )
+            Tab.MAP -> MapScreen(Modifier.padding(pad))
             Tab.MESH -> MeshScreen(
                 Modifier.padding(pad),
                 onAsk = { text ->
