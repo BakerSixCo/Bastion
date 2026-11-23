@@ -335,6 +335,19 @@
       "note": "Downloaded and checksum-verified; not yet loaded in BASTION."
     },
     {
+      "id": "ref-ifixit",
+      "title": "Reference: iFixit repair guides",
+      "kind": "reference",
+      "default": false,
+      "preset": "self-reliance",
+      "file": "ifixit_en_all_2025-12.zim",
+      "url": "https://download.kiwix.org/zim/ifixit/ifixit_en_all_2025-12.zim",
+      "sha256": "9bb5f3408707fd0300c6ef47a425c3217187f144cd9154a928183816aa72eead",
+      "bytes": 3570695757,
+      "licence": "CC BY-NC-SA",
+      "note": "Downloaded and checksum-verified; not yet loaded in BASTION."
+    },
+    {
       "id": "model-gemma4-e4b",
       "title": "AI model: Gemma 4 E4B (larger, reads sources better; for phones with 12 GB of memory or more)",
       "kind": "model",
