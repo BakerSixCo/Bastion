@@ -112,6 +112,23 @@ class GroundingTest {
     }
 
     @Test
+    fun isRefusal_looksOnlyAtTheOpeningSentence() {
+        // Verbatim from the model comparison, 2026-11-23.
+        // A partial answer that ends by saying what is missing is an answer (Gemma 4 E2B).
+        assertFalse(Grounding.isRefusal(
+            "- Carry at least 4 litres of water per person per day in summer [1].\n" +
+                "- The sources do not provide information on how much food each person should carry per day.",
+        ))
+        // Refusals that explain themselves (Gemma 4 E4B).
+        assertTrue(Grounding.isRefusal(
+            "The sources provide recommended process times for different types of beans, but do not specify a process time for quart jars of green beans [1, 2, 3].",
+        ))
+        assertTrue(Grounding.isRefusal("The sources do not provide instructions on how to jump start a car."))
+        assertTrue(Grounding.isRefusal(Grounding.NO_ANSWER + " The sources only list weather radio stations."))
+        assertFalse(Grounding.isRefusal("Add 2 tablespoons of bottled lemon juice per quart of tomatoes [1]."))
+    }
+
+    @Test
     fun subjectPhrases_keepSubjectRunsInOriginalCase() {
         assertEquals(listOf("burn"), Grounding.subjectPhrases("First aid for a burn"))
         assertEquals(listOf("sprained ankle"), Grounding.subjectPhrases("How to treat a sprained ankle"))

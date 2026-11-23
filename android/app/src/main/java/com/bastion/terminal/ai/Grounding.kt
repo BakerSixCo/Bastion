@@ -381,10 +381,27 @@ object Grounding {
 
     // Models paraphrase the refusal ("The provided sources do not contain…"), so
     // match the shape, not only the exact sentence (seen on emulator 2026-11-21).
+    // Larger models explain instead ("The sources give times for lima beans, but do not
+    // specify…"), hence the longer reach and the extra verbs (model comparison, 2026-11-23).
     private val REFUSAL = Regex(
-        "\\b(sources?|library|passages?|documents?)\\b[^.]{0,40}\\b(do|does|did)\\s+not\\s+(contain|provide|mention|include|say|cover|address)",
+        "\\b(sources?|library|passages?|documents?)\\b[^.]{0,120}\\b(do|does|did)\\s+not\\s+(contain|provide|mention|include|say|cover|address|specify|state|give|list|have)",
         RegexOption.IGNORE_CASE,
     )
+    private val SENTENCE_END = Regex("[.!?](\\s|$)|\\n")
+
+    /**
+     * Whether a reply is a refusal. Only its opening sentence counts: a reply that answers
+     * part of the question and then says what the sources leave out ("Carry 4 litres of
+     * water [1]. The sources do not say how much food.") is an answer, and was being thrown
+     * away as a refusal (found in the model comparison, 2026-11-23).
+     */
+    fun isRefusal(answer: String): Boolean {
+        val a = answer.trim()
+        if (a.startsWith(NO_ANSWER, ignoreCase = true)) return true
+        val end = SENTENCE_END.find(a)?.range?.last?.plus(1) ?: a.length
+        val opening = a.take(minOf(end, 260))
+        return opening.contains(NO_ANSWER, ignoreCase = true) || REFUSAL.containsMatchIn(opening)
+    }
 
     /**
      * Which citations the answer uses ([1], [2], or lists like [1, 2]), which
@@ -399,7 +416,7 @@ object Grounding {
         return CitationCheck(
             cited = valid,
             invalid = nums - valid,
-            isNoAnswer = answer.contains(NO_ANSWER, ignoreCase = true) || REFUSAL.containsMatchIn(answer),
+            isNoAnswer = isRefusal(answer),
         )
     }
 }

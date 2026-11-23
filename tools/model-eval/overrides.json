@@ -1,0 +1,10 @@
+{
+  "occ-rag-1.7b-q8": {
+    "r16": ["WRONG", "Says to connect negative to positive between the cars: reversed polarity, dangerous. Matched on the word 'negative'."],
+    "r03": ["WRONG", "Answers '2 drops' for a gallon; the source gives 2 drops per litre or quart."],
+    "i01": ["WRONG", "Same as r03: '2 drops' for a gallon."]
+  },
+  "gemma4-e2b-q4": {
+    "r24": ["WRONG", "Garbled the table: says trout have no bag limit in the Upper Snake Region."]
+  }
+}

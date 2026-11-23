@@ -1,0 +1,7 @@
+model=OCC-RAG-1.7B-Q8_0.gguf
+size_bytes=1834423424
+mode=occ
+load_s=1
+peak_working_set_mb=6678
+runtime=llama.cpp version: 1.0.0-dev (build 12651, commit f5e6915c2)
+context=4096 threads=4 backend=CPU temperature=0 reasoning=off

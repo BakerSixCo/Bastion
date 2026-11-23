@@ -1741,6 +1741,44 @@ First questions sent from a real phone (iPhone Meshtastic app on simulated radio
 - The radio answer logic is now one function (`MeshAutoResponder.answerFor`) that the app and the test both use.
 - Not tested: the larger E4B model, which needs a phone with more memory than the emulator has.
 
+## Answer-model comparison (2026-11-23)
+
+Four candidate models were run on one fixed set: 50 cases built from BASTION's own search results (`tools/model-eval`, see its README). **Run on the development PC in llama.cpp (CPU, 4-bit GGUF files; OCC-RAG at 8-bit). Not the LiteRT-LM files the phone loads. Nothing here was measured on a phone.**
+
+| Result (of 50) | Gemma 4 E2B | Gemma 4 E4B | Qwen 3.5 4B | OCC-RAG 1.7B |
+|---|---|---|---|---|
+| Answerable: correct (23) | 20 | 20 | 21, plus 2 hedged | 16 |
+| Answerable: wrong answer | 1 | 0 | 0 | 5 |
+| Answerable: refused wrongly | 2 | 3 | 0 | 2 |
+| No answer in sources: correctly refused (15) | 11 | 13 | 13 | 13 |
+| Conflicting sources: gave both (3) | 3 | 3 | 3 | 0 |
+| Partial sources handled (3) | 3 | 3 | 3 | 1 |
+| Planted instruction ignored, answered (6) | 6 | 6 | 6 | 4 |
+| Total correct | 43 | 45 | 46 | 34 |
+
+What it shows:
+
+- **No model fixes the welding question.** All four answered "can I weld with a car battery" from the welding-on-a-car passages. A model swap does not solve that class of error; the search has to stop handing over the wrong passages.
+- **E4B over E2B:** fewer unsupported answers (2 against 4) and no wrong answers, but it refused three answerable questions. A small gain on this set.
+- **Qwen 3.5 4B:** best here, with no wrong answers and no wrongful refusals. It did not over-refuse as the published comparison reported. Its answers are longer and one was cut off at the length limit.
+- **OCC-RAG 1.7B:** worst here. It returns a few words where steps are needed, could not report two conflicting sources, and gave two dangerous answers (reversed jump-lead polarity; "2 drops" of bleach for a gallon). Not suitable as BASTION's answer model.
+- No model obeyed an instruction planted in a source.
+- Search misses found while building the set: "how do I change a flat tire", "how do I build a fire in the rain" and "how do I tie a bowline knot" return passages that do not answer them.
+
+Decision for now:
+
+| Phone | Model | Why |
+|---|---|---|
+| 8 GB | Keep Gemma 4 E2B | Nothing measured on a phone justifies a swap; Qwen is the challenger to try there |
+| 12 GB or more | Gemma 4 E4B is the candidate | The app already picks it when it fits in memory; needs a phone to confirm |
+| Either | Qwen 3.5 4B stays a challenger | Best scores, but the LiteRT file is a community GPU-only build and cannot run on the emulator |
+| Either | Do not add OCC-RAG | Measured worse, and it would need a second runtime in the app |
+| Either | Gemma 4 12B stays experimental | Not tested |
+
+App change from this work: a reply is now treated as "no answer" only when its opening sentence says so. Before, a partial answer that ended with "the sources do not say how much food" was thrown away as a refusal. Unit tested.
+
+Not done: any phone measurement (load time, speed, memory, heat), LiteRT-LM builds of E4B and Qwen, a larger question set.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
