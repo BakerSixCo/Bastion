@@ -1727,6 +1727,20 @@ answer path opens the library itself if it finds it closed.
   not give a background service the phone's position, so `@base` cannot give
   this phone's location until BASTION has been opened once.
 
+## Radio answers name their source (2026-11-23)
+
+First questions sent from a real phone (iPhone Meshtastic app on simulated radio B, over the simulated mesh, to the emulator).
+
+- Questions sent on the public LongFast channel got silence. That is the rule working: BASTION only answers on a private channel.
+- `?can I weld with a car battery` on the private channel got a wrong answer: steps about disconnecting the battery when welding **on** a car. The search found a mechanics Q&A that shares the words, and the small model (Gemma 4 E2B) answered that question instead.
+- Tried, measured on emulator with the real model (`MeshAnswerEvalTest`, new, 13 questions):
+  - Stricter instructions ("decide first whether the sources answer this question"): kept. Did not fix the welding answer.
+  - A second pass asking the model to judge its own answer: **removed**. It rejected good answers (sucking chest wound, flat tire) and still passed the welding one.
+  - Each radio answer now starts with the name of its top source in square brackets, for example `[Frostbite] 1. ...` or `[Welding on car - damage to ECU, battery, altern…] ...`, so the reader can see when the answer is about something else. Kept.
+- Result: 9 of 13 on E2B (emulator, CPU). Known fails: the welding question (still answered, now with its source shown), "why is my car overheating" (refused), "how do I purify water" (weak source chosen), "can I drink water from a car radiator" (answered "No" without a source saying so).
+- The radio answer logic is now one function (`MeshAutoResponder.answerFor`) that the app and the test both use.
+- Not tested: the larger E4B model, which needs a phone with more memory than the emulator has.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.
