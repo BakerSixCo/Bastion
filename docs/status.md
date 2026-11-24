@@ -1884,3 +1884,71 @@ What it shows:
 Next: give the answer step the plan's relation and not-about lines and a forced JSON reply (`answers_original_question`, `quote`, `answer`); the app shows its own fixed no-answer text unless the flag is true and the quote is word-for-word in a passage. Then measure: unanswerable cases must produce exactly that text.
 
 Files: `evalvariants-w0.json`, `evalvariants-w10.json`, `evalset-e2b-*.json`, `results/gemma4-e2b-q4-restate-*`.
+
+## Checked answers: never show a wrong answer (2026-11-24)
+
+Owner requirement: the AI must never give a wrong answer, must understand what is asked, and
+must cover the backcountry, survival and prepping questions people actually ask. A 2-billion-
+parameter model cannot be made to never be wrong, so the app now makes sure it never *shows*
+an answer that fails checks: the only failure left should be "no answer".
+
+**Question set** (`tools/model-eval/questions-v2.json`): 156 questions over 16 topics (medical,
+water, fire, shelter, navigation, signalling, wild food, hunting/fishing, preserving, vehicles,
+power, radio, knots/tools, hazards, prepping, garden), in plain words, slang, "do X with Y",
+look-alikes, dangerous guesses and things the library cannot know (22 "trap" questions whose
+right reply is no answer). Written by Claude; every shown answer below was read, not only
+word-scored (`read-labels-v2.json`).
+
+**What was tried (PC, llama.cpp CPU, Gemma 4 E2B 4-bit, not the phone runtime):**
+
+| Approach | Result | Kept? |
+|---|---|---|
+| Model fills a form (quote, verdict, answer); code checks the quote | Refused most good answers (strict wording) or let traps through (balanced) | No |
+| Narrow model check: quoted sentence vs restated question | Blocked a third of good answers | No |
+| Gemma E4B as the form filler | llama.cpp produced blank output under the schema; not a real result | Not measured |
+| Code checks on the normal answer: subject words in cited sources, numbers in sources | Traps answered 8 → 3, kept 97 of 101 good | **Yes** |
+| Final judge: model sees only question + finished answer | Blocked 15 of 27 bad, kept 84 of 91 good | **Yes** |
+| Restated question → search with its keywords | Fixed welding, found CDC "boil a full minute" | **Yes** |
+| Both searches (restated and raw) must reach a checked answer | Best: 69 shown, 3 weak, 0 traps | **Yes** |
+
+**Shipped** (`ai/CheckedAnswer.kt`, `ai/QueryPlan.kt`, used by Ask and radio auto-answer):
+restate → restated search → answer → code checks + judge → raw search → answer → checks +
+judge → show the restated path's answer only if both pass; otherwise exactly the fixed
+no-answer text. Ask no longer streams the draft: it shows the stage ("Understanding the
+question…", "Cross-checking with a second search…") and, when an answer is withheld, why
+(sources don't mention X / a number not in the sources / answers a different question).
+Also fixed: Q&A vote counts were read as data ("48" → "boil for 48 minutes"); step numbers in
+radio answers were taken for invented numbers. Judge and restating use LiteRT-LM's forced JSON
+output (`LocalModel.generateJson`), first used on device here.
+
+**Tested on the hardware-accelerated emulator** (API 37, CPU, Gemma 4 E2B via LiteRT-LM 0.19.1;
+`CheckedAnswerEvalTest`, all 156 questions, 56 minutes):
+
+| | Before (single search, free answer; PC run) | Now (emulator, full pipeline) |
+|---|---|---|
+| Trap questions answered (of 22) | 8 (welding-on-a-car, Oklahoma NOAA for a sheriff, eTrex reset for inReach, "oyster mushroom, edible"…) | **0** |
+| Answers shown | ~140 | 53 |
+| Shown answers read as wrong, garbled or off target | ~30 | **4** |
+| Time per question | — | median 15 s, 90th pct 31 s, max 44 s |
+
+The 4 still shown wrongly: Idaho trout limit (right "6, all species", then garbled table text),
+"stay warm *without* a sleeping bag" (answered with bag liners), "does a filter remove viruses"
+(wetland treatment systems), "international distress signal" (a forum's arm signals, not SOS /
+three of anything). Weak but on target: hypothermia symptoms, aircraft signals.
+
+**The cost:** 53 of 134 answerable questions get an answer (about 40%). The rest get "no answer"
+even where the library could have answered. Examples from the device run: lemon juice per quart
+of tomatoes (the restated search's cited passage did not say "quart"), bleach drops per gallon
+(cited passage lacked "purify"/"gallon"), cut-and-suck for snakebite and the bowline (judge said
+off target), boiling time (the raw path's answer was judged off target). That trade is deliberate (owner: never wrong), and the levers to
+win coverage back without wrong answers are better search (section-aware chunking of the
+canning tables, CDC/WikiMed preferred over forum posts) and a larger model on 12 GB phones.
+
+**Not tested:** a physical phone (speed with GPU, memory with two extra model calls); Gemma E4B
+in this pipeline; Ask screen UI by hand (code path covered by the on-device test, screen layout
+not looked at); follow-up radio questions through the new pipeline.
+
+Emulator housekeeping: to make room for the install, the ham-radio Q&A ZIM and the four 20 MB
+size-cap test files were deleted from the emulator; the Outdoors Q&A, CDC travel health and
+military-medicine ZIMs were added. The new PC now has WSL Ubuntu with both simulated radios
+(`tools/meshsim/install.sh`), and the owner's iPhone reaches radio B at `192.168.254.32:4404`.

@@ -60,7 +60,10 @@ object CheckedAnswer {
         }
 
         val have = passages.flatMap { numbers(Grounding.forModel(it.plainText)) }.toSet()
-        val invented = numbers(a.replace(Regex("\\[[\\d,\\s]+]"), "")).filterNot { it in have }.distinct()
+        // Citation markers and step numbers ("1. Cover the wound", the radio's numbered steps) are
+        // layout, not facts: the radio answers were all refused for "inventing" 1, 2, 3 (emulator, 2026-11-24).
+        val facts = a.replace(Regex("\\[[\\d,\\s]+]"), "").replace(LIST_NUMBER, "")
+        val invented = numbers(facts).filterNot { it in have }.distinct()
         if (invented.isNotEmpty()) return no(Failed.NUMBER, invented)
         return Decision(a, null)
     }
@@ -144,6 +147,9 @@ QUESTION: what are the signs of a stroke | ANSWER: Face drooping, arm weakness a
 QUESTION: how do I build a smoker | ANSWER: Smokers come in electric, charcoal and pellet types. -> {"verdict": "off_target"}
 QUESTION: should I give aspirin for a headache | ANSWER: No. Do not give aspirin to children under 16. -> {"verdict": "responds"}
 """.trim()
+
+    /** A step number opening a line or sentence: "1. ", "2) ", "Step 3: ". */
+    private val LIST_NUMBER = Regex("(?m)(^|(?<=[.!?]\\s))\\s*(step\\s+)?\\d{1,2}[.):]\\s+", RegexOption.IGNORE_CASE)
 
     /** Subject terms of [question] that do not start a word anywhere in [lowerText]. */
     fun missingSubject(question: String, lowerText: String): List<String> {

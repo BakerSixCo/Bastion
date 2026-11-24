@@ -162,4 +162,12 @@ class CheckedAnswerTest {
         assertEquals(Grounding.NO_ANSWER, rawInvents.shown)
         assertEquals(Failed.NUMBER, rawInvents.failed)
     }
+
+    @Test fun stepNumbersAreLayoutNotInventedNumbers() {
+        val radio = "1. Apply direct pressure to the wound. 2. If it does not stop, apply a tourniquet above the wound.\n3) Keep pressure on."
+        assertTrue(CheckedAnswer.check("how do I stop bleeding from a leg wound", radio, listOf(bleeding)).isAnswer)
+        // A real quantity inside a step is still checked.
+        val dose = "1. Add 4 tablespoons of bottled lemon juice per quart."
+        assertEquals(Failed.NUMBER, CheckedAnswer.check("how much lemon juice do I add to a quart of tomatoes when canning", dose, listOf(canning)).failed)
+    }
 }
