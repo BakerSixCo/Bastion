@@ -1823,7 +1823,7 @@ Still running on the PC when this was written (results land in `tools/model-eval
 Not done:
 
 1. Baseline on the emulator: push `tools/model-eval/evalset.json` as `evalset-fixed.json`, run `BaselineEvalTest` (answers, search timings, three probes), score with `score.pl` and `latency.pl`.
-2. Question-restating early signal: push `plans/plan-e2b-queries.json`, run `searchOtherWordings` with `-e wide 0` and `-e wide 10`, then `fuse.pl`.
+2. ~~Question-restating early signal~~ — **done 2026-11-24**, see the next section.
 3. Read the inventory result and write the inventory table, the baseline scorecard, `docs/experiments.md` and `docs/s-tier-status.md`.
 4. Owner decision needed: keep the phone as the target (as documented), or bring back a separate box.
 
@@ -1859,3 +1859,28 @@ Not done:
   before ATAK can be used beyond launch).
 - Local builds on Windows: set `JAVA_HOME` to a JDK 17–24 (Temurin 21 is
   installed) — Android Studio's bundled JDK 25 does not work with Gradle 8.14.3.
+
+## Question restating: first measurement (2026-11-24)
+
+Before the search, Gemma 4 E2B rewrites each question into a short plan with three worked examples (`tools/model-eval/restate.pl`, PC). For "can I weld with a car battery" it wrote relation `car battery USED AS welding power source` and not-about `jump starting; battery maintenance`. The app's own search was then run on each wording (**tested on the hardware-accelerated emulator**, `EvalSetExportTest.searchOtherWordings`, wide 0 and 10, current library), and Gemma 4 E2B answered from each set of passages (**PC, llama.cpp CPU, 4-bit GGUF; not the phone runtime**). 38 real questions; `original` is the same search rerun today, so the comparison is fair.
+
+Search (expected fact in the five passages, 26 the library should answer; crude word match): original 25, keyword 23, standalone 22, **alternate 26**, semantic 24, fused (RRF) 24. For the welding question every restated wording stopped returning the "welding on a car" passages; fused brought them back.
+
+Answers (Gemma 4 E2B):
+
+| Search wording | Answerable correct (23) | Wrong | No answer in sources: refused (15) |
+|---|---|---|---|
+| original | 22 | 0 | 11 |
+| keyword | 20 | 2 (one is the scorer: aphid answer is valid) | 11, **incl. welding and radiator** |
+| alternate | 20 | 2 | 8 |
+| fused | 19 | 3 | 9 |
+
+What it shows:
+
+- **Keyword restating fixes the welding question**: "The sources do not contain an answer to whether you can weld with a car battery." It also refuses the radiator question. It costs the lemon-juice canning answer (the 2-tablespoon passage dropped out) and is otherwise level.
+- **Better search alone does not make the answer safe.** With the alternate wording the welding passages were gone, and Gemma still answered from an unrelated battery passage. Gemma answers from whatever it is given, so the "no answer" decision has to be made in code (next step), not left to the model.
+- No wording is a clean win. Single run, 38 questions, word-match scoring: a difference of one or two cases is not a finding.
+
+Next: give the answer step the plan's relation and not-about lines and a forced JSON reply (`answers_original_question`, `quote`, `answer`); the app shows its own fixed no-answer text unless the flag is true and the quote is word-for-word in a passage. Then measure: unanswerable cases must produce exactly that text.
+
+Files: `evalvariants-w0.json`, `evalvariants-w10.json`, `evalset-e2b-*.json`, `results/gemma4-e2b-q4-restate-*`.
