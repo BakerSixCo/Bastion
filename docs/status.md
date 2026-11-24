@@ -1806,6 +1806,27 @@ Next, in this order:
 
 To resume the PC tests: start nothing on the emulator; models and the llama.cpp build are in `tools/kit/pc-eval/` (not committed). See `tools/model-eval/README.md`.
 
+## S-tier plan, Step 0: stopped part-way (2026-11-23 evening, usage limit)
+
+The owner's S-tier upgrade plan describes an Ollama + Python + N.O.M.A.D. + Qdrant stack on a mini PC. None of that exists: this PC has no Ollama, Qdrant or Docker, and `docs/build-sheet.md` records the mini PC as replaced by a phone and the N.O.M.A.D. stack as dropped. Step 0 is being done against what exists: the Android app, LiteRT-LM 0.19.1, Gemma 4 E2B, emulator only.
+
+Done:
+
+- **Reranker over 30-candidate pools** (`poolrank.pl`, Qwen3-Reranker 0.6B, PC CPU, 24 minutes for 38 questions): expected fact present in the five passages for 24 of 26 questions, against 25 of 26 today. It gains "fire in the rain" by one weak passage and improves bowline, but loses both green-beans canning questions by picking the dried-beans and lima-beans tables. Flat tire and fire in the rain are still not really answered. Early signal only.
+- **Inventory verified from code** by 15 readers and checkers (1,178 facts, 9 corrected). Full result saved outside git at `tools/kit/pc-eval/step0-inventory-workflow.json`; read it with `step0-inventory-read.pl critic|web|refuted|missed`.
+- **Runtime capabilities read from the shipped library** (LiteRT-LM 0.19.1 classes): schema-forced output (`ResponseFormat.json`), thinking on/off (`ThinkingConfig`), embeddings (`EmbeddingEngine`), adapters (`LoraConfig`), token counting and conversation cloning. The app uses none of these yet.
+- **Prompt sizes from the PC runs:** 492 to 1,435 tokens in, none over 1,664 (context 2,048 minus 384 for the answer).
+- **Written, compiled, not yet run:** `BaselineEvalTest` (real model on the fixed 50 cases on the device, search timings, and probes for context overflow, prefix reuse and JSON-schema output), `EvalSetExportTest.searchOtherWordings`, and `tools/model-eval/restate.pl`, `fuse.pl`, `latency.pl`.
+
+Still running on the PC when this was written (results land in `tools/model-eval`): question plans from Gemma 4 E2B (`plans/plan-e2b.json`) and the current model on the reranked passages (`results/gemma4-e2b-q4-reranked.jsonl`).
+
+Not done:
+
+1. Baseline on the emulator: push `tools/model-eval/evalset.json` as `evalset-fixed.json`, run `BaselineEvalTest` (answers, search timings, three probes), score with `score.pl` and `latency.pl`.
+2. Question-restating early signal: push `plans/plan-e2b-queries.json`, run `searchOtherWordings` with `-e wide 0` and `-e wide 10`, then `fuse.pl`.
+3. Read the inventory result and write the inventory table, the baseline scorecard, `docs/experiments.md` and `docs/s-tier-status.md`.
+4. Owner decision needed: keep the phone as the target (as documented), or bring back a separate box.
+
 ## Next actions
 
 1. ~~Build session on `bastion` env~~ — **done 2026-11-21**.

@@ -1,0 +1,40 @@
+r01 answerable    17s top=1.000 was=[2,3,4,8] hit=3  what frequency is the NOAA weather radio in Bois
+r02 answerable    18s top=1.000 was=[1,2,21] hit=2  what NOAA weather radio station covers Valley co
+r03 answerable    37s top=0.999 was=[1,9,2,3,21] hit=3  how many drops of bleach to purify a gallon of w
+r04 answerable    54s top=0.996 was=[5,1,3] hit=0  how long do I process quart jars of green beans 
+r05 answerable    50s top=0.996 was=[1,4,6] hit=0  how long do I process pint jars of green beans i
+r06 answerable    46s top=1.000 was=[1,5,24,29,30] hit=1  how much lemon juice do I add to a quart of toma
+r07 answerable    50s top=0.984 was=[6,4,1,19,10] hit=3  how do I can tomatoes safely
+r08 answerable    40s top=0.999 was=[10,2,19,17] hit=2  how do I treat a sucking chest wound
+r09 answerable    39s top=1.000 was=[1,3,5,28,25] hit=2  what are the symptoms of hypothermia
+r10 answerable    35s top=1.000 was=[3,21,2] hit=1  how do you treat frostbite
+r11 answerable    41s top=0.994 was=[11,5,1,4,14] hit=2  how do I treat a burn
+r12 answerable    61s top=0.997 was=[18,1,4,27] hit=4  how do I treat a snake bite
+r13 answerable    38s top=0.993 was=[6,17,1,5,16] hit=2  how do I stop severe bleeding
+r14 answerable    45s top=1.000 was=[1,2,9,30,18] hit=5  what are the signs of heat stroke
+r15 answerable    31s top=0.999 was=[1,5,15,14,25] hit=3  what are the signs of dehydration
+r16 answerable    36s top=0.996 was=[14,22,23,30,24] hit=3  how do I jump start a car
+r17 answerable    44s top=0.991 was=[19,18,6,14,12] hit=5  how do I change a flat tire
+r18 answerable    49s top=0.998 was=[8,25,12,13,4] hit=3  why is my car overheating
+r19 answerable    41s top=1.000 was=[1,17,3,4,30] hit=5  how do I get rid of aphids
+r20 answerable    38s top=1.000 was=[6,21,3,2,27] hit=5  how do I disinfect water with sunlight
+r21 answerable    40s top=0.997 was=[14,4,1,15,22] hit=2  how do I tie a bowline knot
+r22 answerable    36s top=0.997 was=[3,8,4,14,12] hit=3  what is tylenol used for
+r23 answerable    36s top=0.995 was=[3,17,5,2,19] hit=2  what is ibuprofen used for
+r24 answerable    42s top=0.999 was=[17,14,27] hit=3  what is the bag limit for trout in Idaho
+r25 answerable    32s top=0.986 was=[5,21,7,2,20] hit=1  how do I build a fire in the rain
+r26 answerable    35s top=0.993 was=[17,2,3,15,16] hit=5  how do I signal a rescue aircraft
+r27 absent        41s top=0.999 was=[2,18,4,1,10] hit=0  can I weld with a car battery
+r28 absent        39s top=0.643 was=[10,16,6,20,3] hit=0  can I charge a phone from a lemon
+r29 absent        31s top=0.643 was=[1,2,20,8] hit=0  can I drink water from a car radiator
+r30 absent        48s top=0.995 was=[1,4,2,16] hit=0  how long do I pressure can quart jars of broccol
+r31 absent        39s top=0.001 was=[7,9,15,1] hit=0  who won the 2022 world cup
+r32 absent        40s top=0.001 was=[1,4,9,2,22] hit=0  what is the wifi password at the Stanley library
+r33 absent        37s top=0.997 was=[1,6,5,15,8] hit=0  what is the phone number of the Boise weather ra
+r34 absent        33s top=0.550 was=[20,3,16,21] hit=0  what is the dose of amoxicillin for a dog
+r35 absent        31s top=0.999 was=[2,3,4,9,7] hit=0  what radio channel does the Custer county sherif
+r36 absent         2s top=0.000 was=[1,2] hit=0  how do I reset a Garmin inReach
+r37 absent        32s top=0.002 was=[1,15,8,13,25] hit=0  what time does the Stanley gas station close
+r38 absent        39s top=0.001 was=[1,2,4,5,10] hit=0  how many calories are in a pound of elk meat
+WROTE evalset-reranked.json
+exit=0 seconds=1446

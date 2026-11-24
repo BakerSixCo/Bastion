@@ -98,5 +98,41 @@ class EvalSetExportTest {
         Log.i(TAG, "WROTE ${file.absolutePath} cases=${out.length()} bytes=${file.length()}")
     }
 
+    /**
+     * The app's own search run on other wordings of each question, for testing a
+     * question-restating step before the search. Reads `-e queries <file>` from the app's
+     * media folder: `{ "r01": { "original": "...", "keyword": "...", ... }, ... }`, and
+     * writes what the search returns for every wording to `evalvariants-w<wide>.json`.
+     */
+    @Test
+    fun searchOtherWordings() = runBlocking<Unit> {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val name = InstrumentationRegistry.getArguments().getString("queries")
+        org.junit.Assume.assumeTrue("needs -e queries <file in the media folder>: skipped", name != null)
+        val wide = InstrumentationRegistry.getArguments().getString("wide")?.toIntOrNull() ?: 0
+        val queries = JSONObject(File(ctx.externalMediaDirs.first(), name!!).readText())
+        val zim = ZimLibrary.get(ctx)
+        zim.restore()
+        val retriever = Retriever(LibraryStore.get(ctx), zim)
+        val out = JSONArray()
+        for (id in queries.keys().asSequence().sorted()) {
+            val variants = queries.getJSONObject(id)
+            for (variant in variants.keys().asSequence().sorted()) {
+                val q = variants.optString(variant).trim()
+                if (q.isEmpty()) continue
+                val t0 = System.nanoTime()
+                val passages = runCatching { retriever.retrieve(q, wide = wide) }.getOrDefault(emptyList())
+                val ms = (System.nanoTime() - t0) / 1e6
+                val ps = JSONArray()
+                for (p in passages) ps.put(JSONObject().put("index", p.index).put("label", p.label).put("text", Grounding.forModel(p.plainText)))
+                out.put(JSONObject().put("id", id).put("variant", variant).put("question", q).put("ms", Math.round(ms)).put("passages", ps))
+            }
+            Log.i(TAG, "wordings $id done")
+        }
+        val file = File(ctx.externalMediaDirs.first(), "evalvariants-w$wide.json")
+        file.writeText(JSONObject().put("cases", out).toString(1))
+        Log.i(TAG, "WROTE ${file.absolutePath} entries=${out.length()}")
+    }
+
     private companion object { const val TAG = "EvalSet" }
 }

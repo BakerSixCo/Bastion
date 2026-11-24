@@ -1,0 +1,116 @@
+r01   10s valid=1 out=132 | what frequency is the NOAA weather radio in Boise
+   kw: NOAA weather radio frequency Boise
+   not: how to tune a weather radio; NOAA weather alerts
+r02    9s valid=1 out=137 | what NOAA weather radio station covers Valley county Idaho
+   kw: NOAA weather radio station coverage Valley County Idaho
+   not: local weather forecasts; specific weather alerts
+r03    9s valid=1 out=134 | how many drops of bleach to purify a gallon of water
+   kw: bleach water purification dosage gallon
+   not: how to clean surfaces with bleach; bleach concentration for swimming pools
+r04   11s valid=1 out=145 | how long do I process quart jars of green beans in a pressure canner
+   kw: pressure canning green beans quart jars processing time
+   not: canning vegetables in water bath; canning green beans in a pot
+r05   11s valid=1 out=147 | how long do I process pint jars of green beans in a pressure canner
+   kw: pressure canning green beans pint jars processing time
+   not: canning green beans in water bath method; canning green beans in quart jars
+r06   10s valid=1 out=135 | how much lemon juice do I add to a quart of tomatoes when canning
+   kw: tomato canning lemon juice ratio
+   not: tomato recipe for sauce; lemon juice for cooking
+r07    8s valid=1 out=111 | how do I can tomatoes safely
+   kw: safe tomato preservation canning freezing drying
+   not: how to grow tomatoes
+r08    8s valid=1 out=121 | how do I treat a sucking chest wound
+   kw: sucking chest wound first aid treatment
+   not: treating a stab wound; treating a gunshot wound
+r09    9s valid=1 out=127 | what are the symptoms of hypothermia
+   kw: symptoms of hypothermia
+   not: causes of hypothermia; prevention of hypothermia
+r10    7s valid=1 out=111 | how do you treat frostbite
+   kw: frostbite first aid treatment
+   not: preventing frostbite
+r11    7s valid=1 out=108 | how do I treat a burn
+   kw: first aid burn treatment first aid procedure
+   not: burn prevention
+r12    7s valid=1 out=115 | how do I treat a snake bite
+   kw: snake bite first aid treatment venom
+   not: snake venom identification; snake identification
+r13    7s valid=1 out=117 | how do I stop severe bleeding
+   kw: stop severe bleeding first aid pressure tourniquet
+   not: minor cuts; bleeding from a scrape
+r14    7s valid=1 out=117 | what are the signs of heat stroke
+   kw: signs of heat stroke symptoms medical
+   not: signs of heat exhaustion
+r15    6s valid=1 out=105 | what are the signs of dehydration
+   kw: signs of dehydration symptoms
+   not: causes of dehydration
+r16    7s valid=1 out=127 | how do I jump start a car
+   kw: jump start car procedure battery connection
+   not: diagnosing car battery failure; car battery maintenance
+r17    7s valid=1 out=122 | how do I change a flat tire
+   kw: change flat tire procedure vehicle repair
+   not: how to inflate a tire
+r18    7s valid=1 out=122 | why is my car overheating
+   kw: car overheating causes engine coolant low
+   not: how to fix a car overheating
+r19    7s valid=1 out=124 | how do I get rid of aphids
+   kw: aphid control organic pesticides gardening
+   not: treating severe plant diseases; identifying insect pests
+r20    7s valid=1 out=122 | how do I disinfect water with sunlight
+   kw: water disinfection sunlight method
+   not: boiling water to kill bacteria; chemical water purification
+r21    7s valid=1 out=122 | how do I tie a bowline knot
+   kw: how to tie bowline knot
+   not: how to tie a clove hitch
+r22    7s valid=1 out=116 | what is tylenol used for
+   kw: acetaminophen uses and indications
+   not: ibuprofen uses and indications
+r23    7s valid=1 out=118 | what is ibuprofen used for
+   kw: ibuprofen uses and indications
+   not: ibuprofen dosage and side effects
+r24    8s valid=1 out=126 | what is the bag limit for trout in Idaho
+   kw: trout bag limit idaho fishing regulations
+   not: trout feeding regulations; trout stocking limits
+r25    8s valid=1 out=123 | how do I build a fire in the rain
+   kw: starting fire in rain
+   not: how to build a fire in snow
+r26    8s valid=1 out=118 | how do I signal a rescue aircraft
+   kw: signal rescue aircraft distress signals aviation
+   not: how to fly an aircraft
+r27    9s valid=1 out=141 | can I weld with a car battery
+   kw: car battery welding power source safety
+   not: how to jump start a car; car battery maintenance
+r28    9s valid=1 out=131 | can I charge a phone from a lemon
+   kw: charge phone lemon battery safe
+   not: using citrus for cleaning; phone charging accessories
+r29    9s valid=1 out=126 | can I drink water from a car radiator
+   kw: drinking car radiator water safety
+   not: car radiator coolant maintenance; radiator fluid composition
+r30    9s valid=1 out=132 | how long do I pressure can quart jars of broccoli
+   kw: pressure canning broccoli jar time
+   not: reheating canned broccoli; pressure canning vegetables other than broccoli
+r31    9s valid=1 out=137 | who won the 2022 world cup
+   kw: 2022 world cup winner
+   not: 2022 world cup final score
+r32    8s valid=1 out=114 | what is the wifi password at the Stanley library
+   kw: Stanley library wifi password
+   not: how to connect to wifi
+r33    8s valid=1 out=129 | what is the phone number of the Boise weather radio station
+   kw: Boise weather radio station phone number
+   not: weather forecast for Boise; local news station schedule
+r34    8s valid=1 out=124 | what is the dose of amoxicillin for a dog
+   kw: amoxicillin dosage canine medication
+   not: amoxicillin dosage for humans
+r35    8s valid=1 out=132 | what radio channel does the Custer county sheriff use
+   kw: Custer County Sheriff radio frequency
+   not: how to use a radio; radio equipment repair
+r36    8s valid=1 out=134 | how do I reset a Garmin inReach
+   kw: Garmin inReach reset procedure
+   not: Garmin inReach battery replacement; Garmin inReach subscription setup
+r37    7s valid=1 out=123 | what time does the Stanley gas station close
+   kw: Stanley gas station hours of operation
+   not: fuel prices at Stanley gas station; finding a gas station location
+r38    8s valid=1 out=128 | how many calories are in a pound of elk meat
+   kw: calories in elk meat per pound
+   not: how to cook elk meat; elk meat nutritional guide
+valid 38/38  seconds median 7.7 max 10.7
+exit=0

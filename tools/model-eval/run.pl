@@ -5,7 +5,7 @@
 use strict; use warnings; use JSON::PP; use HTTP::Tiny; use Time::HiRes qw(time);
 my ($tag, $mode, $port, $only) = @ARGV; $port ||= 8089;
 my $json = JSON::PP->new->utf8->canonical;
-open my $h, '<:raw', 'evalset.json' or die; my $set = do { local $/; $json->decode(<$h>) }; close $h;
+open my $h, '<:raw', ($ENV{EVALSET} || 'evalset.json') or die; my $set = do { local $/; $json->decode(<$h>) }; close $h;
 my $http = HTTP::Tiny->new(timeout => 1800);
 open my $out, '>:raw', "results/$tag.jsonl" or die;
 $| = 1;

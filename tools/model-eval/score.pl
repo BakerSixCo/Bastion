@@ -3,7 +3,7 @@
 use strict; use warnings; use JSON::PP;
 my $verbose = grep { $_ eq '-v' } @ARGV; my @tags = grep { $_ ne '-v' } @ARGV;
 my $json = JSON::PP->new->utf8;
-open my $h, '<:raw', 'evalset.json' or die; my $set = do { local $/; $json->decode(<$h>) }; close $h;
+open my $h, '<:raw', ($ENV{EVALSET} || 'evalset.json') or die; my $set = do { local $/; $json->decode(<$h>) }; close $h;
 my %case = map { $_->{id} => $_ } @{$set->{cases}};
 # A reply that opens by saying the sources do not hold the answer. Larger models explain what the
 # sources do hold instead of using the app's fixed sentence, so the opening is what counts.
