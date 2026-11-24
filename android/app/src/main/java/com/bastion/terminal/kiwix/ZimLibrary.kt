@@ -212,10 +212,10 @@ class ZimLibrary private constructor(private val app: Context) {
      * the article *title* contains a key term, so an antenna question doesn't
      * pull in "Photosynthesis" (seen on emulator).
      */
-    suspend fun search(terms: List<String>, max: Int = 5): List<ZimHit> = withContext(Dispatchers.IO) {
+    suspend fun search(terms: List<String>, max: Int = 5, use: (file: String) -> Boolean = { true }): List<ZimHit> = withContext(Dispatchers.IO) {
         lock.withLock {
             if (terms.isEmpty()) return@withLock emptyList()
-            open.values.flatMap { o ->
+            open.values.filter { use(it.info.file) }.flatMap { o ->
                 val s = o.searcher ?: return@flatMap emptyList()
                 // Of the articles holding every term, prefer those that say so in the title:
                 // on a Q&A reference "How do I jump start a car" beats a long thread that
@@ -248,10 +248,10 @@ class ZimLibrary private constructor(private val app: Context) {
      * aid kit" for "first aid for a burn" — seen on emulator). Redirects are
      * followed; only HTML articles count. Up to [max] per ZIM.
      */
-    suspend fun titleLookup(phrases: List<String>, max: Int = 2): List<ZimHit> = withContext(Dispatchers.IO) {
+    suspend fun titleLookup(phrases: List<String>, max: Int = 2, use: (file: String) -> Boolean = { true }): List<ZimHit> = withContext(Dispatchers.IO) {
         lock.withLock {
             val all = ArrayList<ZimHit>()
-            for (o in open.values) {
+            for (o in open.values.filter { use(it.info.file) }) {
                 val a = o.archive
                 val out = ArrayList<ZimHit>()
                 for (p in phrases) {

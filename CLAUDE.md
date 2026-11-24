@@ -183,6 +183,17 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   (on device: `CheckedAnswerEvalTest`) and read, not only word-scored. Add questions for new
   failure modes; never loosen a check to raise the answer count without measuring wrong answers.
 
+## Sources of truth (owner decision 2026-11-24, `docs/library-plan.md`)
+
+- Every source has a tier (`ai/SourceTier.kt`): OWN (owner's documents, kit docs folder),
+  OFFICIAL (government, military, public health), REFERENCE (WikiMed, iFixit, Appropedia,
+  Energypedia, mixed bundles), FORUM (all Stack Exchange, blogs), UNRATED (anything not listed).
+- FORUM and UNRATED are never searched for AI answers. REFERENCE is used only when no strong
+  OWN/OFFICIAL passage covers the question (`SourcePolicy.preferTruth`); the same text is kept
+  once, from the most trusted copy.
+- A new reference stays UNRATED (unused) until it is classified in `SourceTier` with a test in
+  `SourceTierTest`. Only government works or material published free to share go in the kit.
+
 ## Packs (Library)
 
 - A pack is a named set of documents with a kind (`data/PackTemplates`:

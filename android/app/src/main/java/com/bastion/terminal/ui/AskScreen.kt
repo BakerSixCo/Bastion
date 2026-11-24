@@ -34,6 +34,7 @@ import com.bastion.terminal.ai.Grounding
 import com.bastion.terminal.ai.LocalAi
 import com.bastion.terminal.ai.LocalModel
 import com.bastion.terminal.ai.Passage
+import com.bastion.terminal.ai.SourceTier
 import com.bastion.terminal.mesh.MeshBridge
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -126,8 +127,14 @@ fun AskScreen(
 }
 
 private fun zimIntro(z: ZimState): String = when (z) {
-    is ZimState.Ready -> "Offline reference searched too: " +
-        z.zims.joinToString { "“${it.title}” (${"%,d".format(it.articleCount)} articles)" } + "."
+    is ZimState.Ready -> {
+        // Sources of truth (docs/library-plan.md): say plainly which references the AI may use.
+        val (used, unused) = z.zims.partition { SourceTier.forZim(it.file.ifEmpty { it.fileName }).usedForAnswers }
+        "Offline reference searched too: " +
+            used.joinToString { "“${it.title}” (${SourceTier.forZim(it.file.ifEmpty { it.fileName }).label})" } + "." +
+            (if (unused.isEmpty()) "" else " Not used for answers: " +
+                unused.joinToString { "“${it.title}” (${SourceTier.forZim(it.file.ifEmpty { it.fileName }).label.substringBefore(" —")})" } + ".")
+    }
     is ZimState.Opening -> "Opening the offline reference…"
     is ZimState.Copying -> "Copying the offline reference into BASTION (see Home)…"
     is ZimState.Failed -> "Offline reference unavailable: ${z.reason}"

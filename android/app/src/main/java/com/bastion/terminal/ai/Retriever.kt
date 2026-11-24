@@ -70,15 +70,17 @@ class Retriever internal constructor(
             return rank to phrases
         }
         val (ownRank, ownPhrases) = subjectOf(question)
+        // Sources of truth (docs/library-plan.md): forums and unrated references are never searched.
+        val useZim = { file: String -> SourceTier.forZim(file).usedForAnswers }
         // Exact-title articles first ("burn" → Burn), then the full-text top articles.
-        var titleHits = if (zimOpen) zim.titleLookup(ownPhrases) else emptyList()
+        var titleHits = if (zimOpen) zim.titleLookup(ownPhrases, use = useZim) else emptyList()
         var rankTerms = ownRank
         var aspect = Grounding.aspect(question)
         var libQuestion = question
         if (context != null && titleHits.isEmpty()) {
             // Follow-up: no subject of its own, so the open topic supplies it.
             val (ctxRank, ctxPhrases) = subjectOf(context)
-            titleHits = if (zimOpen) zim.titleLookup(ctxPhrases) else emptyList()
+            titleHits = if (zimOpen) zim.titleLookup(ctxPhrases, use = useZim) else emptyList()
             rankTerms = (ownRank + ctxRank).distinct().take(10)
             aspect = aspect ?: Grounding.aspect(context)
             libQuestion = "$question $context"
@@ -86,22 +88,29 @@ class Retriever internal constructor(
         }
         val terms = if (lastContinuedTopic) rankTerms else ownTerms
         if (rankTerms.isEmpty()) return emptyList()
+        val libTier = libraryTiers()
         val lib = store.retrieve(libQuestion, scope, wide)
-        val textHits = if (zimOpen) zim.search(rankTerms, if (wide > 0) MAX_ARTICLES * 2 else MAX_ARTICLES) else emptyList()
+            .filter { (libTier[it.docId] ?: SourceTier.OWN).usedForAnswers }
+        val textHits = if (zimOpen) zim.search(rankTerms, if (wide > 0) MAX_ARTICLES * 2 else MAX_ARTICLES, use = useZim) else emptyList()
         // Same article in two ZIMs (WikiMed is a subset of full Wikipedia): keep one, from the
         // larger file (opened first), so duplicates don't crowd out other sources.
         val hits = (titleHits + textHits).distinctBy { it.title.lowercase() }
         val aboutPaths = titleHits.map { it.zim + "|" + it.path }.toSet()
         lastZimArticles = titleHits.map { "${it.title} (title)" } + textHits.map { "${it.title} (${it.score}%)" }
-        if (hits.isEmpty()) return lib.take(if (wide > 0) wide else lib.size)
+        if (hits.isEmpty()) {
+            val keep = SourcePolicy.preferTruth(lib.map { (libTier[it.docId] ?: SourceTier.OWN) to "${it.label}\n${it.plainText}" }, rankTerms)
+            return lib.filterIndexed { i, _ -> i in keep }.take(if (wide > 0) wide else lib.size)
+                .mapIndexed { n, p -> p.copy(index = n + 1) }
+        }
 
         data class Cand(
             val title: String, val heading: String?, val text: String, val docId: Long, val zimPath: String?,
             val zimFile: String? = null,
             val opensSection: Boolean = false,
+            val tier: SourceTier = SourceTier.OWN,
         )
         val cands = ArrayList<Cand>()
-        lib.forEach { cands += Cand(it.title, it.heading, it.plainText, it.docId, null) }
+        lib.forEach { cands += Cand(it.title, it.heading, it.plainText, it.docId, null, tier = libTier[it.docId] ?: SourceTier.OWN) }
         hits.forEachIndexed { i, h ->
             val article = zim.article(h.zim, h.path) ?: return@forEachIndexed
             val zimTitle = zim.infoFor(h.zim)?.title ?: "Offline reference"
@@ -116,7 +125,7 @@ class Retriever internal constructor(
                 val opens = ch.heading != prevHeading
                 prevHeading = ch.heading
                 // Negative ids keep ZIM articles distinct from library doc ids for the per-doc cap.
-                cands += Cand("$zimTitle: ${article.title}", ch.heading, body, -(i + 1L), article.path, h.zim, opens)
+                cands += Cand("$zimTitle: ${article.title}", ch.heading, body, -(i + 1L), article.path, h.zim, opens, SourceTier.forZim(h.zim))
             }
         }
         // Score each passage with its title and heading ("Snakebite — Treatment"): a section
@@ -153,8 +162,11 @@ class Retriever internal constructor(
             val section = Grounding.aspectWeight(aspect, c.heading, articleTitle) * (if (c.opensSection) 1.1 else 1.0) * answers
             sc.copy(score = sc.score * titlePrior * section)
         }
-        val chosen = if (wide > 0) Bm25.select(boosted, { cands[it.toInt()].text.length }, k = wide, perDoc = wide, charBudget = wide * 2000, relCutoff = 0.0)
-        else Bm25.select(boosted, { cands[it.toInt()].text.length })
+        // Official before reference, and each text once (docs/library-plan.md).
+        val keep = SourcePolicy.preferTruth(boosted.map { cands[it.id.toInt()].let { c -> c.tier to "${c.title}\n${c.heading.orEmpty()}\n${c.text}" } }, rankTerms, boosted.map { it.score })
+        val ranked = boosted.filterIndexed { i, _ -> i in keep }
+        val chosen = if (wide > 0) Bm25.select(ranked,{ cands[it.toInt()].text.length }, k = wide, perDoc = wide, charBudget = wide * 2000, relCutoff = 0.0)
+        else Bm25.select(ranked, { cands[it.toInt()].text.length })
         lastChoice = chosen.joinToString(" ; ") { sc ->
             val c = cands[sc.id.toInt()]
             "${c.title.takeLast(28)}|${c.heading?.take(20)} s=${"%.2f".format(sc.score)} tf=${sc.termTf.toList()}"
@@ -172,6 +184,10 @@ class Retriever internal constructor(
             )
         }
     }
+
+    /** Library document id → tier, from each document's provenance (bundle PDFs inherit their ZIM's tier). */
+    private suspend fun libraryTiers(): Map<Long, SourceTier> =
+        runCatching { store.listDocs().associate { it.id to SourceTier.forProvenance(it.provenance) } }.getOrDefault(emptyMap())
 
     private companion object {
         const val MAX_ARTICLES = 5

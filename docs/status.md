@@ -1954,3 +1954,39 @@ Emulator housekeeping: to make room for the install, the ham-radio Q&A ZIM and t
 size-cap test files were deleted from the emulator; the Outdoors Q&A, CDC travel health and
 military-medicine ZIMs were added. The new PC now has WSL Ubuntu with both simulated radios
 (`tools/meshsim/install.sh`), and the owner's iPhone reaches radio B at `192.168.254.32:4404`.
+
+## Sources of truth: forums out, official first (2026-11-24)
+
+Owner decision (`docs/library-plan.md`): government and reputable sources are the source of
+truth; forums never feed AI answers; reputable wikis only when no official source covers it.
+
+**Code** (`ai/SourceTier.kt`, `SourcePolicy`, used by `Retriever`): every reference and library
+document has a tier (OWN, OFFICIAL, REFERENCE, FORUM, UNRATED). Forum and unrated ZIMs are not
+searched for answers. Reference passages are dropped when a trusted passage strongly covers the
+question (contains every subject term and scores at least half the best). The same text (5-word
+shingle overlap ≥ 0.5) is kept once, from the most trusted copy. The Ask screen lists which
+references are not used for answers. Unit tests: `SourceTierTest` (6).
+
+**Tested on the hardware-accelerated emulator:**
+- `RetrievalEvalTest` 13/13.
+- `ZimRetrievalEvalTest` 13/14 (WikiMed alone, other ZIMs moved aside for the run and put back).
+  A first version dropped WikiMed's Hypothermia article because the built-in *sample* note
+  mentions hypothermia; fixed with the "strong match" rule. The remaining miss (CPR compression
+  rate) also occurs with today's retrieval changes removed, so it predates this work. Not yet
+  investigated.
+- Checked-answer run, 156 questions, same library minus forums (`results/device-v2-tiers.jsonl`):
+  0 of 22 traps answered; 42 answers shown, no forum sources. Read: 4 bad (rattlesnake bite
+  answered with Central American antivenom availability from the CDC travel pages; boiling time
+  not given; filters/viruses answered with wetland systems; garbled Idaho trout table), 3 weak
+  (frostbite, anaphylaxis, dehydration). Vehicle, garden and gear questions now get no answer:
+  no official source covers them yet.
+
+**Library** (`docs/library-downloads.md`, approved by the owner, free-to-use only): 41 official
+PDFs added to the kit and pinned with SHA-256 in `tools/kit-manifest.json`, plus EPA's emergency
+water disinfection page saved as text. Each was checked: real PDF, expected title, licence text
+(Army "Approved for public release; distribution is unlimited"; WHO CC BY-NC-SA 3.0 IGO; the
+ORNL nuclear book's 1986 additions carry their author's permission to reproduce). Not obtained:
+FEMA nuclear-detonation guides and CDC emergency-water sheets (the sites refuse scripted
+downloads: fetch by hand), TC 3-25.26 land navigation (armypubs sends it to a CAC sign-in).
+The download research fetched one PDF by mistake while checking a size (FEMA *Are You Ready?*,
+deleted at once; later downloaded properly as approved).
