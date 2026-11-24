@@ -32,8 +32,8 @@ class MeshAnswerEvalTest {
 
     private val cases = listOf(
         // Asked from a real phone on 2026-11-23: the sources hold "disconnect the battery when
-        // welding ON a car", which is a different question. It was answered with that anyway.
-        // KNOWN FAIL on gemma-4-E2B: the model does not tell the two apart.
+        // welding ON a car", which is a different question. It was answered with that until the
+        // checked-answer pipeline (CheckedAnswer.twoPaths); refused since 2026-11-24 (emulator).
         Case("can I weld with a car battery", emptyList()),
         Case("how do you treat frostbite", listOf("warm")),
         Case("how do I deal with a sucking chest wound", listOf("seal", "occlusive", "dressing", "cover")),

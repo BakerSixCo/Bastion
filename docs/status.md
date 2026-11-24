@@ -1944,6 +1944,8 @@ off target), boiling time (the raw path's answer was judged off target). That tr
 win coverage back without wrong answers are better search (section-aware chunking of the
 canning tables, CDC/WikiMed preferred over forum posts) and a larger model on 12 GB phones.
 
+**Radio answers, tested on the hardware-accelerated emulator** (`MeshAnswerEvalTest`, same pipeline with the radio prompt): **11 of 13**, up from 9 of 13 on 2026-11-23. "Can I weld with a car battery" is now refused; radiator, lemon and World Cup refused; frostbite, sucking chest wound, burn (cool running water 10–20 min), jump-start, hypothermia, Tylenol and water purification answered. Misses (no answer, not wrong): change a flat tire (no how-to in the library), car overheating (judge said off target). 11–25 s per question.
+
 **Not tested:** a physical phone (speed with GPU, memory with two extra model calls); Gemma E4B
 in this pipeline; Ask screen UI by hand (code path covered by the on-device test, screen layout
 not looked at); follow-up radio questions through the new pipeline.
