@@ -45,12 +45,18 @@ class AskSession private constructor(context: Context) {
         private set
     var generating by mutableStateOf(false)
         private set
+    /** Set when the model wrote an answer but the code checks withheld it (see [CheckedAnswer]). */
+    var withheld by mutableStateOf<CheckedAnswer.Decision?>(null)
+        private set
+    /** What the checked answer is doing now ("Understanding the question…"), while [generating]. */
+    var stage by mutableStateOf("")
+        private set
 
     private var job: Job? = null
     private var running: LocalModel? = null
 
     private fun resetAnswer() {
-        answer = ""; answerError = null; stats = null; check = null
+        answer = ""; answerError = null; stats = null; check = null; withheld = null; stage = ""
     }
 
     fun search() {
@@ -84,15 +90,33 @@ class AskSession private constructor(context: Context) {
             running = model
             modelLabel = model.label
             try {
-                model.generate(Grounding.SYSTEM_INSTRUCTION, Grounding.userPrompt(question, sources), MAX_ANSWER_TOKENS)
-                    .collect { answer += it }
-                stats = model.lastStats()
-                check = Grounding.checkCitations(answer, sources)
+                // Not streamed to the screen: the answer is checked first (CheckedAnswer.twoPaths), so
+                // a wrong answer is never shown, even briefly. Anything that fails shows exactly
+                // Grounding.NO_ANSWER. The search shown before (raw words) is the second path.
+                val result = CheckedAnswer.twoPaths(
+                    model, question,
+                    search = { wording, restated -> if (restated) retriever.retrieve(wording) else sources },
+                    write = { ps ->
+                        val sb = StringBuilder()
+                        model.generate(Grounding.SYSTEM_INSTRUCTION, Grounding.userPrompt(question, ps), MAX_ANSWER_TOKENS).collect { sb.append(it) }
+                        stats = model.lastStats()
+                        sb.toString()
+                    },
+                    onStage = { stage = it },
+                )
+                if (result.failed != null && result.failed != CheckedAnswer.Failed.REFUSAL) {
+                    withheld = CheckedAnswer.Decision(result.shown, result.failed, result.missing)
+                }
+                // The shown answer cites the restated search's passages: show those as the sources.
+                if (result.isAnswer) passages = result.passages
+                answer = result.shown
+                check = Grounding.checkCitations(answer, if (result.isAnswer) result.passages else sources)
+                Log.i(TAG, "checked answer: stage=${result.stage} failed=${result.failed} missing=${result.missing}")
                 // One line per answer for benchmarking (no document text logged).
                 Log.i(
                     TAG,
                     "done ${model.label} | ${stats?.let(::statsLine)} | cited=${check?.cited} " +
-                        "invalid=${check?.invalid} noAnswer=${check?.isNoAnswer}",
+                        "invalid=${check?.invalid} noAnswer=${check?.isNoAnswer} withheld=${withheld?.failed}",
                 )
             } catch (c: CancellationException) {
                 answerError = "Stopped."

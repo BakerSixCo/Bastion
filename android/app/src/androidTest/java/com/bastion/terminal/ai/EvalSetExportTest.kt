@@ -76,13 +76,22 @@ class EvalSetExportTest {
         val zim = ZimLibrary.get(ctx)
         zim.restore()
         val retriever = Retriever(LibraryStore.get(ctx), zim)
+        val args = InstrumentationRegistry.getArguments()
         // "-e wide 30": the wider candidate pool, for testing a second ranking step.
-        val wide = InstrumentationRegistry.getArguments().getString("wide")?.toIntOrNull() ?: 0
+        val wide = args.getString("wide")?.toIntOrNull() ?: 0
+        // "-e questions <file>": a larger question list from the media folder
+        // ({ "cases": [ { id, cat, topic, question, expect: [...] } ] }); default is the list above.
+        val listFile = args.getString("questions")
+        val list: List<Pair<String, Case>> = if (listFile == null) cases.mapIndexed { n, c -> "r%02d".format(n + 1) to c } else {
+            val a = JSONObject(File(ctx.externalMediaDirs.first(), listFile).readText()).getJSONArray("cases")
+            (0 until a.length()).map { i -> val o = a.getJSONObject(i); val e = o.optJSONArray("expect") ?: JSONArray()
+                o.getString("id") to Case(o.getString("cat"), o.getString("question"), (0 until e.length()).map { e.getString(it) }) }
+        }
         val out = JSONArray()
-        for ((n, c) in cases.withIndex()) {
+        for ((id, c) in list) {
             val passages = retriever.retrieve(c.question, wide = wide)
             val o = JSONObject()
-            o.put("id", "r%02d".format(n + 1)); o.put("cat", c.cat); o.put("question", c.question)
+            o.put("id", id); o.put("cat", c.cat); o.put("question", c.question)
             o.put("expect", JSONArray(c.expect))
             val ps = JSONArray()
             for (p in passages) ps.put(JSONObject().put("index", p.index).put("label", p.label).put("text", Grounding.forModel(p.plainText)))
@@ -93,7 +102,11 @@ class EvalSetExportTest {
             Log.i(TAG, "${c.cat} | ${c.question} | passages=${passages.size} chars=${passages.sumOf { it.plainText.length }}")
         }
         val doc = JSONObject().put("system", Grounding.SYSTEM_INSTRUCTION).put("noAnswer", Grounding.NO_ANSWER).put("cases", out)
-        val file = File(ctx.externalMediaDirs.first(), if (wide > 0) "evalpool.json" else "evalset.json")
+        val file = File(ctx.externalMediaDirs.first(), when {
+            listFile != null -> "evalset-" + listFile.removeSuffix(".json") + (if (wide > 0) "-pool" else "") + ".json"
+            wide > 0 -> "evalpool.json"
+            else -> "evalset.json"
+        })
         file.writeText(doc.toString(1))
         Log.i(TAG, "WROTE ${file.absolutePath} cases=${out.length()} bytes=${file.length()}")
     }

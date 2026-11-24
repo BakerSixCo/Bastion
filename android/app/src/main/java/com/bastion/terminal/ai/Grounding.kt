@@ -126,6 +126,9 @@ object Grounding {
 
     private val ASPECT_STEMS by lazy { ASPECT_WORDS.map(::stem).toSet() }
 
+    /** Whether a stemmed key term is an aspect word ("treat", "symptom"…), not a subject. */
+    fun isAspectTerm(stemmed: String): Boolean = stemmed in ASPECT_STEMS
+
     /**
      * Key terms without the aspect words ("treat", "first", "aid", "symptom"…),
      * for ranking reference-article passages when [aspect] is known: the aspect
@@ -284,6 +287,11 @@ object Grounding {
      */
     fun forModel(text: String): String =
         carryUnits(text.trim().replace(Regex("[\\uFFFD\\u00A0\\u2000-\\u200B\\u202F]"), " ").replace(Regex("[ \t]{2,}"), " "))
+
+    private val VOTE_LINE = Regex("(?m)^-?\\d{1,5}\\n\\n(?=\\S)")
+
+    /** Removes the vote-count line that opens each Q&A answer ("48", blank line, answer text). */
+    fun stripVoteCounts(text: String): String = text.replace(VOTE_LINE, "")
 
     private val TABLE_NUMBER = Regex("^\\d[\\d,./–-]*$")
     private val TABLE_UNIT = Regex("^[A-Za-z%°]{1,6}$")

@@ -177,4 +177,14 @@ class GroundingTest {
         assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("what should I do for a snakebite"))
         assertEquals(listOf("suck", "chest", "wound"), Grounding.subjectTerms("How do I deal with a sucking chest wound"))
     }
+
+    // Seen 2026-11-24: "48" (the answer's vote count) was read as "boil for 48 minutes".
+    @Test
+    fun stripVoteCounts_removesTheScoreLineThatOpensEachAnswer() {
+        val article = "How long to boil water?\n\n48\n\nThis article gives a good summary.\n\n-3\n\nBoil it for 1 minute.\n\nKeep 2 litres per day."
+        assertEquals(
+            "How long to boil water?\n\nThis article gives a good summary.\n\nBoil it for 1 minute.\n\nKeep 2 litres per day.",
+            Grounding.stripVoteCounts(article),
+        )
+    }
 }

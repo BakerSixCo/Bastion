@@ -8,6 +8,7 @@ import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.ExperimentalApi
 import com.google.ai.edge.litertlm.ExperimentalFlags
+import com.google.ai.edge.litertlm.ResponseFormat
 import com.google.ai.edge.litertlm.SamplerConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -93,22 +94,35 @@ class LiteRtLmModel(
         throw lastError ?: IllegalStateException("no backend")
     }
 
-    override fun generate(systemInstruction: String, userPrompt: String, maxOutputTokens: Int): Flow<String> = flow {
+    override fun generate(systemInstruction: String, userPrompt: String, maxOutputTokens: Int): Flow<String> =
+        run(systemInstruction, userPrompt, maxOutputTokens, null)
+
+    // Constrained decoding: the runtime only lets the model produce JSON that fits the schema.
+    // Greedy (topK 1), because a form decides what is shown and must not vary between runs.
+    override suspend fun generateJson(systemInstruction: String, userPrompt: String, jsonSchema: String, maxOutputTokens: Int): String {
+        val sb = StringBuilder()
+        run(systemInstruction, userPrompt, maxOutputTokens, ResponseFormat.json(jsonSchema)).collect { sb.append(it) }
+        return sb.toString()
+    }
+
+    private fun run(systemInstruction: String, userPrompt: String, maxOutputTokens: Int, format: ResponseFormat?): Flow<String> = flow {
         val e = checkNotNull(engine) { "Model not loaded" }
         stats = null
         val conversation = e.createConversation(
             ConversationConfig(
                 systemInstruction = Contents.of(systemInstruction),
                 // Low temperature: grounded answers should stick to the sources.
-                samplerConfig = SamplerConfig(topK = 20, topP = 0.9, temperature = 0.2),
+                samplerConfig = if (format == null) SamplerConfig(topK = 20, topP = 0.9, temperature = 0.2)
+                    else SamplerConfig(topK = 1, topP = 1.0, temperature = 0.0),
                 maxOutputToken = maxOutputTokens,
+                enableResponseFormat = format != null,
             )
         )
         current = conversation
         val t0 = System.nanoTime()
         var firstChunkAt = -1L
         try {
-            conversation.sendMessageAsync(userPrompt).collect { msg ->
+            (if (format == null) conversation.sendMessageAsync(userPrompt) else conversation.sendMessageAsync(userPrompt, responseFormat = format)).collect { msg ->
                 val text = msg.toString()
                 if (text.isNotEmpty()) {
                     if (firstChunkAt < 0) firstChunkAt = System.nanoTime()

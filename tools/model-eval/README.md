@@ -40,3 +40,29 @@ UNANSWERABLE status and answer section.
 - 50 cases, one run each. A difference of one or two cases between models is not a finding.
 - Scoring is by expected words, refusal wording, forbidden words and the planted word, with
   hand corrections in `overrides.json`. It does not check every sentence of every answer.
+
+## Checked answers (2026-11-24)
+
+Measuring whether BASTION can avoid ever showing a wrong answer. The question set is
+`questions-v2.json`: 156 backcountry, survival and prepping questions across 16 topics, mixing
+plain wording, slang, "do X with Y", look-alikes, dangerous guesses and things the library
+cannot know.
+
+| File | What it is |
+|---|---|
+| `questions-v2.json` | The 156 questions (`cat` answerable/absent, `style`, `expect` words) |
+| `evalset-v2-retrieved.json` | Their passages from the app's search (emulator, `EvalSetExportTest -e questions`) |
+| `restate.pl`, `restate.sh` | Gemma rewrites each question into a search plan (`EVALSET=… IDS=.`) |
+| `evalvariants-v2-w0.json`, `mkarm.pl` | The app's search on each restated wording; `mkarm.pl` builds a set from one wording |
+| `gate.pl`, `gate.sh` | Tried and rejected: the model fills a form (quote, verdict, answer) and code decides |
+| `cover.pl`, `relcheck.pl` | Tried: subject-word coverage (kept, now in the app) and a sentence-level same-subject check (rejected) |
+| `plaincheck.pl`, `cover-lib.pl` | The code checks the app uses (`CheckedAnswer.check`), on free-text answers |
+| `ansjudge.pl` | The final answer judge the app uses (`CheckedAnswer.judge`) |
+| `agree.pl` | Passage-level agreement between searches (measured, not used) |
+| `gscore.pl` | Scores a run: answerable / library gap / trap, with `-v` to read every shown answer |
+| `read-labels-v2.json` | Which shown answers were read as bad, and why |
+
+The app's pipeline (`CheckedAnswer.twoPaths`) is: restate → search the restated keywords →
+answer → code checks + judge → search the asker's own words → answer → checks + judge → show
+the restated path's answer only if both passed. The on-device run of exactly that is
+`CheckedAnswerEvalTest` (results in `results/device-v2-twopaths.jsonl`).

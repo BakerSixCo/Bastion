@@ -1,0 +1,118 @@
+m01 answerable responds   | how do I stop severe bleeding from a leg wound
+m03 answerable OFF-TARGET | where do I put a tourniquet
+m04 answerable responds   | how do I treat a sucking chest wound
+m05 answerable responds   | what are the symptoms of hypothermia
+m07 answerable responds   | how do you treat frostbite
+m09 answerable responds   | what are the signs of heat stroke
+m10 answerable responds   | how do I treat heat exhaustion
+m11 answerable responds   | how do I treat a burn
+m12 answerable OFF-TARGET | how do I treat a rattlesnake bite
+m13 answerable responds   | should I cut and suck the venom out of a snake bite
+m14 answerable responds   | how do I splint a broken leg
+m15 answerable responds   | how do I tell if an ankle is broken or sprained
+m16 answerable responds   | what are the signs of a concussion
+m17 answerable responds   | how do I treat shock
+m18 answerable responds   | what are the signs of anaphylaxis
+m19 answerable responds   | how do I remove a tick
+m20 answerable responds   | what are the symptoms of lyme disease
+m22 answerable OFF-TARGET | how do I treat diarrhea and dehydration in the field
+m23 answerable responds   | how do I make oral rehydration solution
+m24 answerable responds   | what are the signs of dehydration
+m25 answerable responds   | what are the symptoms of altitude sickness
+m26 answerable responds   | how do I treat high altitude pulmonary edema
+m27 answerable responds   | how do I clean a wound in the field
+m28 answerable responds   | what are signs a wound is infected
+m29 answerable responds   | how do I do CPR on an adult
+m30 answerable responds   | what is ibuprofen used for
+m31 answerable responds   | what is tylenol for
+m32 answerable responds   | what is the maximum daily dose of paracetamol for an adult
+m33 answerable responds   | what is benadryl used for
+m34 answerable responds   | how do I treat a bee sting
+m35 answerable OFF-TARGET | how do I treat a blister on my foot while hiking
+m36 answerable responds   | how do I treat carbon monoxide poisoning
+m37 answerable responds   | what are the symptoms of carbon monoxide poisoning
+m38 answerable responds   | how do I treat a dislocated shoulder
+m39 answerable responds   | what is trench foot
+m40 answerable responds   | how do I treat snow blindness
+w03 answerable responds   | how long do I boil water to make it safe
+w04 answerable responds   | how do I disinfect water with sunlight
+w05 answerable responds   | how do I find water in the desert
+w06 answerable OFF-TARGET | how do I make a solar still
+w07 answerable responds   | can I drink melted snow
+w08 answerable responds   | is it safe to drink sea water
+w09 answerable responds   | how much water does a person need per day
+w10 answerable responds   | how do I store water long term for emergencies
+w11 absent     responds   | can I drink water from a car radiator
+w13 answerable responds   | does a water filter remove viruses
+f01 answerable OFF-TARGET | how do I build a fire in the rain
+f02 answerable responds   | how do I start a fire without matches
+f03 answerable responds   | what makes good tinder
+f04 answerable responds   | how do I make a bow drill
+f05 answerable responds   | can I start a fire with a battery and steel wool
+f07 answerable responds   | what is a dakota fire hole
+s01 answerable responds   | how do I build a debris shelter
+s02 answerable responds   | how do I build a snow cave
+s03 answerable OFF-TARGET | where should I not set up camp
+s04 answerable responds   | how do I stay warm sleeping in the cold without a sleeping bag
+s05 answerable responds   | how do I pitch a tarp shelter
+n01 answerable OFF-TARGET | how do I find north without a compass
+n02 answerable responds   | how do I find the north star
+n03 answerable responds   | how do I use a watch to find direction
+n04 answerable responds   | what should I do if I get lost in the woods
+n05 answerable responds   | what is magnetic declination
+g01 answerable responds   | how do I signal a rescue aircraft
+g02 answerable responds   | how do I use a signal mirror
+g03 answerable responds   | what is the international distress signal
+g04 answerable responds   | what are ground to air emergency signals
+o01 answerable responds   | how do I do the universal edibility test
+o02 answerable OFF-TARGET | are cattails edible
+o03 answerable OFF-TARGET | how do I identify morel mushrooms
+o04 answerable OFF-TARGET | how do I tell a true morel from a false morel
+o08 answerable responds   | how do I clean a fish
+o09 answerable OFF-TARGET | are huckleberries edible
+o10 answerable responds   | which insects are safe to eat
+h01 answerable responds   | what is the bag limit for trout in Idaho
+h02 answerable responds   | do I need a hunting license in Idaho
+h03 answerable responds   | how do I field dress a deer
+h05 answerable responds   | when is elk season in Idaho
+h06 answerable OFF-TARGET | how do I keep meat from spoiling in the backcountry
+p02 answerable responds   | how much lemon juice do I add to a quart of tomatoes when canning
+p05 answerable OFF-TARGET | how do I adjust canning time for high altitude
+p06 answerable OFF-TARGET | how do I make jerky
+p07 answerable responds   | how do I can venison
+v01 answerable responds   | how do I jump start a car
+v02 answerable responds   | truck just clicks when i turn the key
+v03 answerable OFF-TARGET | why is my car overheating
+v04 answerable OFF-TARGET | how do I change a flat tire
+v06 answerable responds   | can I put water in the radiator instead of coolant
+v07 absent     responds   | can I weld with a car battery
+v09 answerable responds   | what does the check engine light mean
+v10 answerable responds   | how do I check the oil level
+e02 answerable OFF-TARGET | can I charge my phone with a car battery
+e04 answerable responds   | how do solar panels charge a battery
+e05 answerable responds   | what size inverter do I need
+r01 answerable responds   | what frequency is the NOAA weather radio in Boise
+r02 answerable responds   | what NOAA weather radio station covers Valley county Idaho
+r03 answerable responds   | do I need a license to use a ham radio
+r05 answerable responds   | can I use a ham radio in an emergency without a license
+k01 answerable responds   | how do I tie a bowline knot
+k02 answerable responds   | how do I tie a clove hitch
+k03 answerable responds   | what knot joins two ropes together
+k04 answerable responds   | how do I sharpen a knife
+k05 answerable responds   | how do I tie a taut line hitch
+x01 answerable responds   | what should I do if caught in a lightning storm
+x02 answerable OFF-TARGET | what do I do if I meet a bear
+x03 answerable responds   | how do I cross a river safely
+x04 answerable responds   | what should I do in an avalanche
+x05 answerable responds   | how do I store food from bears when camping
+x06 answerable responds   | what should I do if I meet a mountain lion
+y02 answerable responds   | what should be in a first aid kit
+y03 answerable responds   | how much food should I store for an emergency
+y04 answerable responds   | how do I make an emergency toilet
+y05 answerable responds   | how do I dig a latrine
+y07 answerable responds   | what should I do after an earthquake
+y12 absent     OFF-TARGET | what is the phone number of the Boise weather radio station
+d01 answerable responds   | how do I get rid of aphids
+d02 answerable responds   | when should I plant potatoes
+d03 answerable OFF-TARGET | how do I save tomato seeds
+d04 answerable OFF-TARGET | how do I make compost

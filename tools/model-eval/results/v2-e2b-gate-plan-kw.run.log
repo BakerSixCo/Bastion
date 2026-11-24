@@ -1,0 +1,158 @@
+m01 answerable    6s SHOWN                - Control severe extremity bleeding with direct pressure and/or applic
+m02 answerable    5s verdict              The library does not contain an answer to that.
+m03 answerable    6s SHOWN                Tourniquets are placed towards the torso from the site of injury.
+m04 answerable    6s SHOWN                As a temporary stabilizing measure, a dressing may be applied on top o
+m05 answerable    6s verdict              The library does not contain an answer to that.
+m06 answerable    8s SHOWN                - Stop with an act of will if you can, as you are still ok in danger. 
+m07 answerable    7s SHOWN                If there is no risk of re-freezing, the extremity can be exposed and w
+m08 answerable    6s verdict              The library does not contain an answer to that.
+m09 answerable    6s SHOWN                Heat stroke generally presents with a hyperthermia of greater than 40 
+m10 answerable   15s SHOWN                - Move the person to a shaded, fanned, or air-conditioned place - Remo
+m11 answerable    5s verdict              The library does not contain an answer to that.
+m12 answerable    7s verdict              The library does not contain an answer to that.
+m13 answerable    6s verdict              The library does not contain an answer to that.
+m14 answerable    7s SHOWN                - Use a foam sleeping pad. - Use at least three (and preferably 5) pie
+m15 answerable    6s verdict              The library does not contain an answer to that.
+m16 answerable    7s SHOWN                Signs and symptoms of a concussion usually appear within 72 hours of t
+m17 answerable    7s verdict              The library does not contain an answer to that.
+Wide character in printf at gate.pl line 86.
+m18 answerable   10s SHOWN                The most common areas affected by anaphylaxis include the skin (80–90%
+m19 answerable    9s evidence-not-quoted  The library does not contain an answer to that.
+m20 answerable    5s verdict              The library does not contain an answer to that.
+m21 answerable   17s verdict              The library does not contain an answer to that.
+m22 answerable   19s form                 The library does not contain an answer to that.
+m23 answerable   19s form                 The library does not contain an answer to that.
+m24 answerable    8s SHOWN                The hallmarks of dehydration include thirst and neurological changes s
+m25 answerable    6s SHOWN                Symptoms include headache, confusion, fatigue, stomach illness, dizzin
+m26 answerable    5s SHOWN                Treatment involves supplemental oxygen, diuretics, and treating the un
+m27 answerable    6s verdict              The library does not contain an answer to that.
+m28 answerable    8s SHOWN                Signs of infection in chronic wounds persisting for more than 12 weeks
+m29 answerable   10s verdict              The library does not contain an answer to that.
+m30 answerable    7s SHOWN                Ibuprofen is indicated for mild to moderate pain (1-4) and fever reduc
+m31 answerable    6s SHOWN                Acetaminophen remains the nonopioid analgesic of choice during pregnan
+m32 answerable    6s SHOWN                The recommended maximum daily dose for healthy adults is 4 grams.
+m33 answerable   10s SHOWN                Benadryl is an antihistamine drug used to relieve allergies. It can al
+m34 answerable    8s verdict              The library does not contain an answer to that.
+m35 answerable    8s SHOWN                After blisters have formed, rubbing alcohol can work well because it d
+m36 answerable    8s SHOWN                Immediately remove the person from the exposure without endangering fu
+m37 answerable    6s SHOWN                The initial symptoms of acute carbon monoxide poisoning include headac
+m38 answerable    5s verdict              The library does not contain an answer to that.
+m39 answerable    6s SHOWN                Trench foot is a medical condition caused by prolonged exposure of the
+m40 answerable    8s verdict              The library does not contain an answer to that.
+m41 absent       11s verdict              The library does not contain an answer to that.
+m42 absent        6s verdict              The library does not contain an answer to that.
+m43 absent       19s verdict              The library does not contain an answer to that.
+w01 answerable    7s verdict              The library does not contain an answer to that.
+w02 answerable    6s verdict              The library does not contain an answer to that.
+w03 answerable    7s SHOWN                Boil water for a full minute to account for user variability in identi
+w04 answerable    7s SHOWN                - Fill microbiologically contaminated water into transparent PET plast
+w05 answerable    7s SHOWN                In a desert survival situation, you must first consider "How much wate
+w06 answerable    7s verdict              The library does not contain an answer to that.
+w07 answerable    6s SHOWN                Filter or boil the water from melted snow before drinking.
+w08 answerable    6s verdict              The library does not contain an answer to that.
+w09 answerable    7s verdict              The library does not contain an answer to that.
+w10 answerable   10s verdict              The library does not contain an answer to that.
+w11 absent        7s verdict              The library does not contain an answer to that.
+w12 absent        6s verdict              The library does not contain an answer to that.
+w13 answerable    6s verdict              The library does not contain an answer to that.
+f01 answerable    6s verdict              The library does not contain an answer to that.
+f02 answerable    6s verdict              The library does not contain an answer to that.
+f03 answerable    6s verdict              The library does not contain an answer to that.
+f04 answerable    7s verdict              The library does not contain an answer to that.
+f05 answerable    6s SHOWN                Steel wool is the easiest way to use a battery to start a fire.
+f06 absent        6s verdict              The library does not contain an answer to that.
+f07 answerable    6s SHOWN                The Dakota Hole is a tactical fire lay.
+s01 answerable    6s verdict              The library does not contain an answer to that.
+s02 answerable    6s verdict              The library does not contain an answer to that.
+s03 answerable    6s verdict              The library does not contain an answer to that.
+s04 answerable    7s verdict              The library does not contain an answer to that.
+s05 answerable    6s verdict              The library does not contain an answer to that.
+n01 answerable    6s verdict              The library does not contain an answer to that.
+n02 answerable    6s verdict              The library does not contain an answer to that.
+n03 answerable    9s evidence-not-quoted  The library does not contain an answer to that.
+n04 answerable    9s verdict              The library does not contain an answer to that.
+n05 answerable    7s verdict              The library does not contain an answer to that.
+n06 absent        6s verdict              The library does not contain an answer to that.
+g01 answerable    6s verdict              The library does not contain an answer to that.
+g02 answerable    8s verdict              The library does not contain an answer to that.
+g03 answerable    6s verdict              The library does not contain an answer to that.
+g04 answerable    6s verdict              The library does not contain an answer to that.
+o01 answerable    8s SHOWN                Apply the Universal Edibility Test (Figure 9-5) before eating any port
+o02 answerable    6s SHOWN                Cattail includes the root, stalk, and stem.
+o03 answerable    5s verdict              The library does not contain an answer to that.
+o04 answerable    7s verdict              The library does not contain an answer to that.
+o05 absent        7s verdict              The library does not contain an answer to that.
+o06 answerable    7s verdict              The library does not contain an answer to that.
+o07 answerable    7s verdict              The library does not contain an answer to that.
+o08 answerable    8s verdict              The library does not contain an answer to that.
+o09 answerable    7s SHOWN                Huckleberry leaves are used in combination with V. deliciosum berries.
+o10 answerable    8s verdict              The library does not contain an answer to that.
+h01 answerable    6s verdict              The library does not contain an answer to that.
+h02 answerable    7s verdict              The library does not contain an answer to that.
+h03 answerable   10s SHOWN                - As soon as the deer is down, take care of it, except if you shot it 
+h04 absent        7s verdict              The library does not contain an answer to that.
+h05 answerable    7s verdict              The library does not contain an answer to that.
+h06 answerable    6s verdict              The library does not contain an answer to that.
+p01 answerable   10s verdict              The library does not contain an answer to that.
+p02 answerable    6s verdict              The library does not contain an answer to that.
+p03 answerable    6s verdict              The library does not contain an answer to that.
+p04 answerable    7s verdict              The library does not contain an answer to that.
+p05 answerable    5s verdict              The library does not contain an answer to that.
+p06 answerable    5s verdict              The library does not contain an answer to that.
+p07 answerable    7s verdict              The library does not contain an answer to that.
+p08 answerable    6s verdict              The library does not contain an answer to that.
+p09 absent       10s verdict              The library does not contain an answer to that.
+p10 answerable    7s verdict              The library does not contain an answer to that.
+v01 answerable   20s form                 The library does not contain an answer to that.
+v02 answerable    9s SHOWN                Repeated clicking may be a result of not enough power making it to the
+v03 answerable    6s verdict              The library does not contain an answer to that.
+v04 answerable    5s verdict              The library does not contain an answer to that.
+v05 answerable    8s SHOWN                Use high torque, as the wheels will keep putting out a lot of power at
+v06 answerable    6s verdict              The library does not contain an answer to that.
+v07 absent        6s verdict              The library does not contain an answer to that.
+v08 absent       20s form                 The library does not contain an answer to that.
+v09 answerable    6s verdict              The library does not contain an answer to that.
+v10 answerable    8s verdict              The library does not contain an answer to that.
+e01 answerable    6s evidence-short       The library does not contain an answer to that.
+e02 answerable    6s verdict              The library does not contain an answer to that.
+e03 absent        7s verdict              The library does not contain an answer to that.
+e04 answerable    8s SHOWN                A solar panel rated 18v 5w will trickle charge your battery and keep i
+e05 answerable    5s verdict              The library does not contain an answer to that.
+r01 answerable    7s SHOWN                The NOAA weather radio in Boise, ID has the frequency 162.550 MHz.
+r02 answerable    5s SHOWN                McCall, ID on 162.475 MHz (WWF58).
+r03 answerable    8s SHOWN                You do need to obtain a license to transmit.
+r04 answerable    6s verdict              The library does not contain an answer to that.
+r05 answerable    6s SHOWN                Yes, during an emergency, you may use any means of communication possi
+r06 answerable   10s verdict              The library does not contain an answer to that.
+r07 absent       10s verdict              The library does not contain an answer to that.
+r08 absent        5s verdict              The library does not contain an answer to that.
+k01 answerable   12s SHOWN                - Wrap the free end of the taut line around whatever you're circling w
+k02 answerable    6s verdict              The library does not contain an answer to that.
+k03 answerable    7s SHOWN                A better way to join two ropes of unequal diameter is to use the "Open
+k04 answerable    6s verdict              The library does not contain an answer to that.
+k05 answerable    6s verdict              The library does not contain an answer to that.
+x01 answerable    6s SHOWN                - seek shelter in a house.
+x02 answerable    6s verdict              The library does not contain an answer to that.
+x03 answerable    9s verdict              The library does not contain an answer to that.
+x04 answerable    7s verdict              The library does not contain an answer to that.
+x05 answerable    8s evidence-not-quoted  The library does not contain an answer to that.
+x06 answerable    5s verdict              The library does not contain an answer to that.
+x07 absent        5s verdict              The library does not contain an answer to that.
+y01 answerable    8s SHOWN                Essential items for a general survival situation include a knife or mu
+y02 answerable   10s verdict              The library does not contain an answer to that.
+y03 answerable    9s SHOWN                Store 5 lbs of peanut butter, which is equivalent to two normal sized 
+y04 answerable   10s verdict              The library does not contain an answer to that.
+y05 answerable    8s SHOWN                Dig a hole in the ground just large enough to hold the feces from one 
+y06 answerable    5s verdict              The library does not contain an answer to that.
+y07 answerable   18s verdict              The library does not contain an answer to that.
+y08 absent        4s verdict              The library does not contain an answer to that.
+y09 absent        6s verdict              The library does not contain an answer to that.
+y10 absent        5s verdict              The library does not contain an answer to that.
+y11 absent        6s verdict              The library does not contain an answer to that.
+y12 absent        6s verdict              The library does not contain an answer to that.
+y13 absent        7s verdict              The library does not contain an answer to that.
+d01 answerable    9s SHOWN                - Plant garlic or onion in pots or near plants to help aphids disappea
+d02 answerable    8s SHOWN                Potatoes would naturally be in the ground all winter and would start g
+d03 answerable    7s verdict              The library does not contain an answer to that.
+d04 answerable    8s SHOWN                - Place the waste in a pit (say 2m x 2m x 1m deep) and leave it to dec
+exit=0

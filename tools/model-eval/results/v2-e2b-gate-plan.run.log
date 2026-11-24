@@ -1,0 +1,158 @@
+m01 answerable    6s SHOWN                For severely injured patients, tourniquets are helpful in preventing c
+m02 answerable    5s verdict              The library does not contain an answer to that.
+m03 answerable    8s verdict              The library does not contain an answer to that.
+m04 answerable    6s SHOWN                As a temporary stabilizing measure, a dressing may be applied on top o
+m05 answerable    6s verdict              The library does not contain an answer to that.
+m06 answerable    5s verdict              The library does not contain an answer to that.
+m07 answerable    6s SHOWN                If there is no risk of re-freezing, the extremity can be exposed and w
+m08 answerable    6s SHOWN                Do not rub the affected area with snow or apply cold water soaks.
+m09 answerable    6s SHOWN                Heat stroke generally presents with a hyperthermia of greater than 40 
+m10 answerable   15s SHOWN                - Move the person to a shaded, fanned, or air-conditioned place - Remo
+m11 answerable    9s verdict              The library does not contain an answer to that.
+m12 answerable    7s verdict              The library does not contain an answer to that.
+m13 answerable    7s verdict              The library does not contain an answer to that.
+m14 answerable    8s SHOWN                - Use a foam sleeping pad. - Use at least three (and preferably 5) pie
+m15 answerable    8s SHOWN                Symptoms of an ankle fracture can be similar to those of ankle sprains
+m16 answerable    7s SHOWN                Signs and symptoms of a concussion usually appear within 72 hours of t
+m17 answerable    7s verdict              The library does not contain an answer to that.
+Wide character in printf at gate.pl line 86.
+m18 answerable   10s SHOWN                The most common areas affected by anaphylaxis include the skin (80–90%
+m19 answerable    7s SHOWN                - Use fine-tipped tweezers to grasp the tick as close to the skin's su
+m20 answerable    5s verdict              The library does not contain an answer to that.
+m21 answerable   17s verdict              The library does not contain an answer to that.
+m22 answerable    6s verdict              The library does not contain an answer to that.
+m23 answerable   19s form                 The library does not contain an answer to that.
+m24 answerable    8s SHOWN                The hallmarks of dehydration include thirst and neurological changes s
+m25 answerable    6s SHOWN                Symptoms include headache, confusion, fatigue, stomach illness, dizzin
+m26 answerable    5s SHOWN                Treatment involves supplemental oxygen, diuretics, and treating the un
+m27 answerable    6s verdict              The library does not contain an answer to that.
+m28 answerable    6s SHOWN                Classic signs of infection are redness, warmth, swelling, odor, and pa
+m29 answerable    9s SHOWN                - Perform compression-only CPR (chest compressions hands-only or cardi
+m30 answerable    8s evidence-not-quoted  The library does not contain an answer to that.
+m31 answerable    7s SHOWN                Tylenol is a brand of drugs advertised for reducing pain, reducing fev
+m32 answerable    6s SHOWN                The recommended maximum daily dose for healthy adults is 4 grams.
+m33 answerable    7s SHOWN                Benadryl is a brand of antihistamine medications used to treat allergi
+m34 answerable    8s verdict              The library does not contain an answer to that.
+m35 answerable    8s verdict              The library does not contain an answer to that.
+m36 answerable    8s SHOWN                Immediately remove the person from the exposure without endangering fu
+m37 answerable    6s SHOWN                The initial symptoms of acute carbon monoxide poisoning include headac
+m38 answerable    6s verdict              The library does not contain an answer to that.
+m39 answerable    7s SHOWN                Trench foot is a medical condition caused by prolonged exposure of the
+m40 answerable    7s verdict              The library does not contain an answer to that.
+m41 absent        5s verdict              The library does not contain an answer to that.
+m42 absent        7s verdict              The library does not contain an answer to that.
+m43 absent       19s verdict              The library does not contain an answer to that.
+w01 answerable    7s verdict              The library does not contain an answer to that.
+w02 answerable    6s verdict              The library does not contain an answer to that.
+w03 answerable    5s evidence-short       The library does not contain an answer to that.
+w04 answerable    6s SHOWN                Solar water disinfection, or SODIS, is a method to disinfect water usi
+w05 answerable    6s verdict              The library does not contain an answer to that.
+w06 answerable    6s verdict              The library does not contain an answer to that.
+w07 answerable    8s SHOWN                Yes, you can use your body to melt snow for drinking water without red
+w08 answerable    6s SHOWN                If you are in a survival situation, there is no "safe amount" of seawa
+w09 answerable    8s SHOWN                For an "average" person, the absolute minimum requirement is estimated
+w10 answerable    7s SHOWN                Use 2 liter (2 quart) soda bottles to store and carry water, as they s
+w11 absent        5s verdict              The library does not contain an answer to that.
+w12 absent        5s verdict              The library does not contain an answer to that.
+w13 answerable    7s SHOWN                Progressively finer levels of filtration, including ultrafiltration, n
+f01 answerable    7s verdict              The library does not contain an answer to that.
+f02 answerable    5s verdict              The library does not contain an answer to that.
+f03 answerable    8s SHOWN                Good tinder can be made from tiny twigs, dry pine branches, cedar or b
+f04 answerable   14s verdict              The library does not contain an answer to that.
+f05 answerable    7s evidence-not-quoted  The library does not contain an answer to that.
+f06 absent        6s verdict              The library does not contain an answer to that.
+f07 answerable    6s verdict              The library does not contain an answer to that.
+s01 answerable    6s SHOWN                The debris hut is relatively easy to assemble and can be made semi qui
+s02 answerable    6s verdict              The library does not contain an answer to that.
+s03 answerable    5s verdict              The library does not contain an answer to that.
+s04 answerable    8s verdict              The library does not contain an answer to that.
+s05 answerable    6s SHOWN                - Pitch your shelter in an area with good drainage.
+n01 answerable    6s verdict              The library does not contain an answer to that.
+n02 answerable    8s SHOWN                Line up two objects pointing towards where the star is currently at. W
+n03 answerable   10s evidence-not-quoted  The library does not contain an answer to that.
+n04 answerable    8s verdict              The library does not contain an answer to that.
+n05 answerable    6s verdict              The library does not contain an answer to that.
+n06 absent        5s verdict              The library does not contain an answer to that.
+g01 answerable    9s SHOWN                Signal at "search & rescue" aircraft as they are looking for you, as i
+g02 answerable    8s verdict              The library does not contain an answer to that.
+g03 answerable    6s verdict              The library does not contain an answer to that.
+g04 answerable    6s verdict              The library does not contain an answer to that.
+o01 answerable    9s SHOWN                If you have the slightest doubt about a plant's edibility, apply the U
+o02 answerable    6s verdict              The library does not contain an answer to that.
+o03 answerable    6s verdict              The library does not contain an answer to that.
+o04 answerable    6s verdict              The library does not contain an answer to that.
+o05 absent        8s SHOWN                Those look like oyster mushrooms, which are a common edible known for 
+o06 answerable    6s verdict              The library does not contain an answer to that.
+o07 answerable    6s verdict              The library does not contain an answer to that.
+o08 answerable    7s SHOWN                Use a multi-functional tool that has a razor blade to cut open the bel
+o09 answerable    7s SHOWN                Yes, huckleberries are among the most successful and productive crops.
+o10 answerable    6s SHOWN                Black, brown, and green are typically colors of insects that are safe 
+h01 answerable    8s verdict              The library does not contain an answer to that.
+h02 answerable   11s verdict              The library does not contain an answer to that.
+h03 answerable    7s SHOWN                Field dress the deer as soon as possible while maintaining your own sa
+h04 absent        6s verdict              The library does not contain an answer to that.
+h05 answerable    7s SHOWN                Elk hunting season is from August 2026 to February 2027.
+h06 answerable    6s verdict              The library does not contain an answer to that.
+p01 answerable   10s verdict              The library does not contain an answer to that.
+p02 answerable    6s SHOWN                Add 2 tablespoons of bottled lemon juice or 1/2 teaspoon of citric aci
+p03 answerable    6s verdict              The library does not contain an answer to that.
+p04 answerable    7s verdict              The library does not contain an answer to that.
+p05 answerable    6s verdict              The library does not contain an answer to that.
+p06 answerable    6s SHOWN                - Trim off all the fat and make proper jerky.
+p07 answerable    7s SHOWN                Add one part high-quality pork fat to three or four parts venison befo
+p08 answerable    7s verdict              The library does not contain an answer to that.
+p09 absent        6s verdict              The library does not contain an answer to that.
+p10 answerable    7s verdict              The library does not contain an answer to that.
+v01 answerable    5s verdict              The library does not contain an answer to that.
+v02 answerable    6s verdict              The library does not contain an answer to that.
+v03 answerable    6s verdict              The library does not contain an answer to that.
+v04 answerable   17s verdict              The library does not contain an answer to that.
+v05 answerable    6s evidence-not-quoted  The library does not contain an answer to that.
+v06 answerable    8s SHOWN                If you use water instead of anti-freeze mix, the engine will take long
+v07 absent        6s verdict              The library does not contain an answer to that.
+v08 absent        7s verdict              The library does not contain an answer to that.
+v09 answerable    8s SHOWN                If the check engine light lights up, it means you have a problem with 
+v10 answerable    7s verdict              The library does not contain an answer to that.
+e01 answerable    6s verdict              The library does not contain an answer to that.
+e02 answerable    6s verdict              The library does not contain an answer to that.
+e03 absent        6s verdict              The library does not contain an answer to that.
+e04 answerable   10s verdict              The library does not contain an answer to that.
+e05 answerable    6s verdict              The library does not contain an answer to that.
+r01 answerable    7s SHOWN                The NOAA Weather Radio in Boise, ID has the frequency 162.550 MHz.
+r02 answerable    6s SHOWN                McCall, ID on 162.475 MHz (WWF58) covers Valley County, Idaho.
+r03 answerable    8s SHOWN                You do need to obtain a license to transmit.
+r04 answerable    7s verdict              The library does not contain an answer to that.
+r05 answerable    8s SHOWN                Yes, it is legal for a ham to transmit on any frequency, licensed or n
+r06 answerable   18s verdict              The library does not contain an answer to that.
+r07 absent       10s verdict              The library does not contain an answer to that.
+r08 absent        7s SHOWN                To perform a factory reset, press and hold the "enter" button and then
+k01 answerable   12s SHOWN                - Wrap the free end of the taut line around whatever you're circling w
+k02 answerable    9s verdict              The library does not contain an answer to that.
+k03 answerable    7s verdict              The library does not contain an answer to that.
+k04 answerable    6s verdict              The library does not contain an answer to that.
+k05 answerable    8s verdict              The library does not contain an answer to that.
+x01 answerable    6s SHOWN                Seek shelter in a house if you are caught in a lightning storm.
+x02 answerable    7s SHOWN                Should you run; fight for your life; climb a tree; or do nothing?
+x03 answerable   10s evidence-not-quoted  The library does not contain an answer to that.
+x04 answerable    6s verdict              The library does not contain an answer to that.
+x05 answerable    7s verdict              The library does not contain an answer to that.
+x06 answerable    6s evidence-short       The library does not contain an answer to that.
+x07 absent        4s verdict              The library does not contain an answer to that.
+y01 answerable    6s verdict              The library does not contain an answer to that.
+y02 answerable   16s SHOWN                A first aid kit should contain items such as adhesive bandages and tap
+y03 answerable    8s SHOWN                5 lbs of peanut butter, which is two normal sized Jiff containers and 
+y04 answerable   19s form                 The library does not contain an answer to that.
+y05 answerable    6s verdict              The library does not contain an answer to that.
+y06 answerable    5s verdict              The library does not contain an answer to that.
+y07 answerable    6s verdict              The library does not contain an answer to that.
+y08 absent        5s verdict              The library does not contain an answer to that.
+y09 absent        6s verdict              The library does not contain an answer to that.
+y10 absent        6s verdict              The library does not contain an answer to that.
+y11 absent        7s verdict              The library does not contain an answer to that.
+y12 absent        4s verdict              The library does not contain an answer to that.
+y13 absent        7s verdict              The library does not contain an answer to that.
+d01 answerable    8s SHOWN                - Introduce predatory insects or manually remove the aphids in smaller
+d02 answerable    7s SHOWN                Midsummer is probably about the latest time you can usefully plant out
+d03 answerable    6s verdict              The library does not contain an answer to that.
+d04 answerable   19s form                 The library does not contain an answer to that.
+exit=0

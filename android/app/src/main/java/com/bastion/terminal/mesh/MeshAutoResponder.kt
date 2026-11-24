@@ -299,29 +299,43 @@ object MeshAutoResponder {
         retriever: Retriever, question: String, openQuestion: String? = null, openAnswer: String? = null,
         model: suspend () -> com.bastion.terminal.ai.LocalModel,
     ): String? {
-        // MESH scope: only packs the owner allowed to be answered over the radio.
-        val passages = retriever.retrieve(question, Scope.MESH, context = openQuestion)
-        if (passages.isEmpty()) return null
+        // MESH scope: only packs the owner allowed to be answered over the radio. The search on the
+        // asker's own words runs first (no model needed): nothing found means no answer, and it
+        // tells whether this continues the open topic.
+        val raw = retriever.retrieve(question, Scope.MESH, context = openQuestion)
+        if (raw.isEmpty()) return null
         val followUp = openQuestion != null && retriever.lastContinuedTopic
-        val prompt = buildString {
-            if (followUp) {
-                appendLine("EARLIER QUESTION: $openQuestion")
-                appendLine("EARLIER ANSWER: ${openAnswer.orEmpty()}")
-                appendLine()
-            }
-            append(Grounding.userPrompt(question, passages))
-        }
-        val sb = StringBuilder()
+        // A follow-up ("what about kids?") takes its subject from the open topic.
+        val asked = if (followUp) "$openQuestion. $question" else question
         val m = model()
-        m.generate(SYSTEM_INSTRUCTION, prompt, MAX_TOKENS).collect { sb.append(it) }
-        val draft = sb.toString().trim().takeUnless { it.isBlank() || Grounding.checkCitations(it, passages.size).isNoAnswer }
-            ?: return null
-        // Name the source the answer was read from. A small model answers the sources'
-        // question when it shares words with the asker's ("can I weld with a car battery" got
-        // "disconnect the battery when welding on a car": seen from a real phone 2026-11-23).
-        // Stricter instructions did not stop it, and a second pass asking the model to judge
-        // its own answer threw out good answers while keeping that one (measured on emulator).
-        // With the source named, the reader can see when the answer is about something else.
+        // Checked answer (CheckedAnswer.twoPaths): restated search and raw search must both reach an
+        // answer that passes the code checks and the answer judge. This replaced naming the source
+        // as the only guard: "can I weld with a car battery" was answered with "disconnect the
+        // battery when welding ON a car" (seen from a real phone 2026-11-23); it now gets no answer.
+        val result = com.bastion.terminal.ai.CheckedAnswer.twoPaths(
+            m, asked,
+            search = { wording, restated -> if (restated) retriever.retrieve(wording, Scope.MESH) else raw },
+            write = { passages ->
+                val prompt = buildString {
+                    if (followUp) {
+                        appendLine("EARLIER QUESTION: $openQuestion")
+                        appendLine("EARLIER ANSWER: ${openAnswer.orEmpty()}")
+                        appendLine()
+                    }
+                    append(Grounding.userPrompt(question, passages))
+                }
+                val sb = StringBuilder()
+                m.generate(SYSTEM_INSTRUCTION, prompt, MAX_TOKENS).collect { sb.append(it) }
+                sb.toString()
+            },
+        )
+        if (!result.isAnswer) {
+            Log.i(TAG, "no radio answer: stage=${result.stage} failed=${result.failed} missing=${result.missing}")
+            return null
+        }
+        val draft = result.shown
+        val passages = result.passages
+        // Name the source the answer was read from, so the reader can open the same one.
         val top = passages.first()
         val source = (if (top.zimPath != null) top.title.substringAfter(": ") else top.title).trim().let {
             if (it.length > SOURCE_CHARS) it.take(SOURCE_CHARS - 1).trimEnd() + "…" else it

@@ -105,7 +105,10 @@ class Retriever internal constructor(
         hits.forEachIndexed { i, h ->
             val article = zim.article(h.zim, h.path) ?: return@forEachIndexed
             val zimTitle = zim.infoFor(h.zim)?.title ?: "Offline reference"
-            val text = article.text
+            // Q&A answers start with their vote count on a line of its own ("48", blank line, text):
+            // the model read "48" as "boil for 48 minutes" (measured 2026-11-24). Q&A ZIMs only:
+            // elsewhere a bare number line can be a list step.
+            val text = if (h.zim.contains("stackexchange", ignoreCase = true)) Grounding.stripVoteCounts(article.text) else article.text
             var prevHeading: String? = "0000"
             for (ch in Chunker.chunk(text)) {
                 val body = text.substring(ch.start, ch.end).trim()

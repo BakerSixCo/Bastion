@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.bastion.terminal.ai.AiState
 import com.bastion.terminal.ai.AskSession
+import com.bastion.terminal.ai.CheckedAnswer
 import com.bastion.terminal.kiwix.ZimLibrary
 import com.bastion.terminal.kiwix.ZimState
 import com.bastion.terminal.ai.GenerationStats
@@ -119,7 +120,7 @@ fun AskScreen(
         }
 
         if (s.answer.isNotEmpty() || s.answerError != null) {
-            item { AnswerCard(s.answer, s.answerError, s.modelLabel, s.stats, s.check, s.generating) }
+            item { AnswerCard(s.answer, s.answerError, s.modelLabel, s.stats, s.check, s.generating, s.withheld, s.stage) }
         }
     }
 }
@@ -193,14 +194,23 @@ private fun AnswerCard(
     stats: GenerationStats?,
     check: Grounding.CitationCheck?,
     generating: Boolean,
+    withheld: CheckedAnswer.Decision?,
+    stage: String,
 ) {
     Card {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text("Local AI answer", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary)
+            if (generating) Text(
+                (stage.ifEmpty { "Starting…" }) + " Answers are checked before they are shown.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             if (answer.isNotEmpty()) Text(answer, style = MaterialTheme.typography.bodyMedium)
+            withheld?.let { Text(withheldReason(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
             if (!generating && check != null) {
                 when {
+                    withheld != null -> Unit
                     check.isNoAnswer -> Text(
                         "The model reports the sources don't answer this.",
                         style = MaterialTheme.typography.bodySmall,
@@ -245,3 +255,13 @@ private fun AnswerCard(
     }
 }
 
+
+/** One plain line on why a written answer was not shown. */
+private fun withheldReason(d: CheckedAnswer.Decision): String = when (d.failed) {
+    CheckedAnswer.Failed.SUBJECT -> "BASTION withheld the model's answer: the sources it used do not mention " +
+        d.missing.joinToString(", ") { "“$it”" } + ", so they are about something else."
+    CheckedAnswer.Failed.NUMBER -> "BASTION withheld the model's answer: it gave a number (" +
+        d.missing.joinToString(", ") + ") that is not in the sources."
+    CheckedAnswer.Failed.OFF_TARGET -> "BASTION withheld the model's answer: on checking, it answers a different question than the one asked."
+    else -> ""
+}

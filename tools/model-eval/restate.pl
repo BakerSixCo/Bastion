@@ -6,7 +6,8 @@
 use strict; use warnings; use JSON::PP; use HTTP::Tiny; use Time::HiRes qw(time); $| = 1;
 my ($tag, $port) = @ARGV; $port ||= 8089;
 my $j = JSON::PP->new->utf8->canonical; my $http = HTTP::Tiny->new(timeout => 900);
-open my $h, '<:raw', 'evalset.json' or die; my $set = do { local $/; $j->decode(<$h>) }; close $h;
+# EVALSET=questions-v2.json IDS=. for the larger set.
+open my $h, '<:raw', ($ENV{EVALSET} || 'evalset.json') or die; my $set = do { local $/; $j->decode(<$h>) }; close $h;
 
 my $schema = {
     type => 'object',
@@ -47,7 +48,7 @@ P
 
 my %plans;
 for my $c (@{$set->{cases}}) {
-    next unless $c->{id} =~ /^r/;
+    next unless $c->{id} =~ ($ENV{IDS} ? qr/$ENV{IDS}/ : qr/^r/);
     my $t0 = time;
     my $res = $http->post("http://127.0.0.1:$port/v1/chat/completions", { headers => { 'Content-Type' => 'application/json' },
         content => $j->encode({ messages => [{ role => 'system', content => $system }, { role => 'user', content => "Question: $c->{question}" }],

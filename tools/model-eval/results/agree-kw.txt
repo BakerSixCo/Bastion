@@ -1,0 +1,118 @@
+m01 answerable passage=yes doc=yes | how do I stop severe bleeding from a leg wound
+m03 answerable passage=NO  doc=NO  | where do I put a tourniquet
+m04 answerable passage=yes doc=yes | how do I treat a sucking chest wound
+m05 answerable passage=yes doc=yes | what are the symptoms of hypothermia
+m07 answerable passage=yes doc=yes | how do you treat frostbite
+m09 answerable passage=yes doc=yes | what are the signs of heat stroke
+m10 answerable passage=yes doc=yes | how do I treat heat exhaustion
+m11 answerable passage=yes doc=yes | how do I treat a burn
+m12 answerable passage=yes doc=yes | how do I treat a rattlesnake bite
+m13 answerable passage=NO  doc=yes | should I cut and suck the venom out of a snake bite
+m14 answerable passage=yes doc=yes | how do I splint a broken leg
+m15 answerable passage=yes doc=yes | how do I tell if an ankle is broken or sprained
+m16 answerable passage=yes doc=yes | what are the signs of a concussion
+m17 answerable passage=yes doc=yes | how do I treat shock
+m18 answerable passage=yes doc=yes | what are the signs of anaphylaxis
+m19 answerable passage=yes doc=yes | how do I remove a tick
+m20 answerable passage=yes doc=yes | what are the symptoms of lyme disease
+m22 answerable passage=yes doc=yes | how do I treat diarrhea and dehydration in the field
+m23 answerable passage=yes doc=yes | how do I make oral rehydration solution
+m24 answerable passage=yes doc=yes | what are the signs of dehydration
+m25 answerable passage=yes doc=yes | what are the symptoms of altitude sickness
+m26 answerable passage=yes doc=yes | how do I treat high altitude pulmonary edema
+m27 answerable passage=yes doc=yes | how do I clean a wound in the field
+m28 answerable passage=NO  doc=NO  | what are signs a wound is infected
+m29 answerable passage=NO  doc=NO  | how do I do CPR on an adult
+m30 answerable passage=NO  doc=NO  | what is ibuprofen used for
+m31 answerable passage=NO  doc=NO  | what is tylenol for
+m32 answerable passage=yes doc=yes | what is the maximum daily dose of paracetamol for an adult
+m33 answerable passage=yes doc=yes | what is benadryl used for
+m34 answerable passage=yes doc=yes | how do I treat a bee sting
+m35 answerable passage=NO  doc=NO  | how do I treat a blister on my foot while hiking
+m36 answerable passage=yes doc=yes | how do I treat carbon monoxide poisoning
+m37 answerable passage=yes doc=yes | what are the symptoms of carbon monoxide poisoning
+m38 answerable passage=yes doc=yes | how do I treat a dislocated shoulder
+m39 answerable passage=yes doc=yes | what is trench foot
+m40 answerable passage=yes doc=yes | how do I treat snow blindness
+w03 answerable passage=NO  doc=NO  | how long do I boil water to make it safe
+w04 answerable passage=yes doc=yes | how do I disinfect water with sunlight
+w05 answerable passage=NO  doc=NO  | how do I find water in the desert
+w06 answerable passage=NO  doc=yes | how do I make a solar still
+w07 answerable passage=NO  doc=NO  | can I drink melted snow
+w08 answerable passage=yes doc=yes | is it safe to drink sea water
+w09 answerable passage=NO  doc=NO  | how much water does a person need per day
+w10 answerable passage=NO  doc=NO  | how do I store water long term for emergencies
+w11 absent     passage=yes doc=yes | can I drink water from a car radiator
+w13 answerable passage=NO  doc=yes | does a water filter remove viruses
+f01 answerable passage=NO  doc=NO  | how do I build a fire in the rain
+f02 answerable passage=NO  doc=NO  | how do I start a fire without matches
+f03 answerable passage=yes doc=yes | what makes good tinder
+f04 answerable passage=NO  doc=yes | how do I make a bow drill
+f05 answerable passage=yes doc=yes | can I start a fire with a battery and steel wool
+f07 answerable passage=yes doc=yes | what is a dakota fire hole
+s01 answerable passage=yes doc=yes | how do I build a debris shelter
+s02 answerable passage=yes doc=yes | how do I build a snow cave
+s03 answerable passage=NO  doc=NO  | where should I not set up camp
+s04 answerable passage=NO  doc=NO  | how do I stay warm sleeping in the cold without a sleeping b
+s05 answerable passage=yes doc=yes | how do I pitch a tarp shelter
+n01 answerable passage=yes doc=yes | how do I find north without a compass
+n02 answerable passage=NO  doc=yes | how do I find the north star
+n03 answerable passage=yes doc=yes | how do I use a watch to find direction
+n04 answerable passage=NO  doc=yes | what should I do if I get lost in the woods
+n05 answerable passage=yes doc=yes | what is magnetic declination
+g01 answerable passage=yes doc=yes | how do I signal a rescue aircraft
+g02 answerable passage=yes doc=yes | how do I use a signal mirror
+g03 answerable passage=yes doc=yes | what is the international distress signal
+g04 answerable passage=yes doc=yes | what are ground to air emergency signals
+o01 answerable passage=yes doc=yes | how do I do the universal edibility test
+o02 answerable passage=yes doc=yes | are cattails edible
+o03 answerable passage=NO  doc=NO  | how do I identify morel mushrooms
+o04 answerable passage=NO  doc=NO  | how do I tell a true morel from a false morel
+o08 answerable passage=NO  doc=NO  | how do I clean a fish
+o09 answerable passage=NO  doc=yes | are huckleberries edible
+o10 answerable passage=NO  doc=yes | which insects are safe to eat
+h01 answerable passage=yes doc=yes | what is the bag limit for trout in Idaho
+h02 answerable passage=NO  doc=yes | do I need a hunting license in Idaho
+h03 answerable passage=yes doc=yes | how do I field dress a deer
+h05 answerable passage=NO  doc=yes | when is elk season in Idaho
+h06 answerable passage=NO  doc=NO  | how do I keep meat from spoiling in the backcountry
+p02 answerable passage=NO  doc=yes | how much lemon juice do I add to a quart of tomatoes when ca
+p05 answerable passage=yes doc=yes | how do I adjust canning time for high altitude
+p06 answerable passage=NO  doc=NO  | how do I make jerky
+p07 answerable passage=yes doc=yes | how do I can venison
+v01 answerable passage=yes doc=yes | how do I jump start a car
+v02 answerable passage=NO  doc=NO  | truck just clicks when i turn the key
+v03 answerable passage=NO  doc=yes | why is my car overheating
+v04 answerable passage=NO  doc=NO  | how do I change a flat tire
+v06 answerable passage=NO  doc=NO  | can I put water in the radiator instead of coolant
+v07 absent     passage=NO  doc=NO  | can I weld with a car battery
+v09 answerable passage=NO  doc=NO  | what does the check engine light mean
+v10 answerable passage=NO  doc=NO  | how do I check the oil level
+e02 answerable passage=NO  doc=NO  | can I charge my phone with a car battery
+e04 answerable passage=yes doc=yes | how do solar panels charge a battery
+e05 answerable passage=yes doc=yes | what size inverter do I need
+r01 answerable passage=yes doc=yes | what frequency is the NOAA weather radio in Boise
+r02 answerable passage=yes doc=yes | what NOAA weather radio station covers Valley county Idaho
+r03 answerable passage=yes doc=yes | do I need a license to use a ham radio
+r05 answerable passage=yes doc=yes | can I use a ham radio in an emergency without a license
+k01 answerable passage=yes doc=yes | how do I tie a bowline knot
+k02 answerable passage=NO  doc=NO  | how do I tie a clove hitch
+k03 answerable passage=NO  doc=yes | what knot joins two ropes together
+k04 answerable passage=NO  doc=yes | how do I sharpen a knife
+k05 answerable passage=yes doc=yes | how do I tie a taut line hitch
+x01 answerable passage=yes doc=yes | what should I do if caught in a lightning storm
+x02 answerable passage=NO  doc=NO  | what do I do if I meet a bear
+x03 answerable passage=yes doc=yes | how do I cross a river safely
+x04 answerable passage=NO  doc=NO  | what should I do in an avalanche
+x05 answerable passage=NO  doc=NO  | how do I store food from bears when camping
+x06 answerable passage=NO  doc=NO  | what should I do if I meet a mountain lion
+y02 answerable passage=NO  doc=NO  | what should be in a first aid kit
+y03 answerable passage=yes doc=yes | how much food should I store for an emergency
+y04 answerable passage=NO  doc=NO  | how do I make an emergency toilet
+y05 answerable passage=NO  doc=NO  | how do I dig a latrine
+y07 answerable passage=NO  doc=NO  | what should I do after an earthquake
+y12 absent     passage=yes doc=yes | what is the phone number of the Boise weather radio station
+d01 answerable passage=NO  doc=NO  | how do I get rid of aphids
+d02 answerable passage=NO  doc=NO  | when should I plant potatoes
+d03 answerable passage=NO  doc=NO  | how do I save tomato seeds
+d04 answerable passage=NO  doc=NO  | how do I make compost

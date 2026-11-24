@@ -169,6 +169,20 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   enforces this — extend it, never weaken it. Android also adds
   `ACCESS_LOCAL_NETWORK` implicitly on Android 17.
 
+## Checked answers (owner requirement 2026-11-24: never show a wrong answer)
+
+- Every AI answer shown in Ask or sent by radio goes through `ai/CheckedAnswer.twoPaths`:
+  restate (`ai/QueryPlan`) → restated search → answer → code checks + answer judge → raw
+  search → answer → checks + judge → show only if both paths pass. Anything else shows
+  exactly `Grounding.NO_ANSWER`. Never stream or send an answer before it is checked.
+- The checks are code, not the model's say-so: subject words of the question must be in the
+  cited sources (`CheckedAnswer.check`, with `FILLER` words ignored), every number must be in
+  the sources. The model is only trusted for the narrow "does this answer respond to this
+  question" judgement, which fails closed.
+- Changes to search, prompts or checks are measured on `tools/model-eval/questions-v2.json`
+  (on device: `CheckedAnswerEvalTest`) and read, not only word-scored. Add questions for new
+  failure modes; never loosen a check to raise the answer count without measuring wrong answers.
+
 ## Packs (Library)
 
 - A pack is a named set of documents with a kind (`data/PackTemplates`:

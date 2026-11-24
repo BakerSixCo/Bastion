@@ -29,6 +29,17 @@ interface LocalModel : AutoCloseable {
     /** Streams answer text chunks for a single grounded turn. */
     fun generate(systemInstruction: String, userPrompt: String, maxOutputTokens: Int): Flow<String>
 
+    /**
+     * One reply forced into [jsonSchema] (the runtime only lets the model produce text that
+     * fits it). The default just collects [generate], for test doubles and runtimes without
+     * constrained output; callers must still treat an unparseable reply as "no answer".
+     */
+    suspend fun generateJson(systemInstruction: String, userPrompt: String, jsonSchema: String, maxOutputTokens: Int): String {
+        val sb = StringBuilder()
+        generate(systemInstruction, userPrompt, maxOutputTokens).collect { sb.append(it) }
+        return sb.toString()
+    }
+
     /** Stats for the most recent [generate] call, once it has finished. */
     fun lastStats(): GenerationStats?
 
