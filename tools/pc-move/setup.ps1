@@ -18,7 +18,9 @@ if ($env:USERNAME -ne 'ccie5') {
 }
 
 function Install-App($id) {
-    if (winget list --id $id -e 2>$null | Select-String -SimpleMatch $id) { Write-Host "already installed: $id"; return }
+    # --accept-source-agreements here too: on a fresh PC, winget's first run asks a yes/no
+    # question, and with the output piped that question is invisible and waits forever.
+    if (winget list --id $id -e --accept-source-agreements --disable-interactivity 2>$null | Select-String -SimpleMatch $id) { Write-Host "already installed: $id"; return }
     Write-Host "installing $id"
     winget install --id $id -e --accept-source-agreements --accept-package-agreements
 }
