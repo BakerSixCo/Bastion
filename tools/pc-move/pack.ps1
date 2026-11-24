@@ -27,7 +27,8 @@ if ($Dest.StartsWith('\\') -and -not (Test-Path $Dest)) {
     net use $Dest /persistent:no
     if (-not (Test-Path $Dest)) { throw "Cannot reach $Dest. Check both PCs are on the same network and the share commands were run on the new PC." }
 }
-if (-not $ListOnly) { New-Item -ItemType Directory -Force $Dest | Out-Null }
+# A share's top folder already exists and cannot be "created" (New-Item calls that path illegal).
+if (-not $ListOnly -and -not (Test-Path $Dest)) { New-Item -ItemType Directory -Force $Dest | Out-Null }
 
 $total = 0L
 function Copy-Tree($what, $from, $to, $skipDirs = @(), $skipFiles = @()) {
