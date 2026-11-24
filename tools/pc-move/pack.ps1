@@ -87,5 +87,5 @@ if (-not $ListOnly) {
 Write-Host ''
 Write-Host ("Total: {0:N1} GB." -f ($total / 1GB))
 if ($ListOnly) { Write-Host 'Nothing was copied (list only).' }
-else { Write-Host 'Done. On the new PC, open PowerShell and run:  C:\bastion-move\setup.ps1' }
+else { Write-Host 'Done. On the new PC, open PowerShell and run:  powershell -ExecutionPolicy Bypass -File C:\bastion-move\setup.ps1' }
 $global:LASTEXITCODE = 0
