@@ -1,6 +1,6 @@
 {
   "id": "insect-sting-bite-care",
-  "kind": "fact",
+  "kind": "protocol",
   "title": "Insect stings and bites: first aid",
   "asks": [
     "bee sting what do I do",
@@ -12,17 +12,17 @@
     "bug bite first aid",
     "got stung by a hornet",
     "bee sting treatmnt",
-    "multiple stings when to worry",
     "tick on me how to pull it off"
   ],
   "answer": [
     "First watch for a severe allergic reaction (anaphylaxis): difficulty breathing, dizziness, swelling of the face or throat, or a widespread rash. If any of these appear, seek immediate medical attention.",
+    "For a severe allergic reaction, if an epinephrine (adrenaline) auto-injector is available: help the person use it, or give it yourself if you are allowed and trained, and call for medical help. For the signs and the full steps, ask for the severe allergic reaction (anaphylaxis) card.",
+    "Fire ants: move away from the ants, and remove any clothing or jewelry that may have ants trapped in it, because they can keep stinging.",
     "Stinger left in the skin (bees, wasps): remove it as quickly as possible. Gently scrape it off with a blunt edge such as a credit card or your fingernail, and avoid squeezing the venom sac.",
     "Wash the area with mild soap and water. Be gentle.",
     "Apply a cold compress, or an ice pack wrapped in a cloth, for 10 to 15 minutes at a time, several times a day, for pain, swelling and itching.",
     "For itching and inflammation, over-the-counter creams, ointments or sprays with hydrocortisone, calamine or antihistamine can help. If itching or swelling persists, an over-the-counter oral antihistamine can be taken. Follow the instructions on the package.",
     "Do not scratch the bite: scratching can cause further irritation and infection.",
-    "Fire ants: move away from the ants, and remove any clothing or jewelry that may have ants trapped in it, because they can keep stinging.",
     "Tick: grasp it with fine-tipped tweezers as close to the skin as possible and pull upward gently and steadily with even pressure. Do not twist or jerk it, and avoid squeezing or crushing its body. Then clean the bite area thoroughly with soap and water or an antiseptic."
   ],
   "warnings": [
@@ -48,6 +48,10 @@
     { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
       "text": "Monitor for severe reactions: In rare cases, insect bites can cause severe allergic reactions, known as anaphylaxis. If you experience symptoms such as difficulty breathing, dizziness, swelling of the face or throat, or a widespread rash, seek immediate medical attention." },
     { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "The treatment of anaphylactic shock is urgent and time sensitive. Immediate actions include calling for medical help and, if available, using the casualty's epinephrine auto-injector." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If anaphylactic shock is suspected, immediate medical assistance is crucial. The primary treatment involves administering epinephrine (adrenaline). If an epinephrine auto-injector is available, assist the affected individual in using it, or administer it yourself if you are allowed and trained." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
       "text": "If the insect type is unknown or if the Service member is experiencing severe or worsening symptoms, it is best to consult a health care professional for proper evaluation and guidance." },
     { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
       "text": "Move away from the area where the ants are present to avoid further stings. • Remove any clothing or jewelry that may have ants trapped in them, as they can continue to sting." },
@@ -56,13 +60,14 @@
     { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
       "text": "If in an area where these diseases are prevalent or if you develop symptoms such as fever, rash, joint pain, or flu-like symptoms after a tick bite, it is crucial to consult a health care professional for proper evaluation, diagnosis, and treatment." }
   ],
+  "conflict": "No disagreement found between sources. Added in revision: the auto-injector line comes from ATP 4-02.11's anaphylactic shock paragraphs (7-32 and 7-35), not from its insect section (16-48), which says only to 'seek immediate medical attention'; WHO-ICRC Basic Emergency Care 2018 likewise says to give intramuscular adrenaline as soon as possible for a severe allergic reaction with difficulty breathing. Dose, repeat doses and positioning are on the anaphylaxis card, with their source disagreements. The answer is now ordered steps (kind 'protocol'); the fire-ant line was moved up because ATP 4-02.11 para 16-76 puts moving away from the ants first. MULTIPLE STINGS: the ask 'multiple stings when to worry' was dropped. The kit says only that fire ants 'may attack simultaneously, leading to multiple stings' (ATP 4-02.11 para 16-76) and gives no guidance on how many stings are dangerous.",
   "review": {
-    "verdict": "fail",
-    "notes": "Problems: (1) Point (d): A1 tells the reader only to 'seek immediate medical attention' for anaphylaxis. The single most important action, using an epinephrine auto-injector if one is available, is missing; ATP 4-02.11 7-35: 'If an epinephrine auto-injector is available, assist the affected individual in using it, or administer it yourself if you are allowed and trained.' (ATP's prevention list also says people allergic to stings should 'be prepared with the proper medication'.) Fix: add that line and a pointer to the anaphylaxis card. (2) Point (b): the answer is ordered steps (watch for anaphylaxis, remove the stinger, wash, cold compress, creams, antihistamine); kind should be 'protocol'. Confirmed: ATP 4-02.11 16-43 onward (stinger scraping, wash, cold compress 10-15 min, OTC creams, oral antihistamine, no scratching, anaphylaxis signs, unknown insect or worsening = professional, fire ants, tick removal and cleaning, tick-borne disease symptoms). No PDF junk. Minor: 'multiple stings when to worry' is claimed but not addressed; no kit quote found on multi-sting toxicity, so either drop that ask or answer it only with W2's 'severe or worsening symptoms'.",
-    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+    "verdict": "",
+    "notes": "previous review: (verdict fail, by claude-opus-5-5 (xhigh), independent review 2026-11-24) Problems: (1) Point (d): A1 tells the reader only to 'seek immediate medical attention' for anaphylaxis. The single most important action, using an epinephrine auto-injector if one is available, is missing; ATP 4-02.11 7-35: 'If an epinephrine auto-injector is available, assist the affected individual in using it, or administer it yourself if you are allowed and trained.' (ATP's prevention list also says people allergic to stings should 'be prepared with the proper medication'.) Fix: add that line and a pointer to the anaphylaxis card. (2) Point (b): the answer is ordered steps (watch for anaphylaxis, remove the stinger, wash, cold compress, creams, antihistamine); kind should be 'protocol'. Confirmed: ATP 4-02.11 16-43 onward (stinger scraping, wash, cold compress 10-15 min, OTC creams, oral antihistamine, no scratching, anaphylaxis signs, unknown insect or worsening = professional, fire ants, tick removal and cleaning, tick-borne disease symptoms). No PDF junk. Minor: 'multiple stings when to worry' is claimed but not addressed; no kit quote found on multi-sting toxicity, so either drop that ask or answer it only with W2's 'severe or worsening symptoms'.",
+    "by": ""
   },
   "status": "draft",
-  "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "claude-opus-5-5 (xhigh)",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review",
+  "reviewed_by": "",
   "approved_by": ""
 }
