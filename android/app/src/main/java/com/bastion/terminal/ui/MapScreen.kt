@@ -1,5 +1,8 @@
 package com.bastion.terminal.ui
 
+import com.bastion.terminal.map.Guidance
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.DisposableEffect
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.LruCache
@@ -302,11 +305,13 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     }
     // Routing.
     var picked by remember { mutableStateOf<Picked?>(null) }
-    var start by remember { mutableStateOf<Pair<Double, Double>?>(null) }
-    var dest by remember { mutableStateOf<Pair<Double, Double>?>(null) }
-    var destName by remember { mutableStateOf("") }
-    var route by remember { mutableStateOf<TerrainRoute.Route?>(null) }
-    var routeNote by remember { mutableStateOf("") }
+    // The route and turn-by-turn live in RouteSession so they carry on while another tab is open.
+    val rs = remember { RouteSession.get(ctx) }
+    var start by rs::start
+    var dest by rs::dest
+    var destName by rs::destName
+    var route by rs::route
+    var routeNote by rs::routeNote
     var showGoTo by remember { mutableStateOf(false) }
     val pinStore = remember { com.bastion.terminal.map.Pins.get(ctx) }
     val pins by pinStore.pins.collectAsState()
@@ -315,12 +320,15 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     var nearKind by remember { mutableStateOf("") }
     var nearList by remember { mutableStateOf<List<MapPacks.Place>?>(null) }
     var showLegs by remember { mutableStateOf(false) }
-    // Driving: up to three routes over the pack's road network; blocked roads are kept as positions.
-    var drive by remember { mutableStateOf(false) }
-    var vehicle by remember { mutableStateOf(RoadGraph.Vehicle.CAR) }
-    var drives by remember { mutableStateOf<List<RoadGraph.Route>>(emptyList()) }
-    var chosen by remember { mutableStateOf(0) }
-    val blockedAt = remember { mutableStateListOf<Pair<Double, Double>>() }
+    var drive by rs::drive
+    var vehicle by rs::vehicle
+    val drives = rs.drives
+    var chosen by rs::chosen
+    val blockedAt = rs.blockedAt
+    val navigating = rs.navigating
+    val voiceOn = rs.voiceOn
+    val navState = rs.navState
+    LaunchedEffect(rs.planned) { showLegs = false }
 
     fun bearingText(a: Pair<Double, Double>, b: Pair<Double, Double>): String {
         val d = Cot.distanceMeters(a.first, a.second, b.first, b.second)
@@ -328,37 +336,12 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
         return "${Nav.distanceText(d)} at ${String.format(Locale.US, "%03d", brg)}° ${Nav.compass(brg)}"
     }
 
-    fun plan() {
-        val to = dest ?: return
-        val from = start ?: fix?.let { it.lat to it.lon }
-        route = null; drives = emptyList(); chosen = 0
-        if (from == null) { routeNote = "Destination set. No GPS position yet — long-press the map and choose \"Start here\"."; return }
-        if (!store.covers(from.first, from.second)) { routeNote = "The start is off the map. Long-press the map and choose \"Start here\"."; return }
-        if (drive) {
-            if (!store.hasRoads(from.first, from.second)) {
-                routeNote = "No driving roads on the maps here. Rebuild this area's map pack on the PC to add them."; return
-            }
-            routeNote = "Working out driving routes…"
-            scope.launch {
-                val rs = store.drive(from.first, from.second, to.first, to.second, blockedAt.toList(), vehicle = vehicle)
-                drives = rs
-                routeNote = if (rs.isNotEmpty()) "" else
-                    "No driving route found: both ends must be within about 2 km of a road on one map pack, and " +
-                        "the roads must connect" + (if (blockedAt.isNotEmpty()) " around the ${blockedAt.size} blocked road(s)" else "") +
-                        ". Straight line: ${bearingText(from, to)}."
-                showLegs = false
-            }
-            return
-        }
-        routeNote = "Working out the route…"
-        scope.launch {
-            val r = store.routeBetween(from.first, from.second, to.first, to.second)
-            route = r
-            routeNote = if (r != null) "" else
-                "No walking route worked out: the two ends are not on one map with elevation, are too far apart " +
-                    "(over about 40 km), or the ground between is too steep. Straight line: ${bearingText(from, to)}."
-            showLegs = false
-        }
+    fun plan() = rs.plan()
+
+    // While navigating, the map follows the phone.
+    LaunchedEffect(navState) {
+        val f = fix ?: return@LaunchedEffect
+        if (navigating) { cx = Geo.x(f.lon); cy = Geo.y(f.lat); if (zoom < 14) zoom = 15.0.coerceAtMost(maxZoom) }
     }
 
     Box(modifier.fillMaxSize().background(Color(0xFFDDE3DA))) {
@@ -662,8 +645,49 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
             }
         }
 
+        // Turn-by-turn: big next instruction on top, what is left and two large buttons at the bottom.
+        if (navigating) {
+            val s = navState
+            Card(
+                Modifier.align(Alignment.TopCenter).fillMaxWidth().padding(8.dp),
+                colors = androidx.compose.material3.CardDefaults.cardColors(containerColor = Color(0xFF1B5E20), contentColor = Color.White),
+            ) {
+                Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    Text(s?.let { Guidance.arrow(it.next.turn) } ?: "…", fontSize = 56.sp, fontWeight = FontWeight.Bold)
+                    Column {
+                        Text(s?.let { RoadGraph.miles(it.toNext) } ?: "Waiting for GPS…", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                        Text(s?.let { Guidance.instruction(it.next) } ?: "", fontSize = 20.sp)
+                    }
+                }
+            }
+            Card(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(start = 8.dp, end = 8.dp, bottom = 34.dp)) {
+                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    s?.let {
+                        val eta = java.util.Calendar.getInstance().apply { add(java.util.Calendar.SECOND, it.remainingSeconds.toInt()) }
+                        Text(
+                            "${RoadGraph.miles(it.remaining)} · ${RoadGraph.timeText(it.remainingSeconds)} · arrive " +
+                                String.format(Locale.US, "%d:%02d", eta.get(java.util.Calendar.HOUR).let { h -> if (h == 0) 12 else h }, eta.get(java.util.Calendar.MINUTE)),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                        if (it.offRoute > 60) Text("Off the route — rerouting if you keep going.", color = MaterialTheme.colorScheme.error)
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(
+                            onClick = { rs.blockAhead() },
+                            colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = Color(0xFFB71C1C)),
+                            modifier = Modifier.weight(1f).height(56.dp),
+                        ) { Text("Blocked ahead", fontSize = 18.sp) }
+                        OutlinedButton(onClick = { rs.toggleVoice() }, modifier = Modifier.height(56.dp)) {
+                            Text(if (voiceOn) "Voice on" else "Voice off")
+                        }
+                        OutlinedButton(onClick = { rs.endNav() }, modifier = Modifier.height(56.dp)) { Text("End") }
+                    }
+                }
+            }
+        }
+
         // Route card, bottom.
-        if (dest != null || routeNote.isNotBlank()) {
+        if (!navigating && (dest != null || routeNote.isNotBlank())) {
             Card(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(start = 8.dp, end = 8.dp, bottom = 34.dp)) {
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (dest != null) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -709,9 +733,13 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                     if (routeNote.isNotBlank()) Text(routeNote, style = MaterialTheme.typography.bodyMedium)
                     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         if ((!drive && route != null) || (drive && drives.isNotEmpty())) TextButton(onClick = { showLegs = !showLegs }) { Text(if (showLegs) "Hide steps" else "Show steps") }
+                        if (drive && drives.isNotEmpty() && fix != null) Button(onClick = {
+                            rs.startNav()
+                            if (zoom < 15) zoom = 15.0.coerceAtMost(maxZoom)
+                        }) { Text("Go") }
                         if (drive && dest != null && fix != null) TextButton(onClick = { start = null; plan() }) { Text("Reroute from me") }
                         if (blockedAt.isNotEmpty()) TextButton(onClick = { blockedAt.clear(); plan() }) { Text("Unblock (${blockedAt.size})") }
-                        TextButton(onClick = { dest = null; start = null; route = null; drives = emptyList(); routeNote = ""; destName = "" }) { Text("Clear") }
+                        TextButton(onClick = { rs.clear() }) { Text("Clear") }
                     }
                 }
             }

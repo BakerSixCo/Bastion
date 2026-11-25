@@ -44,6 +44,13 @@ fun BastionApp() {
 
     // Open every ZIM in BASTION's reference folders (phone storage and SD card).
     val ctx = LocalContext.current
+    // Turn-by-turn keeps the screen on whichever tab is open.
+    val routeSession = androidx.compose.runtime.remember { RouteSession.get(ctx) }
+    val rootView = androidx.compose.ui.platform.LocalView.current
+    androidx.compose.runtime.DisposableEffect(routeSession.navigating) {
+        rootView.keepScreenOn = routeSession.navigating
+        onDispose { }
+    }
     // Then add the kit's documents (the docs folder, and PDFs inside document bundles) to the library.
     LaunchedEffect(Unit) {
         ZimLibrary.get(ctx).restore()

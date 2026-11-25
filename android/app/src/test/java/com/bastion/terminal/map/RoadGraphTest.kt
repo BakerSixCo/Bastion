@@ -38,6 +38,35 @@ class RoadGraphTest {
         assertEquals(listOf("Main St", "Loop Rd", "North Rd"), r.steps.map { it.name })
     }
 
+    @Test fun turnInstructionsAndGuidance() {
+        val r = turnsGraph().routes(43.6000, -116.2000, 43.6095, -116.1900, count = 1).single()
+        // East on Main St, left (north) onto Loop Rd, which bends west, then left (south) onto North Rd.
+        assertEquals(
+            listOf(RoadGraph.Turn.DEPART, RoadGraph.Turn.LEFT, RoadGraph.Turn.LEFT, RoadGraph.Turn.ARRIVE),
+            r.maneuvers.map { it.turn },
+        )
+        assertEquals(listOf("Main St", "Loop Rd", "North Rd"), r.maneuvers.dropLast(1).map { it.onto })
+        assertEquals(1610.0, r.maneuvers[1].atMeters, 15.0)
+
+        val g = Guidance(r)
+        val s0 = g.update(43.6000, -116.1950)          // a quarter of the way along Main St
+        assertEquals("Turn left onto Loop Rd", Guidance.instruction(s0.next))
+        assertEquals(1208.0, s0.toNext, 15.0)
+        assertTrue(s0.offRoute < 5)
+        // 300 m before the turn at town speed: spoken once, then not again at the same distance.
+        val s1 = g.update(43.6000, -116.18371)
+        val said = g.announcement(s1, 30.0)!!
+        assertTrue(said, said.startsWith("In ") && said.endsWith("turn left onto Loop Rd."))
+        assertEquals(null, g.announcement(s1, 30.0))
+        // 200 m off to the north of Main St: off the route.
+        assertTrue(g.update(43.6018, -116.1950).offRoute > 150)
+        // At the destination.
+        assertTrue(g.update(43.6095, -116.1900).arrived)
+        // "Blocked ahead" point: 100 m further along from the start is on Main St.
+        val (la, lo) = g.pointAhead(0.0, 100.0)
+        assertEquals(43.6000, la, 1e-5); assertTrue(lo > -116.2000)
+    }
+
     @Test fun carsKeepOffRoughTracksButA4x4CanUseThem() {
         // A spot on Ridge Track, 300 m from any other road.
         val car = turnsGraph().routes(43.6000, -116.2000, 43.6050, -116.2000, count = 1, maxOffRoad = 100.0)

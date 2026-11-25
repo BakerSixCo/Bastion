@@ -45,6 +45,18 @@ class LocationSource private constructor(private val app: Context) {
         }
     }
 
+    /** Turn-by-turn needs a fix every second; otherwise every 10 s / 10 m saves battery. */
+    @SuppressLint("MissingPermission")
+    fun fast(on: Boolean) {
+        if (!listening) start()
+        if (!listening) return
+        val lm = app.getSystemService(Context.LOCATION_SERVICE) as? LocationManager ?: return
+        runCatching {
+            lm.removeUpdates(listener)
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, if (on) 1_000L else 10_000L, if (on) 0f else 10f, listener, Looper.getMainLooper())
+        }
+    }
+
     fun stop() {
         if (!listening) return
         (app.getSystemService(Context.LOCATION_SERVICE) as? LocationManager)?.removeUpdates(listener)

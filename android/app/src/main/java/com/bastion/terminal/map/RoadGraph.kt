@@ -28,6 +28,11 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
 
     data class Step(val name: String, val meters: Double)
 
+    enum class Turn { DEPART, CONTINUE, SLIGHT_LEFT, LEFT, SHARP_LEFT, SLIGHT_RIGHT, RIGHT, SHARP_RIGHT, U_TURN, ARRIVE }
+
+    /** One instruction: at [atMeters] along the route, do [turn] onto [onto] (blank if the road has no name). */
+    data class Maneuver(val atMeters: Double, val lat: Double, val lon: Double, val turn: Turn, val onto: String)
+
     class Route(
         val points: List<Pair<Double, Double>>,   // lat, lon from start to end
         val meters: Double,
@@ -36,6 +41,7 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
         val edgeIds: List<Long>,
         val offRoadStart: Double,                  // straight-line metres from the start to the road
         val offRoadEnd: Double,
+        val maneuvers: List<Maneuver> = emptyList(),
     ) {
         fun summary(): String = "${miles(meters)} Â· ${timeText(seconds)}"
     }
@@ -218,16 +224,22 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
         return Math.toDegrees(kotlin.math.atan2(dx, dy))
     }
 
-    /**
-     * Seconds lost turning from one directed edge onto the next: nothing going straight, a little
-     * for a right turn, more for a left (crossing traffic), a lot for a sharp turn or U-turn.
-     */
-    private fun turnSeconds(inState: Int, outEdge: Int, outForward: Boolean): Double {
+    /** Signed turn angle in degrees from one directed edge onto the next: negative = left, positive = right. */
+    private fun turnAngle(inState: Int, outEdge: Int, outForward: Boolean): Double {
         val a = heading(edges[inState / 2], inState % 2 == 0, atEnd = true)
         val b = heading(edges[outEdge], outForward, atEnd = false)
         var d = b - a
         while (d > 180) d -= 360
         while (d < -180) d += 360
+        return d
+    }
+
+    /**
+     * Seconds lost turning from one directed edge onto the next: nothing going straight, a little
+     * for a right turn, more for a left (crossing traffic), a lot for a sharp turn or U-turn.
+     */
+    private fun turnSeconds(inState: Int, outEdge: Int, outForward: Boolean): Double {
+        val d = turnAngle(inState, outEdge, outForward)
         val turn = kotlin.math.abs(d)
         return when {
             turn > 160 -> 60.0
@@ -332,10 +344,55 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
             for (i in 1 until path.size) secs += turnSeconds(path[i - 1], path[i] / 2, path[i] % 2 == 0)
             if (path.last() / 2 != t.edge) secs += turnSeconds(path.last(), t.edge, u == te.a)
         }
-        return Route(pts, meters, secs, steps, ids.distinct(), s.dist, t.dist)
+        return Route(pts, meters, secs, steps, ids.distinct(), s.dist, t.dist, maneuvers(path, s.frac, t, sameEdge, meters, pts))
     }
 
-    /** The shape of an edge between two fractions of its length (from may exceed to: reversed). */
+    /**
+     * Instructions for a route: one wherever the road turns by 30° or more or its name changes,
+     * plus depart and arrive. Distances are measured along the drawn route.
+     */
+    private fun maneuvers(path: List<Int>, snapStartFrac: Double, t: Snap, sameEdge: Boolean, total: Double, pts: List<Pair<Double, Double>>): List<Maneuver> {
+        val first = edges[path.first() / 2]
+        val out = arrayListOf(Maneuver(0.0, pts.first().first, pts.first().second, Turn.DEPART, first.name))
+        if (!sameEdge) {
+            var along = 0.0
+            // The start road is driven from the snap point, so its length here is the part actually driven.
+            val legs = ArrayList<Pair<Int, Double>>()   // (state, metres driven on it)
+            path.forEachIndexed { i, st ->
+                val e = edges[st / 2]; val fwd = st % 2 == 0
+                val part = if (i == 0) (if (fwd) 1 - snapStartFrac else snapStartFrac) else 1.0
+                legs += st to e.meters * part
+            }
+            val te = edges[t.edge]
+            val lastSt = path.last(); val lastE = edges[lastSt / 2]; val u = if (lastSt % 2 == 0) lastE.b else lastE.a
+            val next = legs.map { it.first } + listOf(t.edge * 2 + if (u == te.a) 0 else 1)
+            var name = first.name
+            for (i in 0 until next.size - 1) {
+                along += legs[i].second
+                val inSt = next[i]; val outSt = next[i + 1]
+                if (outSt / 2 == inSt / 2) continue
+                val oe = edges[outSt / 2]
+                val d = turnAngle(inSt, outSt / 2, outSt % 2 == 0)
+                val ad = kotlin.math.abs(d)
+                val renamed = oe.name.isNotBlank() && oe.name != name
+                if (ad < 30 && !renamed) continue
+                val turn = when {
+                    ad > 160 -> Turn.U_TURN
+                    ad < 30 -> Turn.CONTINUE
+                    ad < 60 -> if (d < 0) Turn.SLIGHT_LEFT else Turn.SLIGHT_RIGHT
+                    ad < 130 -> if (d < 0) Turn.LEFT else Turn.RIGHT
+                    else -> if (d < 0) Turn.SHARP_LEFT else Turn.SHARP_RIGHT
+                }
+                val node = if (outSt % 2 == 0) oe.a else oe.b
+                out += Maneuver(along, lat[node] / 1e6, lon[node] / 1e6, turn, oe.name)
+                name = oe.name
+            }
+        }
+        out += Maneuver(total, pts.last().first, pts.last().second, Turn.ARRIVE, "")
+        return out
+    }
+
+    /** The shape of an edge between) two fractions of its length (from may exceed to: reversed). */
     private fun partial(e: Edge, from: Double, to: Double): List<Pair<Double, Double>> {
         val line = shape(e)
         val n = line.size / 2
