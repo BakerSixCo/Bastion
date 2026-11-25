@@ -17,9 +17,9 @@ class Guidance(val route: RoadGraph.Route) {
         val toNext: Double,             // metres to it
         val remaining: Double,          // metres to the destination
         val remainingSeconds: Double,
-    ) {
-        val arrived: Boolean get() = remaining < 30
-    }
+        /** True only on a dependable fix at the end of the route: within [ARRIVE_M] of its last point, within [ARRIVE_LATERAL_M] of the line, GPS accuracy under [ARRIVE_ACCURACY_M]. */
+        val arrived: Boolean = false,
+    )
 
     private val pts = route.points
     private val cum = DoubleArray(pts.size).also { c ->
@@ -28,8 +28,26 @@ class Guidance(val route: RoadGraph.Route) {
     private val length = cum.lastOrNull() ?: 0.0
     private var lastAlong = 0.0
 
-    /** Where [lat], [lon] is on the route. Prefers the part just ahead of the last position, so a road that doubles back is not confused with itself. */
-    fun update(lat: Double, lon: Double): State {
+    /** Planned seconds from the start to each point (from the route, or by distance share for old routes). */
+    private val times: DoubleArray =
+        if (route.pointSeconds.size == pts.size) route.pointSeconds.toDoubleArray()
+        else DoubleArray(pts.size) { i -> if (length > 0) route.seconds * cum[i] / length else 0.0 }
+
+    /** Planned seconds from the start to [along] metres along the route. */
+    private fun secondsAt(along: Double): Double {
+        if (pts.size < 2) return 0.0
+        var i = 1
+        while (i < pts.size - 1 && cum[i] < along) i++
+        val seg = cum[i] - cum[i - 1]
+        val f = if (seg > 0) ((along - cum[i - 1]) / seg).coerceIn(0.0, 1.0) else 1.0
+        return times[i - 1] + (times[i] - times[i - 1]) * f
+    }
+
+    /**
+     * Where [lat], [lon] is on the route. Prefers the part just ahead of the last position, so a road
+     * that doubles back is not confused with itself. [accuracyM] is the GPS accuracy; arrival needs it.
+     */
+    fun update(lat: Double, lon: Double, accuracyM: Float? = null): State {
         var best = Double.MAX_VALUE; var bestAlong = lastAlong
         var nearBest = Double.MAX_VALUE; var nearAlong = lastAlong
         val kx = 111_320.0 * cos(Math.toRadians(lat)); val ky = 110_574.0
@@ -49,8 +67,14 @@ class Guidance(val route: RoadGraph.Route) {
         lastAlong = along
         val next = route.maneuvers.firstOrNull { it.atMeters > along + 5 } ?: route.maneuvers.last()
         val remaining = (length - along).coerceAtLeast(0.0)
-        val secs = if (length > 0) route.seconds * remaining / length else 0.0
-        return State(along, off, next, (next.atMeters - along).coerceAtLeast(0.0), remaining, secs)
+        // Time left is the planned time of the part still ahead (a slow last stretch keeps its time).
+        val secs = (route.seconds - secondsAt(along)).coerceAtLeast(0.0)
+        // Arrival only on a dependable fix at the end itself: a single fix on a parallel road can project
+        // past the end of the line, and a poor fix can be anywhere.
+        val end = pts.lastOrNull()
+        val arrived = end != null && accuracyM != null && accuracyM < ARRIVE_ACCURACY_M && off <= ARRIVE_LATERAL_M &&
+            RoadGraph.meters(lat, lon, end.first, end.second) <= ARRIVE_M
+        return State(along, off, next, (next.atMeters - along).coerceAtLeast(0.0), remaining, secs, arrived)
     }
 
     /** The position [ahead] metres further along the route from [along] (for "blocked ahead"). */
@@ -70,6 +94,8 @@ class Guidance(val route: RoadGraph.Route) {
     private val spoken = HashSet<String>()
     fun announcement(s: State, mph: Double): String? {
         if (s.arrived) return if (spoken.add("arrive")) "You have arrived." else null
+        // Off the route, the next turn on it is not the driver's next turn: say nothing until back on it.
+        if (s.offRoute > OFF_ROUTE_M) return null
         val far = if (mph > 45) 1600.0 else 500.0
         val near = if (mph > 45) 400.0 else 150.0
         val key = "${s.next.atMeters.toInt()}"
@@ -83,6 +109,17 @@ class Guidance(val route: RoadGraph.Route) {
     }
 
     companion object {
+        const val ARRIVE_M = 40.0
+        const val ARRIVE_LATERAL_M = 50.0
+        const val ARRIVE_ACCURACY_M = 50f
+        /** Further than this from the route line counts as off the route. */
+        const val OFF_ROUTE_M = 60.0
+        /** A GPS fix older than this is not used to start, follow or end navigation. */
+        const val MAX_FIX_AGE_MS = 30_000L
+
+        /** True if a fix taken at [fixMs] is recent enough at [nowMs] (same clock) to navigate by; unknown time is not. */
+        fun fresh(fixMs: Long?, nowMs: Long): Boolean = fixMs != null && nowMs - fixMs in -5_000L..MAX_FIX_AGE_MS
+
         fun instruction(m: RoadGraph.Maneuver): String {
             val onto = m.onto.takeIf { it.isNotBlank() }
             return when (m.turn) {

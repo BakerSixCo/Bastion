@@ -655,8 +655,9 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                 Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
                     Text(s?.let { Guidance.arrow(it.next.turn) } ?: "…", fontSize = 56.sp, fontWeight = FontWeight.Bold)
                     Column {
-                        Text(s?.let { RoadGraph.miles(it.toNext) } ?: "Waiting for GPS…", fontSize = 30.sp, fontWeight = FontWeight.Bold)
-                        Text(s?.let { Guidance.instruction(it.next) } ?: "", fontSize = 20.sp)
+                        // No instruction while rerouting or after a failed reroute: show why instead.
+                        Text(s?.let { RoadGraph.miles(it.toNext) } ?: if (routeNote.isNotBlank()) "No directions" else "Waiting for GPS…", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                        Text(s?.let { Guidance.instruction(it.next) } ?: routeNote, fontSize = 20.sp)
                     }
                 }
             }
@@ -766,9 +767,10 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         scope.launch {
                             val road = store.roadNear(p.lat, p.lon)
                             if (road == null) { routeNote = "No road within 150 m of that spot to block."; return@launch }
-                            blockedAt += p.lat to p.lon
+                            // The point on the road, not the press: the block closes roads within 50 m of it.
+                            blockedAt += road.lat to road.lon
                             if (dest != null) { drive = true; plan() }
-                            else routeNote = "Blocked: ${road.second.ifBlank { "unnamed road" }}. Routes will go around it."
+                            else routeNote = "Blocked: ${road.name.ifBlank { "unnamed road" }}. Routes will go around it."
                         }
                     }, Modifier.fillMaxWidth()) { Text("Road blocked here") }
                     if (p.pinId != null) {

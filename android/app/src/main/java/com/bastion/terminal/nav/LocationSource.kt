@@ -29,7 +29,7 @@ class LocationSource private constructor(private val app: Context) {
         app.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
     private fun publish(l: Location) {
-        _fix.value = Nav.Fix(l.latitude, l.longitude, if (l.hasAccuracy()) l.accuracy else null, l.time)
+        _fix.value = Nav.Fix(l.latitude, l.longitude, if (l.hasAccuracy()) l.accuracy else null, l.time, l.elapsedRealtimeNanos / 1_000_000L)
     }
 
     /** Starts GPS updates if the permission is granted. Safe to call repeatedly. */

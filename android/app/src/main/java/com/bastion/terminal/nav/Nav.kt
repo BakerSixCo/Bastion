@@ -10,7 +10,8 @@ import java.util.Locale
  * figure BASTION gives for distance or direction comes from here. Pure JVM.
  */
 object Nav {
-    data class Fix(val lat: Double, val lon: Double, val accuracyM: Float? = null, val time: Long = 0L)
+    /** [time]: GPS wall-clock time (ms); [elapsedMs]: when it was taken on the phone's monotonic clock (SystemClock.elapsedRealtime), if known. */
+    data class Fix(val lat: Double, val lon: Double, val accuracyM: Float? = null, val time: Long = 0L, val elapsedMs: Long? = null)
 
     /** Initial great-circle bearing from point 1 to point 2, degrees true, 0..359. */
     fun bearingDeg(lat1: Double, lon1: Double, lat2: Double, lon2: Double): Int {

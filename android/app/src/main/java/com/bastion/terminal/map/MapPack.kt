@@ -252,7 +252,8 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
         }
     }
 
-    fun roadNear(lat: Double, lon: Double): Pair<Long, String>? {
+    /** The road nearest a position and the closest point on it (store that point to block the road). */
+    fun roadNear(lat: Double, lon: Double): RoadGraph.RoadHit? {
         val g = roadGraph ?: return null
         if (!contains(lat, lon)) return null
         return synchronized(g) { g.roadNear(lat, lon) }
@@ -399,8 +400,11 @@ class MapPacks private constructor(private val app: Context) {
     /** True if some pack on the phone has driving roads at this position. */
     fun hasRoads(lat: Double, lon: Double): Boolean = roadPack(lat to lon) != null
 
-    /** The road nearest a position (to block it), as id and name. */
-    suspend fun roadNear(lat: Double, lon: Double): Pair<Long, String>? = withContext(Dispatchers.Default) { roadPack(lat to lon)?.roadNear(lat, lon) }
+    /**
+     * The road nearest a position (to block it), with the closest point on it. A block is applied to
+     * every road within 50 m of the stored point, so store [RoadGraph.RoadHit.lat]/[lon], not the press.
+     */
+    suspend fun roadNear(lat: Double, lon: Double): RoadGraph.RoadHit? = withContext(Dispatchers.Default) { roadPack(lat to lon)?.roadNear(lat, lon) }
 
     companion object {
         @Volatile private var inst: MapPacks? = null

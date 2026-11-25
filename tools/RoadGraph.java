@@ -4,13 +4,17 @@
 // Output: <outDir>/<x>/<y>.bin, one per grid cell, each holding every road edge that starts or
 // ends in that cell (edges are cut at junctions, so the phone can search cell by cell and never
 // loads the whole state). Big-endian, read by android .../map/RoadGraph.kt:
-//   "BRG2"; int nNames; nNames x UTF; int nNodes; nNodes x (long osmId, int lat1e6, int lon1e6);
+//   "BRG3"; int nNames; nNames x UTF; int nNodes; nNodes x (long osmId, int lat1e6, int lon1e6);
 //   int nEdges; nEdges x (long edgeId, int a, int b, byte class, byte oneway, byte mph, byte flags,
 //                         int nameIdx, float meters, short nPts, nPts x (int lat1e6, int lon1e6));
-//   int nTurns; nTurns x (long fromEdge, long toEdge, byte only)   -- turn restrictions at a junction in this cell
+//   int nTurns; nTurns x (long fromEdge, long viaNode, long toEdge, byte only)   -- turn restrictions at a junction in this cell
+// viaNode is the OSM id of the junction the rule applies at, so a rule never restricts the other end of
+// its from edge. When a way passes through the via node (two of its edges end there), only the edge pairs
+// that can carry the named movement (legal direction; left / right / straight on / U-turn) are written.
 // flags: 1 = 4wd only, 2 = unpaved, 4 = rough (high clearance), 8 = not passable by car (tracktype grade5, very bad surface).
 // only: 0 = this turn is forbidden ("no_left_turn" etc.), 1 = from this road only this turn is allowed ("only_straight_on").
-// BRG1 (no flags, no turns) is still read by the phone.
+// BRG2 (turns without viaNode) and BRG1 (no flags, no turns) are still read by the phone.
+// Not yet handled: restrictions whose via is a way (they are skipped and counted in the summary line).
 // oneway: 0 = both ways, 1 = only a->b. Points are the shape between a and b, a and b excluded.
 // The data is (c) OpenStreetMap contributors, ODbL; the pack credits it.
 
@@ -27,11 +31,13 @@ public class RoadGraph {
     static final int[] DEFAULT_MPH = {65, 55, 50, 45, 35, 30, 25, 10, 10, 10, 25, 45, 40, 35, 30, 25};
 
     record Way(long id, int cls, int oneway, int mph, String name, long[] nodes, int flags) {}
-    record Turn(long fromWay, long via, long toWay, int only) {}
+    record Turn(long fromWay, long via, long toWay, int only, String kind) {}
     static final List<Turn> turns = new ArrayList<>();
+    static int viaWayTurns = 0;
 
     static final Map<Long, int[]> coord = new HashMap<>();
     static final Map<Long, Way> ways = new HashMap<>();
+    static final Map<Long, List<Object[]>> byWay = new HashMap<>();   // way id -> its edges
 
     public static void main(String[] a) throws Exception {
         Path raw = Path.of(a[0]), out = Path.of(a[1]);
@@ -44,7 +50,6 @@ public class RoadGraph {
         Map<Long, Integer> uses = new HashMap<>();
         for (Way w : ways.values()) for (long n : w.nodes) uses.merge(n, 1, Integer::sum);
         Map<Long, List<Object[]>> cells = new HashMap<>();   // cell key -> edges
-        Map<Long, List<Object[]>> byWay = new HashMap<>();   // way id -> its edges
         long edgeId = 0;
         for (Way w : ways.values()) {
             int start = 0;
@@ -66,16 +71,18 @@ public class RoadGraph {
                 }
             }
         }
-        // Turn restrictions become (from edge, to edge) pairs at the via node, stored in the via node's cell.
+        // Turn restrictions become (from edge, via node, to edge) movements, stored in the via node's cell.
         Map<Long, List<long[]>> cellTurns = new HashMap<>();
         int nTurns = 0;
         for (Turn t : turns) {
-            Object[] from = endingAt(byWay.get(t.fromWay), t.via), to = endingAt(byWay.get(t.toWay), t.via);
             int[] c = coord.get(t.via);
-            if (from == null || to == null || c == null) continue;
+            if (c == null) continue;
             int cx = tileX(c[1] / 1e6, z), cy = tileY(c[0] / 1e6, z);
-            cellTurns.computeIfAbsent(((long) cx << 32) | cy, k -> new ArrayList<>()).add(new long[]{(long) from[0], (long) to[0], t.only});
-            nTurns++;
+            for (Object[][] mv : movements(t)) {
+                cellTurns.computeIfAbsent(((long) cx << 32) | cy, k -> new ArrayList<>())
+                    .add(new long[]{(long) mv[0][0], t.via, (long) mv[1][0], t.only});
+                nTurns++;
+            }
         }
         long edges = 0;
         for (var en : cells.entrySet()) {
@@ -85,14 +92,64 @@ public class RoadGraph {
             write(f, en.getValue(), cellTurns.getOrDefault(en.getKey(), List.of()));
             edges += en.getValue().size();
         }
-        System.out.println(ways.size() + " ways, " + edgeId + " edges, " + nTurns + " turn rules, " + cells.size() + " cells, " + edges + " edge entries");
+        System.out.println(ways.size() + " ways, " + edgeId + " edges, " + nTurns + " turn rules, " + cells.size() + " cells, " + edges + " edge entries"
+            + (viaWayTurns > 0 ? ", " + viaWayTurns + " via-way restrictions skipped (not supported)" : ""));
     }
 
-    /** The edge of a way that has [node] as one of its ends. */
-    static Object[] endingAt(List<Object[]> es, long node) {
-        if (es == null) return null;
-        for (Object[] e : es) { long[] s = (long[]) e[2]; if (s[0] == node || s[s.length - 1] == node) return e; }
-        return null;
+    /** The edges of a way that have [node] as one of their ends (two when the way passes through it). */
+    static List<Object[]> endingAt(List<Object[]> es, long node) {
+        List<Object[]> out = new ArrayList<>();
+        if (es == null) return out;
+        for (Object[] e : es) { long[] s = (long[]) e[2]; if (s[0] == node || s[s.length - 1] == node) out.add(e); }
+        return out;
+    }
+
+    /**
+     * The (from edge, to edge) pairs a restriction names at its via node. A way that passes through the
+     * via node has an edge on each side, so pairs are kept only if they can be driven (into the via on the
+     * from edge, out of it on the to edge) and, when still ambiguous, only if their turn angle matches the
+     * restriction (left, right, straight on, U-turn). If no pair matches the angle, every legal pair is kept.
+     */
+    static List<Object[][]> movements(Turn t) {
+        List<Object[]> froms = endingAt(byWay.get(t.fromWay), t.via), tos = endingAt(byWay.get(t.toWay), t.via);
+        boolean uTurn = t.kind.endsWith("u_turn");
+        List<Object[][]> all = new ArrayList<>();
+        for (Object[] f : froms) for (Object[] to : tos) if (f != to || uTurn) all.add(new Object[][]{f, to});
+        List<Object[][]> moves = new ArrayList<>();
+        for (Object[][] p : all) if (canEnter(p[0], t.via) && canLeave(p[1], t.via)) moves.add(p);
+        if (moves.isEmpty()) moves = all;
+        if (moves.size() > 1) {
+            List<Object[][]> shaped = new ArrayList<>();
+            for (Object[][] p : moves) {
+                double d = angle(p[0], p[1], t.via);
+                boolean ok = t.kind.endsWith("left_turn") ? d < -20 && d > -160
+                    : t.kind.endsWith("right_turn") ? d > 20 && d < 160
+                    : t.kind.endsWith("straight_on") ? Math.abs(d) < 45
+                    : !uTurn || Math.abs(d) > 135;
+                if (ok) shaped.add(p);
+            }
+            if (!shaped.isEmpty()) moves = shaped;
+        }
+        return moves;
+    }
+
+    static boolean canEnter(Object[] e, long via) { long[] s = (long[]) e[2]; return ((Way) e[1]).oneway == 0 || s[s.length - 1] == via; }
+    static boolean canLeave(Object[] e, long via) { long[] s = (long[]) e[2]; return ((Way) e[1]).oneway == 0 || s[0] == via; }
+
+    /** Signed turn angle (degrees, negative = left) arriving at [via] on [from] and leaving on [to]. */
+    static double angle(Object[] from, Object[] to, long via) {
+        long[] f = (long[]) from[2], o = (long[]) to[2];
+        long before = f[f.length - 1] == via ? f[f.length - 2] : f[1];
+        long after = o[0] == via ? o[1] : o[o.length - 2];
+        double d = heading(coord.get(via), coord.get(after)) - heading(coord.get(before), coord.get(via));
+        while (d > 180) d -= 360;
+        while (d < -180) d += 360;
+        return d;
+    }
+
+    static double heading(int[] p, int[] q) {
+        double dx = (q[1] - p[1]) * Math.cos(Math.toRadians(p[0] / 1e6)), dy = q[0] - p[0];
+        return Math.toDegrees(Math.atan2(dx, dy));
     }
 
     static void read(Path p) throws Exception {
@@ -116,13 +173,14 @@ public class RoadGraph {
                             nds.add(ref);
                             coord.putIfAbsent(ref, new int[]{(int) Math.round(Double.parseDouble(la) * 1e6), (int) Math.round(Double.parseDouble(lo) * 1e6)});
                         }
-                        case "relation" -> { rel = new long[]{-1, -1, -1}; tags = new HashMap<>(); }
+                        case "relation" -> { rel = new long[]{-1, -1, -1, 0}; tags = new HashMap<>(); }
                         case "member" -> {
                             if (rel == null) break;
                             String role = r.getAttributeValue(null, "role"), type = r.getAttributeValue(null, "type");
                             long ref = Long.parseLong(r.getAttributeValue(null, "ref"));
                             if ("from".equals(role) && "way".equals(type)) rel[0] = ref;
                             else if ("via".equals(role) && "node".equals(type)) rel[1] = ref;
+                            else if ("via".equals(role) && "way".equals(type)) rel[3] = 1;
                             else if ("to".equals(role) && "way".equals(type)) rel[2] = ref;
                         }
                         case "tag" -> { if (tags != null) tags.put(r.getAttributeValue(null, "k"), r.getAttributeValue(null, "v")); }
@@ -140,9 +198,9 @@ public class RoadGraph {
                     boolean exceptCars = tags.getOrDefault("except", "").contains("motorcar");
                     if ("restriction".equals(tags.get("type")) && rel[0] > 0 && rel[1] > 0 && rel[2] > 0 && !exceptCars
                         && (kind.startsWith("no_") || kind.startsWith("only_"))) {
-                        Turn t = new Turn(rel[0], rel[1], rel[2], kind.startsWith("only_") ? 1 : 0);
+                        Turn t = new Turn(rel[0], rel[1], rel[2], kind.startsWith("only_") ? 1 : 0, kind);
                         if (!turns.contains(t)) turns.add(t);
-                    }
+                    } else if ("restriction".equals(tags.get("type")) && rel[3] == 1) viaWayTurns++;
                     rel = null; tags = null;
                 }
             }
@@ -152,7 +210,11 @@ public class RoadGraph {
     static Way way(long id, Map<String, String> t, List<Long> nds) {
         int cls = Arrays.asList(CLASSES).indexOf(t.getOrDefault("highway", ""));
         if (cls < 0) return null;
-        String access = t.getOrDefault("motor_vehicle", t.getOrDefault("access", "yes"));
+        // The most specific access tag that covers a car wins: motorcar, then motor_vehicle, vehicle, access.
+        String access = "yes";
+        for (String k : new String[]{"motorcar", "motor_vehicle", "vehicle", "access"}) {
+            if (t.containsKey(k)) { access = t.get(k); break; }
+        }
         if (access.equals("no") || access.equals("private")) return null;
         String ow = t.getOrDefault("oneway", "");
         int oneway = 0;
@@ -196,7 +258,7 @@ public class RoadGraph {
             nodes.putIfAbsent(seg[0], nodes.size()); nodes.putIfAbsent(seg[seg.length - 1], nodes.size());
         }
         try (var o = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(f)))) {
-            o.writeBytes("BRG2");
+            o.writeBytes("BRG3");
             o.writeInt(names.size());
             for (String s : names.keySet()) o.writeUTF(s.length() > 200 ? s.substring(0, 200) : s);
             o.writeInt(nodes.size());
@@ -214,7 +276,7 @@ public class RoadGraph {
                 for (int k = 1; k <= pts; k++) { int[] c = coord.get(seg[k]); o.writeInt(c[0]); o.writeInt(c[1]); }
             }
             o.writeInt(cellTurns.size());
-            for (long[] t : cellTurns) { o.writeLong(t[0]); o.writeLong(t[1]); o.writeByte((int) t[2]); }
+            for (long[] t : cellTurns) { o.writeLong(t[0]); o.writeLong(t[1]); o.writeLong(t[2]); o.writeByte((int) t[3]); }
         }
     }
 
