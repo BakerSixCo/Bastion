@@ -154,6 +154,7 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   auto-answer private-channel-only by default (`isPublicChannel`); never log
   message text or keys. Simulator private channel: `tools/meshsim/private-channel.sh`.
 - Mesh text limit: 200 UTF-8 bytes (`MeshBridge.MAX_BYTES`).
+- **Radio answers are for people without BASTION** (owner 2026-11-25): radio-only Meshtastic users and phones that cannot run the AI. Never send a verified card cut to fit; a card goes over radio only as its own owner-approved short version (drafted and reviewed like the card). If no safe short version exists, say so and give the one critical action. No reference codes or compression for now.
 
 ## TAK connection (`link/` package) — BASTION's only network code
 
