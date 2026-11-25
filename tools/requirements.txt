@@ -1,0 +1,5 @@
+# Python packages for the PC tools (tools/.venv). Recreate with:
+#   py -3.12 -m venv tools\.venv
+#   tools\.venv\Scripts\pip install -r toolsequirements.txt
+pypdfium2==5.15.2
+pillow==13.0.0
