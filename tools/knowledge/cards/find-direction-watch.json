@@ -1,0 +1,52 @@
+{
+  "id": "find-direction-watch",
+  "kind": "protocol",
+  "title": "Find direction with a watch and the sun",
+  "asks": [
+    "how to find north with a watch",
+    "use my watch as a compass",
+    "watch method for direction",
+    "point the hour hand at the sun which way is south",
+    "find south with an analog watch",
+    "does the watch compass trick work on daylight saving time",
+    "can i find north with a digital watch",
+    "how 2 use wach as compas",
+    "no compass, have a wristwatch and sun, which way is north, over"
+  ],
+  "answer": [
+    "Use an analog watch (with hands). With only a digital watch, draw a clock face with the correct time on a circle of paper and use that.",
+    "In the north temperate zone only (northern latitudes): point the hour hand toward the sun.",
+    "The south line is midway between the hour hand and 1200 hours on the dial, on standard time.",
+    "On daylight saving time, the north-south line is found between the hour hand and 1300 hours.",
+    "If in doubt which end of the line is north, remember that the sun is in the east before noon and in the west after noon.",
+    "In the south temperate zone (southern latitudes) the method is different: point 1200 on the dial toward the sun. The north line is halfway between 1200 and the hour hand. On daylight saving time, the north line lies midway between the hour hand and 1300 hours.",
+    "For a more accurate reading, lay the watch on the ground, or draw the clock face on the ground."
+  ],
+  "warnings": [
+    "The watch method can be inaccurate, especially in the lower latitudes, and may cause circling. To avoid this, the Army survival manual says to make a shadow clock and set the watch to the time it indicates; after moving for an hour, take another shadow-clock reading and reset the watch if necessary.",
+    "It gives only the approximate true north and true south.",
+    "Do not rely on one form of navigation. (The Army cold-weather manual gives this note for movement in extremely cold weather.)"
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "This method requires the use of a common analog watch—one that has hands. Use of this type of watch will enable the isolated person to determine the approximate true north and true south" },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "In the North Temperate Zone only, the hour hand is pointed toward the sun. A south line can be found midway between the hour hand and 1200 hours, standard time. If on daylight savings time, the northsouth line is found between the hour hand and 1300 hours. If there is any doubt as to which end of the line is north, remember that the sun is in the east before noon and in the west after noon." },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "In northern latitudes, the hour hand is pointed toward the sun. An imaginary line halfway between the hour hand and 1200 points to the south. In southern latitudes, the procedure is different. Point the 1200 toward the sun. An imaginary line halfway between the hour hand and 1200 points to the north." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "The watch may also be used to determine direction in the South Temperate Zone. However, the method is different." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "If on daylight savings time, the north line lies midway between the hour hand and 1300 hours." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "The watch method can be inaccurate, especially in the lower latitudes, and may cause circling. To avoid this, make a shadow clock and set the watch to the time indicated. After movement for an hour, take another shadow-clock reading and reset the watch if necessary." },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "Do not rely on one form of navigation when moving in extremely cold weather." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "If you only have a digital watch, draw a clock face on a circle of paper with the correct time on it and use it to determine your direction at that time. You may also choose to draw a clock face on the ground or lay your watch on the ground for a more accurate reading." }
+  ],
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

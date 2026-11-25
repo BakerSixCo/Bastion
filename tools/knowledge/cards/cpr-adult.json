@@ -1,0 +1,62 @@
+{
+  "id": "cpr-adult",
+  "kind": "protocol",
+  "title": "CPR for an adult",
+  "asks": [
+    "how do I do CPR",
+    "cpr steps adult",
+    "he is not breathing and has no pulse",
+    "how many chest compressions and breaths",
+    "how deep and how fast for chest compressions",
+    "someone collapsed heart stopped what do I do",
+    "cpr ratio 30 2",
+    "no pulse no resps start cpr how",
+    "how to do mouth to mouth",
+    "cpr instrucions quick",
+    "when do I stop cpr"
+  ],
+  "answer": [
+    "CPR is for cardiac arrest, when the heart has stopped beating effectively. If you find someone unresponsive: call for help immediately, put them on their back, check for a pulse, open the airway and check whether they are breathing.",
+    "Make sure the person is lying on a firm, flat surface such as the ground. Kneel beside their chest.",
+    "Place the heel of one hand on the center of the chest, between the nipples.",
+    "Press down firmly and smoothly. For an adult, compress the chest at least 2 inches (5 centimeters) deep.",
+    "Compress at a rate of 100 to 120 compressions per minute, about 2 per second.",
+    "Let the chest fully recoil between compressions, without lifting your hands off the chest.",
+    "If you are alone, do cycles of 30 chest compressions then 2 rescue breaths. With 2 rescuers the ratio can be 30:2, or continuous compressions while the other rescuer gives the breaths.",
+    "Rescue breath: tilt the head back slightly and lift the chin, gently remove any visible obstruction from the mouth, pinch the nose closed, seal your mouth over theirs and blow for about 1 second, enough to make the chest visibly rise.",
+    "Continue until professional medical help takes over or the person shows obvious signs of life: breathing normally, coughing or moving. If you become too exhausted to continue effectively, switch with another trained person.",
+    "Drowning: if the person is unconscious and not breathing, begin with 5 rescue breaths, then continue with 30 compressions and 2 rescue breaths."
+  ],
+  "warnings": [
+    "In combat casualties, cardiac arrest is nearly always the result of hemorrhagic or obstructive shock, neither of which will respond to standard CPR.",
+    "This is a general overview. Proper CPR training is needed for accurate and effective CPR.",
+    "The depth and hand placement here are for adults. Technique and the ratio of rescue breaths may vary for a child or infant."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "In scenarios where a casualty is found already unresponsive, the procedure slightly differs: • Quickly assess the situation to understand the context and severity. • Call for immediate assistance. • Position the casualty on their back to manage and secure the airway effectively. • Check for a pulse to determine the urgency of cardiovascular support. • Open the airway using recommended techniques. • Confirm if the casualty is not breathing and, if so, proceed to attempt rescue breathing" },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "CPR is conducted using a specific technique to provide manual circulation support during cardiac arrest or when the heart has stopped beating effectively. A general outline of the steps involved in conducting external chest compressions is: • Position: Ensure the person is lying on a firm, flat surface, such as the ground or a CPR board. Kneel beside the person's chest." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Hand Placement: Place the heel of one hand on the center of the person's chest, between the nipples. For infants or children, use two or three fingers instead of the entire hand. • Compression Depth: Press down firmly and smoothly. For adults, compress the chest at least two inches (five centimeters) deep." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Compression Rate: Perform compressions at a rate of 100 to 120 compressions per minute. This equates to about two compressions per second. • Complete Chest Recoil: Allow the chest to fully recoil between each compression, without lifting your hands off the chest. This allows the heart to refill with blood. • Compression to Ventilation Ratio: If you are performing CPR alone, do cycles of 30 chest compressions to two rescue breaths (mouth-to-mouth or mouth-to-mask). If there are two rescuers, the ratio can be 30:2 or continuous chest compressions with ventilation being delivered by the other rescuer. • Continue until Help Arrives: Keep performing chest compressions until professional medical help arrives, or until the person shows signs of movement or starts breathing." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "In general, CPR should be continued until one of the following conditions is met: • Signs of Life: If the person shows obvious signs of life, such as breathing normally, coughing, or moving, CPR can be stopped. • Professional Medical Help Arrives: CPR should be continued until professional medical personnel take over the resuscitation efforts. • Provider Fatigue: If the person performing CPR becomes too exhausted to continue effectively, they can switch with another trained individual to maintain the quality of compression." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Position: Ensure the casualty is lying on a flat surface, preferably with their head tilted back slightly to open the airway. • Clear the Airway: Check for any visible obstructions in the person's mouth or throat, and if present, gently remove them if possible. • Seal the Mouth: If the casualty's mouth is open, use your hand to gently lift the chin upward to maintain an open airway. With your other hand, pinch the person's nose closed to prevent air from escaping. • Breathing Technique: Place your mouth over the casualty's mouth, forming a seal, and blow into their mouth while watching for the chest to rise. Deliver the breath over one second and make sure it is sufficient to visibly inflate the chest." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "It is important to note that these steps provide a general overview of external chest compressions. Proper CPR training and certification are needed to gain a thorough understanding of the technique and to ensure accurate and effective application during emergency situations." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "External chest compressions, also known as Cardiopulmonary Resuscitation (CPR), in combat casualties is nearly always the result of hemorrhagic or obstructive shock, neither of which will respond to standard CPR. Conducting CPR may delay definitive treatment in nearly all cases." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "It is important to note that the technique and ratio of rescue breaths may vary depending on the age of the person receiving CPR (such as an adult, child, or infant) and the specific guidelines in the area or operation." },
+    { "doc": "JTS-CPG-Drowning_Management_17_Mar_2025_ID64_v1.1.pdf",
+      "text": "If unconscious and not breathing, begin with 5 rescue breaths, then continue with traditional basic life support utilizing a ratio of 30 compressions and 2 rescue breaths. Five breaths are used initially as a recruitment maneuver." }
+  ],
+  "conflict": "CPR NUMBERS (the card shows the 2026 values): ATP 4-02.11 (2026) says 30 compressions to 2 breaths, 100 to 120 compressions per minute, at least 2 inches deep; ATP 3-50.21 (2018) agrees (30 compressions, at least 2 inches, at least 100 per minute, 2 rescue breaths). HHS Ship's Medicine Chest 2003 (crew training assessment standard, older guidelines) says cycles of 15 compressions to 2 ventilations (5 to 1 with two rescuers), 80 to 100 compressions per minute, depth 1½ to 2 inches, hands two finger widths above the tip of the breastbone, each breath taking 1½ to 2 seconds, and a carotid pulse check of 5 to 10 seconds. Owner to confirm the newer Army values stand. WHO-ICRC BEC 2018 gives no CPR method ('follow relevant CPR protocols'); FEMA P-2064 (2020) only says to take CPR training. Note also ATP 4-02.11 para 6-44: CPR on combat trauma casualties 'should be a rare circumstance'.",
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

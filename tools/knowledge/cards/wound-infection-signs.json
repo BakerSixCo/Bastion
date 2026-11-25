@@ -1,0 +1,52 @@
+{
+  "id": "wound-infection-signs",
+  "kind": "fact",
+  "title": "Signs that a wound is infected",
+  "asks": [
+    "how do I know if a wound is infected",
+    "signs of wound infection",
+    "cut is red swollen and hot",
+    "pus coming out of my wound",
+    "wound smells bad is it infected",
+    "is this cut infected or healing normally",
+    "fever after a deep cut",
+    "infected wound symptoms when to worry",
+    "wound infecton signs",
+    "check wound for infxn",
+    "my cut hurts more today than yesterday"
+  ],
+  "answer": [
+    "Local signs of wound infection: pain, swelling, heat, redness, and limited movement of the part. Increasing pain is a sign of infection.",
+    "Pus in the wound or on the dressing, or a foul odor from the wound.",
+    "An oral temperature of 100°F or greater 1 to 2 days after a severe injury, or enlarged lymph nodes.",
+    "Normal healing looks different: by the second or third day after injury there is a noticeable decrease in pain, swelling, heat and redness around the wound.",
+    "Inspect the wound frequently. At each dressing change, at least every 24 hours, look for any change in color, drainage, pain or odor. Fluid on the old dressing should be off-white or slightly yellow, and the dressing should not smell sweet or foul.",
+    "A wound infection must be identified and treated: infected wounds are treated with a combination of local wound care and antibiotics. Get medical help. If possible, elevate the injured part."
+  ],
+  "warnings": [
+    "If the person becomes ill overall (fever, fast heart rate, lethargy, decreased mental status), the infection may be turning into sepsis, which is life-threatening: sepsis is a medical emergency, and a person suspected of having it should be evacuated immediately.",
+    "Never close a dirty or infected wound."
+  ],
+  "quotes": [
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "Signs of Infection: The wound should be inspected frequently for signs of infection. Wound infection will be characterized by such local signs as pain, swelling, heat, redness, and/or limitation of motion. Signs of infection are an elevated oral temperature of 100o F or greater one to two days after a severe injury, enlarged lymph nodes, evidence of \"pus\" in the wound or on the dressing, and a foul odor to the wound. In the normal healing by the second or third day after injury, there is a noticeable decrease in pain, swelling, heat, and redness around the wound site." },
+    { "doc": "JTS-CPG-Wound_Management_PFC_24_Jul_2017_ID62.pdf",
+      "text": "If a wound develops signs of infection (e.g., increasing pain, erythema, purulent drainage) or the patient becomes systemically ill (e.g., fever, tachycardia, hypotension, lethargy, decreased mental status), wound infection must be identified and treated. Treat infected wounds with a combination of local wound care and systemic antibiotics." },
+    { "doc": "JTS-CPG-Wound_Management_PFC_24_Jul_2017_ID62.pdf",
+      "text": "Inspect old bandages during a dressing change for signs of infection by observing the color and odor of the exudate; the color should be off-white or slightly yellow, and the bandage should not smell sweet or foul." },
+    { "doc": "JTS-CPG-Nursing_Interventions_PCC_08_July_2025_ID70_v1.1.pdf",
+      "text": "Change the dressing at least every 24 hours and as needed and examine the wound for any change in color, drainage, pain or odor." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "If possible, elevate the injured part. Oral antibiotics are reserved for major and badly contaminated wounds with a high risk of infection, and for infected wounds." },
+    { "doc": "JTS-CPG-Sepsis_Management_PFC_28_Oct_2020_ID83.pdf",
+      "text": "Sepsis and septic shock are medical emergencies. Patients suspected of having either of these conditions should be immediately evacuated out of the austere environment to higher echelons of care." },
+    { "doc": "JTS-CPG-Sepsis_Management_PFC_28_Oct_2020_ID83.pdf",
+      "text": "Sepsis: Life-threatening organ dysfunction caused by a dysregulated host response to infection (Sepsis-3 definition, adopted by Surviving Sepsis Campaign in 2017)." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "At no time should dirty or infected wounds be closed. Wounds that continue to bleed inside, particularly if deep, should not be closed either." }
+  ],
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

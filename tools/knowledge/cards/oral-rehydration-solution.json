@@ -1,0 +1,63 @@
+{
+  "id": "oral-rehydration-solution",
+  "kind": "fact",
+  "title": "Oral rehydration solution (ORS): home recipe and how to use it",
+  "asks": [
+    "how to make oral rehydration solution",
+    "homemade rehydration drink recipe",
+    "salt and sugar water for diarrhea how much",
+    "how much salt and sugar in a liter of water for dehydration",
+    "diy pedialyte",
+    "kid has diarrhea and no ors packets what can i mix",
+    "rehydration salts recipe",
+    "what to drink when dehydrated from the runs",
+    "ORS recipie",
+    "bad diarrhea, dehydrated, have salt and sugar, what is the mix, over"
+  ],
+  "answer": [
+    "Recipe: dissolve 6 level teaspoons of table sugar and ½ level teaspoon (half a teaspoon) of table salt in 1 liter of safe drinking (potable) water.",
+    "The Army heat bulletin gives the same amounts for 1 quart of water.",
+    "If you have pre-packaged ORS, use it and mix it as the package says. This recipe is for when you have none.",
+    "ORS is the preferred drink for treating dehydration from diarrhea.",
+    "Cholera care guidance on giving ORS: most patients can be treated with ORS, but severe cases may need IV fluids. Give a lot of it: the person needs to drink more ORS than the fluid lost through diarrhea and vomiting. Even people who are vomiting can be rehydrated with ORS taken in frequent small sips. Regular urination (every 3 to 4 hours) is a sign that it is working."
+  ],
+  "warnings": [
+    "Give ORS only to a person who is fully alert and able to swallow without choking. For anyone else, get medical help: severe cases may need IV fluids.",
+    "Extreme diarrhea combined with vomiting or fever can lead to dehydration, coma or death, and severe dehydration may come on rapidly.",
+    "Children: a child who cannot drink, vomits everything, is unusually sleepy or confused, or has convulsions needs URGENT medical attention.",
+    "Severe diarrhea (dysentery, or diarrhea containing blood or mucus) can be incapacitating and even life-threatening without medical care and IV rehydration.",
+    "Get medical advice for any diarrhea that causes serious symptoms or lasts more than a week or two, and whenever there is any doubt about the person's hydration, their mental state, or whether the treatment is working.",
+    "ORS is not for routine, everyday drinking: used improperly it may lead to adverse health effects."
+  ],
+  "quotes": [
+    { "doc": "Army-TB-MED-507-Heat-Stress-Control-2022.pdf",
+      "text": "Dehydration stemming from infectious diarrhea results in electrolyte losses 2 to 3 times greater than from sweating. Therefore, ORS is the preferred beverage for treating diarrheal dehydration. In the absence of pre-packaged ORS, a simple ORS recipe can be made using 6 level teaspoons of table sugar and ½ level teaspoon of table salt dissolved in 1 quart of potable water." },
+    { "doc": "JTS-CPG-Burn_Management_PFC_13_Jan_2017_ID57.pdf",
+      "text": "World Health Organization (WHO) Oral Rehydration Solution (per package instructions or 1L of potable water with 6 level teaspoons sugar, 0.5 level teaspoon salt)" },
+    { "doc": "JTS-CPG-Sepsis_Management_PFC_28_Oct_2020_ID83.pdf",
+      "text": "Include an oral rehydration solution for those patients who cannot consume food but can drink water (use either proprietary mixtures or fabricated – 6 teaspoons of granulated sugar with ½ teaspoon of table salt in 1 liter of water." },
+    { "doc": "JTS-CPG-Nursing_Interventions_PCC_08_July_2025_ID70_v1.1.pdf",
+      "text": "Better: Potable water + improvised oral rehydration solution (in 1 liter of potable water: ½ tsp of table salt + 5-6 tsp of table/granulated sugar)" },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "The most important aspect of treatment for cholera is replacing the lost fluids rapidly by way of rehydration therapy. Most patients can be treated with oral rehydration salt (ORS) solutions. Severe cases may require intravenous therapy." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "Proper administration of ORS is simple. The basic principle of rehydration therapy is to replace the fluids and salts that are lost through diarrhea and vomiting. This means giving a lot of ORS. The amount of ORS needed varies, depending on the severity of the dehydration and the amount of ongoing fluid losses. Patients need to drink more ORS than the total volume of fluid lost through diarrhea and vomiting. Patients should have ORS constantly available at the bedside and should be encouraged to drink as much as possible. Even patients with vomiting can be rehydrated with ORS taken in frequent small sips. An indication that rehydration therapy is succeeding is regular urination (every 3 to 4 hours)." },
+    { "doc": "Army-TB-MED-507-Heat-Stress-Control-2022.pdf",
+      "text": "Oral fluids work well for most dehydrated patients who are not obtunded and can take fluids without risk of aspiration or vomiting." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "Dehydration leading to coma or death may occur when extreme diarrhea is combined with vomiting or fever. This will cause a loss of water taken in and of water stored by the body. Severe dehydration may occur rapidly." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "Children with danger signs need URGENT attention and referral/ handover to a provider able to provide advanced paediatric care. Paediatric danger signs include: • Signs of airway obstruction (stridor or drooling/unable to swallow saliva) • Increased breathing effort (fast breathing, nasal flaring, grunting, chest indrawing or retractions) • Cyanosis (blue colour of the skin, especially at the lips and fingertips) • Altered mental status (including lethargy or unusual sleepiness, confusion, disorientation) • Moves only when stimulated or no movement at all (AVPU other than “A”) • Not feeding well or cannot drink or breastfeed • Vomiting everything • Seizures/convulsions • Low body temperature (hypothermia)" },
+    { "doc": "Army-TB-MED-507-Heat-Stress-Control-2022.pdf",
+      "text": "Oral rehydration is the keystone treatment. More severe diarrhea (for example, dysentery, or severe diarrhea containing blood or mucus) can be incapacitating and some forms even life threatening in the absence of medical intervention and IV rehydration." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "Basic medical advice should be sought by radio for any diarrheal illness that causes serious acute symptoms or persists for more than a week or two. Advice should also be sought if there is any question regarding hydration status, mentation, or lack of response to therapy." },
+    { "doc": "Army-FM-7-22-Holistic-Health-and-Fitness-2020.pdf",
+      "text": "Dietitians use these solutions to treat and prevent dehydration due to diarrhea. These solutions contain approximately three to five times the amount of sodium and potassium found in typical carbohydrate-electrolyte beverages. If used improperly, oral rehydration solutions may lead to various adverse health effects. Leaders do not use rehydration solutions for IMT trainees for routine hydration to prevent heat illness or heat injury." }
+  ],
+  "conflict": "The simple sugar-and-salt recipe is the same in four documents except for the water volume: 1 liter in the JTS Burn (2017), Sepsis (2020) and Nursing (2025, '5-6 tsp' sugar) guidelines; 1 quart in TB MED 507 (2022). The card gives 1 liter and notes the quart. Other official recipes in the kit add baking soda or potassium and use different amounts: JTS Nursing CPG (2025) calls 1 L water + 9 tsp sugar + 1 tsp salt + 1 tsp baking soda + 1/4 tsp potassium chloride 'optimal' when no commercial ORS is available (it ranks the simple recipe 'Better', below 'Best'); JTS Burn (2017) and Crush (2016) also list 8 tsp sugar + 0.5 tsp salt + 0.5 tsp baking soda per 1 L; HHS Ship's Medicine Chest (2003) gives 1 1/2 tablespoons sugar, 1/2 tsp salt, 3/4 tsp baking soda and 1/4 tsp salt substitute per liter or quart. The owner should decide whether the simple recipe alone is what the card should show. The how-to-give lines come from the cholera section of the 2003 HHS book (written about ORS packets) and are labelled as cholera guidance in the card. Limits: no kit document forbids ORS by mouth for a drowsy person with diarrhea in so many words; the 'fully alert and able to swallow' warning restates TB MED 507's sentence on oral fluids ('not obtunded and can take fluids without risk of aspiration or vomiting'), which is written about heat casualties, and the child warning comes from WHO BEC's general paediatric danger signs. Not in the card: the WHO Model List (2025) says zinc sulfate should be used with ORS in acute diarrhoea (no lay dosing in the kit). FEMA P-2064 (2020) was searched: nothing on rehydration.",
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

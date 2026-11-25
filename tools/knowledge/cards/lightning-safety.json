@@ -1,0 +1,48 @@
+{
+  "id": "lightning-safety",
+  "kind": "fact",
+  "title": "Lightning and thunderstorms: what to do",
+  "asks": [
+    "what to do in a lightning storm",
+    "lightning safety",
+    "caught in a thunderstorm where is safe",
+    "is a car safe in lightning",
+    "is it safe to shelter in a shed during lightning",
+    "thunder is getting close what do i do",
+    "lightning while swimming or in a boat",
+    "can i use running water during a thunderstorm",
+    "litening storm wat do i do",
+    "thunderstorm rolling in fast, where do we go, over"
+  ],
+  "answer": [
+    "When thunder roars, go indoors. When you hear thunder or see lightning, immediately get inside a sturdy building or an enclosed vehicle with a metal roof.",
+    "Do not take shelter in small sheds, gazebos, dugouts, bleachers or a convertible car.",
+    "If necessary, take shelter in a car with a metal top and sides. Do not touch anything metal.",
+    "If boating or swimming, get to land and find a sturdy, grounded shelter or vehicle immediately.",
+    "When you expect thunderstorms, plan to be near sturdy shelter. Find a safe location nearby that you can go to immediately at the first sound of thunder.",
+    "During a thunderstorm, avoid running water and landline phones: electricity can travel through plumbing and phone lines.",
+    "Unplug all chargers when the storm arrives.",
+    "Watch for fallen power lines and trees."
+  ],
+  "warnings": [
+    "Lightning can cause temporary unconsciousness, difficulties in breathing, or difficulties with the heart (irregular heartbeat)."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "High voltage electrical burns from an electrical source or lightning may cause temporary unconsciousness, difficulties in breathing, or difficulties with the heart (irregular heartbeat)." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "When thunder roars, go indoors. When you hear thunder or see lightning, immediately get inside a sturdy building or enclosed vehicle with a metal roof." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "Do not take shelter in small sheds, gazebos, dugouts, bleachers, or in a convertible car. If necessary, take shelter in a car with a metal top and sides. Do not touch anything metal." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "If boating or swimming, get to land and find a sturdy, grounded shelter or vehicle immediately." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "When you expect thunderstorms, plan to be near sturdy shelter. Find a safe location nearby to immediately go to at the first sound of thunder." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "Charge your mobile phone before the storm arrives. Unplug all chargers when the storm arrives. During thunderstorms, avoid running water or using landline phones. Electricity can travel through plumbing and phone lines. During thunderstorms, pay attention to alerts from public officials. Watch for fallen power lines and trees." }
+  ],
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

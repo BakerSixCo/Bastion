@@ -1,0 +1,57 @@
+{
+  "id": "ground-to-air-signals",
+  "kind": "fact",
+  "title": "Signalling search aircraft and search parties from the ground: fires, smoke, lights and ground markings",
+  "asks": [
+    "how do i signal a rescue plane",
+    "how to signal a helicopter from the ground",
+    "signal fire smoke or flame",
+    "how to make ground to air signals in snow",
+    "how to get a search plane to see me",
+    "best way to signal for rescue",
+    "signal fire how to make lots of smoke",
+    "how 2 signel a plane",
+    "we can hear a search plane, how do we get its attention, over"
+  ],
+  "answer": [
+    "If there is a radio, use it to call for help.",
+    "In a forest, prepare fires to attract search planes. Smoke is better by day and flame is better at night.",
+    "Mirrors and ground signals are helpful in attracting search parties.",
+    "Ground-to-air markings can be made with signal panel markers, by dragging brush into the desired shape, or by stomping the symbol into the snow.",
+    "Ground and air signals can also be made with small fires laid out to form the characters.",
+    "A small flashlight or chemical light can be seen from the air or on the ground as far as line of sight permits. Strobe lights can be seen for miles by aircraft.",
+    "A fire signals with light and smoke, and several well-placed fires increase your presence in the area.",
+    "For smoke: rotten wood produces a large amount of smoke, and the more moisture the fuel contains, the more white smoke the fire makes. Petroleum-based fuels produce thick, black smoke.",
+    "A log cabin fire lay (layers of fuel wood laid perpendicular to each other) gives a great amount of light and heat and can be the basis of a signal fire.",
+    "If you are trapped (FEMA's earthquake guidance): send a text, or bang on a pipe or wall. Instead of shouting, use a whistle, and cover your mouth for protection."
+  ],
+  "warnings": [
+    "Smoke from petroleum-based fuels: inhaled petroleum products can be harmful to your health and respiratory system."
+  ],
+  "quotes": [
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "Check communications: If there is a radio set, use it to contact the parent unit for help. If in a forest, prepare fires to attract search planes. Smoke is better by day and flame is better at night. Mirrors and ground signals are helpful in attracting search parties." },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "Ground-to-air visual markings that relay specific concepts or requirements can be made with VS-17 panel markers, dragging brush into the desired shape(s), or stomping the symbol into the snow." },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "Create signals with fires since ground and air signals can be made with small fires to form the identification characters." },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "A small tactical flashlight or chemical light can be seen from the air or on the ground as far as line-of-sight permits. Strobe lights (infrared or plain) can be seen for miles by aircraft." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "If you are trapped, send a text or bang on a pipe or wall. Cover your mouth for protection and instead of shouting, use a whistle." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Provides several ways to signal recovery forces with light and smoke and increases the isolated person’s presence in the area with multiple well-placed fires. Fires allow personnel to multi-task while fire acts as a passive signal to recovery forces." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "In contrast, rotten wood, most of which is found lying directly on the ground, is of little use since it smolders and is very difficult to ignite. It produces a large amount of smoke, which can be useful in a signaling situation, but is a poor fuel." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "However, the more moisture fuel contains the more white smoke the fire will produced as it burns it off." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Petroleum-based fuels will produce thick, black smoke when burned. Inhaled petroleum products can be harmful to the health and respiratory system of the isolated person." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Log cabin fires are built by placing layers upon layers of perpendicular fuel wood. This fire creates a great amount of light and heat, primarily because of the amount of oxygen which enters the fire. The log cabin fire creates a quick and large bed of coals and can be used for cooking or as the basis for a signal fire." }
+  ],
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

@@ -1,0 +1,51 @@
+{
+  "id": "food-storage-animals-camp",
+  "kind": "fact",
+  "title": "Storing food in camp: keeping animals, birds and insects out of it",
+  "asks": [
+    "how to store food in camp",
+    "how do i keep animals out of my food",
+    "should i keep food in my tent or shelter",
+    "how high should i hang my food",
+    "mice are getting into our food at camp",
+    "can i bury my food to hide it from animals",
+    "where do i put food at night when camping",
+    "how 2 keep critters out of my food",
+    "something raided our food last night, how should we store it, over"
+  ],
+  "answer": [
+    "Never store food in your shelter: it may attract wild animals and could be hazardous to you.",
+    "Many animals and insects will devour your food supply if it is not correctly stored.",
+    "In most cases, food stored several feet off the ground is out of reach of most animals. Hang the food in a cache.",
+    "To protect supplies from small animals, hang them about 6.5 feet (about 2 meters) from the ground.",
+    "To protect food from insects and birds: wrap it in material, wrap and tie brush around the bundle, then wrap it with another layer of material. The dead air space makes it more difficult for insects and birds to get to the food.",
+    "Burying food is a good method of storage as long as there are no scavengers in the area to uncover it. Consider insects and small animals when burying food.",
+    "Do not eat in sleeping areas, to avoid attracting insects, rodents and other animals. Uneaten food or meal trash left in living areas can quickly attract rodents and other potentially dangerous pests.",
+    "Eating in a designated area and keeping trash to a minimum reduces the likelihood that pests will be attracted.",
+    "Store garbage and other food sources in rodent-proof containers, and do not let garbage build up."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Food should never be stored in the isolated person’s shelter as this may attract wild animals and could be hazardous to the isolated person." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Many animals and insects will devour an isolated person’s food supply if it is not correctly stored. Protect food from insects and birds by wrapping it in material, wrapping and tying brush around the bundle, then wrapping it with another layer of material. This creates \"dead air\" space making it more difficult for insects and birds to get to the food." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "In most cases, if food is stored several feet off the ground, it will be out of reach of most animals. Hang the food by putting it into a \"cache.\"" },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "It may be necessary to protect supplies from small animals. Hang these supplies about 6.5 feet (approximately 2 meters) from the ground." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Burying food is a good method of storage as long as scavengers are not in the area to uncover it. Consider insects and small animals when burying food." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Keep Soldiers from eating in sleeping/work areas to avoid attracting insects, rodents, and other animals." },
+    { "doc": "Army-TC-4-02.3-Field-Hygiene-and-Sanitation-2015.pdf",
+      "text": "For example, bringing food into these areas and then leaving uneaten food items or failing to remove trash associated with meals can quickly attract disease carrying arthropods, rodents, and other potentially dangerous pests." },
+    { "doc": "Army-TC-4-02.3-Field-Hygiene-and-Sanitation-2015.pdf",
+      "text": "Eating in designated areas and keeping trash to a minimum reduces the likelihood that pests will be attracted to these areas and thus reduce the potential for infestation and the spread of disease." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "It is necessary to eliminate all possible food sources. Garbage and other food sources should be stored in rodent-proof containers. Garbage collection should be conducted so that excess amounts of material do not build up." }
+  ],
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

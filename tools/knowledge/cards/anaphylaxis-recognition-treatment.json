@@ -1,0 +1,59 @@
+{
+  "id": "anaphylaxis-recognition-treatment",
+  "kind": "protocol",
+  "title": "Severe allergic reaction (anaphylaxis): signs and what to do",
+  "asks": [
+    "severe allergic reaction what do I do",
+    "anaphylaxis signs and treatment",
+    "when and how do I use an epipen",
+    "bee sting and his throat is swelling",
+    "ate peanuts lips swelling cant breathe",
+    "allergic reaction with hives and wheezing",
+    "anaphylactic shock tx",
+    "when can I give a second epipen",
+    "alergic reaction face swelling help",
+    "stung and now dizzy and short of breath",
+    "epi auto injector emergency steps"
+  ],
+  "answer": [
+    "Signs, which can appear within seconds or minutes of exposure to an allergen: sudden and severe difficulty breathing, wheezing or shortness of breath; swelling of the face, lips or tongue; hives or widespread skin redness; a rapid or weak pulse; confusion, dizziness or loss of consciousness. There may also be nausea, vomiting, abdominal pain or a feeling of impending doom.",
+    "Call for medical help immediately. Anaphylaxis is life-threatening.",
+    "If an epinephrine (adrenaline) auto-injector is available, use it: help the person use it, or give it yourself if you are allowed and trained. Dosage guidelines are provided with the injector.",
+    "Remove the allergen, if possible.",
+    "Lay the person on their back with the legs raised, if injuries permit.",
+    "If symptoms persist, further doses of epinephrine may be necessary, every 5 to 10 minutes, if prescribed.",
+    "Give rescue breathing and chest compressions if required.",
+    "Monitor the person's vital signs every three to five minutes until they are stable, and get them to medical care as soon as possible."
+  ],
+  "warnings": [
+    "The reaction can return when the adrenaline (epinephrine) wears off, which can be within minutes. Keep watching the person closely and be prepared to give additional doses.",
+    "Anaphylaxis is life-threatening and immediate action is crucial. Seek professional medical help promptly even while giving first aid."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Assess Symptoms: ▪ Observe for sudden and severe symptoms like difficulty breathing, wheezing, or shortness of breath. ▪ Check for a rapid or weak pulse. ▪ Look for swelling of the face, lips, or tongue. ▪ Note any hives or widespread skin redness. ▪ Be alert to signs of confusion, dizziness, or loss of consciousness." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Look for Other Symptoms: ▪ Be aware of nausea, vomiting, abdominal pain, or a feeling of impending doom." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "… manifest within seconds or minutes after exposure to an allergen, affecting the skin, respiratory, and circulatory systems." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "The treatment of anaphylactic shock is urgent and time sensitive. Immediate actions include calling for medical help and, if available, using the casualty's epinephrine auto-injector." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If anaphylactic shock is suspected, immediate medical assistance is crucial. The primary treatment involves administering epinephrine (adrenaline). If an epinephrine auto-injector is available, assist the affected individual in using it, or administer it yourself if you are allowed and trained. Dosage guidelines are typically provided with the injector—0.15 milligrams (mg) for children and 0.3 mg for adults weighing more than 66 pounds." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Further doses of epinephrine may be necessary, administered every 5 to 10 minutes if prescribed and symptoms persist. Additionally, provide supportive measures for treating shock, respiratory failure, circulatory collapse, or cardiac arrest: • Position the casualty supine with legs elevated if injuries permit. • Perform rescue breathing and external chest compressions if required. • Monitor vital signs every three to five minutes until the casualty is stable." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Use CASEVAC only if MEDEVAC is unavailable and transport the casualty to the nearest MTF as soon as possible. Anaphylaxis is life-threatening, and immediate action is crucial. Seek professional medical help promptly and provide supportive care while awaiting arrival of medical personnel." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "Remove the allergen, if possible. For severe allergic reaction with difficulty breathing give intramuscular adrenaline as soon as possible." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "If a patient with a severe allergic reaction is given adrenaline, the reaction can return when the adrenaline wears off. Patients need to be monitored closely." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "Give intramuscular adrenaline for airway obstruction, severe wheezing or shock. [See SKILLS] –– Adrenaline can wear off in minutes so be prepared to give additional doses." }
+  ],
+  "conflict": "DOSE (the card gives no dose, only 'provided with the injector'): ATP 4-02.11 (2026) para 7-35 says auto-injector doses are typically 0.15 mg for children and 0.3 mg for adults weighing more than 66 pounds; JTS Spider and Scorpion Envenomation 2026 says 0.3 mg (0.15 mg pediatric) of 1:1000 epinephrine intramuscularly; WHO-ICRC Basic Emergency Care 2018 (trained providers, drawn up from an ampoule) says 0.5 mg IM for adults of 50 kg or above, 0.4 mg at 40 kg, 0.3 mg at 30 kg, and 0.15 mg for children. REPEAT INTERVAL (the card gives the ATP figure): ATP 4-02.11 says every 5 to 10 minutes if prescribed and symptoms persist; WHO BEC says adults may repeat at 5-minute intervals and children every 5–15 minutes as needed. HHS Ship's Medicine Chest 2003 (anaphylaxis appears only in its training outline and medicine list) and FEMA P-2064 (2020) give no anaphylaxis first aid.",
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

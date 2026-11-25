@@ -1,0 +1,63 @@
+{
+  "id": "insect-sting-bite-care",
+  "kind": "fact",
+  "title": "Insect stings and bites: first aid",
+  "asks": [
+    "bee sting what do I do",
+    "how to treat a wasp sting",
+    "stinger still in my skin how to get it out",
+    "insect bite swelling and itching",
+    "fire ant bites treatment",
+    "how do I remove a tick",
+    "bug bite first aid",
+    "got stung by a hornet",
+    "bee sting treatmnt",
+    "multiple stings when to worry",
+    "tick on me how to pull it off"
+  ],
+  "answer": [
+    "First watch for a severe allergic reaction (anaphylaxis): difficulty breathing, dizziness, swelling of the face or throat, or a widespread rash. If any of these appear, seek immediate medical attention.",
+    "Stinger left in the skin (bees, wasps): remove it as quickly as possible. Gently scrape it off with a blunt edge such as a credit card or your fingernail, and avoid squeezing the venom sac.",
+    "Wash the area with mild soap and water. Be gentle.",
+    "Apply a cold compress, or an ice pack wrapped in a cloth, for 10 to 15 minutes at a time, several times a day, for pain, swelling and itching.",
+    "For itching and inflammation, over-the-counter creams, ointments or sprays with hydrocortisone, calamine or antihistamine can help. If itching or swelling persists, an over-the-counter oral antihistamine can be taken. Follow the instructions on the package.",
+    "Do not scratch the bite: scratching can cause further irritation and infection.",
+    "Fire ants: move away from the ants, and remove any clothing or jewelry that may have ants trapped in it, because they can keep stinging.",
+    "Tick: grasp it with fine-tipped tweezers as close to the skin as possible and pull upward gently and steadily with even pressure. Do not twist or jerk it, and avoid squeezing or crushing its body. Then clean the bite area thoroughly with soap and water or an antiseptic."
+  ],
+  "warnings": [
+    "An insect bite or sting can cause great pain, allergic reaction, inflammation and infection, and some may cause serious illness or even death if not treated correctly. In any case, medical personnel should examine the person at the earliest possible time.",
+    "If the insect is unknown, or symptoms are severe or getting worse, consult a health care professional.",
+    "After a tick bite, fever, rash, joint pain or flu-like symptoms need evaluation by a health care professional."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "An insect bite or sting can cause great pain, allergic reaction, inflammation, and infection. If not treated correctly, some bites or stings may cause serious illness or even death. When an allergic reaction is not involved, first aid is a simple process. In any case, medical personnel should examine the casualty at the earliest possible time." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Remove the stinger (if applicable): In the case of stinging insects like bees or wasps, it's important to remove the stinger as quickly as possible to prevent further venom injection. Gently scrape it off the skin using a blunt edge like a credit card or your fingernail. Avoid squeezing the venom sac, as it may release more venom." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Wash the bite area: Clean the bite site with mild soap and water to reduce the risk of infection. Be gentle and avoid excessive scrubbing." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Apply a cold compress: To alleviate pain, reduce swelling, and minimize itching, apply a cold compress or an ice pack wrapped in a cloth to the bite area. Do this for 10-15 minutes at a time, several times a day." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Use over-the-counter remedies: Over-the-counter topical creams, ointments, or sprays containing ingredients such as hydrocortisone, calamine lotion, or antihistamines can help relieve itching and inflammation. Follow the instructions and precautions on the product packaging." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Take oral antihistamines: If itching or swelling persists, you can take over-the-counter oral antihistamine to help reduce allergic reactions and relieve symptoms. Consult a pharmacist or health care professional for appropriate dosage and recommendations." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Avoid scratching: Although it may be tempting, refrain from scratching the insect bite to prevent further irritation, infection, or the development of a secondary skin condition." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Monitor for severe reactions: In rare cases, insect bites can cause severe allergic reactions, known as anaphylaxis. If you experience symptoms such as difficulty breathing, dizziness, swelling of the face or throat, or a widespread rash, seek immediate medical attention." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If the insect type is unknown or if the Service member is experiencing severe or worsening symptoms, it is best to consult a health care professional for proper evaluation and guidance." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Move away from the area where the ants are present to avoid further stings. • Remove any clothing or jewelry that may have ants trapped in them, as they can continue to sting." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Prepare for tick removal: Use fine-tipped tweezers to grasp the tick as close to the skin's surface as possible. Avoid squeezing or crushing the tick's body. • Remove the tick: Gently and steadily pull the tick upward with even pressure. Do not twist or jerk it. The goal is to remove the entire tick, including its mouthparts. Dispose of the tick by placing it in a sealed bag or container or by submerging it in alcohol. • Clean the bite area: Thoroughly clean the bite area with soap and water or an antiseptic solution to reduce the risk of infection." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If in an area where these diseases are prevalent or if you develop symptoms such as fever, rash, joint pain, or flu-like symptoms after a tick bite, it is crucial to consult a health care professional for proper evaluation, diagnosis, and treatment." }
+  ],
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

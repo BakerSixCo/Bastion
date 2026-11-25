@@ -1,0 +1,57 @@
+{
+  "id": "latrine-cat-hole",
+  "kind": "protocol",
+  "title": "Cat-hole latrine: where to dig it and how to use it",
+  "asks": [
+    "how to dig a cat hole",
+    "how deep should a cat hole be",
+    "where do i poop in the woods",
+    "how far from water should i go to the bathroom",
+    "no toilet what do we do with human waste",
+    "how far should the latrine be from camp and water",
+    "how to bury poop when camping",
+    "were to poop wen camping",
+    "no latrine at this site, how do we handle human waste, over"
+  ],
+  "answer": [
+    "Do not soil the ground in the camp area with urine or feces. When no latrine is available, dig a cat hole and cover your waste. The Army uses the cat-hole latrine when a unit is on the move.",
+    "Pick the spot away from water. The Army survival manual says to locate latrines 200 feet from water and away from shelter. The Army field sanitation manual says at least 100 feet from any ground water source, and downslope from wells, springs, streams and other water sources (30 meters or more).",
+    "Keep it away from food: at least 300 feet downwind and downhill from where food is prepared and served. Another passage of the same manual says as far from food operations as possible (100 meters or more).",
+    "Do not dig down to the ground water level, or in a place where the contents may drain into a water source.",
+    "Dig a hole about one foot deep and one foot in diameter.",
+    "After using the cat hole, fill it in completely and pack the dirt down.",
+    "Wash or sanitize your hands after using the latrine."
+  ],
+  "warnings": [
+    "The Army manuals say the use of improvised latrines such as cat holes is generally prohibited in the United States, and that it has become less common due to ecological and statutory restrictions."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Do not soil the ground in the camp area with urine or feces; use latrines. When no latrines are available, isolated persons should dig \"cat holes\" and cover their waste." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Locate latrines 200 feet from water and away from shelter." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Considerations for the placement of latrines. Latrines must be" },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Located at least 300 feet downwind and downhill from unit food service facilities and at least 100 feet from any unit ground water source." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Latrines are not dug to the ground water level or in places where pit contents may drain into the water source." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Select location for field latrines as follows: As far from food operations as possible (100 meters or more). Downwind and downslope, if possible. Downslope from wells, springs, streams, and other water sources (30 meters or more)." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "The cat-hole latrine is used when the unit is on the move" },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "The cat-hole latrine is simply a hole approximately one foot deep and one foot in diameter. After using a cat hole it must be completely filled in and the dirt packed down." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "When to wash and or sanitize the hands (at a minimum)— Before eating or snacking. After eating or snacking. Before handling and or preparing food. After using the latrine." },
+    { "doc": "Army-TC-4-02.3-Field-Hygiene-and-Sanitation-2015.pdf",
+      "text": "Generally, the use of improvised latrines in the U.S. is prohibited. The use of improvised latrines such as cat holes and slit trenches has become less common due to ecological and statutory restrictions." },
+    { "doc": "Army-TB-MED-593-Field-Waste-Management-2006.pdf",
+      "text": "The types of improvised latrines listed below can be used for field use. Generally, the use of improvised latrines in the United States is prohibited." }
+  ],
+  "conflict": "Distance from water differs between Army manuals: ATP 3-50.21 (2018) 'Locate latrines 200 feet from water'; ATP 4-25.12 (2014, change 2 2025) and TB MED 593 (2006) 'at least 100 feet from any unit ground water source'; ATP 4-25.12 also says 'Downslope from wells, springs, streams, and other water sources (30 meters or more)' and 'at least 30 meters down gradient from any ground water source'; TB MED 577 (2010) says 'at least 30 yards (yd) downgradient'. Distance from food: ATP 4-25.12 gives both 'at least 300 feet' and '100 meters or more'. The card shows the figures side by side; the owner must choose.",
+  "status": "draft",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "",
+  "approved_by": ""
+}

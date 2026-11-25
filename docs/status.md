@@ -2030,3 +2030,17 @@ differ (8.25% bleach), EPA table row quoted when the volume is one of its rows, 
 (xhigh) review passed 6 and failed 6 (missed HHS Ship's Medicine Chest and FEMA P-2064 conflicts,
 "drinks if conscious" instead of "alert and able to swallow", missing "do not remove an existing
 tourniquet", no "when ORS is not enough"). Fixes in progress; nothing approved yet.
+
+## Resume here (2026-11-24, session limit)
+
+Cards: 54 draft files in `tools/knowledge/cards/`, all pass `perl tools/knowledge/build.pl -v` (quotes + numbers, local, no AI).
+None reviewed/approved yet. Batch 1 (12) revised after Opus review, awaiting re-review; batch 2a (20) awaiting review;
+batch 2b (field skills/disasters, ~24) drafted by Fable. Next session:
+1. Independent Opus xhigh review of every card still `draft` (read each card's quotes against `perl tools/knowledge/find.pl`).
+   Owner flags to judge: "high and tight" tourniquet; tourniquet-left-on with no time limit; heat stroke 102 F end point;
+   ORS "only if fully alert"; frostbite thermometer; CPR 2026 vs HHS 15:2; shock no food/drink; heat exhaustion 30 vs 20 min.
+2. Passes -> status `reviewed`; `perl tools/knowledge/review/sync.pl export`; ArtifactData batch set into collection "cards"
+   of https://claude.ai/artifact/H8nmtGzCwuGvoh54FEj2dz; owner approves there.
+3. Owner decisions -> `sync.pl import` -> `build.pl` -> app assets -> emulator test.
+Free local work (no Claude tokens): `build.pl -v`, `find.pl`, `tools/model-eval/pipeline.sh` (Arc GPU), `gradlew :app:testDebugUnitTest`.
+Next calculator: USDA canning time by altitude.
