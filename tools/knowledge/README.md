@@ -37,6 +37,14 @@ and everything is critical in an emergency.
 - `status`: `draft` → `reviewed` (a second model checked it against the quotes) → `approved`
   (the owner signed it off). **Only `approved` cards reach the phone.**
 
+## Find passages locally (no AI tokens)
+
+    perl tools/knowledge/find.pl "rattlesnake bite do not cut suck" -n 8 [-doc JTS-CPG]
+
+Searches every kit document (text cached in `tools/kit/.textcache/`, same extraction as the
+verifier, so its paragraphs can be quoted directly) and prints the best paragraphs with document
+and page. Drafters and reviewers use it instead of reading whole manuals.
+
 ## Build
 
     perl tools/knowledge/build.pl            # verify every card, write the app's cards file
