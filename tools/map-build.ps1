@@ -417,7 +417,7 @@ if ($withLayers) {
         $g = TileRange $GridZoom
         $rawDir = Join-Path $osm 'streets'
         $cells = ($g[2] - $g[0] + 1) * ($g[3] - $g[1] + 1); $done = 0; $failed = 0
-        $body = 'way["highway"~"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|service|track|road|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link)$"]["service"!~"^(parking_aisle|drive-through|emergency_access)$"]["area"!="yes"];out body geom qt;'
+        $body = 'way["highway"~"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|service|track|road|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link)$"]["service"!~"^(parking_aisle|drive-through|emergency_access)$"]["area"!="yes"];out body geom qt;rel(bw)["type"="restriction"];out body qt;'
         for ($cx = $g[0]; $cx -le $g[2]; $cx++) { for ($cy = $g[1]; $cy -le $g[3]; $cy++) {
             $done++
             $w = [math]::Max($West, (TileLon $cx $GridZoom)); $e = [math]::Min($East, (TileLon ($cx + 1) $GridZoom))

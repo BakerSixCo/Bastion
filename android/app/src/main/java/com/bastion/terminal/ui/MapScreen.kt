@@ -317,6 +317,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     var showLegs by remember { mutableStateOf(false) }
     // Driving: up to three routes over the pack's road network; blocked roads are kept as positions.
     var drive by remember { mutableStateOf(false) }
+    var vehicle by remember { mutableStateOf(RoadGraph.Vehicle.CAR) }
     var drives by remember { mutableStateOf<List<RoadGraph.Route>>(emptyList()) }
     var chosen by remember { mutableStateOf(0) }
     val blockedAt = remember { mutableStateListOf<Pair<Double, Double>>() }
@@ -339,7 +340,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
             }
             routeNote = "Working out driving routes…"
             scope.launch {
-                val rs = store.drive(from.first, from.second, to.first, to.second, blockedAt.toList())
+                val rs = store.drive(from.first, from.second, to.first, to.second, blockedAt.toList(), vehicle = vehicle)
                 drives = rs
                 routeNote = if (rs.isNotEmpty()) "" else
                     "No driving route found: both ends must be within about 2 km of a road on one map pack, and " +
@@ -668,6 +669,9 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                     if (dest != null) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         FilterChip(selected = !drive, onClick = { if (drive) { drive = false; plan() } }, label = { Text("Walk") })
                         FilterChip(selected = drive, onClick = { if (!drive) { drive = true; plan() } }, label = { Text("Drive") })
+                        if (drive) RoadGraph.Vehicle.entries.forEach { v ->
+                            FilterChip(selected = vehicle == v, onClick = { if (vehicle != v) { vehicle = v; plan() } }, label = { Text(v.label) })
+                        }
                     }
                     if (drive && drives.isNotEmpty()) {
                         Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {

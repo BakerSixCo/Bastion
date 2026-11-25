@@ -242,13 +242,13 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
     private val roadGraph: RoadGraph? by lazy { roadGrid?.let { g -> RoadGraph(g) { x, y -> bytes("layers/streets/$x/$y.bin") } } }
 
     /** Driving routes between two positions, fastest first (empty if this pack cannot route them). Call off the main thread. */
-    fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>>, count: Int): List<RoadGraph.Route> {
+    fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>>, count: Int, vehicle: RoadGraph.Vehicle): List<RoadGraph.Route> {
         val g = roadGraph ?: return emptyList()
         if (!contains(fromLat, fromLon) || !contains(toLat, toLon)) return emptyList()
         return synchronized(g) {
             // A block closes every road within 50 m of the spot, so a route cannot slip round it through a lot or a side lane.
             val blocked = blockedAt.flatMap { (la, lo) -> g.roadsWithin(la, lo, 50.0) }.toSet()
-            g.routes(fromLat, fromLon, toLat, toLon, blocked, count)
+            g.routes(fromLat, fromLon, toLat, toLon, blocked, count, vehicle = vehicle)
         }
     }
 
@@ -390,10 +390,10 @@ class MapPacks private constructor(private val app: Context) {
         _packs.value.filter { p -> p.roadGrid != null && at.all { p.contains(it.first, it.second) } }.minByOrNull { it.areaKm2 }
 
     /** Driving routes, fastest first; the road nearest each of [blockedAt] is avoided. Empty if no pack on the phone has roads for both ends. */
-    suspend fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>> = emptyList(), count: Int = 3): List<RoadGraph.Route> =
+    suspend fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>> = emptyList(), count: Int = 3, vehicle: RoadGraph.Vehicle = RoadGraph.Vehicle.CAR): List<RoadGraph.Route> =
         withContext(Dispatchers.Default) {
             if (_packs.value.isEmpty()) rescan()
-            roadPack(fromLat to fromLon, toLat to toLon)?.drive(fromLat, fromLon, toLat, toLon, blockedAt, count).orEmpty()
+            roadPack(fromLat to fromLon, toLat to toLon)?.drive(fromLat, fromLon, toLat, toLon, blockedAt, count, vehicle).orEmpty()
         }
 
     /** True if some pack on the phone has driving roads at this position. */

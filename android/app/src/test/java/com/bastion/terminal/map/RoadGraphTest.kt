@@ -25,6 +25,29 @@ class RoadGraphTest {
         assertTrue(g.routes(43.6100, -116.1900, 43.6000, -116.2000).isEmpty())
     }
 
+    /** Built by tools/RoadGraph.java from turns.osm.xml: a no-left-turn from Main St onto North Rd, and a grade-4 track. */
+    private fun turnsGraph(): RoadGraph {
+        val bytes = javaClass.getResourceAsStream("/roadgraph/turns-90-186.bin")!!.readBytes()
+        return RoadGraph(grid) { x, y -> if (x == 90 && y == 186) bytes else null }
+    }
+
+    @Test fun noLeftTurnIsObeyed() {
+        // Just south of the north end of North Rd. The direct way is Main St, then left onto North Rd: forbidden.
+        val r = turnsGraph().routes(43.6000, -116.2000, 43.6095, -116.1900, count = 1).single()
+        assertEquals(listOf("Main St", "Loop Rd", "North Rd"), r.steps.map { it.name })
+    }
+
+    @Test fun carsKeepOffRoughTracksButA4x4CanUseThem() {
+        // A spot on Ridge Track, 300 m from any other road.
+        val car = turnsGraph().routes(43.6000, -116.2000, 43.6050, -116.2000, count = 1, maxOffRoad = 100.0)
+        assertTrue(car.isEmpty())
+        val truck = turnsGraph().routes(43.6000, -116.2000, 43.6050, -116.2000, count = 1, maxOffRoad = 100.0,
+            vehicle = RoadGraph.Vehicle.FOUR_BY_FOUR).single()
+        assertEquals("Ridge Track", truck.steps.last().name)
+        // Rough track: 10 mph at most.
+        assertTrue(truck.seconds >= 556 / (10 * 0.44704) - 1)
+    }
+
     // A 5 x 5 grid of two-way 30 mph streets, 0.01° apart, in one cell; returns the cell bytes.
     private fun gridCell(oneWayRow: Int = -1): ByteArray {
         val bo = ByteArrayOutputStream(); val o = DataOutputStream(bo)
