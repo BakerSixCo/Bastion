@@ -36,7 +36,8 @@ java '-Djava.awt.headless=true' "-Dpdfbox.fontcache=$out" -Xmx2g -cp $cp Figures
 Open `index.html` locally. Select a thumbnail to inspect the full-resolution
 PNG. `pdfPage` counts from 1. `printedPage` is the visible page label when
 the text layer yields a single plausible header or footer label. `docTitle`
-comes from PDF metadata, with the filename stem as a fallback.
+comes from a checked cover title where available, then PDF metadata, then the
+filename stem for missing or placeholder metadata.
 
 The extractor finds graphical regions in a graphics-only preview, then exports
 them from the complete rendering so original figure labels and compositing are

@@ -16,6 +16,10 @@ public final class FiguresTest {
         check(args.length == 1, "Pass a scratch directory under out/");
         testCaptions();
         testLicence();
+        check(Figures.documentTitle("Army-ATP-3-50.21-Survival-2018.pdf", "Chapter 1").equals("Survival"),
+                "Reviewed cover title");
+        check(Figures.documentTitle("Army-Synthetic.pdf", "Microsoft Word - Draft.docx").equals("Army-Synthetic"),
+                "Placeholder title falls back to the filename stem");
         Path root = Path.of(args[0]);
         Path sources = Files.createDirectories(root.resolve("pdfs"));
         createFixture(sources.resolve("Army-Synthetic.pdf"));

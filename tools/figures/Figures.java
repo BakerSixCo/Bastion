@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
@@ -61,6 +64,16 @@ public final class Figures {
             "Special-Forest-Products-Pacific-Northwest-PNW-GTR-513.pdf",
             "Wild-Edible-Mushrooms-Blue-Mountains-PNW-GTR-393.pdf");
     private static final String PUBLIC_DOMAIN = "US government work (public domain)";
+    private static final Map<String, String> COVER_TITLES = Map.of(
+            "Army-ATP-3-50.21-Survival-2018.pdf", "Survival",
+            "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+            "Army Techinques Publication for Casualty Response, Tactical Combat Casualty Care, and First Aid",
+            "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+            "Soldier’s Handbook for Individual Operations and Survival in Cold-Weather Areas",
+            "WHO-Model-List-Essential-Medicines-24th-2025.pdf", "WHO Model List of Essential Medicines, 24th list");
+    private static final Pattern PLACEHOLDER_TITLE = Pattern.compile(
+            "(?i)(?:chapter\\s+\\d+|this is for chapters?.*|microsoft word\\s*-.*|"
+            + ".*\\.(?:pdf|docx?)|guidance for industry|TB MED \\d+)");
 
     record Box(int left, int top, int right, int bottom) {
         int width() { return right - left; }
@@ -145,10 +158,7 @@ public final class Figures {
         String filename = pdf.getFileName().toString();
         String docId = sha256(filename.getBytes(StandardCharsets.UTF_8)).substring(0, 16);
         try (PDDocument doc = Loader.loadPDF(pdf.toFile())) {
-            String title = doc.getDocumentInformation().getTitle();
-            if (title == null || title.isBlank()) {
-                title = filename.substring(0, filename.length() - 4);
-            }
+            String title = documentTitle(filename, doc.getDocumentInformation().getTitle());
             var text = new PageText();
             var graphics = new PageRenderer(doc, true);
             var renderer = new PageRenderer(doc, false);
@@ -186,7 +196,7 @@ public final class Figures {
                     Path target = output.resolve(file);
                     savePng(figure, target, DPI);
                     savePng(thumbnail(figure), output.resolve("thumbs/" + id + ".png"), 0);
-                    entries.add(new Entry(id, filename, title.strip(), page + 1, printed, candidate.caption(),
+                    entries.add(new Entry(id, filename, title, page + 1, printed, candidate.caption(),
                             file, figure.getWidth(), figure.getHeight(), sha256(Files.readAllBytes(target)),
                             licence(filename), candidate.method(), candidate.confidence()));
                 }
@@ -224,6 +234,18 @@ public final class Figures {
 
     static String licence(String filename) {
         return AGENCY.matcher(filename).matches() || FOREST_SERVICE.contains(filename) ? PUBLIC_DOMAIN : "check";
+    }
+
+    static String documentTitle(String filename, String metadataTitle) {
+        String title = COVER_TITLES.get(filename);
+        if (title != null) {
+            return title;
+        }
+        if (metadataTitle != null && !metadataTitle.isBlank()
+                && !PLACEHOLDER_TITLE.matcher(metadataTitle.strip()).matches()) {
+            return metadataTitle.strip();
+        }
+        return filename.substring(0, filename.length() - 4);
     }
 
     static boolean startsCaption(String text) {
@@ -474,8 +496,25 @@ public final class Figures {
     }
 
     private static final class PageRenderer extends PDFRenderer {
+        private static final Logger SAMPLED_IMAGES =
+                Logger.getLogger("org.apache.pdfbox.pdmodel.graphics.image.SampledImageReader");
         private final boolean graphicsOnly;
         private boolean incomplete;
+        // PDFBox can return a partial image for a truncated 1-bit stream without throwing.
+        private final Handler partialImage = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                if (record.getMessage().contains("premature EOF")) {
+                    incomplete = true;
+                }
+            }
+
+            @Override
+            public void flush() {}
+
+            @Override
+            public void close() {}
+        };
 
         PageRenderer(PDDocument doc, boolean graphicsOnly) {
             super(doc);
@@ -486,7 +525,12 @@ public final class Figures {
 
         BufferedImage render(int page, int dpi) throws IOException {
             incomplete = false;
-            return renderImageWithDPI(page, dpi, ImageType.RGB);
+            SAMPLED_IMAGES.addHandler(partialImage);
+            try {
+                return renderImageWithDPI(page, dpi, ImageType.RGB);
+            } finally {
+                SAMPLED_IMAGES.removeHandler(partialImage);
+            }
         }
 
         @Override
