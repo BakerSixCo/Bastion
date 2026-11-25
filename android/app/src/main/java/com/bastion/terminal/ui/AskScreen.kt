@@ -54,6 +54,7 @@ fun AskScreen(
     val zimState by remember { ZimLibrary.get(ctx) }.state.collectAsState()
     // App-scoped: survives tab switches and opening a source.
     val s = remember { AskSession.get(ctx) }
+    var showBleach by rememberSaveable { mutableStateOf(false) }
 
     LazyColumn(
         modifier.fillMaxSize().padding(16.dp),
@@ -84,6 +85,12 @@ fun AskScreen(
                 onClick = { s.search() },
             ) { Text(if (zimState is ZimState.Ready) "Search library + reference" else "Search library") }
         }
+        item {
+            OutlinedButton(onClick = { showBleach = !showBleach }) {
+                Text(if (showBleach) "Hide bleach calculator" else "Water: bleach calculator")
+            }
+        }
+        if (showBleach) item { BleachCalculator() }
         if (s.searching) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
 
         if (s.searched && !s.searching && s.passages.isEmpty()) {
@@ -123,6 +130,8 @@ fun AskScreen(
 
         if (s.answer.isNotEmpty() || s.answerError != null) {
             item { AnswerCard(s.answer, s.answerError, s.modelLabel, s.stats, s.check, s.generating, s.withheld, s.stage, s.card) }
+            // A verified bleach answer comes with the calculator for other amounts of water.
+            if (s.card?.id == "water-bleach-dose" && !showBleach) item { BleachCalculator() }
         }
     }
 }
