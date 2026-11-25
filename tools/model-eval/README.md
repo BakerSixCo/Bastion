@@ -66,3 +66,14 @@ The app's pipeline (`CheckedAnswer.twoPaths`) is: restate → search the restate
 answer → code checks + judge → search the asker's own words → answer → checks + judge → show
 the restated path's answer only if both passed. The on-device run of exactly that is
 `CheckedAnswerEvalTest` (results in `results/device-v2-twopaths.jsonl`).
+
+## Arc GPU (2026-11-24)
+
+The PC scripts (`run-model.sh`, `restate.sh`, `gate.sh`) now use the official llama.cpp **Vulkan**
+build (b12651, same version as the CPU build; SHA-256 checked against GitHub) in
+`tools/kit/pc-eval/llama-vulkan/`, with every layer on the laptop's Intel Arc 140V
+(`-ngl 99`). `llama-bench`, Gemma 4 E2B Q4_0: prompt 368 → 4,452 tokens/s (12×), generation
+30 → 49 tokens/s (1.6×). 20 questions: 185 s → 78 s, identical scores, wording differs only
+in phrasing (`results/sub20-llama*.jsonl`). `LLAMA_BIN=../kit/pc-eval/llama` runs on the CPU.
+The laptop's NPU is not used (llama.cpp has no Intel NPU backend; the Arc chip is faster for
+this anyway). None of this changes the phone: its speed depends on its own chip.
