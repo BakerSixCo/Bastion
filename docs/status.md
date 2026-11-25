@@ -1991,3 +1991,19 @@ FM 21-76 (1992) was removed from the kit (owner decision): ATP 3-50.21 (2018) re
 Not obtained: TC 3-25.26 land navigation (armypubs sends it to a CAC sign-in).
 The download research fetched one PDF by mistake while checking a size (FEMA *Are You Ready?*,
 deleted at once; later downloaded properly as approved).
+
+**Official library run** (2026-11-24, emulator; library 95 documents: the official PDFs, FEMA and
+CDC files, FM 21-76 retired; subject check accepts the source's own word for the same thing,
+e.g. purify/disinfect; `results/device-v2-official2.jsonl`): 0 of 22 traps answered, 44 shown
+(42 before the official documents). Read: 6 bad (rattlesnake bite → CDC travel page on
+Guatemala/Belize antivenom; boiling time → a CDC travel line instead of EPA's "1 minute";
+filters/viruses → wetland systems; garbled Idaho trout table; knife sharpening → making a stone
+knife; avalanche → a military casualty-rescue line), about 7 weak. New and right: bleach dose
+from EPA and TB MED 577, cut-and-suck "do not", tinder from ATP 3-50.21. The bad ones are the
+model picking the wrong sentence from a good source; verified answer cards
+(`tools/knowledge`) are the fix being built.
+
+Storage note (emulator, applies to phones): importing ~180 MB of PDFs left too little free space
+for the model's ~860 MB working cache, Android cleared it, and the model would not start (the app
+said so plainly). Kit PDFs only need to stay in the docs folder until imported (their text is
+kept); on a phone, put references and documents on the SD card.
