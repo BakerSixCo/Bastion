@@ -9,7 +9,7 @@
 #   - Factory-reset the phone and finish Android's welcome screens WITHOUT adding any
 #     account (no Google sign-in). Android refuses the device-manager role otherwise.
 #   - Enable USB debugging (Settings > About > tap Build number 7 times > Developer options).
-#   - Put companion app .apk files in tools\kit\ (Meshtastic, ATAK-CIV, Organic Maps, Kiwix),
+#   - Put companion app .apk files in tools\kit\ (Meshtastic, ATAK-CIV, Kiwix),
 #     plus optionally a .litertlm model and .zim files. BASTION installs the apps itself.
 #
 # Build the kit folder first with tools\kit-build.ps1 (downloads from official sources and

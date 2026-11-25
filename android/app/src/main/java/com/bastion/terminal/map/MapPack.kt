@@ -62,6 +62,9 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
     private val elevExt = json.optJSONObject("elev")?.optString("ext", "png") ?: "png"
     val layers: List<LayerInfo>
 
+    /** Grid zoom of the driving-road network (layers/streets/x/y.bin), or null if the pack has none. */
+    val roadGrid: Int?
+
     /** Rough ground area, km² — used to prefer the most local pack. */
     val areaKm2: Double
 
@@ -70,7 +73,9 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
         west = b.getDouble(0); south = b.getDouble(1); east = b.getDouble(2); north = b.getDouble(3)
         areaKm2 = (east - west) * 111.32 * cos(Math.toRadians((south + north) / 2)) * (north - south) * 111.32
         val arr = json.optJSONArray("layers") ?: JSONArray()
-        layers = (0 until arr.length()).map { arr.getJSONObject(it) }.filter { it.optInt("count", 1) > 0 }.map {
+        val all = (0 until arr.length()).map { arr.getJSONObject(it) }.filter { it.optInt("count", 1) > 0 }
+        roadGrid = all.firstOrNull { it.optString("kind") == "roadgraph" && it.has("grid") }?.getInt("grid")
+        layers = all.filter { it.optString("kind") != "roadgraph" }.map {
             LayerInfo(
                 it.getString("id"), it.optString("title", it.getString("id")), it.optString("kind") == "area",
                 it.optString("file"), if (it.has("grid")) it.getInt("grid") else null, it.optString("kind") == "point",
@@ -232,6 +237,26 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
             null
         }
 
+    // ---- driving roads ----
+
+    private val roadGraph: RoadGraph? by lazy { roadGrid?.let { g -> RoadGraph(g) { x, y -> bytes("layers/streets/$x/$y.bin") } } }
+
+    /** Driving routes between two positions, fastest first (empty if this pack cannot route them). Call off the main thread. */
+    fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>>, count: Int): List<RoadGraph.Route> {
+        val g = roadGraph ?: return emptyList()
+        if (!contains(fromLat, fromLon) || !contains(toLat, toLon)) return emptyList()
+        return synchronized(g) {
+            val blocked = blockedAt.mapNotNull { (la, lo) -> g.roadNear(la, lo)?.first }.toSet()
+            g.routes(fromLat, fromLon, toLat, toLon, blocked, count)
+        }
+    }
+
+    fun roadNear(lat: Double, lon: Double): Pair<Long, String>? {
+        val g = roadGraph ?: return null
+        if (!contains(lat, lon)) return null
+        return synchronized(g) { g.roadNear(lat, lon) }
+    }
+
     fun close() = runCatching { zip.close() }
 
     companion object {
@@ -358,6 +383,23 @@ class MapPacks private constructor(private val app: Context) {
         if (_packs.value.isEmpty()) rescan()
         return best(fromLat to fromLon, toLat to toLon)?.route(fromLat, fromLon, toLat, toLon)
     }
+
+    /** The most local pack with driving roads covering both ends. */
+    private fun roadPack(vararg at: Pair<Double, Double>): MapPack? =
+        _packs.value.filter { p -> p.roadGrid != null && at.all { p.contains(it.first, it.second) } }.minByOrNull { it.areaKm2 }
+
+    /** Driving routes, fastest first; the road nearest each of [blockedAt] is avoided. Empty if no pack on the phone has roads for both ends. */
+    suspend fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>> = emptyList(), count: Int = 3): List<RoadGraph.Route> =
+        withContext(Dispatchers.Default) {
+            if (_packs.value.isEmpty()) rescan()
+            roadPack(fromLat to fromLon, toLat to toLon)?.drive(fromLat, fromLon, toLat, toLon, blockedAt, count).orEmpty()
+        }
+
+    /** True if some pack on the phone has driving roads at this position. */
+    fun hasRoads(lat: Double, lon: Double): Boolean = roadPack(lat to lon) != null
+
+    /** The road nearest a position (to block it), as id and name. */
+    suspend fun roadNear(lat: Double, lon: Double): Pair<Long, String>? = withContext(Dispatchers.Default) { roadPack(lat to lon)?.roadNear(lat, lon) }
 
     companion object {
         @Volatile private var inst: MapPacks? = null

@@ -51,7 +51,6 @@ private val COMPANIONS = listOf(
     CompanionApp("Kiwix", "org.kiwix.kiwixmobile", "Offline ZIM library (Wikipedia and more)"),
     CompanionApp("Meshtastic", "com.geeksville.mesh", "LoRa mesh messaging — needs external radio hardware"),
     CompanionApp("ATAK-CIV", "com.atakmap.app.civ", "Tactical mapping"),
-    CompanionApp("Organic Maps", "app.organicmaps", "Offline navigation maps"),
 )
 
 @Composable
@@ -117,7 +116,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     // The same app published outside the Play Store has a different package name.
                     val altPkg = when (comp.pkg) {
                         "org.kiwix.kiwixmobile" -> "org.kiwix.kiwixmobile.standalone"
-                        "app.organicmaps" -> "app.organicmaps.web"
                         else -> null
                     }
                     val launch = remember(comp.pkg) {

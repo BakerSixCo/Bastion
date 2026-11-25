@@ -47,10 +47,8 @@ object DeviceManager {
             Manifest.permission.WRITE_EXTERNAL_STORAGE, "android.permission.ACCESS_LOCAL_NETWORK",
             Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO,
         ),
-        "app.organicmaps" to listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
         "org.kiwix.kiwixmobile" to listOf(Manifest.permission.POST_NOTIFICATIONS),
         // The same apps as published outside the Play Store (the builds the kit uses).
-        "app.organicmaps.web" to listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
         "org.kiwix.kiwixmobile.standalone" to listOf(Manifest.permission.POST_NOTIFICATIONS),
     )
     private val OWN = listOf(

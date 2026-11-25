@@ -50,7 +50,7 @@ data class SetupStatus(
     val autoAnswerOn: Boolean,
     val atakInstalled: Boolean,
     val kiwixInstalled: Boolean,
-    val mapsInstalled: Boolean,
+    val mapPacks: Int,
     val deviceSecure: Boolean = false,
     val linkInstalled: Boolean = false,
 ) {
@@ -62,7 +62,6 @@ data class SetupStatus(
 
 private const val PKG_ATAK = "com.atakmap.app.civ"
 private const val PKG_KIWIX = "org.kiwix.kiwixmobile"
-private const val PKG_MAPS = "app.organicmaps"
 
 private fun installed(ctx: Context, pkg: String) =
     runCatching { ctx.packageManager.getPackageInfo(pkg, 0) }.isSuccess
@@ -92,7 +91,7 @@ fun rememberSetupStatus(): SetupStatus {
             autoAnswerOn = MeshAutoResponder.isEnabled(ctx),
             atakInstalled = installed(ctx, PKG_ATAK),
             kiwixInstalled = installed(ctx, PKG_KIWIX) || installed(ctx, "org.kiwix.kiwixmobile.standalone"),
-            mapsInstalled = installed(ctx, PKG_MAPS) || installed(ctx, "app.organicmaps.web"),
+            mapPacks = com.bastion.terminal.map.MapPacks.get(ctx).packs.value.size,
             linkInstalled = com.bastion.terminal.link.LinkClient.get(ctx).isSetUp(),
             deviceSecure = (ctx.getSystemService(Context.KEYGUARD_SERVICE) as? android.app.KeyguardManager)?.isDeviceSecure == true,
         )
@@ -146,7 +145,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
         "No app store on this phone. Install $name another way, then come back.",
     )
     fun launch(pkg: String, name: String) {
-        val alt = mapOf(PKG_KIWIX to "org.kiwix.kiwixmobile.standalone", PKG_MAPS to "app.organicmaps.web")[pkg]
+        val alt = mapOf(PKG_KIWIX to "org.kiwix.kiwixmobile.standalone")[pkg]
         val i = ctx.packageManager.getLaunchIntentForPackage(pkg)
             ?: alt?.let { ctx.packageManager.getLaunchIntentForPackage(it) }
         if (i != null) open(i, "Could not open $name.") else note = "$name is not installed."
@@ -242,7 +241,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             steps = listOf(
                 "Meshtastic collects usage analytics unless you turn it off: Meshtastic → Settings → turn off analytics.",
                 "To keep message text off the lock screen: Android Settings → Notifications → hide sensitive content. BASTION's inbox still works.",
-                "ATAK, Kiwix and Organic Maps are separate apps with their own permissions and network access.",
+                "ATAK and Kiwix are separate apps with their own permissions and network access.",
             ),
         )
 
@@ -272,13 +271,13 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             else listOf("Get ATAK-CIV" to { store(PKG_ATAK, "ATAK-CIV") }),
         )
         Step(
-            n = 10, title = "Offline maps", done = status.mapsInstalled, optional = true,
-            state = if (status.mapsInstalled) "Organic Maps is installed." else "Organic Maps is not installed.",
+            n = 10, title = "Offline maps", done = status.mapPacks > 0, optional = true,
+            state = if (status.mapPacks > 0) "${status.mapPacks} map pack(s) on this phone." else "No map packs on this phone yet.",
             steps = listOf(
-                "Install Organic Maps and download the regions you'll travel through while you have internet.",
+                "Maps are built on a computer with tools/map-build.ps1 while it has internet, then copied to the phone (the script can push them over USB).",
+                "A pack holds topo maps, public land, trails, elevation for walking routes, and the road network for driving routes with alternatives and detours.",
+                "Build a pack for home, one for each state you would travel through, and one for any area you plan to be in.",
             ),
-            actions = if (status.mapsInstalled) listOf("Open Organic Maps" to { launch(PKG_MAPS, "Organic Maps") })
-            else listOf("Get Organic Maps" to { store(PKG_MAPS, "Organic Maps") }),
         )
         Step(
             n = 11, title = "Kiwix reader", done = status.kiwixInstalled, optional = true,

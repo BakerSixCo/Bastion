@@ -291,10 +291,10 @@ if ($withLayers) {
 # --- places and military areas (OpenStreetMap) ---
 # One Overpass request each for the whole pack. The raw answers are kept beside the pack
 # (<name>.osm) so a rebuild does not ask again; delete that folder to refresh them.
-function Overpass([string]$body, [string]$dest) {
+function Overpass([string]$body, [string]$dest, [double[]]$box = @($South, $West, $North, $East), [string]$fmt = 'json') {
     if ((Test-Path $dest) -and (Get-Item $dest).Length -gt 0) { return $true }
     $inv = [Globalization.CultureInfo]::InvariantCulture
-    $q = '[out:json][timeout:300][bbox:' + [string]::Format($inv, '{0},{1},{2},{3}', $South, $West, $North, $East) + '];' + $body
+    $q = "[out:$fmt][timeout:300][bbox:" + [string]::Format($inv, '{0},{1},{2},{3}', $box[0], $box[1], $box[2], $box[3]) + '];' + $body
     New-Item -ItemType Directory -Force (Split-Path $dest) | Out-Null
     $qf = "$dest.query"; [IO.File]::WriteAllText($qf, $q)
     $wait = 20
@@ -302,7 +302,7 @@ function Overpass([string]$body, [string]$dest) {
         $keep = $ErrorActionPreference; $ErrorActionPreference = 'SilentlyContinue'
         & curl.exe --silent --fail --max-time 400 -A 'map-pack-builder/1.0' --data-urlencode "data@$qf" -o "$dest.part" 'https://overpass-api.de/api/interpreter' 2>$null
         $code = $LASTEXITCODE; $ErrorActionPreference = $keep
-        if ($code -eq 0 -and (Test-Path "$dest.part") -and ([IO.File]::ReadAllText("$dest.part")).TrimStart().StartsWith('{')) {
+        if ($code -eq 0 -and (Test-Path "$dest.part") -and ([IO.File]::ReadAllText("$dest.part")).TrimStart().StartsWith($(if ($fmt -eq 'xml') { '<' } else { '{' }))) {
             Move-Item -Force "$dest.part" $dest; Remove-Item $qf; return $true
         }
         Write-Host "  OpenStreetMap server busy; trying again in $wait s ..."
@@ -406,6 +406,41 @@ if ($withLayers) {
         Write-Host ("Layer {0,-14} {1,7:N0} features" -f 'Military areas', $feats.Count)
         if ($feats.Count) { $built += @{ id = 'military'; title = 'Military areas'; kind = 'line'; file = 'layers/military.geojson'; count = $feats.Count } }
     }
+
+    # Road network for driving routes (OpenStreetMap): one Overpass request per grid cell, kept in
+    # <name>.osm/streets so a rebuild does not ask again. tools/RoadGraph.java (needs Java 17+) cuts
+    # the roads at junctions and writes one binary file per cell; the phone never loads it whole.
+    $java = Get-Command java -ErrorAction SilentlyContinue
+    if (-not $java) { $jdk = Get-ChildItem 'C:\Program Files\Eclipse Adoptium' -Directory -Filter 'jdk-*' -ErrorAction SilentlyContinue | Sort-Object Name -Descending | Select-Object -First 1; if ($jdk) { $java = Join-Path $jdk.FullName 'bin\java.exe' } } else { $java = $java.Source }
+    if (-not $java) { Write-Warning 'No Java found: the pack is built without driving routes. Install a JDK 17+ and run again.' }
+    else {
+        $g = TileRange $GridZoom
+        $rawDir = Join-Path $osm 'streets'
+        $cells = ($g[2] - $g[0] + 1) * ($g[3] - $g[1] + 1); $done = 0; $failed = 0
+        $body = 'way["highway"~"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|service|track|road|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link)$"]["service"!~"^(parking_aisle|drive-through|emergency_access)$"]["area"!="yes"];out body geom qt;'
+        for ($cx = $g[0]; $cx -le $g[2]; $cx++) { for ($cy = $g[1]; $cy -le $g[3]; $cy++) {
+            $done++
+            $w = [math]::Max($West, (TileLon $cx $GridZoom)); $e = [math]::Min($East, (TileLon ($cx + 1) $GridZoom))
+            $n = [math]::Min($North, (TileLat $cy $GridZoom)); $s = [math]::Max($South, (TileLat ($cy + 1) $GridZoom))
+            $dest = Join-Path $rawDir "$cx-$cy.xml"
+            if (-not (Overpass $body $dest @($s, $w, $n, $e) 'xml')) { $failed++; continue }
+            # Overpass reports a timeout inside an otherwise valid answer: drop it so the next run asks again.
+            $head = Get-Content $dest -TotalCount 40 -ErrorAction SilentlyContinue
+            if (($head -join "`n") -match 'runtime error') { Remove-Item $dest; $failed++; continue }
+            if ($cells -gt 20 -and $done % 20 -eq 0) { Write-Host ("  Roads: cell {0} of {1}" -f $done, $cells) }
+        } }
+        if ($failed) { Write-Warning "Driving roads: $failed of $cells cells could not be downloaded. Run the same command again to fetch them." }
+        $graphDir = Join-Path $work 'layers/streets'
+        if (Test-Path $graphDir) { Remove-Item -Recurse -Force $graphDir }
+        $src = Join-Path $PSScriptRoot 'RoadGraph.java'
+        $report = & $java -Xmx6g $src $rawDir $graphDir $GridZoom $g[0] $g[1] $g[2] $g[3]
+        if ($LASTEXITCODE -ne 0) { Write-Warning 'Building the road network failed; the pack is built without driving routes.' }
+        else {
+            $nCells = @(Get-ChildItem $graphDir -Recurse -File -Filter '*.bin' -ErrorAction SilentlyContinue).Count
+            Write-Host ("Layer {0,-14} {1}" -f 'Driving roads', $report)
+            if ($nCells) { $built += @{ id = 'streets'; title = 'Driving roads'; kind = 'roadgraph'; grid = $GridZoom; count = $nCells; complete = ($failed -eq 0) } }
+        }
+    }
 }
 
 # --- pack.json ---
@@ -420,7 +455,7 @@ $pack = [ordered]@{
     bbox    = @($West, $South, $East, $North)
     built   = (Get-Date).ToUniversalTime().ToString('yyyy-MM-dd')
     layers  = $built
-    credits = 'Map: USGS The National Map. Public land: BLM Surface Management Agency. Roads, trails, wilderness: USDA Forest Service. Streams: USGS NHD. Elevation: USGS 3DEP via AWS Terrain Tiles. Places and military areas: (c) OpenStreetMap contributors, ODbL.'
+    credits = 'Map: USGS The National Map. Public land: BLM Surface Management Agency. Roads, trails, wilderness: USDA Forest Service. Streams: USGS NHD. Elevation: USGS 3DEP via AWS Terrain Tiles. Places, military areas and driving roads: (c) OpenStreetMap contributors, ODbL.'
 }
 if (HasFiles 'topo') { $pack.topo = [ordered]@{ minZoom = $MinZoom; maxZoom = $MaxZoom; ext = 'jpg' } }
 if (HasFiles 'land') { $pack.land = [ordered]@{ minZoom = $MinZoom; maxZoom = $LandMax; ext = 'png' } }

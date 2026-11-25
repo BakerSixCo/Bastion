@@ -51,18 +51,6 @@
       "note": "Manual file (no direct download: tak.gov needs an account). Pinned to atak.apk from ATAK-CIV-5.5.1.8-SDK.zip — the SDK developer build BASTION was tested with. Copy it into the kit folder as atak-civ.apk; the builder verifies it. It shows a DEVELOPER BUILD watermark; the store build is the one for real use."
     },
     {
-      "id": "app-organicmaps",
-      "title": "App: Organic Maps (offline navigation)",
-      "kind": "app",
-      "default": false,
-      "file": "OrganicMaps-26111139-web-release.apk",
-      "url": "https://github.com/organicmaps/organicmaps/releases/download/2026.11.11-39-android/OrganicMaps-26111139-web-release.apk",
-      "sha256": "9dacaec3125d65ab03d803a7285a6ce14211c3a50921defbf78a98f643cbe7d5",
-      "bytes": 65750108,
-      "licence": "Apache-2.0",
-      "note": "Organic Maps 2026.11.11-39 (package app.organicmaps.web). SHA-256 matches the checksum the publisher posts beside the release."
-    },
-    {
       "id": "app-kiwix",
       "title": "App: Kiwix reader (browse Wikipedia with pictures and links)",
       "kind": "app",

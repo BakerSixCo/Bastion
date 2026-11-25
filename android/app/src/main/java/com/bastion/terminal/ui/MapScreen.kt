@@ -3,6 +3,7 @@ package com.bastion.terminal.ui
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.LruCache
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -40,6 +41,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -77,6 +79,7 @@ import com.bastion.terminal.map.MapPack
 import com.bastion.terminal.map.Mgrs
 import com.bastion.terminal.map.MapPacks
 import com.bastion.terminal.map.TerrainRoute
+import com.bastion.terminal.map.RoadGraph
 import com.bastion.terminal.nav.LocationSource
 import com.bastion.terminal.nav.Nav
 import kotlinx.coroutines.CoroutineScope
@@ -312,6 +315,11 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     var nearKind by remember { mutableStateOf("") }
     var nearList by remember { mutableStateOf<List<MapPacks.Place>?>(null) }
     var showLegs by remember { mutableStateOf(false) }
+    // Driving: up to three routes over the pack's road network; blocked roads are kept as positions.
+    var drive by remember { mutableStateOf(false) }
+    var drives by remember { mutableStateOf<List<RoadGraph.Route>>(emptyList()) }
+    var chosen by remember { mutableStateOf(0) }
+    val blockedAt = remember { mutableStateListOf<Pair<Double, Double>>() }
 
     fun bearingText(a: Pair<Double, Double>, b: Pair<Double, Double>): String {
         val d = Cot.distanceMeters(a.first, a.second, b.first, b.second)
@@ -322,9 +330,25 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
     fun plan() {
         val to = dest ?: return
         val from = start ?: fix?.let { it.lat to it.lon }
-        route = null
+        route = null; drives = emptyList(); chosen = 0
         if (from == null) { routeNote = "Destination set. No GPS position yet — long-press the map and choose \"Start here\"."; return }
         if (!store.covers(from.first, from.second)) { routeNote = "The start is off the map. Long-press the map and choose \"Start here\"."; return }
+        if (drive) {
+            if (!store.hasRoads(from.first, from.second)) {
+                routeNote = "No driving roads on the maps here. Rebuild this area's map pack on the PC to add them."; return
+            }
+            routeNote = "Working out driving routes…"
+            scope.launch {
+                val rs = store.drive(from.first, from.second, to.first, to.second, blockedAt.toList())
+                drives = rs
+                routeNote = if (rs.isNotEmpty()) "" else
+                    "No driving route found: both ends must be within about 2 km of a road on one map pack, and " +
+                        "the roads must connect" + (if (blockedAt.isNotEmpty()) " around the ${blockedAt.size} blocked road(s)" else "") +
+                        ". Straight line: ${bearingText(from, to)}."
+                showLegs = false
+            }
+            return
+        }
         routeNote = "Working out the route…"
         scope.launch {
             val r = store.routeBetween(from.first, from.second, to.first, to.second)
@@ -563,6 +587,21 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                     if (i > 0) marker(text, sx(Geo.x(leg.from.lon)), sy(Geo.y(leg.from.lat)), Color(0xFF0D47A1), "$i", density)
                 }
             }
+            // Driving routes: the others thin and grey under the chosen one.
+            drives.forEachIndexed { i, r ->
+                if (i == chosen) return@forEachIndexed
+                val p = Path()
+                r.points.forEachIndexed { k, (la, lo) -> val x = sx(Geo.x(lo)); val y = sy(Geo.y(la)); if (k == 0) p.moveTo(x, y) else p.lineTo(x, y) }
+                drawPath(p, Color.White, style = Stroke(width = 6f * density))
+                drawPath(p, Color(0xFF757575), style = Stroke(width = 3.5f * density, pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f * density, 6f * density))))
+            }
+            drives.getOrNull(chosen)?.let { r ->
+                val p = Path()
+                r.points.forEachIndexed { k, (la, lo) -> val x = sx(Geo.x(lo)); val y = sy(Geo.y(la)); if (k == 0) p.moveTo(x, y) else p.lineTo(x, y) }
+                drawPath(p, Color.White, style = Stroke(width = 8f * density))
+                drawPath(p, Color(0xFF6A1B9A), style = Stroke(width = 5f * density))
+            }
+            blockedAt.forEach { (la, lo) -> marker(text, sx(Geo.x(lo)), sy(Geo.y(la)), Color(0xFFB71C1C), "⛔", density) }
             // Pins.
             pins.forEach { p ->
                 val x = sx(Geo.x(p.lon)); val y = sy(Geo.y(p.lat))
@@ -626,7 +665,33 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
         if (dest != null || routeNote.isNotBlank()) {
             Card(Modifier.align(Alignment.BottomCenter).fillMaxWidth().padding(start = 8.dp, end = 8.dp, bottom = 34.dp)) {
                 Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    route?.let { r ->
+                    if (dest != null) Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                        FilterChip(selected = !drive, onClick = { if (drive) { drive = false; plan() } }, label = { Text("Walk") })
+                        FilterChip(selected = drive, onClick = { if (!drive) { drive = true; plan() } }, label = { Text("Drive") })
+                    }
+                    if (drive && drives.isNotEmpty()) {
+                        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                            drives.forEachIndexed { i, r ->
+                                FilterChip(selected = i == chosen, onClick = { chosen = i; showLegs = false },
+                                    label = { Text("${i + 1}: ${RoadGraph.timeText(r.seconds)}") })
+                            }
+                        }
+                        val r = drives[chosen.coerceIn(drives.indices)]
+                        Text((if (destName.isNotBlank()) "To $destName: " else "Drive: ") + r.summary(), style = MaterialTheme.typography.titleSmall)
+                        if (r.offRoadStart > 100 || r.offRoadEnd > 100) Text(
+                            "Off road: ${RoadGraph.miles(r.offRoadStart)} to the first road, ${RoadGraph.miles(r.offRoadEnd)} from the last.",
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        if (showLegs) Column(Modifier.heightIn(max = 190.dp).verticalScroll(rememberScrollState())) {
+                            r.steps.forEachIndexed { i, s -> Text("${i + 1}. ${s.name} — ${RoadGraph.miles(s.meters)}", style = MaterialTheme.typography.bodyMedium) }
+                        }
+                        Text(
+                            "Times assume the speed limit and no traffic. The map does not know closures, washouts, snow, gates or " +
+                                "damage — long-press a road and choose \"Road blocked here\" to route around it.",
+                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    if (!drive) route?.let { r ->
                         Text((if (destName.isNotBlank()) "To $destName: " else "Route: ") + r.summary(), style = MaterialTheme.typography.titleSmall)
                         if (showLegs) Column(Modifier.heightIn(max = 190.dp).verticalScroll(rememberScrollState())) {
                             r.legs.forEachIndexed { i, leg -> Text(leg.text(i + 1), style = MaterialTheme.typography.bodyMedium) }
@@ -638,9 +703,11 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         }
                     }
                     if (routeNote.isNotBlank()) Text(routeNote, style = MaterialTheme.typography.bodyMedium)
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        if (route != null) TextButton(onClick = { showLegs = !showLegs }) { Text(if (showLegs) "Hide steps" else "Show steps") }
-                        TextButton(onClick = { dest = null; start = null; route = null; routeNote = ""; destName = "" }) { Text("Clear") }
+                    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if ((!drive && route != null) || (drive && drives.isNotEmpty())) TextButton(onClick = { showLegs = !showLegs }) { Text(if (showLegs) "Hide steps" else "Show steps") }
+                        if (drive && dest != null && fix != null) TextButton(onClick = { start = null; plan() }) { Text("Reroute from me") }
+                        if (blockedAt.isNotEmpty()) TextButton(onClick = { blockedAt.clear(); plan() }) { Text("Unblock (${blockedAt.size})") }
+                        TextButton(onClick = { dest = null; start = null; route = null; drives = emptyList(); routeNote = ""; destName = "" }) { Text("Clear") }
                     }
                 }
             }
@@ -662,6 +729,16 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                     fix?.let { f -> Text("From you: ${bearingText(f.lat to f.lon, p.lat to p.lon)} (straight line)") }
                     Button(onClick = { dest = p.lat to p.lon; destName = p.name; picked = null; plan() }, Modifier.fillMaxWidth()) { Text("Route to here") }
                     OutlinedButton(onClick = { start = p.lat to p.lon; picked = null; if (dest != null) plan() else routeNote = "Start set. Long-press where you want to go." }, Modifier.fillMaxWidth()) { Text("Start here") }
+                    if (store.hasRoads(p.lat, p.lon)) OutlinedButton(onClick = {
+                        picked = null
+                        scope.launch {
+                            val road = store.roadNear(p.lat, p.lon)
+                            if (road == null) { routeNote = "No road within 150 m of that spot to block."; return@launch }
+                            blockedAt += p.lat to p.lon
+                            if (dest != null) { drive = true; plan() }
+                            else routeNote = "Blocked: ${road.second.ifBlank { "unnamed road" }}. Routes will go around it."
+                        }
+                    }, Modifier.fillMaxWidth()) { Text("Road blocked here") }
                     if (p.pinId != null) {
                         OutlinedButton(onClick = { sharePin = com.bastion.terminal.map.Pins.shareText(p.name, p.lat, p.lon); picked = null }, Modifier.fillMaxWidth()) { Text("Send pin to mesh…") }
                         TextButton(onClick = { pinStore.remove(p.pinId); picked = null }) { Text("Delete pin") }

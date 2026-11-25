@@ -1,0 +1,97 @@
+package com.bastion.terminal.map
+
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
+import org.junit.Test
+import java.io.ByteArrayOutputStream
+import java.io.DataOutputStream
+
+class RoadGraphTest {
+    private val grid = 9
+
+    /** The file tools/RoadGraph.java wrote from fixture.osm.xml: checks the two sides agree on the format. */
+    @Test fun readsTheBuildersFileAndKeepsOneWays() {
+        val bytes = javaClass.getResourceAsStream("/roadgraph/90-186.bin")!!.readBytes()
+        val g = RoadGraph(grid) { x, y -> if (x == 90 && y == 186) bytes else null }
+        // West end of Main St to the north end of the one-way side street (one way, northbound).
+        val r = g.routes(43.6000, -116.2000, 43.6100, -116.1900, count = 1).single()
+        assertEquals(listOf("Main St", "unnamed road"), r.steps.map { it.name })
+        assertEquals(805.0 + 1112.0, r.meters, 15.0)
+        // Main St is 35 mph (from its maxspeed tag); the side street a typical 25 mph.
+        assertEquals(805 / (35 * 0.44704) + 1112 / (25 * 0.44704), r.seconds, 3.0)
+        // Coming back the wrong way up the one-way street is not allowed, and there is no other road.
+        assertTrue(g.routes(43.6100, -116.1900, 43.6000, -116.2000).isEmpty())
+    }
+
+    // A 5 x 5 grid of two-way 30 mph streets, 0.01° apart, in one cell; returns the cell bytes.
+    private fun gridCell(oneWayRow: Int = -1): ByteArray {
+        val bo = ByteArrayOutputStream(); val o = DataOutputStream(bo)
+        val la0 = 43_600_000; val lo0 = -116_200_000; val step = 10_000
+        fun id(i: Int, j: Int) = (i * 5 + j).toLong() + 1
+        o.writeBytes("BRG1"); o.writeInt(0)
+        o.writeInt(25)
+        for (i in 0 until 5) for (j in 0 until 5) { o.writeLong(id(i, j)); o.writeInt(la0 + i * step); o.writeInt(lo0 + j * step) }
+        val es = ArrayList<IntArray>()
+        for (i in 0 until 5) for (j in 0 until 5) {
+            if (j < 4) es += intArrayOf(i * 5 + j, i * 5 + j + 1, if (i == oneWayRow) 1 else 0)
+            if (i < 4) es += intArrayOf(i * 5 + j, (i + 1) * 5 + j, 0)
+        }
+        o.writeInt(es.size)
+        for ((k, e) in es.withIndex()) {
+            val a = e[0]; val b = e[1]
+            val m = RoadGraph.meters((la0 + a / 5 * step) / 1e6, (lo0 + a % 5 * step) / 1e6, (la0 + b / 5 * step) / 1e6, (lo0 + b % 5 * step) / 1e6)
+            o.writeLong(k.toLong() + 100); o.writeInt(a); o.writeInt(b)
+            o.writeByte(6); o.writeByte(e[2]); o.writeByte(30); o.writeInt(-1); o.writeFloat(m.toFloat()); o.writeShort(0)
+        }
+        o.flush(); return bo.toByteArray()
+    }
+
+    private fun graph(bytes: ByteArray) = RoadGraph(grid) { x, y ->
+        if (x == Geo.tileX(-116.18, grid) && y == Geo.tileY(43.62, grid)) bytes else null
+    }
+
+    @Test fun fastestRouteAcrossTheGrid() {
+        val g = graph(gridCell())
+        val r = g.routes(43.600, -116.200, 43.640, -116.160, count = 1).single()
+        // 4 blocks north + 4 blocks east, whichever way round.
+        val expected = 4 * RoadGraph.meters(43.600, -116.2, 43.610, -116.2) + 4 * RoadGraph.meters(43.62, -116.2, 43.62, -116.19)
+        assertEquals(expected, r.meters, expected * 0.01)
+        assertEquals(43.600, r.points.first().first, 1e-6); assertEquals(43.640, r.points.last().first, 1e-6)
+    }
+
+    @Test fun alternativesAreDifferentAndNotMuchSlower() {
+        val g = graph(gridCell())
+        val rs = g.routes(43.600, -116.200, 43.640, -116.160, count = 3)
+        assertTrue(rs.size >= 2)
+        assertNotEquals(rs[0].edgeIds, rs[1].edgeIds)
+        rs.forEach { assertTrue(it.seconds <= rs[0].seconds * 1.6 + 1) }
+        assertTrue(rs.zipWithNext().all { (a, b) -> a.seconds <= b.seconds })
+    }
+
+    @Test fun blockingARoadFindsADetour() {
+        val g = graph(gridCell())
+        // Straight east along the bottom row.
+        val direct = g.routes(43.600, -116.200, 43.600, -116.160, count = 1).single()
+        val blockAt = g.roadNear(43.600, -116.175)!!
+        assertTrue(blockAt.first in direct.edgeIds)
+        val detour = g.routes(43.600, -116.200, 43.600, -116.160, blocked = setOf(blockAt.first), count = 1).single()
+        assertFalse(blockAt.first in detour.edgeIds)
+        assertTrue(detour.meters > direct.meters + 1000)
+    }
+
+    @Test fun oneWayStreetIsOnlyDrivenOneWay() {
+        // Bottom row one-way eastbound (a -> b is west -> east).
+        val g = graph(gridCell(oneWayRow = 0))
+        val east = g.routes(43.600, -116.200, 43.600, -116.160, count = 1).single()
+        val west = g.routes(43.600, -116.160, 43.600, -116.200, count = 1).single()
+        assertTrue(west.meters > east.meters + 1000)  // must go round by the next row
+    }
+
+    @Test fun tooFarFromAnyRoadGivesNothing() {
+        val g = graph(gridCell())
+        assertTrue(g.routes(43.700, -116.200, 43.600, -116.160, maxOffRoad = 2000.0).isEmpty())
+        assertTrue(g.routes(43.600, -116.200, 43.600, -116.160).first().offRoadStart < 1.0)
+    }
+}
