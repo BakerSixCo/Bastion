@@ -55,6 +55,7 @@ fun AskScreen(
     // App-scoped: survives tab switches and opening a source.
     val s = remember { AskSession.get(ctx) }
     var showBleach by rememberSaveable { mutableStateOf(false) }
+    var showAngles by rememberSaveable { mutableStateOf(false) }
 
     LazyColumn(
         modifier.fillMaxSize().padding(16.dp),
@@ -91,6 +92,12 @@ fun AskScreen(
             }
         }
         if (showBleach) item { BleachCalculator() }
+        item {
+            OutlinedButton(onClick = { showAngles = !showAngles }) {
+                Text(if (showAngles) "Hide angle calculator" else "Angles: MOA / MRAD")
+            }
+        }
+        if (showAngles) item { AngleCalculator() }
         if (s.searching) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
 
         if (s.searched && !s.searching && s.passages.isEmpty()) {
