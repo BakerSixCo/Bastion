@@ -1,0 +1,60 @@
+{
+  "id": "fake-good",
+  "title": "FAKE test flow (not guidance)",
+  "entry": true,
+  "status": "approved",
+  "drafted_by": "fixture",
+  "reviewed_by": "fixture",
+  "approved_by": "fixture",
+  "review": { "verdict": "pass", "notes": "Fixture for flows.pl and the phone flow player. Fake content.", "by": "fixture" },
+  "start": "lamp",
+  "nodes": {
+    "lamp": {
+      "type": "question",
+      "text": "Test question: is the test lamp lit?",
+      "quote_refs": ["q-lamp"],
+      "answers": [
+        { "label": "Yes", "next": "step-c" },
+        { "label": "No", "next": "step-a" }
+      ]
+    },
+    "step-a": {
+      "type": "tool",
+      "text": "Test step A: press the green test button 30 times at 110 per minute, then say banana two times.",
+      "quote_refs": ["q-a", "q-cycle"],
+      "warnings": ["Fake warning: this is test content only."],
+      "tool": { "kind": "metronome", "rate_bpm": 110, "compressions": 30, "breaths": 2, "cycle_seconds": 120 },
+      "log": "Test step A started",
+      "next": "end"
+    },
+    "step-c": {
+      "type": "action",
+      "text": "Test step C: write the test time on the test card.",
+      "quote_refs": ["q-c"],
+      "log": "Test step C done",
+      "next": "wait"
+    },
+    "wait": {
+      "type": "tool",
+      "text": "Test wait: wait 45 seconds.",
+      "quote_refs": ["q-c"],
+      "tool": { "kind": "timer", "seconds": 45, "label": "Test wait over" },
+      "next": "stamp"
+    },
+    "stamp": {
+      "type": "tool",
+      "text": "Test stamp: tap to record the test time.",
+      "quote_refs": ["q-c"],
+      "tool": { "kind": "timestamp", "label": "Test card written" },
+      "next": "end"
+    },
+    "end": { "type": "end", "text": "End of the fake test flow." }
+  },
+  "quotes": [
+    { "id": "q-lamp", "doc": "Fake-Test-Manual.txt", "page": 1, "text": "look at the test lamp and see whether the test lamp is lit." },
+    { "id": "q-a", "doc": "Fake-Test-Manual.txt", "page": 1, "text": "Test step A: press the green test button 30 times at a rate of 110 per minute, then say the word banana two times." },
+    { "id": "q-cycle", "doc": "Fake-Test-Manual.txt", "page": 1, "text": "Repeat the whole test cycle every 2 minutes until the test ends." },
+    { "id": "q-c", "doc": "Fake-Test-Manual.txt", "page": 2, "text": "Test step C: write the test time on the test card, then wait 45 seconds before the next test step." }
+  ],
+  "links": []
+}

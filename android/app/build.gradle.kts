@@ -45,6 +45,8 @@ android {
     }
     buildFeatures {
         compose = true
+        // BuildConfig.DEBUG gates the guide's test-flow folder (guide/FlowStore): release builds never read it.
+        buildConfig = true
     }
     packaging {
         // Compress native libraries inside the APK (smaller sideload file; Android extracts
@@ -72,6 +74,8 @@ dependencies {
     implementation(libs.libkiwix)
     implementation(libs.pdfbox.android)
     testImplementation(libs.junit)
+    // Real org.json for JVM unit tests (the Android stub throws); test-only, not in the APK.
+    testImplementation(libs.json)
     androidTestImplementation(libs.androidx.test.runner)
     androidTestImplementation(libs.androidx.test.ext.junit)
 }

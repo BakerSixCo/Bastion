@@ -4,6 +4,8 @@ import androidx.activity.compose.BackHandler
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
@@ -41,6 +43,7 @@ fun BastionApp() {
     var readerQuery by rememberSaveable { mutableStateOf("") }
     var readerZimPath by rememberSaveable { mutableStateOf<String?>(null) }
     var readerZimFile by rememberSaveable { mutableStateOf("") }
+    var emergency by rememberSaveable { mutableStateOf(false) }
 
     // Open every ZIM in BASTION's reference folders (phone storage and SD card).
     val ctx = LocalContext.current
@@ -67,6 +70,15 @@ fun BastionApp() {
     }
     if (locked) {
         Surface(color = MaterialTheme.colorScheme.background) { LockScreen(onOpen = { locked = false }) }
+        return
+    }
+
+    if (emergency) {
+        // Clear of the status and gesture bars (Android 15 draws apps edge to edge), so the TEST banner and
+        // the bottom buttons are never under them.
+        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+            androidx.compose.foundation.layout.Box(Modifier.safeDrawingPadding()) { EmergencyScreen(onClose = { emergency = false }) }
+        }
         return
     }
 
@@ -135,7 +147,7 @@ fun BastionApp() {
             }
             val page = Modifier.weight(1f).fillMaxHeight()
             when (tab) {
-                Tab.HOME -> HomeScreen(page)
+                Tab.HOME -> HomeScreen(page, onEmergency = { emergency = true })
                 Tab.ASK -> AskScreen(
                     page,
                     onOpen = open,

@@ -54,7 +54,7 @@ private val COMPANIONS = listOf(
 )
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier, onEmergency: () -> Unit = {}) {
     val ctx = LocalContext.current
     val setup = rememberSetupStatus()
     var showGuide by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
@@ -80,6 +80,9 @@ fun HomeScreen(modifier: Modifier = Modifier) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        // First thing on Home: one tap to the emergency guides (docs/field-guide-design.md §2).
+        EmergencyButton(onEmergency)
+
         Text("BASTION", style = MaterialTheme.typography.headlineLarge)
         Text(
             "Off-grid field terminal — v0.1",

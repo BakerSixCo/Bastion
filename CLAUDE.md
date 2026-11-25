@@ -254,3 +254,14 @@ Do not use `gradlew connectedDebugAndroidTest` on an emulator that holds a set-u
 - A pack may be far larger than memory: never load one whole. Elevation is read by window (`MapPack.dem`), line layers by grid cell (`MapPack.cell`).
 - Driving routes use the pack's road network (`layers/streets/x/y.bin`): OpenStreetMap roads (ODbL, credited in the pack) fetched per grid cell by `map-build.ps1` and cut at junctions by `tools/RoadGraph.java`. `map/RoadGraph.kt` reads cells only as the search reaches them, offers up to 3 alternatives, and routes around roads the user marks blocked (kept as positions, since road ids differ between packs). Times assume the speed limit and no traffic; the screen says it does not know closures, washouts, snow or gates. Organic Maps is no longer a companion app (owner decision 2026-11-25).
 - `tools/maps/` (built packs and their working folders) is never committed.
+
+## Field guide (`guide/`, design in `docs/field-guide-design.md`)
+
+- Guided emergency flows are data: `tools/knowledge/flows/<id>.json` (format in its README), checked by
+  `perl tools/knowledge/flows.pl` (structure, verbatim quotes, every number in a quote) — only approved flows
+  are written to `assets/knowledge/flows.json`. The phone re-validates and rejects invalid flows.
+- Flows are life-safety content: drafted, independently reviewed by a second model, approved by the owner,
+  like cards. Never hand-write protocol text in code.
+- Debug builds also read `Android/media/com.bastion.terminal/flows-test/` with a red "TEST FLOW — NOT
+  APPROVED" banner; release builds never do. Test flows are obviously fake.
+- The casualty log (`files/guide/`) is private data and is erased by the wipe PIN.

@@ -1,0 +1,8 @@
+FAKE TEST MANUAL - fixture for the BASTION flow checker. Not real guidance of any kind.
+
+Test step A: press the green test button 30 times at a rate of 110 per minute, then say the word banana two times.
+
+Repeat the whole test cycle every 2 minutes until the test ends.
+
+Test lamp check: look at the test lamp and see whether the test lamp is lit.
+Page two of the fake manual. Test step C: write the test time on the test card, then wait 45 seconds before the next test step.
