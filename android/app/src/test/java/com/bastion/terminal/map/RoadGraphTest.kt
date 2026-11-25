@@ -54,6 +54,8 @@ class RoadGraphTest {
         assertEquals(1208.0, s0.toNext, 15.0)
         assertTrue(s0.offRoute < 5)
         // 300 m before the turn at town speed: spoken once, then not again at the same distance.
+        // 900 m on from the last fix: a jump that far is believed on the second fix that agrees (switchback guard).
+        g.update(43.6000, -116.18372)
         val s1 = g.update(43.6000, -116.18371)
         val said = g.announcement(s1, 30.0)!!
         assertTrue(said, said.startsWith("In ") && said.endsWith("turn left onto Loop Rd."))
@@ -61,6 +63,7 @@ class RoadGraphTest {
         // 200 m off to the north of Main St: off the route.
         assertTrue(g.update(43.6018, -116.1950).offRoute > 150)
         // At the destination, on a good fix.
+        g.update(43.6095, -116.1900, 8f)   // far from the last fix: believed on the second agreeing fix
         assertTrue(g.update(43.6095, -116.1900, 8f).arrived)
         // "Blocked ahead" point: 100 m further along from the start is on Main St.
         val (la, lo) = g.pointAhead(0.0, 100.0)
@@ -193,6 +196,8 @@ class RoadGraphTest {
             edges += E(id, a, b, name, mph, cls, oneway, meters)
         }
         fun rule(from: Long, via: Long, to: Long, only: Boolean) { rules += longArrayOf(from, via, to, if (only) 1 else 0) }
+        val paths = ArrayList<Triple<List<Long>, Long, Boolean>>()   // (from edge, via edges...), to edge, only
+        fun pathRule(seq: List<Long>, to: Long, only: Boolean) { paths += Triple(seq, to, only) }
         fun cellOf(n: Long) = nodes[n]!!.let { (la, lo) -> Geo.tileX(lo, grid) to Geo.tileY(la, grid) }
         fun cells(): Map<Pair<Int, Int>, ByteArray> {
             val keys = (edges.flatMap { listOf(cellOf(it.a), cellOf(it.b)) } + rules.map { cellOf(it[1]) }).toSet()
@@ -201,7 +206,7 @@ class RoadGraphTest {
                 val names = es.map { it.name }.filter { it.isNotEmpty() }.distinct()
                 val ns = es.flatMap { listOf(it.a, it.b) }.distinct()
                 val bo = ByteArrayOutputStream(); val o = DataOutputStream(bo)
-                o.writeBytes("BRG3")
+                o.writeBytes("BRG4")
                 o.writeInt(names.size); names.forEach { o.writeUTF(it) }
                 o.writeInt(ns.size)
                 ns.forEach { n -> val (la, lo) = nodes[n]!!; o.writeLong(n); o.writeInt(Math.round(la * 1e6).toInt()); o.writeInt(Math.round(lo * 1e6).toInt()) }
@@ -215,6 +220,11 @@ class RoadGraphTest {
                 val rs = rules.filter { cellOf(it[1]) == key }
                 o.writeInt(rs.size)
                 rs.forEach { r -> o.writeLong(r[0]); o.writeLong(r[1]); o.writeLong(r[2]); o.writeByte(r[3].toInt()) }
+                o.writeInt(paths.size)   // via-way rules: in every cell (the phone keeps each once)
+                paths.forEach { (seq, to, only) ->
+                    o.writeLong(seq[0]); o.writeByte(seq.size - 1); seq.drop(1).forEach { o.writeLong(it) }
+                    o.writeLong(to); o.writeByte(if (only) 1 else 0)
+                }
                 o.flush(); bo.toByteArray()
             }
         }
@@ -385,5 +395,189 @@ class RoadGraphTest {
         assertTrue(Guidance.fresh(now - 5_000, now))
         assertFalse(Guidance.fresh(now - 31_000, now))
         assertFalse(Guidance.fresh(null, now))
+    }
+
+    // ---- regression tests for the remaining 2026-11-25 review findings ----
+
+    private fun resource(path: String): ByteArray? = javaClass.getResourceAsStream(path)?.readBytes()
+
+    /** Files from the BRG3 builder (no via-way table) are still read and obeyed. */
+    @Test fun brg3TurnRulesStillWork() {
+        val bytes = resource("/roadgraph/turns-brg3-90-186.bin")!!
+        val g = RoadGraph(grid) { x, y -> if (x == 90 && y == 186) bytes else null }
+        val r = g.routes(43.6000, -116.2000, 43.6095, -116.1900, count = 1).single()
+        assertEquals(listOf("Main St", "Loop Rd", "North Rd"), r.steps.map { it.name })
+    }
+
+    /**
+     * Task 1, finding 2 (via way): built by tools/RoadGraph.java from viaway.osm.xml. No U-turn from North
+     * Lanes through the Crossover way onto South Lanes: the route goes round by the Top Crossover. Coming
+     * from West Rd the Crossover is allowed.
+     */
+    @Test fun viaWayUTurnBanIsObeyed() {
+        val bytes = resource("/roadgraph/viaway-90-186.bin")!!
+        val g = RoadGraph(grid) { x, y -> if (x == 90 && y == 186) bytes else null }
+        val r = g.routes(43.6020, -116.2000, 43.6020, -116.1995, count = 1).single()
+        assertEquals(listOf("North Lanes", "Top Crossover", "South Lanes"), r.steps.map { it.name })
+        val west = g.routes(43.6100, -116.2050, 43.6020, -116.1995, count = 1).single()
+        assertEquals(listOf("West Rd", "Crossover", "South Lanes"), west.steps.map { it.name })
+    }
+
+    /**
+     * The search keeps the path history across the via road: reaching the via road from the from road is
+     * cheapest, but that arrival may not go on to the to road. A dearer arrival (round the loop) may, and
+     * must not be thrown away as "already reached more cheaply".
+     */
+    @Test fun viaWayRuleKeepsPathHistory() {
+        val net = Net(9)
+        net.node(1, 43.6000, -116.2100); net.node(2, 43.6000, -116.2000)     // From Rd ends at J0 (2)
+        net.node(3, 43.6000, -116.1990); net.node(4, 43.6000, -116.1900)     // Via Rd J0 -> J1 (3), To Rd J1 -> 4
+        net.node(5, 43.6050, -116.2000); net.node(6, 43.6050, -116.2050)     // a loop back to J0
+        net.edge(10, 1, 2, "From Rd"); net.edge(11, 2, 3, "Via Rd"); net.edge(12, 3, 4, "To Rd")
+        net.edge(13, 2, 5, "Loop A"); net.edge(14, 5, 6, "Loop B"); net.edge(15, 6, 2, "Loop C")
+        net.pathRule(listOf(10L, 11L), 12L, only = false)   // no straight on: From Rd, Via Rd, To Rd
+        val r = net.graph().routes(43.6000, -116.2090, 43.6000, -116.1910, count = 1).single()
+        assertEquals(listOf("From Rd", "Loop A", "Loop B", "Loop C", "Via Rd", "To Rd"), r.steps.map { it.name })
+    }
+
+    /** An "only" rule through a via way: from From Rd the only way on is Via Rd then To Rd (a U-turn at its end to reach Side Rd). */
+    @Test fun viaWayOnlyRuleIsObeyed() {
+        val net = Net(9)
+        net.node(1, 43.6000, -116.2100); net.node(2, 43.6000, -116.2000); net.node(3, 43.6000, -116.1990)
+        net.node(4, 43.6100, -116.1990); net.node(5, 43.5900, -116.1990)
+        net.edge(10, 1, 2, "From Rd"); net.edge(11, 2, 3, "Via Rd"); net.edge(12, 3, 4, "To Rd"); net.edge(13, 3, 5, "Side Rd")
+        net.pathRule(listOf(10L, 11L), 12L, only = true)
+        val r = net.graph().routes(43.6000, -116.2090, 43.5910, -116.1990, count = 1).single()
+        assertEquals(listOf("From Rd", "Via Rd", "To Rd", "Side Rd"), r.steps.map { it.name })
+        assertTrue(r.maneuvers.any { it.turn == RoadGraph.Turn.U_TURN })
+    }
+
+    /** Task 1, finding 6: the nearest road is an isolated frontage road; the main road 44 m away is used instead of "no route". */
+    @Test fun isolatedFrontageRoadDoesNotBlockTheRoute() {
+        val net = Net(9)
+        net.node(1, 43.6000, -116.2100); net.node(2, 43.6000, -116.1900); net.node(3, 43.6000, -116.1700)
+        net.node(4, 43.6003, -116.2050); net.node(5, 43.6003, -116.1950)
+        net.edge(10, 1, 2, "Main Rd"); net.edge(11, 2, 3, "Main Rd"); net.edge(12, 4, 5, "Frontage Rd")
+        val r = net.graph().routes(43.6004, -116.2000, 43.6000, -116.1750, count = 1).single()
+        assertEquals(listOf("Main Rd"), r.steps.map { it.name })
+        assertEquals(44.0, r.offRoadStart, 2.0)
+    }
+
+    /** Task 1, finding 7: start and end on the same road still get an alternative (the direct drive is priced in the search). */
+    @Test fun sameRoadStartAndEndStillGetAlternatives() {
+        val net = Net(9)
+        net.node(1, 43.6000, -116.2000); net.node(2, 43.6000, -116.1876)       // A, B: the road, about 1 km
+        net.node(3, 43.6009, -116.2000); net.node(4, 43.6009, -116.1876)       // 100 m north
+        net.edge(10, 1, 2, "Near Rd")
+        net.edge(11, 1, 3, "West Link"); net.edge(12, 3, 4, "Fast Rd", mph = 45); net.edge(13, 4, 2, "East Link")
+        val rs = net.graph().routes(43.6000, -116.19938, 43.6000, -116.18822, count = 3)
+        assertEquals(listOf("Near Rd"), rs.first().steps.map { it.name })
+        assertTrue(rs.size >= 2)
+        assertTrue(rs[1].steps.any { it.name == "Fast Rd" })
+    }
+
+    /** Task 1/2, finding 7: a route from a point to itself is one route of zero length, and guidance copes with it. */
+    @Test fun zeroLengthRouteIsHandled() {
+        val net = Net(9)
+        net.node(1, 43.6000, -116.2000); net.node(2, 43.6000, -116.1900)
+        net.edge(10, 1, 2, "Lone Rd")
+        val rs = net.graph().routes(43.6000, -116.1950, 43.6000, -116.1950, count = 3)
+        assertEquals(1, rs.size)
+        val r = rs.single()
+        assertTrue(r.meters < 1.0)
+        val g = Guidance(r)
+        val (la, lo) = g.pointAhead(0.0, 100.0)
+        assertEquals(43.6000, la, 1e-6); assertEquals(-116.1950, lo, 1e-6)
+        assertTrue(g.update(43.6000, -116.1950, 8f).arrived)
+        val far = g.update(43.6100, -116.1950, 8f)
+        assertFalse(far.arrived)
+        assertTrue(far.offRoute > 1000)
+    }
+
+    /** Task 1, finding 10: built by tools/RoadGraph.java from long.osm.xml (grid 12): the middle of a 32 km road is found on a fresh graph. */
+    @Test fun middleOfALongRoadIsFoundOnAColdGraph() {
+        fun g() = RoadGraph(12) { x, y -> resource("/roadgraph/long/$x/$y.bin") }
+        val hit = g().roadNear(43.6005, -116.2000)
+        assertEquals("Long Rd", hit?.name)
+        val r = g().routes(43.6000, -116.2500, 43.6000, -116.1500, count = 1).single()
+        assertEquals(RoadGraph.meters(43.6, -116.25, 43.6, -116.15), r.meters, 50.0)
+        // A block in the middle closes it too.
+        assertTrue(g().roadsWithin(43.6000, -116.2000, 50.0).isNotEmpty())
+    }
+
+    /** Task 1, finding 11: an incomplete or route-less local pack does not hide another pack's route. */
+    @Test fun incompleteLocalPackFallsBackToACompletePack() {
+        val route = Net(9).run {
+            node(1, 43.6000, -116.2000); node(2, 43.6000, -116.1900); edge(10, 1, 2, "Lone Rd")
+            graph().routes(43.6000, -116.1990, 43.6000, -116.1910, count = 1).single()
+        }
+        val other = Net(9).run {
+            node(1, 43.6000, -116.2000); node(2, 43.6000, -116.1900); edge(20, 1, 2, "Other Rd")
+            graph().routes(43.6000, -116.1990, 43.6000, -116.1910, count = 1).single()
+        }
+        data class P(val complete: Boolean, val routes: List<RoadGraph.Route>)
+        fun pick(vararg ps: P) = PackChoice.drive(ps.toList(), { it.complete }) { it.routes }
+        // Local pack incomplete: the complete wider pack's route is used.
+        assertEquals(listOf(other), pick(P(false, listOf(route)), P(true, listOf(other))))
+        // Local pack complete but no route (a gap): the wider pack is tried.
+        assertEquals(listOf(other), pick(P(true, emptyList()), P(true, listOf(other))))
+        // Only an incomplete pack has a route: it is used (and its routes say coverage is reduced).
+        assertEquals(listOf(route), pick(P(false, listOf(route)), P(true, emptyList())))
+        // A complete local pack wins as before.
+        assertEquals(listOf(route), pick(P(true, listOf(route)), P(true, listOf(other))))
+        // A graph of a pack marked incomplete marks its routes.
+        val inc = Net(9).run {
+            node(1, 43.6000, -116.2000); node(2, 43.6000, -116.1900); edge(10, 1, 2, "Lone Rd")
+            val c = cells(); RoadGraph(grid, complete = false) { x, y -> c[x to y] }
+        }
+        assertTrue(inc.routes(43.6000, -116.1990, 43.6000, -116.1910, count = 1).single().reducedCoverage)
+        assertFalse(route.reducedCoverage)
+    }
+
+    /** Task 1, finding 12: a cell whose turn table is cut short is rejected whole, not used without its restriction. */
+    @Test fun truncatedCellIsRejectedWhole() {
+        val net = Net(9)
+        net.node(1, 43.6000, -116.2100); net.node(2, 43.6000, -116.2000); net.node(3, 43.6000, -116.1900)
+        net.node(4, 43.6100, -116.2100); net.node(5, 43.6100, -116.1900)
+        net.edge(10, 1, 2, "West Rd"); net.edge(11, 2, 3, "Target Rd")
+        net.edge(12, 1, 4, "Up Rd"); net.edge(13, 4, 5, "Top Rd"); net.edge(14, 5, 3, "Down Rd")
+        net.rule(10, 2, 11, only = false)   // no straight on from West Rd onto Target Rd
+        val good = net.cells()
+        val ok = RoadGraph(grid) { x, y -> good[x to y] }.routes(43.6000, -116.2090, 43.6000, -116.1910, count = 1).single()
+        assertEquals(listOf("West Rd", "Up Rd", "Top Rd", "Down Rd", "Target Rd"), ok.steps.map { it.name })
+        // Cut off the via-way table and the last byte of the turn table: the roads are complete, the rule is not.
+        val cut = good.mapValues { (_, b) -> b.copyOf(b.size - 5) }
+        val g = RoadGraph(grid) { x, y -> cut[x to y] }
+        assertTrue(g.routes(43.6000, -116.2090, 43.6000, -116.1910, count = 1).isEmpty())
+        assertEquals(1, g.badCells)
+        // A bad cell next to the route: the route is found and says its coverage is reduced.
+        val (cx, cy) = net.cellOf(1)
+        val withBad = good + ((cx to cy - 1) to "BRG4junk".toByteArray())
+        val r = RoadGraph(grid) { x, y -> withBad[x to y] }.routes(43.6000, -116.2090, 43.6000, -116.1910, count = 1).single()
+        assertTrue(r.reducedCoverage)
+    }
+
+    /** Task 2, finding 2: one noisy fix nearer the return pass of a switchback does not move guidance onto it; two in a row do. */
+    @Test fun switchbackJumpNeedsTwoAgreeingFixes() {
+        val pts = listOf(43.6000 to -116.2000, 43.6000 to -116.1800, 43.6003 to -116.1800, 43.6003 to -116.2000)
+        val len = (1 until pts.size).sumOf { RoadGraph.meters(pts[it - 1].first, pts[it - 1].second, pts[it].first, pts[it].second) }
+        val r = RoadGraph.Route(
+            pts, len, len / 13.4, listOf(RoadGraph.Step("Hairpin Rd", len)), listOf(1L), 0.0, 0.0,
+            listOf(
+                RoadGraph.Maneuver(0.0, pts[0].first, pts[0].second, RoadGraph.Turn.DEPART, "Hairpin Rd"),
+                RoadGraph.Maneuver(1610.0, pts[1].first, pts[1].second, RoadGraph.Turn.U_TURN, "Hairpin Rd"),
+                RoadGraph.Maneuver(len, pts[3].first, pts[3].second, RoadGraph.Turn.ARRIVE, ""),
+            ),
+        )
+        val g = Guidance(r)
+        assertEquals(402.0, g.update(43.6000, -116.1950, 8f).along, 10.0)
+        // 31 m north of the first pass, 2 m from the return pass: still on the first pass.
+        val noisy = g.update(43.60028, -116.1940, 8f)
+        assertTrue("along ${noisy.along}", noisy.along < 600)
+        assertEquals(RoadGraph.Turn.U_TURN, noisy.next.turn)
+        assertTrue(g.update(43.6000, -116.1930, 8f).along < 700)
+        // Really on the return pass: the first fix there is doubted, the second agreeing one is believed.
+        assertTrue(g.update(43.6003, -116.1900, 8f).along < 1000)
+        assertTrue(g.update(43.6003, -116.1902, 8f).along > 2300)
     }
 }

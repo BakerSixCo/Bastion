@@ -27,6 +27,9 @@ class Guidance(val route: RoadGraph.Route) {
     }
     private val length = cum.lastOrNull() ?: 0.0
     private var lastAlong = 0.0
+    private var started = false
+    /** Where the last fix matched outside the window, if that match was not believed yet. */
+    private var pendingJump: Double? = null
 
     /** Planned seconds from the start to each point (from the route, or by distance share for old routes). */
     private val times: DoubleArray =
@@ -63,7 +66,20 @@ class Guidance(val route: RoadGraph.Route) {
             // Within 400 m behind/ahead of where we were: the likely match.
             if (a in lastAlong - 100..lastAlong + 400 && d < nearBest) { nearBest = d; nearAlong = a }
         }
-        val (off, along) = if (nearBest < best + 25) nearBest to nearAlong else best to bestAlong
+        // A route of one point (start and end at the same spot): the distance to that point is the match.
+        if (pts.size == 1) { best = RoadGraph.meters(lat, lon, pts[0].first, pts[0].second); nearBest = best; bestAlong = 0.0; nearAlong = 0.0 }
+        // A much closer match outside the window (the other pass of a switchback, say) is believed only on
+        // sustained evidence: the first fix of the drive, or a second fix in a row that agrees with it.
+        // One noisy fix must not move the driver onto the return pass and give its directions.
+        val jump = nearBest >= best + 25
+        val (off, along) = when {
+            !jump -> nearBest to nearAlong
+            !started -> best to bestAlong
+            pendingJump?.let { kotlin.math.abs(it - bestAlong) <= JUMP_AGREE_M } == true -> best to bestAlong
+            else -> nearBest to nearAlong
+        }
+        pendingJump = if (jump && along != bestAlong) bestAlong else null
+        started = true
         lastAlong = along
         val next = route.maneuvers.firstOrNull { it.atMeters > along + 5 } ?: route.maneuvers.last()
         val remaining = (length - along).coerceAtLeast(0.0)
@@ -79,6 +95,7 @@ class Guidance(val route: RoadGraph.Route) {
 
     /** The position [ahead] metres further along the route from [along] (for "blocked ahead"). */
     fun pointAhead(along: Double, ahead: Double): Pair<Double, Double> {
+        if (pts.size < 2) return pts.first()   // a one-point route: there is nothing further along
         val target = (along + ahead).coerceAtMost(length)
         var i = 1
         while (i < pts.size - 1 && cum[i] < target) i++
@@ -114,6 +131,8 @@ class Guidance(val route: RoadGraph.Route) {
         const val ARRIVE_ACCURACY_M = 50f
         /** Further than this from the route line counts as off the route. */
         const val OFF_ROUTE_M = 60.0
+        /** Two fixes in a row matching outside the window within this many metres of each other: believe the jump. */
+        const val JUMP_AGREE_M = 150.0
         /** A GPS fix older than this is not used to start, follow or end navigation. */
         const val MAX_FIX_AGE_MS = 30_000L
 

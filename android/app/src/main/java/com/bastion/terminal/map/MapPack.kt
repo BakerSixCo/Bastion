@@ -65,6 +65,9 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
     /** Grid zoom of the driving-road network (layers/streets/x/y.bin), or null if the pack has none. */
     val roadGrid: Int?
 
+    /** False when the PC build marked the road network incomplete (pack.json: complete=false; some cells failed). */
+    val roadsComplete: Boolean
+
     /** Rough ground area, km² — used to prefer the most local pack. */
     val areaKm2: Double
 
@@ -74,7 +77,9 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
         areaKm2 = (east - west) * 111.32 * cos(Math.toRadians((south + north) / 2)) * (north - south) * 111.32
         val arr = json.optJSONArray("layers") ?: JSONArray()
         val all = (0 until arr.length()).map { arr.getJSONObject(it) }.filter { it.optInt("count", 1) > 0 }
-        roadGrid = all.firstOrNull { it.optString("kind") == "roadgraph" && it.has("grid") }?.getInt("grid")
+        val roads = all.firstOrNull { it.optString("kind") == "roadgraph" && it.has("grid") }
+        roadGrid = roads?.getInt("grid")
+        roadsComplete = roads?.optBoolean("complete", true) ?: true
         layers = all.filter { it.optString("kind") != "roadgraph" }.map {
             LayerInfo(
                 it.getString("id"), it.optString("title", it.getString("id")), it.optString("kind") == "area",
@@ -239,7 +244,7 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
 
     // ---- driving roads ----
 
-    private val roadGraph: RoadGraph? by lazy { roadGrid?.let { g -> RoadGraph(g) { x, y -> bytes("layers/streets/$x/$y.bin") } } }
+    private val roadGraph: RoadGraph? by lazy { roadGrid?.let { g -> RoadGraph(g, roadsComplete) { x, y -> bytes("layers/streets/$x/$y.bin") } } }
 
     /** Driving routes between two positions, fastest first (empty if this pack cannot route them). Call off the main thread. */
     fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>>, count: Int, vehicle: RoadGraph.Vehicle): List<RoadGraph.Route> {
@@ -387,14 +392,23 @@ class MapPacks private constructor(private val app: Context) {
     }
 
     /** The most local pack with driving roads covering both ends. */
-    private fun roadPack(vararg at: Pair<Double, Double>): MapPack? =
-        _packs.value.filter { p -> p.roadGrid != null && at.all { p.contains(it.first, it.second) } }.minByOrNull { it.areaKm2 }
+    private fun roadPack(vararg at: Pair<Double, Double>): MapPack? = roadPacks(*at).firstOrNull()
 
-    /** Driving routes, fastest first; the road nearest each of [blockedAt] is avoided. Empty if no pack on the phone has roads for both ends. */
+    /** Every pack with driving roads covering all of [at], most local first. */
+    private fun roadPacks(vararg at: Pair<Double, Double>): List<MapPack> =
+        _packs.value.filter { p -> p.roadGrid != null && at.all { p.contains(it.first, it.second) } }.sortedBy { it.areaKm2 }
+
+    /**
+     * Driving routes, fastest first; the road nearest each of [blockedAt] is avoided. Empty if no pack on
+     * the phone has roads for both ends. The most local pack is tried first; if its road network is
+     * incomplete or finds no route, the other packs covering both ends are tried ([PackChoice]).
+     */
     suspend fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>> = emptyList(), count: Int = 3, vehicle: RoadGraph.Vehicle = RoadGraph.Vehicle.CAR): List<RoadGraph.Route> =
         withContext(Dispatchers.Default) {
             if (_packs.value.isEmpty()) rescan()
-            roadPack(fromLat to fromLon, toLat to toLon)?.drive(fromLat, fromLon, toLat, toLon, blockedAt, count, vehicle).orEmpty()
+            PackChoice.drive(roadPacks(fromLat to fromLon, toLat to toLon), { it.roadsComplete }) {
+                it.drive(fromLat, fromLon, toLat, toLon, blockedAt, count, vehicle)
+            }
         }
 
     /** True if some pack on the phone has driving roads at this position. */
@@ -410,5 +424,24 @@ class MapPacks private constructor(private val app: Context) {
         @Volatile private var inst: MapPacks? = null
         fun get(context: Context): MapPacks =
             inst ?: synchronized(this) { inst ?: MapPacks(context.applicationContext).also { inst = it } }
+    }
+}
+
+/** Which pack's driving routes to use when several packs cover both ends. Pure logic, unit-tested. */
+internal object PackChoice {
+    /**
+     * Tries [packs] in order (most local first) and returns the first complete pack's routes. A pack
+     * whose road network is incomplete, or that finds no route, does not hide another pack's route; an
+     * incomplete pack's routes are used only if no complete pack has any.
+     */
+    fun <P> drive(packs: List<P>, complete: (P) -> Boolean, drive: (P) -> List<RoadGraph.Route>): List<RoadGraph.Route> {
+        var fallback: List<RoadGraph.Route> = emptyList()
+        for (p in packs) {
+            val r = drive(p)
+            if (r.isEmpty()) continue
+            if (complete(p)) return r
+            if (fallback.isEmpty()) fallback = r
+        }
+        return fallback
     }
 }

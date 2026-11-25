@@ -1,20 +1,25 @@
 // Builds BASTION's offline road network from OpenStreetMap ways (Overpass XML, one file per grid cell).
 // Run by map-build.ps1:  java tools/RoadGraph.java <rawDir> <outDir> <gridZoom> <x0> <y0> <x1> <y1>
 //
-// Output: <outDir>/<x>/<y>.bin, one per grid cell, each holding every road edge that starts or
-// ends in that cell (edges are cut at junctions, so the phone can search cell by cell and never
-// loads the whole state). Big-endian, read by android .../map/RoadGraph.kt:
-//   "BRG3"; int nNames; nNames x UTF; int nNodes; nNodes x (long osmId, int lat1e6, int lon1e6);
+// Output: <outDir>/<x>/<y>.bin, one per grid cell, each holding every road edge whose line passes
+// through that cell (its end cells and every cell a long edge crosses, so a point in the middle of a
+// long road can be found without reading its ends; edges are cut at junctions, so the phone can
+// search cell by cell and never loads the whole state). Big-endian, read by android .../map/RoadGraph.kt:
+//   "BRG4"; int nNames; nNames x UTF; int nNodes; nNodes x (long osmId, int lat1e6, int lon1e6);
 //   int nEdges; nEdges x (long edgeId, int a, int b, byte class, byte oneway, byte mph, byte flags,
 //                         int nameIdx, float meters, short nPts, nPts x (int lat1e6, int lon1e6));
 //   int nTurns; nTurns x (long fromEdge, long viaNode, long toEdge, byte only)   -- turn restrictions at a junction in this cell
+//   int nPaths; nPaths x (long fromEdge, ubyte nVia, nVia x long viaEdge, long toEdge, byte only)
+//                         -- restrictions through a via WAY, stored in the cells of both ends of the via path
 // viaNode is the OSM id of the junction the rule applies at, so a rule never restricts the other end of
 // its from edge. When a way passes through the via node (two of its edges end there), only the edge pairs
 // that can carry the named movement (legal direction; left / right / straight on / U-turn) are written.
+// A via-way restriction becomes the edge sequence from edge, via edges (in driving order), to edge; the
+// phone tracks that sequence during search. One that cannot be resolved (via ways not joined end to end,
+// from/to way not at the via path) is skipped and counted in the summary line.
 // flags: 1 = 4wd only, 2 = unpaved, 4 = rough (high clearance), 8 = not passable by car (tracktype grade5, very bad surface).
 // only: 0 = this turn is forbidden ("no_left_turn" etc.), 1 = from this road only this turn is allowed ("only_straight_on").
-// BRG2 (turns without viaNode) and BRG1 (no flags, no turns) are still read by the phone.
-// Not yet handled: restrictions whose via is a way (they are skipped and counted in the summary line).
+// BRG3 (no via-way table), BRG2 (turns without viaNode) and BRG1 (no flags, no turns) are still read by the phone.
 // oneway: 0 = both ways, 1 = only a->b. Points are the shape between a and b, a and b excluded.
 // The data is (c) OpenStreetMap contributors, ODbL; the pack credits it.
 
@@ -33,7 +38,10 @@ public class RoadGraph {
     record Way(long id, int cls, int oneway, int mph, String name, long[] nodes, int flags) {}
     record Turn(long fromWay, long via, long toWay, int only, String kind) {}
     static final List<Turn> turns = new ArrayList<>();
-    static int viaWayTurns = 0;
+    /** A restriction through one or more via ways (in relation member order). */
+    record ViaWayTurn(long fromWay, List<Long> viaWays, long toWay, int only, String kind) {}
+    static final List<ViaWayTurn> viaWayTurns = new ArrayList<>();
+    static int skippedRestrictions = 0;
 
     static final Map<Long, int[]> coord = new HashMap<>();
     static final Map<Long, Way> ways = new HashMap<>();
@@ -62,12 +70,12 @@ public class RoadGraph {
                 for (int k = 1; k < seg.length; k++) m += meters(coord.get(seg[k - 1]), coord.get(seg[k]));
                 Object[] e = {edgeId++, w, seg, (float) m};
                 byWay.computeIfAbsent(w.id, k -> new ArrayList<>()).add(e);
-                for (long n : new long[]{seg[0], seg[seg.length - 1]}) {
-                    int[] c = coord.get(n);
-                    int cx = tileX(c[1] / 1e6, z), cy = tileY(c[0] / 1e6, z);
+                // Every cell the line passes through, not just its end cells: the middle of a long road must
+                // be found by a search that reads only the cells around a point.
+                for (long key : crossedCells(seg, z)) {
+                    int cx = (int) (key >> 32), cy = (int) key;
                     if (cx < x0 || cx > x1 || cy < y0 || cy > y1) continue;
-                    List<Object[]> list = cells.computeIfAbsent(((long) cx << 32) | cy, k -> new ArrayList<>());
-                    if (list.isEmpty() || list.get(list.size() - 1) != e) list.add(e);
+                    cells.computeIfAbsent(key, k -> new ArrayList<>()).add(e);
                 }
             }
         }
@@ -84,16 +92,122 @@ public class RoadGraph {
                 nTurns++;
             }
         }
+        // Via-way restrictions become edge sequences, stored in the cells of both ends of the via path
+        // (the phone reads the first when the search reaches it; the second covers a search that does not).
+        Map<Long, List<long[]>> cellPaths = new HashMap<>();
+        int nPaths = 0, unresolved = 0;
+        for (ViaWayTurn t : viaWayTurns) {
+            List<long[]> chains = chains(t);
+            if (chains == null) { unresolved++; continue; }
+            for (long[] ch : chains) {
+                for (long node : new long[]{ch[ch.length - 3], ch[ch.length - 2]}) {   // via path start and end
+                    int[] c = coord.get(node);
+                    long key = ((long) tileX(c[1] / 1e6, z) << 32) | tileY(c[0] / 1e6, z);
+                    List<long[]> list = cellPaths.computeIfAbsent(key, k -> new ArrayList<>());
+                    if (list.isEmpty() || list.get(list.size() - 1) != ch) list.add(ch);
+                }
+                nPaths++;
+            }
+        }
         long edges = 0;
         for (var en : cells.entrySet()) {
             int cx = (int) (en.getKey() >> 32), cy = (int) (long) en.getKey();
             Path f = out.resolve(cx + "/" + cy + ".bin");
             Files.createDirectories(f.getParent());
-            write(f, en.getValue(), cellTurns.getOrDefault(en.getKey(), List.of()));
+            write(f, en.getValue(), cellTurns.getOrDefault(en.getKey(), List.of()), cellPaths.getOrDefault(en.getKey(), List.of()));
             edges += en.getValue().size();
         }
-        System.out.println(ways.size() + " ways, " + edgeId + " edges, " + nTurns + " turn rules, " + cells.size() + " cells, " + edges + " edge entries"
-            + (viaWayTurns > 0 ? ", " + viaWayTurns + " via-way restrictions skipped (not supported)" : ""));
+        System.out.println(ways.size() + " ways, " + edgeId + " edges, " + nTurns + " turn rules, " + nPaths + " via-way rules ("
+            + viaWayTurns.size() + " relations, " + unresolved + " not resolved and skipped), " + cells.size() + " cells, " + edges + " edge entries"
+            + (skippedRestrictions > 0 ? ", " + skippedRestrictions + " other restrictions skipped (unsupported member layout)" : ""));
+    }
+
+    /**
+     * The grid cells (key = x << 32 | y) a run of nodes passes through: a grid walk along each straight
+     * piece in tile coordinates, so a long edge is listed in every cell it crosses.
+     */
+    static Set<Long> crossedCells(long[] seg, int z) {
+        Set<Long> out = new LinkedHashSet<>();
+        double n = 1 << z;
+        for (int k = 0; k < seg.length; k++) {
+            int[] p = coord.get(seg[k]);
+            double ax = (p[1] / 1e6 + 180) / 360 * n, ay = fy(p[0] / 1e6, n);
+            int cx = (int) Math.floor(ax), cy = (int) Math.floor(ay);
+            out.add(((long) cx << 32) | (cy & 0xffffffffL));
+            if (k == seg.length - 1) break;
+            int[] q = coord.get(seg[k + 1]);
+            double bx = (q[1] / 1e6 + 180) / 360 * n, by = fy(q[0] / 1e6, n);
+            int ex = (int) Math.floor(bx), ey = (int) Math.floor(by);
+            double dx = bx - ax, dy = by - ay;
+            int sx = dx > 0 ? 1 : -1, sy = dy > 0 ? 1 : -1;
+            double tdx = dx != 0 ? 1 / Math.abs(dx) : Double.POSITIVE_INFINITY, tdy = dy != 0 ? 1 / Math.abs(dy) : Double.POSITIVE_INFINITY;
+            double tx = dx != 0 ? (sx > 0 ? cx + 1 - ax : ax - cx) * tdx : Double.POSITIVE_INFINITY;
+            double ty = dy != 0 ? (sy > 0 ? cy + 1 - ay : ay - cy) * tdy : Double.POSITIVE_INFINITY;
+            for (int guard = 0; (cx != ex || cy != ey) && guard < 1_000_000; guard++) {
+                if (tx < ty) { cx += sx; tx += tdx; } else { cy += sy; ty += tdy; }
+                out.add(((long) cx << 32) | (cy & 0xffffffffL));
+            }
+        }
+        return out;
+    }
+
+    static double fy(double lat, double n) {
+        double r = Math.toRadians(lat);
+        return (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n;
+    }
+
+    /**
+     * The edge sequences of a via-way restriction: {fromEdge, viaEdge..., toEdge, via-path start node,
+     * via-path end node, only}, one per drivable (from edge, to edge) pair — normally exactly one.
+     * Returns an empty list when the movement cannot be driven anyway (a one-way via way the wrong way
+     * round), and null when the relation cannot be resolved (way missing, ways not joined end to end).
+     */
+    static List<long[]> chains(ViaWayTurn t) {
+        Way from = ways.get(t.fromWay), to = ways.get(t.toWay);
+        if (from == null || to == null || t.viaWays.isEmpty()) return null;
+        Set<Long> fromNodes = new HashSet<>();
+        for (long n : from.nodes) fromNodes.add(n);
+        Way v1 = ways.get(t.viaWays.get(0));
+        if (v1 == null) return null;
+        List<long[]> out = new ArrayList<>();
+        boolean resolved = false;
+        // The via path starts at the end of the first via way that lies on the from way.
+        for (long start : new long[]{v1.nodes[0], v1.nodes[v1.nodes.length - 1]}) {
+            if (!fromNodes.contains(start)) continue;
+            List<Object[]> vias = new ArrayList<>();
+            long node = start;
+            boolean ok = true, drivable = true;
+            for (long vid : t.viaWays) {
+                Way v = ways.get(vid);
+                List<Object[]> es = byWay.get(vid);
+                if (v == null || es == null) { ok = false; break; }
+                boolean fwd;
+                if (v.nodes[0] == node) fwd = true;
+                else if (v.nodes[v.nodes.length - 1] == node) fwd = false;
+                else { ok = false; break; }
+                if (v.oneway == 1 && !fwd) drivable = false;
+                List<Object[]> run = new ArrayList<>(es);
+                if (!fwd) Collections.reverse(run);
+                vias.addAll(run);
+                node = fwd ? v.nodes[v.nodes.length - 1] : v.nodes[0];
+            }
+            if (!ok) continue;
+            List<Object[]> froms = new ArrayList<>(), tos = new ArrayList<>();
+            for (Object[] e : endingAt(byWay.get(t.fromWay), start)) if (canEnter(e, start)) froms.add(e);
+            for (Object[] e : endingAt(byWay.get(t.toWay), node)) if (canLeave(e, node)) tos.add(e);
+            if (endingAt(byWay.get(t.toWay), node).isEmpty()) continue;   // to way not at the end of the via path
+            resolved = true;
+            if (!drivable || vias.size() > 255) { if (vias.size() > 255) return null; continue; }
+            for (Object[] f : froms) for (Object[] o : tos) {
+                long[] ch = new long[vias.size() + 5];
+                ch[0] = (long) f[0];
+                for (int i = 0; i < vias.size(); i++) ch[1 + i] = (long) vias.get(i)[0];
+                ch[vias.size() + 1] = (long) o[0];
+                ch[vias.size() + 2] = start; ch[vias.size() + 3] = node; ch[vias.size() + 4] = t.only;
+                out.add(ch);
+            }
+        }
+        return resolved ? out : null;
     }
 
     /** The edges of a way that have [node] as one of their ends (two when the way passes through it). */
@@ -159,7 +273,8 @@ public class RoadGraph {
         try (InputStream in = new BufferedInputStream(Files.newInputStream(p))) {
             XMLStreamReader r = f.createXMLStreamReader(in);
             long id = 0; List<Long> nds = null; Map<String, String> tags = null;
-            long[] rel = null;   // restriction members: from way, via node, to way
+            long[] rel = null;   // restriction members: from way, via node, to way, count of from/to ways seen
+            List<Long> relViaWays = null;   // via ways, in member order
             while (r.hasNext()) {
                 int ev = r.next();
                 if (ev == XMLStreamConstants.START_ELEMENT) {
@@ -173,15 +288,15 @@ public class RoadGraph {
                             nds.add(ref);
                             coord.putIfAbsent(ref, new int[]{(int) Math.round(Double.parseDouble(la) * 1e6), (int) Math.round(Double.parseDouble(lo) * 1e6)});
                         }
-                        case "relation" -> { rel = new long[]{-1, -1, -1, 0}; tags = new HashMap<>(); }
+                        case "relation" -> { rel = new long[]{-1, -1, -1, 0}; relViaWays = new ArrayList<>(); tags = new HashMap<>(); }
                         case "member" -> {
                             if (rel == null) break;
                             String role = r.getAttributeValue(null, "role"), type = r.getAttributeValue(null, "type");
                             long ref = Long.parseLong(r.getAttributeValue(null, "ref"));
-                            if ("from".equals(role) && "way".equals(type)) rel[0] = ref;
+                            if ("from".equals(role) && "way".equals(type)) { rel[0] = ref; rel[3]++; }
                             else if ("via".equals(role) && "node".equals(type)) rel[1] = ref;
-                            else if ("via".equals(role) && "way".equals(type)) rel[3] = 1;
-                            else if ("to".equals(role) && "way".equals(type)) rel[2] = ref;
+                            else if ("via".equals(role) && "way".equals(type)) relViaWays.add(ref);
+                            else if ("to".equals(role) && "way".equals(type)) { rel[2] = ref; rel[3]++; }
                         }
                         case "tag" -> { if (tags != null) tags.put(r.getAttributeValue(null, "k"), r.getAttributeValue(null, "v")); }
                         default -> {}
@@ -193,15 +308,20 @@ public class RoadGraph {
                     }
                     nds = null; tags = null;
                 } else if (ev == XMLStreamConstants.END_ELEMENT && r.getLocalName().equals("relation")) {
-                    // Only simple restrictions (one from way, a via node, one to way) that apply to cars.
+                    // Restrictions with one from way, one to way and either a via node or via way(s), that apply to cars.
                     String kind = tags.getOrDefault("restriction:motorcar", tags.getOrDefault("restriction", ""));
                     boolean exceptCars = tags.getOrDefault("except", "").contains("motorcar");
-                    if ("restriction".equals(tags.get("type")) && rel[0] > 0 && rel[1] > 0 && rel[2] > 0 && !exceptCars
-                        && (kind.startsWith("no_") || kind.startsWith("only_"))) {
-                        Turn t = new Turn(rel[0], rel[1], rel[2], kind.startsWith("only_") ? 1 : 0, kind);
+                    boolean restriction = "restriction".equals(tags.get("type")) && !exceptCars && (kind.startsWith("no_") || kind.startsWith("only_"));
+                    int only = kind.startsWith("only_") ? 1 : 0;
+                    boolean simple = rel[0] > 0 && rel[2] > 0 && rel[3] == 2;
+                    if (restriction && simple && rel[1] > 0 && relViaWays.isEmpty()) {
+                        Turn t = new Turn(rel[0], rel[1], rel[2], only, kind);
                         if (!turns.contains(t)) turns.add(t);
-                    } else if ("restriction".equals(tags.get("type")) && rel[3] == 1) viaWayTurns++;
-                    rel = null; tags = null;
+                    } else if (restriction && simple && rel[1] < 0 && !relViaWays.isEmpty()) {
+                        ViaWayTurn t = new ViaWayTurn(rel[0], List.copyOf(relViaWays), rel[2], only, kind);
+                        if (!viaWayTurns.contains(t)) viaWayTurns.add(t);
+                    } else if (restriction) skippedRestrictions++;
+                    rel = null; relViaWays = null; tags = null;
                 }
             }
         }
@@ -249,7 +369,7 @@ public class RoadGraph {
         return new Way(id, cls, oneway, mph, name, n, flags);
     }
 
-    static void write(Path f, List<Object[]> edges, List<long[]> cellTurns) throws IOException {
+    static void write(Path f, List<Object[]> edges, List<long[]> cellTurns, List<long[]> cellPaths) throws IOException {
         Map<String, Integer> names = new LinkedHashMap<>();
         Map<Long, Integer> nodes = new LinkedHashMap<>();
         for (Object[] e : edges) {
@@ -258,7 +378,7 @@ public class RoadGraph {
             nodes.putIfAbsent(seg[0], nodes.size()); nodes.putIfAbsent(seg[seg.length - 1], nodes.size());
         }
         try (var o = new DataOutputStream(new BufferedOutputStream(Files.newOutputStream(f)))) {
-            o.writeBytes("BRG3");
+            o.writeBytes("BRG4");
             o.writeInt(names.size());
             for (String s : names.keySet()) o.writeUTF(s.length() > 200 ? s.substring(0, 200) : s);
             o.writeInt(nodes.size());
@@ -277,6 +397,13 @@ public class RoadGraph {
             }
             o.writeInt(cellTurns.size());
             for (long[] t : cellTurns) { o.writeLong(t[0]); o.writeLong(t[1]); o.writeLong(t[2]); o.writeByte((int) t[3]); }
+            o.writeInt(cellPaths.size());
+            for (long[] ch : cellPaths) {   // {from, via..., to, start node, end node, only}
+                int nVia = ch.length - 5;
+                o.writeLong(ch[0]); o.writeByte(nVia);
+                for (int i = 1; i <= nVia; i++) o.writeLong(ch[i]);
+                o.writeLong(ch[nVia + 1]); o.writeByte((int) ch[ch.length - 1]);
+            }
         }
     }
 

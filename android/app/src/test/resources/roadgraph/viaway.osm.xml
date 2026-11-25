@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Test fixture for RoadGraphTest: a divided road (one-way North Lanes and South Lanes, 40 m apart) with a
+     crossover between them, and a no_u_turn restriction from North Lanes via the crossover WAY onto South Lanes.
+     West Rd also meets the crossover's west end: from there the crossover may be used. -->
+<osm version="0.6">
+<way id="21"><nd ref="201" lat="43.6000" lon="-116.2000"/><nd ref="202" lat="43.6100" lon="-116.2000"/><tag k="highway" v="primary"/><tag k="oneway" v="yes"/><tag k="name" v="North Lanes"/></way>
+<way id="22"><nd ref="202" lat="43.6100" lon="-116.2000"/><nd ref="203" lat="43.6200" lon="-116.2000"/><tag k="highway" v="primary"/><tag k="oneway" v="yes"/><tag k="name" v="North Lanes"/></way>
+<way id="23"><nd ref="204" lat="43.6200" lon="-116.1995"/><nd ref="205" lat="43.6100" lon="-116.1995"/><tag k="highway" v="primary"/><tag k="oneway" v="yes"/><tag k="name" v="South Lanes"/></way>
+<way id="24"><nd ref="205" lat="43.6100" lon="-116.1995"/><nd ref="206" lat="43.6000" lon="-116.1995"/><tag k="highway" v="primary"/><tag k="oneway" v="yes"/><tag k="name" v="South Lanes"/></way>
+<way id="25"><nd ref="202" lat="43.6100" lon="-116.2000"/><nd ref="205" lat="43.6100" lon="-116.1995"/><tag k="highway" v="primary"/><tag k="name" v="Crossover"/></way>
+<way id="26"><nd ref="203" lat="43.6200" lon="-116.2000"/><nd ref="204" lat="43.6200" lon="-116.1995"/><tag k="highway" v="primary"/><tag k="name" v="Top Crossover"/></way>
+<way id="27"><nd ref="207" lat="43.6100" lon="-116.2100"/><nd ref="202" lat="43.6100" lon="-116.2000"/><tag k="highway" v="residential"/><tag k="name" v="West Rd"/></way>
+<relation id="29"><member type="way" ref="21" role="from"/><member type="way" ref="25" role="via"/><member type="way" ref="24" role="to"/><tag k="type" v="restriction"/><tag k="restriction" v="no_u_turn"/></relation>
+</osm>

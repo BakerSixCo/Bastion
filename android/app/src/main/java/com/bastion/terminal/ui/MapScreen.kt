@@ -732,6 +732,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         }
                     }
                     if (routeNote.isNotBlank()) Text(routeNote, style = MaterialTheme.typography.bodyMedium)
+                    if (drive && drives.getOrNull(chosen)?.reducedCoverage == true) Text(RouteSession.COVERAGE_NOTE, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
                     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         if ((!drive && route != null) || (drive && drives.isNotEmpty())) TextButton(onClick = { showLegs = !showLegs }) { Text(if (showLegs) "Hide steps" else "Show steps") }
                         if (drive && drives.isNotEmpty() && fix != null) Button(onClick = {

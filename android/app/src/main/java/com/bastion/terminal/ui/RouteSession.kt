@@ -193,6 +193,10 @@ class RouteSession private constructor(private val app: Context) {
     }
 
     companion object {
+        /** Shown with a route whose road data has gaps ([RoadGraph.Route.reducedCoverage]): never hidden. */
+        const val COVERAGE_NOTE = "Part of the road data for this area is missing or could not be read: roads or turn " +
+            "restrictions may be missing from this route. Follow road signs."
+
         @Volatile private var inst: RouteSession? = null
         fun get(context: Context): RouteSession =
             inst ?: synchronized(this) { inst ?: RouteSession(context.applicationContext).also { inst = it } }
