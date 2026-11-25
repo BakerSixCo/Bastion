@@ -45,8 +45,13 @@
     { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
       "text": "At no time should dirty or infected wounds be closed. Wounds that continue to bleed inside, particularly if deep, should not be closed either." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed: HHS signs of infection (local signs, 100 F oral temperature 1-2 days after severe injury, lymph nodes, pus, odor, normal healing by day 2-3, elevate; never close infected wounds), JTS Wound Management (increasing pain, systemic illness, local care plus antibiotics, exudate color and odor), JTS Nursing (change at least every 24 h and examine), JTS Sepsis (medical emergency, evacuate). The answer line has '100°F' cleanly (the HHS quote's '100o F' extraction junk is kept out of the answer). Conflict field is empty; I found no disagreement in ATP 3-50.21, WHO BEC or ATP 4-02.11. kind 'fact' is right. Minor: tetanus (lockjaw) symptoms after a dirty wound (HHS) could be a one-line pointer.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

@@ -63,8 +63,13 @@
       "text": "Because life signs at these temperatures are almost impossible to obtain, no one should be pronounced dead until he or she has been rewarmed; hence the use of the adage, “nobody is dead until warm and dead”." }
   ],
   "conflict": "The card gives signs only and no temperatures, because the kit's documents disagree on the numbers: TB MED 508 (2026), TC 21-3 (2025) and ATP 3-50.21 (2018) define hypothermia as a core temperature below 95 F (HHS Ship's Medicine Chest, 2003, starts its mild band at 95 F), while ATP 4-02.11 (2026) says it 'begins when the body's core temperature drops below 97' F. The mild / moderate / severe temperature bands also differ between TB MED 508 (89.6-95, 82.4-89.5, below 82.4 F), TC 21-3 (90-95, 80-89, below 80 F), HHS (90-95, 82-90, below 82 F) and ATP 4-02.11 (93-96, 89-93, below 89 F), and TC 21-3 lists 'uncontrollable shivering' under moderate hypothermia where TB MED 508 lists 'reduced shivering' and HHS says 'shivering stops'. If the owner wants a temperature in this card, the figure must be chosen first. Shivering: TB MED 508 lists shivering among the early signs of hypothermia; TC 21-3 says 'Shivering alone is not a sign of hypothermia'; the card states both (lines 1 and 2). The HHS 'consider severe' list is three bullets in the original; the card reads them as all being present together. FEMA P-2064 (2020) was searched: it only says to watch for signs of hypothermia.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Re-review of the revised card (full check). New lines checked: A2 combines TC 21-3 'Shivering alone is not a sign of hypothermia' with HHS 'Never ignore shivering--it is a warning sign that the body is getting too cold' - accurate and shown as both; A6 HHS 'consider the patient to be in severe hypothermia if the following signs and symptoms are present'; W3 HHS elderly/intoxicated. Other lines as confirmed in batch 1 (TB MED 508, ATP 4-02.11). Temperature disagreements (now including HHS bands) correctly listed. No PDF junk. Recommended, not blocking: A6 reads HHS's three bullets as all required together ('not shivering and shows mental changes and poor coordination'); the HHS text is ambiguous, and the 'all three' reading under-calls severe hypothermia. The safer reading is 'any of these in a very cold person'. Not blocking because W2 already sends any hypothermic, non-shivering person out immediately.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

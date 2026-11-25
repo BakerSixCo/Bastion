@@ -75,8 +75,13 @@
       "text": "Acute Mountain Sickness Diagnosis Criteria at altitude (2500M or higher) Headache plus at least one of these: Weakness/lightheadedness Nausea/vomiting Anorexia Fatigue" }
   ],
   "conflict": "DRINKING: ATP 4-02.11 (2026) lists 'encourage the individual to drink fluids to stay hydrated' as first aid for HAPE and HACE with no condition on alertness; JTS Altitude Emergencies 2024 says avoid dehydration guided by thirst and that overhydration and forced hydration have not been shown to help. The card keeps drinking as a thirst-guided line after the mild-sickness step and does not tell rescuers to give drinks to a confused or drowsy person. DESCEND OR STAY for mild mountain sickness: JTS says mild AMS can be treated in place with rest for 1-2 days and constant monitoring, higher-risk AMS should be evacuated lower; ATP 3-50.21 (2018) and ATP 4-02.11 name descent, rest and hydration without a stay-in-place option. MEDICINES (acetazolamide, dexamethasone, nifedipine doses) are given only in JTS for medical providers and are left off the card. HHS Ship's Medicine Chest 2003 and FEMA P-2064 (2020) have nothing on altitude illness.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed in context: JTS (descent first and definitive; 300-1000 m; urgent with severity; mild AMS rest 1-2 days with monitoring; resume at no more than 500 m/day once symptom-free; HACE/HAPE descent to lowest altitude fastest; HAPE minimal exertion, vehicle, remove load; oxygen without delaying evacuation; ibuprofen/acetaminophen at usual dose; drink to thirst), ATP 4-02.11 (immediate descent, rest and oxygen, warmth, reassurance, evacuation, medicines by professionals), TB MED 508 (evacuation). Order is right (descent first). Drinking and stay-or-descend disagreements are listed; the card does not tell anyone to give drinks to a confused person. Named drugs present. No PDF junk. Recommended, not blocking: when descent is impossible (night, weather), JTS says a portable hyperbaric chamber, if carried, buys time ('a temporary stopgap'); a one-line 'if you cannot descend' with oxygen, hyperbaric bag, warmth and rest would close the (c) gap. JTS lists respiratory depressants as a HAPE risk; consider 'no sleeping pills or alcohol' only if a quote supports it.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

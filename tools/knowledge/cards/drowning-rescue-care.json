@@ -66,8 +66,13 @@
       "text": "Hypothermic near-drowning victims should be rewarmed while CPR is ongoing, and no victim should be declared dead until they are rewarmed and fail to respond to CPR or other resuscitative efforts." }
   ],
   "conflict": "WHEN TO STOP (the card gives no stop time): JTS Drowning Management 2025 says in-water rescue becomes body recovery after more than 60 minutes of submersion, resuscitation of a non-hypothermic patient may stop after 30 minutes of CPR without return of circulation, and a hypothermic patient is rewarmed to 30-34 °C before stopping if still without a heartbeat for more than 20 minutes; HHS Ship's Medicine Chest 2003 says no victim should be declared dead until rewarmed and unresponsive to CPR. NECK: JTS says routine neck immobilization is not recommended unless the circumstances suggest spinal injury (diving, boat accident, fall from height); Ship's Medicine Chest says remove the victim carefully, protecting the neck in the event of spinal injury (compatible). PULSE CHECK: Ship's Medicine Chest says check breathing and pulse for a full minute if the victim has been in cold water; JTS gives no time. FEMA P-2064 (2020) has no drowning first aid.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed in context: JTS Drowning Management 2025 (rescuer safety; reach-throw-row-tow-go; no compressions in water, breaths only if extraction is slow; head and feet level; 5 rescue breaths then 30:2; vomiting and recovery position; finger sweep only if visible; no head-down or abdominal thrusts; keep warm; hospital for anyone resuscitated; evacuation criteria; no routine neck immobilization; resuscitate unless obvious death), WHO (late breathing problems), HHS (no Heimlich unless solid object; rewarm during CPR, not dead until warm). Call for help is first. Stop-time, neck and pulse-check differences are listed. No PDF junk. Recommended: JTS also says 'Drowning patients without circulatory arrest will often respond to rescue breaths alone'; add 'if there is a pulse, keep giving rescue breaths only' so compressions are not started on a beating heart (same gap as cpr-adult); HHS's full-minute pulse check in cold water is worth showing on the card.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

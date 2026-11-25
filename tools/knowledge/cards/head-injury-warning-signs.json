@@ -61,8 +61,13 @@
     { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
       "text": "In severe head injuries where brain tissue is protruding, leave the wound alone. Carefully place a loose moistened dressing (moistened with sterile normal saline if available) and a first aid dressing over the tissue to protect it from further contamination. DO NOT remove or disturb any foreign matter that may be in the wound. Position the casualty so that their head is higher than their body. Keep them warm and seek medical assistance immediately." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed: ATP 4-02.11 TBI signs, first-aid observable signs, CSF/blood leak, open head injury, symptoms can develop over time, most concussions without loss of consciousness, spinal precautions, nothing to eat or drink, no removal of protruding objects, open skull wound care; HHS (prolonged unconsciousness, evacuate; wake frequently; CNS-depressant pain medicine). Asks fit, including 'should I let him sleep' (A6). Conflict field is empty; I found no real disagreement: ATP 3-50.21 (awaken every 2 hours, monitor for 24 hours, cold pack on a bump) and WHO BEC agree, and HHS says withholding pain medication can be advised in head injury. No PDF junk. Recommended, not blocking: (1) ATP 3-50.21 says airway control is the most important part of head-injury care; a line such as 'if unconscious or vomiting, keep the airway clear (roll as one unit onto the side)' would answer 'bumped head now vomiting'; (2) the ATP 3-50.21 '24 hours / every 2 hours' figures would make A6 concrete.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

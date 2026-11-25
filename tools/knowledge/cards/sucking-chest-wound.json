@@ -61,8 +61,13 @@
       "text": "DO NOT pack chest wounds with a hemostatic (or other) dressing. REPORT a severe chest injury to medical personnel immediately." }
   ],
   "conflict": "When breathing gets worse after the wound is sealed: ATP 4-02.11 (2026) says to 'lift the chest seal, release any trapped air by wiping blood or debris from the wound, and reseal or replace the chest seal upon exhalation' (its warning box also allows 'temporarily removing the dressing'); WHO-ICRC BEC (2018) says 'Remove the dressing completely' and does not say to put it back. The card shows both; the owner must choose. WHO BEC also says a three-sided dressing should NOT be placed if the patient cannot be observed continuously; ATP 4-02.11 has no such limit (shown in the card as a WHO warning). The two agree that an improvised covering is taped on three sides. Army ATP 3-50.21 (2018) differs from both: it has the casualty exhale while holding the mouth and nose closed (the Valsalva maneuver) as the wound is closed, and says 'Frequently, a taped, airtight dressing is all that is needed', with no un-taped side or vent; this is not in the card. HHS Ship's Medicine Chest (2003) agrees with three sides ('tapes three sides of the dressing over the wound'). FEMA P-2064 (2020) was searched: nothing on chest wounds.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Re-review of the revised card (full check). Answer and warning lines unchanged from batch 1 and re-confirmed against ATP 4-02.11 ch. 6 and WHO BEC in context. The conflict field now records ATP 3-50.21's Valsalva and 'taped, airtight dressing' (no un-taped side) and HHS's three-sided taping, as I recommended. No PDF junk.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

@@ -52,8 +52,13 @@
       "text": "Give intramuscular adrenaline for airway obstruction, severe wheezing or shock. [See SKILLS] –– Adrenaline can wear off in minutes so be prepared to give additional doses." }
   ],
   "conflict": "DOSE (the card gives no dose, only 'provided with the injector'): ATP 4-02.11 (2026) para 7-35 says auto-injector doses are typically 0.15 mg for children and 0.3 mg for adults weighing more than 66 pounds; JTS Spider and Scorpion Envenomation 2026 says 0.3 mg (0.15 mg pediatric) of 1:1000 epinephrine intramuscularly; WHO-ICRC Basic Emergency Care 2018 (trained providers, drawn up from an ampoule) says 0.5 mg IM for adults of 50 kg or above, 0.4 mg at 40 kg, 0.3 mg at 30 kg, and 0.15 mg for children. REPEAT INTERVAL (the card gives the ATP figure): ATP 4-02.11 says every 5 to 10 minutes if prescribed and symptoms persist; WHO BEC says adults may repeat at 5-minute intervals and children every 5–15 minutes as needed. HHS Ship's Medicine Chest 2003 (anaphylaxis appears only in its training outline and medicine list) and FEMA P-2064 (2020) give no anaphylaxis first aid.",
+  "review": {
+    "verdict": "fail",
+    "notes": "Problem: hidden conflict on positioning. A5 'Lay the person on their back with the legs raised, if injuries permit' follows ATP 4-02.11 7-35, but WHO BEC (Obstruction due to severe allergic reaction) says 'Reposition airway as needed (sit patient upright if no trauma)' and 'Allow the patient to stay in a position of comfort'. Laying flat someone whose throat or tongue is swelling can make breathing worse. Fix: 'If breathing is hard, let them sit up or stay in the position they choose (WHO); if they are faint, pale or collapsing, lay them flat with legs raised (ATP)', with the WHO quote, and list it in conflict. Confirmed: ATP 4-02.11 7-33 to 7-36 (signs, onset, call for help, auto-injector, repeat every 5-10 min if prescribed, CPR, vital signs every 3-5 min, evacuation), WHO (remove allergen, adrenaline can wear off in minutes). Dose and interval disagreements listed. Call for help and epinephrine come right after the signs, which is the right order. No PDF junk. Minor: 'give it yourself if you are allowed and trained' is ATP's wording; acceptable.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
   "status": "draft",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

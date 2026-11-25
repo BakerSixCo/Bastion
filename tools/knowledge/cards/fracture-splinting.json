@@ -86,8 +86,13 @@
       "text": "Narrow materials such as wire, or cord should not be used to secure a splint in place. The application of wire or narrow material to an extremity could cause tissue damage and a TQ effect." }
   ],
   "conflict": "STRAIGHTENING A DEFORMED LIMB THAT HAS NO PULSE (the card states only the case all sources agree on: good pulse = do not straighten): ATP 4-02.11 (2026) para 13-34 says splint in the position found and DO NOT attempt to reposition or straighten (its own para 13-19 says apply the splint with the limb in the position of function or a normal resting position if possible); ATP 3-50.21 (2018) says 'Only reposition the break if there is no blood flow'; WHO-ICRC Basic Emergency Care 2018 (trained providers) says if the limb is visibly deformed and pulses beyond the fracture are weak or absent, first straighten (reduce) the fracture before splinting; HHS Ship's Medicine Chest 2003 (crew first-aid assessment standard) expects 'proper traction' when immobilizing a simple limb fracture. FEMA P-2064 (2020) has no fracture first aid.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed in context: ATP 4-02.11 ch. 13 (fracture signs; lifesaving first; loosen clothing, jewelry, boots rule; circulation check; splint length, four ties, knots away from the body and not over the break; padding; improvised splints and body splinting; position found; cover wounds; recheck circulation; too tight; sling; open-fracture bone not pushed back; spine do-not-move; no wire or cord), WHO BEC (good pulse = do not force; open fracture to surgery), HHS (move only after splinting unless the scene is unsafe). Order is right. No PDF junk. (c) check: the card leaves out the disputed no-pulse case (ATP never straighten; ATP 3-50.21 and WHO reposition only without a pulse), but the needed action is present (A2: numb, cold or blue limb = get to medical treatment as soon as possible), so a reader is not stranded. Recommended: show the no-pulse disagreement on the card next to A11, attributed, since A11's 'If the limb has a good pulse' invites the question. Optional: thigh fractures can bleed enough to cause shock (WHO lists femur fracture under shock causes); add a pointer to the shock card.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

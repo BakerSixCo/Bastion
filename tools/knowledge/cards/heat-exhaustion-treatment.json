@@ -55,8 +55,13 @@
       "text": "Note. Any Soldier who is vomiting repeatedly and may have sustained a heat-related injury should be immediately evacuated." }
   ],
   "conflict": "WHEN TO GET HELP (the card gives the ATP 4-02.11 figure): ATP 4-02.11 (2026) says seek medical assistance immediately if no improvement within 30 minutes or if worse; TC 21-3 (2025, heat exhaustion in a cold-weather environment) says evacuate if symptoms have not improved within 20 minutes or the Soldier cannot drink because of an upset stomach; TB MED 507 (2022) says patients generally improve within the first hour and those failing to respond or declining should be evacuated; FM 7-22 (2020) says heat exhaustion 'requires medical attention'; HHS Ship's Medicine Chest 2003 says treatment should be guided by medical advice. HOW MUCH TO DRINK (the card gives no amount): ATP 4-02.11 says sip cool water or an electrolyte sports drink; TB MED 507 says initially 1 quart per 30 minutes for thirsty, alert patients; TC 21-3 says one canteen over 30 to 45 minutes, plus a canteen with one packet of salt over 30 minutes if cramps occur; ATP 3-50.21 (2018) says slowly sip at least one quart per hour. MENTAL STATUS: JTS Prolonged Casualty Care 2021 says heat exhaustion has normal mental status; FM 7-22 lists confusion among heat exhaustion symptoms; ATP 4-02.11 and TB MED 507 treat confusion as heat stroke or a medical emergency. DRINKS IN HEAT STROKE: FEMA P-2064 (2020) says do not give the person anything to drink; TB MED 507 figure 5-1 says if conscious, provide sips of water.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed in context: ATP 4-02.11 17-9 to 17-11 (signs, steps, 30-minute rule, progression to heat stroke), JTS PCC (normal mental status), HHS (serious, can progress rapidly; medical advice; rest, hydrate, no heat for several days), TB MED 507 (thirsty and alert patients drink; poor mental status = emergency), ATP 4-25.12 (repeated vomiting = evacuate), FEMA (heat stroke: nothing to drink). Drinks are limited to an alert person (A6, W3). Help-timing, drink-amount, mental-status and heat-stroke-drink disagreements are listed. No PDF junk. Point (b): A3-A7 are ordered steps (move, lie down, cool, drink, watch for 30 min); kind should be 'protocol'. Cross-card: W1 states FEMA's 'do not give the person anything to drink' for heat stroke as plain fact while the heat-stroke card follows TB MED 507 ('If conscious, provide sips'); attribute it in W1 or make both cards say the same thing.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

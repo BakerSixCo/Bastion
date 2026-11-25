@@ -66,8 +66,13 @@
       "text": "You can also use river or lake water. It is generally better to use flowing water than still, stagnant water. However, do not use water with floating material in it or water that has a dark color or questionable odor. Regardless of the source, treat the water by following the instructions on the main page above." }
   ],
   "conflict": "8.25% bleach per gallon: the EPA (2026) table says 6 drops; the CDC (2024) sheet says 8 drops for any 5%-9% bleach. Cloudy water: EPA says double the dose (also for colored or very cold water), which is 12 drops per gallon of 8.25% bleach; CDC says 16 drops per gallon for cloudy tap water. The two agree for 6% bleach (8 drops per gallon, 16 if cloudy) and on the 30-minute wait. The card shows both where they differ; the owner must choose. Other kit documents: TB MED 577 (2010) and ATP 3-50.21 (2018) give 2 drops per quart for 5% / 5.25% bleach with a 30-minute wait (consistent), but ATP 3-50.21 says 'If cold and cloudy, wait 60 minutes' instead of doubling the dose. Parasites: CDC says bleach 'will kill most viruses and bacteria' and names parasites only for boiling; the card states the two CDC sentences side by side and does not itself say bleach fails against parasites (only the TB MED 577 Cryptosporidium sentence says so). HHS Ship's Medicine Chest (2003) and FEMA P-2064 (2020) were searched: neither gives a bleach dose for drinking water.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Re-review of the revised card (full check). Confirmed against EPA text and table, CDC sheet and TB MED 577: settle/filter first (EPA); 2 drops per quart/liter; 8 drops 6% per gallon; 8.25% EPA 6 vs CDC 8 shown; cloudy/colored/cold EPA double vs CDC 16 drops shown; 30 min; odor check and 15 min repeat; aeration for taste; cloth/stick drip (TB MED 577, household 5% bleach context); unscented regular bleach; fresh under 1 year; boiling first. New W3 states the two CDC sentences side by side (boiling kills bacteria, viruses and parasites; bleach most viruses and bacteria) without overclaiming; W4 Cryptosporidium (TB MED 577); W6 source caution (EPA). Conflict field records ATP 3-50.21's 60-minute wait and the HHS/FEMA searches. No PDF junk. Asks are bleach-only.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

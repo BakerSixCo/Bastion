@@ -81,8 +81,13 @@
       "text": "If a casualty receives burns of the eyelids or face— • DO NOT apply dressing. • DO NOT touch. • SEEK medical assistance immediately. WARNING DO NOT attempt to force open the eyes with thermal burns." }
   ],
   "conflict": "COVERING THE UNINJURED EYE (the card says nothing about it): ATP 4-02.11 (2026) paras 10-5 to 10-7 and 10-52 say shield the injured eye only, not both, and do not cover the uninjured eye to prevent eye movement; JTS Eye Trauma Initial Care 2021 says 'Shield ONLY injured eye'; JTS Ocular Injuries PFC 2017 says patching both eyes has not been shown to improve outcome. But ATP 4-02.11 para 10-21 says with impaled objects both eyes are usually bandaged (uninjured eye left uncovered on a battlefield) and para 10-31 says cover the unaffected eye when the eyeball is out of its socket; ATP 3-50.21 (2018) says 'Cover both eyes because the eyes are sympathetic'; WHO-ICRC Basic Emergency Care 2018 says place a loose patch over both eyes. SHIELD OR DRESSING: ATP 4-02.11 cautions never to place anything under the shield or directly on the eye, yet its paras 10-8 and 10-9 say cover a lacerated eyelid or eyeball with a (loose) sterile dressing without pressure; WHO BEC says a loose patch. The card uses the rigid shield only. FLUSH TIME for chemicals: ATP 4-02.11 para 10-41 says at least 5 to 20 minutes (acid at least 5 to 10, alkali at least 20) and para 10-46 says at least 20 minutes or until arrival; the card gives the 20-minute figure. JTS Eye Trauma gives volumes instead (minimum 2 liters, up to 10). HHS Ship's Medicine Chest 2003 (only 'copious saline irrigation' for chemical agents in the eye) and FEMA P-2064 (2020) add no eye first aid.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed in context: ATP 4-02.11 ch. 10 (chemical: flood immediately, inner to outer corner, at least 20 minutes or until arrival, evacuate after flushing; acid 5-10 / alkali 20 min; penetrating-injury signs; nothing on the eye, no pressure, no rubbing, nothing removed; positions; rigid shield not pressure patch, improvised cup, taping; impaled object built around; extruded eyeball dressing; evacuate on the back, head raised, with glasses; do not force lids; eyelid/face burns). Chemical flushing comes first, which is the most urgent action. Both-eyes, shield-vs-dressing and flush-time disagreements are listed. No PDF junk. Minor: A5 'do not remove anything from the eye surface' and W3 (the injured person may remove an eyelash or speck) read as a contradiction at first glance; put W3's exception directly after A5.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

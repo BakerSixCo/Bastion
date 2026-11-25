@@ -80,8 +80,13 @@
     { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
       "text": "While these spiders are considered dangerous, actual bites and severe reactions are relatively rare. Most spiders are not aggressive and will only bite in self-defense. If bitten by a spider and experiencing severe symptoms, seek immediate medical attention." }
   ],
+  "review": {
+    "verdict": "fail",
+    "notes": "Problem (point d): A2 says anaphylaxis 'must be recognized and treated immediately' but never says how. JTS says 'using standard acute allergic reaction therapies'; the lay action is the epinephrine auto-injector (ATP 4-02.11 7-35, quote above in the anaphylaxis card). Fix: add 'If an epinephrine auto-injector is available, use it now and call for help (see the anaphylaxis card)'. Confirmed in context: JTS Spider and Scorpion Envenomation 2026 (mostly mild but can kill; anaphylaxis first; tetanus; widow cramps 15-60 min, rigid abdomen; recluse ulcer, no antivenom, no early excision, admission criteria; scorpion pain, sympathetic signs, airway spasm, ibuprofen/acetaminophen, observe 4-6 h, no tourniquet/cautery/incision, children under 10; funnel-web pressure immobilisation and keep the bandage on; early evacuation for severe or progressive symptoms), ATP 4-02.11 16-57 to 16-59 (widow and recluse description, seek attention for severe symptoms). Conflict field is empty; I found no disagreement between ATP 4-02.11 and JTS. kind 'fact' is acceptable. No PDF junk. Minor: the funnel-web line is Australia-only; fine as labelled.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
   "status": "draft",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

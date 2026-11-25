@@ -66,8 +66,13 @@
     { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
       "text": "If you use your car to charge devices, do not leave the car running in a garage, partly closed space, or near a home to avoid carbon monoxide poisoning." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Re-review of the revised card (full check). New lines checked in context: A2 'do not wait for this: poisoning may occur without initial signs' (ATP 4-02.85 10-33); A5 check everyone in the same space (WHO BEC 'Gaseous poisoning... can cause altered mental status in multiple people'); oxygen moved up to A6 (TB MED 508, ATP 4-25.12 order); W1 rescuers in danger, ventilation, and ATP 4-02.85's breathing-protection rule, attributed; W2 exhaust not blocked by snow, windows open (TB MED 508 7-1b); W4 shut the stove off when sleeping or use a tent guard (TC 21-3); W5 car not left running in a garage (FEMA). No disagreements found, conflict field empty is correct. No PDF junk. Recommended, not blocking: W1's breathing-protection rule is an industrial confined-space standard; a lay rescuer at a tent or car has none, and the card could make them hesitate. Consider adding a sourced line that ventilating the space comes first (ATP 4-02.85 'Adequate ventilation should be provided') so the reader opens doors and gets the person out quickly rather than freezing.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

@@ -65,8 +65,13 @@
       "text": "Serious complications of high-altitude disease can be avoided by appropriate preparation, early surveillance of symptom onset, and aggressive treatment of disease. Normally, the most appropriate treatment in all altitude illnesses is to descend." }
   ],
   "conflict": "ALTITUDE THRESHOLDS (the card gives only the 2,500 m / 8,200 ft figure): JTS Altitude Emergencies 2024 says AMS is diagnosed at 2500 m or higher and generally does not occur below 2000 m, with rare AMS and HAPE at 1500-2500 m; TB MED 508 (2026) says AMS, HAPE and HACE follow rapid ascent to high altitude (> 8,202 feet, > 2,500 m); ATP 4-02.11 (2026) says HAPE typically occurs above 2,500 meters (8,200 feet) but HACE typically above 3,000 meters (9,800 feet). EARLY SIGNS OF HAPE: JTS says decreased exercise tolerance and shortness of breath at rest; ATP 3-50.21 (2018) lists loss of appetite, low energy level, coughing spasms and a headache. HHS Ship's Medicine Chest 2003 and FEMA P-2064 (2020) have nothing on altitude illness.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed: JTS Altitude Emergencies 2024 (AMS criteria at 2500 m; onset 1-6 h, up to 48 h; not below 2000 m; differentials; dehydration mimics; HACE classic triad; HAPE criteria and earliest symptoms; HAPE isolated in 50% and second night), ATP 4-02.11 (HACE/HAPE thresholds, neuro and breathing danger signs), TB MED 508 (progression, evacuation, HAPE fatal in 6-12 h). Threshold and early-HAPE-sign disagreements listed (ATP 3-50.21 also says a headache may be the first and only sign). kind 'fact' is right. No PDF junk. Minor: the card warns 'descend' only in W3; that is acceptable for a recognition card that points to the treatment card.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

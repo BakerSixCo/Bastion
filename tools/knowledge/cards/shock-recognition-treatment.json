@@ -56,8 +56,13 @@
       "text": "When providing first aid for shock, DO NOT give the casualty any food or drink. If you must leave the casualty or if they are unconscious, turn their head to the side (see figure 7-2) to prevent them from choking, if they vomit." }
   ],
   "conflict": "FOOD OR DRINK (the card follows ATP 4-02.11: none): ATP 4-02.11 (2026) para 7-17 says DO NOT give the casualty any food or drink; ATP 3-50.21 (2018) says if the victim is conscious, slowly give small doses of a warm salt or sugar solution, lists warm liquids or foods as a way to warm the victim, and says no fluids by mouth only if the victim is unconscious or has abdominal wounds. POSITION of an unconscious person: ATP 4-02.11 says turn the head to the side; ATP 3-50.21 says place them on their side or abdomen with the head turned to one side, and if unsure of the best position place the victim perfectly flat. Leg height: ATP 4-02.11 says feet slightly above the level of the heart; ATP 3-50.21 says lower extremities elevated 6 to 8 inches; HHS Ship's Medicine Chest 2003 says lying on the floor with legs elevated, only if there is no injury to the spine or a lower extremity. Signs: Ship's Medicine Chest lists rapid and shallow respiration, thirst, nausea and vomiting, weak and rapid pulse, restlessness, excitement and anxiety (compatible with the ATP list). FEMA P-2064 (2020) names shock but gives no first aid for it.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed in context: ATP 4-02.11 ch. 7 (signs; alert medical personnel; confusion plus weak radial pulse = major blood loss; control bleeding first; internal bleeding needs rapid evacuation; shelter; shock position with feet slightly above heart, sitting if easier to breathe; loosen clothing except in chemical areas; prevent chilling or overheating, nothing touching the ground; reassure; splint a broken leg first; no food or drink; head to the side if unconscious or left alone), HHS position standard. Call for help is early (A2), bleeding control is the first action. Food/drink, position and leg-height disagreements are listed (ATP 3-50.21's warm salt or sugar solution vs ATP 4-02.11's none). No PDF junk. Minor: W3 'turn their head to the side' is ATP's wording; with no spinal injury the recovery position (on the side) protects the airway better, per ATP 3-50.21 and ATP 6-14; consider mentioning.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

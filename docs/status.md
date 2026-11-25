@@ -2044,3 +2044,6 @@ batch 2b (field skills/disasters, ~24) drafted by Fable. Next session:
 3. Owner decisions -> `sync.pl import` -> `build.pl` -> app assets -> emulator test.
 Free local work (no Claude tokens): `build.pl -v`, `find.pl`, `tools/model-eval/pipeline.sh` (Arc GPU), `gradlew :app:testDebugUnitTest`.
 Next calculator: USDA canning time by altitude.
+Review result (Opus xhigh, 2026-11-24): batch 1 12/12 pass (status reviewed); batch 2a 11/20 pass. Failed, fix per each card's
+review notes: burn-first-aid, anaphylaxis, cpr-adult, choking-adult, diarrhea-field-care, insect-sting, spider-scorpion,
+potassium-iodide (add FDA Q&A age doses). Batch 2b (22 cards) not reviewed yet. Next: fix the 8, review 2b, then sync.pl export + review page.

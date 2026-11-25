@@ -43,8 +43,13 @@
     { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
       "text": "Blood seeping into soft tissues from injured vessels and capillaries causes swelling and pain that may be severe at the site of the injury. If the injury is over a bone, consider the possibility of a fracture." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed: ATP 3-50.21 sprain and strain paragraphs and RICE (rest, ice 24 to 48 h intermittently, compression or splint, boot left on unless circulation is compromised, elevate), fracture warning signs and impaired-circulation evacuation from ATP 4-02.11, HHS 'If the injury is over a bone, consider the possibility of a fracture'. No other kit document gives sprain care, so no conflict to list. kind 'fact' is acceptable (RICE is a set of measures, not a strict sequence). No PDF junk. Recommended, not blocking: (1) ice wrapped in a cloth, 10-15 min at a time (ATP 4-02.11 uses this for stings and centipede bites) to avoid cold injury, especially in cold weather; (2) 'cannot bear weight' is not in any source, so the fracture-sign warning is the right stopping rule.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

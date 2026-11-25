@@ -56,8 +56,13 @@
     { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
       "text": "If in an area where these diseases are prevalent or if you develop symptoms such as fever, rash, joint pain, or flu-like symptoms after a tick bite, it is crucial to consult a health care professional for proper evaluation, diagnosis, and treatment." }
   ],
+  "review": {
+    "verdict": "fail",
+    "notes": "Problems: (1) Point (d): A1 tells the reader only to 'seek immediate medical attention' for anaphylaxis. The single most important action, using an epinephrine auto-injector if one is available, is missing; ATP 4-02.11 7-35: 'If an epinephrine auto-injector is available, assist the affected individual in using it, or administer it yourself if you are allowed and trained.' (ATP's prevention list also says people allergic to stings should 'be prepared with the proper medication'.) Fix: add that line and a pointer to the anaphylaxis card. (2) Point (b): the answer is ordered steps (watch for anaphylaxis, remove the stinger, wash, cold compress, creams, antihistamine); kind should be 'protocol'. Confirmed: ATP 4-02.11 16-43 onward (stinger scraping, wash, cold compress 10-15 min, OTC creams, oral antihistamine, no scratching, anaphylaxis signs, unknown insect or worsening = professional, fire ants, tick removal and cleaning, tick-borne disease symptoms). No PDF junk. Minor: 'multiple stings when to worry' is claimed but not addressed; no kit quote found on multi-sting toxicity, so either drop that ask or answer it only with W2's 'severe or worsening symptoms'.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
   "status": "draft",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }

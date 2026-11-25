@@ -64,8 +64,13 @@
       "text": "If water is plentiful, drink enough water to ensure a steady urine output throughout the day. However, over-hydration can cause low serum sodium levels that can lead to death." }
   ],
   "conflict": "THIRST AS A GUIDE: ATP 3-50.21 (2018), TC 21-3 (2025) and TB MED 507 (2022) say thirst is not adequate and by the time you are thirsty you are already dehydrated; JTS Altitude Emergencies 2024 says hydration at altitude should be 'guided by thirst and appropriate urine output'. 'RED SKIN' as the sign of a severe condition comes only from TC 21-3 (cold-weather manual); no other kit source lists it. TREATMENT is not on this card: TC 21-3 says keep the victim warm, give plenty of liquids and rest; HHS Ship's Medicine Chest 2003 gives oral rehydration solution and IV fluids; see the oral-rehydration-solution card. FEMA P-2064 (2020) has nothing on dehydration signs.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed: ATP 3-50.21 sign list and thirst sentence, TC 21-3 (red skin, appetite, dry mouth, cramps/vomiting, headaches, urine in snow), HHS (signs, worsening adult picture, consequences, oral or IV routes, seek advice early and on any question about hydration or mentation), WHO (adult and child signs; children dehydrate faster). Thirst-as-a-guide and red-skin disagreements are listed. No PDF junk. Recommended, not blocking (point d): name when home care is not enough instead of only 'markedly dehydrated'. WHO BEC paediatric danger signs give it in plain terms: a child who is lethargic or unusually sleepy, cannot drink or breastfeed, or is vomiting everything needs URGENT attention. 'Red skin' as the severe sign comes only from TC 21-3 and is an odd lone criterion; consider de-emphasising it behind the WHO/HHS signs.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
   "approved_by": ""
 }
