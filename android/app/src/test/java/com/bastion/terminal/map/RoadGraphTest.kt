@@ -20,7 +20,8 @@ class RoadGraphTest {
         assertEquals(listOf("Main St", "unnamed road"), r.steps.map { it.name })
         assertEquals(805.0 + 1112.0, r.meters, 15.0)
         // Main St is 35 mph (from its maxspeed tag); the side street a typical 25 mph.
-        assertEquals(805 / (35 * 0.44704) + 1112 / (25 * 0.44704), r.seconds, 3.0)
+        // ... plus 10 s for the left turn from Main St onto the side street.
+        assertEquals(805 / (35 * 0.44704) + 1112 / (25 * 0.44704) + 10, r.seconds, 3.0)
         // Coming back the wrong way up the one-way street is not allowed, and there is no other road.
         assertTrue(g.routes(43.6100, -116.1900, 43.6000, -116.2000).isEmpty())
     }

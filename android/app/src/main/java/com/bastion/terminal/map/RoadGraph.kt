@@ -204,6 +204,40 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
         return rules.none { !it.second && it.first == toEdge.id }
     }
 
+    /** Compass heading (degrees) of a directed edge where it leaves its start (out) or reaches its end (in). */
+    private fun heading(e: Edge, forward: Boolean, atEnd: Boolean): Double {
+        val l = shape(e); val n = l.size / 2
+        val (i, j) = when {
+            forward && atEnd -> n - 2 to n - 1
+            forward -> 0 to 1
+            atEnd -> 1 to 0
+            else -> n - 1 to n - 2
+        }
+        val la1 = l[2 * i] / 1e6; val lo1 = l[2 * i + 1] / 1e6; val la2 = l[2 * j] / 1e6; val lo2 = l[2 * j + 1] / 1e6
+        val dx = (lo2 - lo1) * cos(Math.toRadians(la1)); val dy = la2 - la1
+        return Math.toDegrees(kotlin.math.atan2(dx, dy))
+    }
+
+    /**
+     * Seconds lost turning from one directed edge onto the next: nothing going straight, a little
+     * for a right turn, more for a left (crossing traffic), a lot for a sharp turn or U-turn.
+     */
+    private fun turnSeconds(inState: Int, outEdge: Int, outForward: Boolean): Double {
+        val a = heading(edges[inState / 2], inState % 2 == 0, atEnd = true)
+        val b = heading(edges[outEdge], outForward, atEnd = false)
+        var d = b - a
+        while (d > 180) d -= 360
+        while (d < -180) d += 360
+        val turn = kotlin.math.abs(d)
+        return when {
+            turn > 160 -> 60.0
+            turn > 120 -> 20.0
+            turn < 30 -> 0.0
+            d < 0 -> 10.0      // left
+            else -> 4.0        // right
+        }
+    }
+
     /**
      * Edge-based A*: a state is an edge driven in one direction (ei * 2, + 1 when driven b -> a),
      * so turn rules and "no U-turn" can be checked at each junction.
@@ -242,8 +276,8 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
             // Turn onto the target road and stop at the destination.
             if (ct.isFinite() && st / 2 != t.edge && turnAllowed(inEdge, te)) {
                 val extra = when {
-                    u == te.a -> ct * t.frac
-                    u == te.b && !te.oneway -> ct * (1 - t.frac)
+                    u == te.a -> ct * t.frac + turnSeconds(st, t.edge, true)
+                    u == te.b && !te.oneway -> ct * (1 - t.frac) + turnSeconds(st, t.edge, false)
                     else -> Double.POSITIVE_INFINITY
                 }
                 if (gs + extra < best) { best = gs + extra; bestState = st }
@@ -256,8 +290,8 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
                 if (ei == st / 2 && list.size > 1) continue          // no U-turn except at a dead end
                 if (!turnAllowed(inEdge, e)) continue
                 val c = cost(e); if (c.isInfinite()) continue
-                if (e.a == u) push(ei * 2, gs + c, st)
-                if (e.b == u && !e.oneway && e.a != e.b) push(ei * 2 + 1, gs + c, st)
+                if (e.a == u) push(ei * 2, gs + c + turnSeconds(st, ei, true), st)
+                if (e.b == u && !e.oneway && e.a != e.b) push(ei * 2 + 1, gs + c + turnSeconds(st, ei, false), st)
             }
         }
         if (bestState < 0) return null
@@ -294,6 +328,9 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
             }
             val last = edges[path.last() / 2]; val u = if (path.last() % 2 == 0) last.b else last.a
             add(te, if (u == te.a) 0.0 else 1.0, t.frac)
+            // Time lost at junctions counts toward the arrival time, as it does in the search.
+            for (i in 1 until path.size) secs += turnSeconds(path[i - 1], path[i] / 2, path[i] % 2 == 0)
+            if (path.last() / 2 != t.edge) secs += turnSeconds(path.last(), t.edge, u == te.a)
         }
         return Route(pts, meters, secs, steps, ids.distinct(), s.dist, t.dist)
     }
