@@ -41,6 +41,11 @@
     { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
       "text": "Charge your mobile phone before the storm arrives. Unplug all chargers when the storm arrives. During thunderstorms, avoid running water or using landline phones. Electricity can travel through plumbing and phone lines. During thunderstorms, pay attention to alerts from public officials. Watch for fallen power lines and trees." }
   ],
+  "review": {
+    "verdict": "fail",
+    "notes": "Fail. (1) Honest gap. Every answer line is FEMA P-2064 home/town guidance that assumes a sturdy building or hard-topped vehicle is close by. The kit has no guidance for someone caught outdoors with no building or vehicle (searched every document for lightning/thunder: only FEMA P-2064, ATP 4-02.11 12-10 and unrelated hits). In a backcountry app the asks 'caught in a thunderstorm where is safe' and 'thunderstorm rolling in fast, where do we go, over' will often come from exactly that person; the card must say plainly that the kit does not cover being caught in the open, rather than imply 'go indoors' is always possible. Fix: add that line. (2) The warning lists what lightning can do (ATP 4-02.11) with no action; add a pointer to the CPR card for someone not breathing. The card is right to leave out the first sentence of that ATP warning box ('Do not touch the casualty...'), which there refers to a live electrical source. All present lines match FEMA P-2064's Thunderstorm section; kind fact fine. Optional: drop 'Unplug all chargers' (true to FEMA, irrelevant in the field).",
+    "by": "claude-opus-5-5 xhigh"
+  },
   "status": "draft",
   "drafted_by": "claude-fable-5-2 (max)",
   "reviewed_by": "",

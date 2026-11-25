@@ -55,8 +55,13 @@
       "text": "Take your emergency supply kit with you during an evacuation. Pay attention to your radio or smartphone/tablet and follow local evacuation instructions." }
   ],
   "conflict": "Amount of water: FEMA P-2064 (2020) says 'one gallon of drinking water, per person, per day'. ATP 4-25.12 says a soldier doing normal duties in a hot and dry climate 'may require as much as two to six gallons of water per day for drinking purposes', and one-half to one gallon in a cooler climate. The card shows both.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Every item matches FEMA P-2064's 'Gather Emergency Supplies' lists (basic kit, other items, winter/car kit, airtight bags and one or two containers, designated place, smaller 24-hour kits for car and work, medications in all kits, six-month check, take it when evacuating, list is only a guide). The Army hot-climate water figure is attributed with its context and matches the water-storage card. Kind fact correct. Optional for the 'evacuating in ten minutes' ask: FEMA's evacuation guidelines on the same pages (take your pets; wear sturdy shoes and clothing such as long pants, long-sleeved shirts and a hat; leave a note saying when you left and where you are going; follow recommended routes and do not drive into flooded areas). Not required.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

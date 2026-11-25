@@ -75,8 +75,13 @@
       "text": "Persons in the open with adequate warning of a nuclear explosion can protect themselves from both flash blindness and retinal burns by closing or shielding their eyes. They should get behind anything casting a shadow- quickly." }
   ],
   "conflict": "How long to stay inside differs between FEMA documents. Are You Ready (2020): 'Stay inside for 24 hours unless local authorities provide other instructions'. Planning Guidance, 3rd edition (2022): 'Stay Inside for 12-24 hours, unless provided additional guidance' and 'at least 12-24 hours'. First 72 Hours (2023): 'up to 24 hours or until informed it is safe to change locations', 'at least the first 24 hours', and in its alert template 'at least 24 hours'. The card shows the figures side by side; the owner must choose. Separately, ORNL-5037 (1979), written for an all-out attack, says the occupants of most shelters could stop using them 'within two weeks'; that figure is on the fallout-shelter-basics card, not here.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Every step checked against FEMA P-2064 (Nuclear Explosion), Planning Guidance 3rd ed. 2022, First 72 Hours 2023 and ORNL-5037: flash then take cover away from windows; get inside the nearest building not threatened by fire or collapse (50-mile alert instruction attributed); basement or centre of a large dense building; vehicles inadequate; stay away from windows, doors, outer walls, roof; durations (24 h / 12-24 h / at least 24 h) shown side by side and attributed - drafter flag handled correctly; leave early only for officials' instructions, fire, collapse or medical emergency; evacuate away from the detonation and the heaviest fallout; self-decontamination (outer layer, sealable bag, shower or moist wipes, no conditioner, early beats delayed); pets; AM/FM or hand-crank radio; family stays put; uncovered food and liquids; self-evacuation discouraged; eye protection in the open. Asks answered, including 'drive away' and 'get my kids'. Kind protocol right. Optional: add the Planning Guidance line 'Where possible... first 24 hours following detonation' to the duration step, and First 72 Hours' note that fallout catches in shirt collars and shoe tops. Keep the duration wording identical to the fallout-shelter-basics card once that card is fixed.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

@@ -20,7 +20,7 @@
     "Call for medical help immediately. Anaphylaxis is life-threatening.",
     "If an epinephrine (adrenaline) auto-injector is available, use it: help the person use it, or give it yourself if you are allowed and trained. Dosage guidelines are provided with the injector.",
     "Remove the allergen, if possible.",
-    "Lay the person on their back with the legs raised, if injuries permit.",
+    "Position: sources differ, and it depends on the main problem. If breathing is hard (swelling of the mouth, lips or tongue, wheezing or noisy breathing): let the person sit upright, if there is no injury, or stay in the position they find most comfortable (WHO). If the problem is shock or collapse (dizziness, confusion, a weak pulse, pale or bluish skin, passing out): lay the person on their back with the legs raised, if injuries permit (Army ATP 4-02.11). The Army manual also says that a sitting position is fine if it makes breathing easier.",
     "If symptoms persist, further doses of epinephrine may be necessary, every 5 to 10 minutes, if prescribed.",
     "Give rescue breathing and chest compressions if required.",
     "Monitor the person's vital signs every three to five minutes until they are stable, and get them to medical care as soon as possible."
@@ -49,7 +49,15 @@
     { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
       "text": "If a patient with a severe allergic reaction is given adrenaline, the reaction can return when the adrenaline wears off. Patients need to be monitored closely." },
     { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
-      "text": "Give intramuscular adrenaline for airway obstruction, severe wheezing or shock. [See SKILLS] –– Adrenaline can wear off in minutes so be prepared to give additional doses." }
+      "text": "Obstruction due to severe allergic reaction (anaphylaxis) • Mouth, lip, and tongue swelling • Difficulty breathing with stridor and/or wheezing • Rash or hives (patches of pale or red, itchy, warm, swollen skin) • Tachycardia and hypotension • Abnormal sounds from the airway (such as stridor, snoring, gurgling) • Poor chest rise Severe allergic reactions can cause swelling of the airway that can lead to obstruction. • Give intramuscular adrenaline for airway obstruction, severe wheezing or shock. [See SKILLS] –– Adrenaline can wear off in minutes so be prepared to give additional doses. • Place an IV and give IV fluids. [See SKILLS] • Reposition airway as needed (sit patient upright if no trauma) and give oxygen." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "If the patient has swelling, hives or stridor, consider severe allergic reaction (anaphylaxis), and give intramuscular adrenaline. [See SKILLS] • Allow the patient to stay in a position of comfort and prepare for rapid handover/transfer to a centre capable of advanced airway management, if needed." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Check Circulation: ▪ Assess the pulse to determine its rate and strength. ▪ Look for signs of poor circulation, such as pale or bluish skin." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If the casualty is conscious, place the casualty in the shock recovery position (see figure 7-1), which is on their back with their feet elevated slightly above the level of their heart. This will help their blood circulation. A log, field pack, box, rolled field jacket, or other stable objects can be used to elevate their feet. If a sitting position makes it easier for the casualty to breathe, that is fine." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If a casualty can breathe on their own, let them assume the best position (position of comfort) that allows them to breathe, including sitting up." }
   ],
   "conflict": "DOSE (the card gives no dose, only 'provided with the injector'): ATP 4-02.11 (2026) para 7-35 says auto-injector doses are typically 0.15 mg for children and 0.3 mg for adults weighing more than 66 pounds; JTS Spider and Scorpion Envenomation 2026 says 0.3 mg (0.15 mg pediatric) of 1:1000 epinephrine intramuscularly; WHO-ICRC Basic Emergency Care 2018 (trained providers, drawn up from an ampoule) says 0.5 mg IM for adults of 50 kg or above, 0.4 mg at 40 kg, 0.3 mg at 30 kg, and 0.15 mg for children. REPEAT INTERVAL (the card gives the ATP figure): ATP 4-02.11 says every 5 to 10 minutes if prescribed and symptoms persist; WHO BEC says adults may repeat at 5-minute intervals and children every 5–15 minutes as needed. HHS Ship's Medicine Chest 2003 (anaphylaxis appears only in its training outline and medicine list) and FEMA P-2064 (2020) give no anaphylaxis first aid.",
   "review": {

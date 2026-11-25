@@ -50,6 +50,11 @@
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "Log cabin fires are built by placing layers upon layers of perpendicular fuel wood. This fire creates a great amount of light and heat, primarily because of the amount of oxygen which enters the fire. The log cabin fire creates a quick and large bed of coals and can be used for cooking or as the basis for a signal fire." }
   ],
+  "review": {
+    "verdict": "fail",
+    "notes": "Fail. (1) Drafter flag, no symbol meanings - verdict: the kit does contain them, but only as drawings: TC 21-3 Appendix C, figure C-1 'Ground-to-air markings' (manual page 113), with aircraft acknowledgements in figures C-3/C-4. Text extraction has no labels, so they cannot be quoted, and TC 21-3 ch. 7 says so in text: 'Emergency visual communication depicting ground-to-air terrain markings, hand-and-arm movements, and ground-to-air signals can be found in appendix C.' The card tells the reader to stomp 'the symbol' into the snow without saying which symbol or where to find it, so the ask 'how to make ground to air signals in snow' is not answered. Fix: add a line quoting that note and naming TC 21-3 Appendix C, figure C-1 (page 113) so the reader opens the source, and say plainly that the card cannot show the symbols. (2) The kit gives no text on symbol size, contrast, smoke colour against the background, or how to aim a signal mirror (searched); leave them out, but the owner may want that gap stated. Lines checked and faithful: radio, fires for search planes, smoke by day/flame by night, mirrors and ground signals (TC 21-3 ch. 7); panel/brush/stomped markings; small-fire characters; flashlight/chemical light/strobe; several well-placed fires, rotten-wood smoke, moisture gives white smoke, petroleum gives black smoke plus the inhalation warning, log-cabin lay (ATP 3-50.21 ch. 5); FEMA trapped-person line attributed. Military context (VS-17, 'parent unit', 'enemy situation') correctly removed.",
+    "by": "claude-opus-5-5 xhigh"
+  },
   "status": "draft",
   "drafted_by": "claude-fable-5-2 (max)",
   "reviewed_by": "",

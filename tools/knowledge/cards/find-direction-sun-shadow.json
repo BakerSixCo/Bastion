@@ -66,8 +66,13 @@
       "text": "Do not rely on one form of navigation when moving in extremely cold weather." }
   ],
   "conflict": "Noon shadow: TC 21-3 (2025) para 6-34 says 'At noon in the northern hemisphere, shadows fall to the north of objects', and ATP 3-50.21 (2018) para 7-21 says shadows 'will point north at noon' in the Northern Hemisphere; ATP 3-50.21 para 7-22 is more specific: only north of 23.4 degrees N is the noon shadow always to the north, and in the tropics the sun can be either north or south at noon. The card uses the more specific statement.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Steps 1-5 match ATP 3-50.21 ch. 7 steps 1-4 and the note, in order (first mark always west, wait 10-15 min, E-W line, stand with west mark on the left, any perpendicular is N-S). Stick inclination, hand-size flat spot, any stationary object, why it works, the 23.4-degree noon rule and the tropics, the shadow clock and its limits are all faithful. The conflict with TC 21-3 6-34's simpler 'shadows fall to the north' at noon is correctly resolved toward ATP's more specific statement and recorded. Minor: ATP says ineffective beyond 66 1/2 degrees; 'about 66 degrees' is conservative and acceptable. The last four answer lines are notes, not steps; if the phone numbers them, consider moving 'why it works' and the shadow clock below the steps.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

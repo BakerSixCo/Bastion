@@ -72,8 +72,13 @@
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "Step 8. Finally, add shingling material or branches on top of the debris layer to prevent the insulating material from blowing away in a storm." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Steps 3-10 match ATP 3-50.21 6-38 steps 1-8 in order and meaning (tripod or ridgepole on a base, ridgepole at waist height, wedge-shaped ribbing wide enough and steep enough to shed moisture, crosswise lattice, at least 3 ft of light dry debris, 2 ft inside, entrance plug or door, shingling on top). The site-check and collect-materials-first steps rest on ATP ch. 6 and are rightly placed first. Warnings faithful (most time and energy; 80 percent of body heat lost to the ground supports the 2-ft floor layer; buddy system; TC 21-3's 'contact the parent unit' correctly adapted to 'call for help'). ATP 6-39's '6 to 12 inches of insulation above' is a general thermal rule, not a conflict with 3 ft of loose debris. Minor format: the last answer line (the Army rates it one of the best...) is not a step but will be numbered as step 11 on the phone; move it to the top or into the title.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

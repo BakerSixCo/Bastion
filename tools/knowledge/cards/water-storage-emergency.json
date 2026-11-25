@@ -64,8 +64,13 @@
       "text": "Do not consume food or liquids that were left uncovered outdoors and may be contaminated by fallout." }
   ],
   "conflict": "(1) Amount: FEMA P-2064 (2020) says 'one gallon of drinking water, per person, per day'. ATP 4-25.12 says a soldier doing normal duties in a hot and dry climate 'may require as much as two to six gallons of water per day for drinking purposes' (and elsewhere 'Three gallons or 12-quarts per day in hot, dry climates'), and one-half to one gallon in a cooler climate; ATP 3-50.21 says 2 to 3 quarts a day at 68 F with limited physical activity. The card shows FEMA's figure and the Army range. (2) Tap water: FEMA says 'Store commercially bottled water with your kit, not tap water'; EPA (2026) allows 'water you have properly prepared and stored as an emergency water supply' and refers to FEMA for how. No kit document explains how to prepare tap water for long storage.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Drafter flag verdict (1 vs 2-6 gal/day): correctly shown attributed with its context (FEMA's civilian storage figure; ATP 4-25.12 'a Soldier performing normal duties in a hot and dry climate', with the cooler-climate half to one gallon); keep. The conflict field could also list ORNL-5037 (long shelter stays): 'four or five quarts of drinking water per day are essential in very hot weather' and '15 gallons per person' for a two-week stay. All other lines verified: bottled not tap (FEMA), no direct sunlight, shaded and ventilated, caps elevated, oldest first (TB MED 577, military packaged water but applicable), 1-year shelf life, pets, kits at home/work/car, six-month check, purification system, EPA emergency supply and cooled boiled water, ice cubes/hot water tank/pipes/river or lake, treat regardless of source, floating material/dark colour/odour, fallout-exposed liquids. The tap-water ask gets FEMA's 'not tap water' plus EPA's 'properly prepared and stored', and the conflict field honestly notes that no kit document explains the preparation.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

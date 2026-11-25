@@ -84,8 +84,13 @@
       "text": "There are many other flotation devices that can be devised by using some imagination. Just make sure to test the device before trying to use it." }
   ],
   "conflict": "Whether to enter moving water at all: FEMA P-2064 (2020, flood section) says 'Turn Around, Don't Drown' at flooded roadways, that 'Six inches of moving water may be enough to knock you off your feet', and to avoid wading in floodwater. ATP 3-50.21 (2018) gives techniques 'To ford a swift, treacherous stream' and to swim deep, swift rivers and rapids. The card puts the FEMA warning first and then the Army technique; the owner must decide how to present the two. Also, how long cold shock lasts: TB MED 508 (2026) says a person needs 'about 1 minute' to get over it; HHS Ship's Medicine Chest (2003) says it 'only lasts for a few minutes' (elsewhere 'the first 1-4 minutes'). The card shows both.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Drafter flag verdicts: (a) FEMA 'six inches of moving water' vs Army fording: not a contradiction - FEMA addresses floodwater on roads, ATP 3-50.21 7-8 ff. addresses a deliberate stream crossing; leading with the FEMA warning, attributed and labelled 'at a flooded roadway', is the right order. (b) 'In deep rapids: lie on your stomach, head downstream, angling toward the shore' is ATP 3-50.21 7-12 almost word for word and sits right after the feet-first rule for fast shallow rapids (7-11), so the two positions are not confused; keep them adjacent as they are. All other lines faithful: plan from a high viewpoint, lowest water level, several channels/sandbar, start upstream, about 45 degrees, avoid rock ledges, estuaries, eddies, converging currents; pole 3 in by 7-8 ft planted upstream, foot below the pole, pole against the shoulder; group on one pole heaviest downstream; swim with the current, body horizontal; cold shock with TB MED 508's 1-10-1 rule and HHS 'a few minutes' both shown; test any flotation device. Kind protocol right. Optional: ATP 7-13 rope method for three or more people ('The length of the rope must be three times the width of the stream', figure 7-3) for the group ask. The kit has nothing on unbuckling a pack before crossing (searched).",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

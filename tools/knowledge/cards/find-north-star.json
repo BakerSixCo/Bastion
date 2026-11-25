@@ -49,6 +49,11 @@
       "text": "There is no single star bright enough, which can be seen near the south celestial pole. Therefore, use a constellation known as the Southern Cross." }
   ],
   "conflict": "Not about the North Star itself, but the two Army manuals differ on steering by other sky objects: TC 21-3 (2025) has a note right after its North Star paragraph, 'Do not use the moon or stars as guides because they travel in a circle through the night', while ATP 3-50.21 (2018) describes steering by a star ('A star near the north horizon serves for about half an hour. When moving south, azimuth checks should be made every 15 minutes') and using the moon for 'a rough east-west reference during the night'. This card covers only the North Star, on which both agree.",
+  "review": {
+    "verdict": "fail",
+    "notes": "Fail. The card carries the ask 'how to navigate by the stars at night', and the conflict field records the kit's guidance on exactly that (TC 21-3, note after 6-36: 'Do not use the moon or stars as guides because they travel in a circle through the night'; ATP 3-50.21 7-39: a star near the north horizon serves for about half an hour, and when moving south azimuth checks should be made every 15 minutes), but the card shows none of it. Someone steering on any star other than Polaris can walk far off course. Fix: add an attributed warning: only the North Star stays in place; TC 21-3 says do not use the moon or other stars as guides because they travel in a circle through the night; ATP 3-50.21 says a steering star must be rechecked (about half an hour for a star near the north horizon, every 15 minutes when moving south). Or drop that ask. Everything else verified: Big Dipper pointer stars extended about 5 times, Cassiopeia lazy-side bisector about 5 times, the two opposite and rotating counterclockwise, Little Dipper dim, altitude equals latitude, imaginary line down to the earth, under 70 degrees a good steering mark (usually 1 degree, never more than 2 1/2), above 70 too high (TC 21-3 6-36), Southern Cross warning.",
+    "by": "claude-opus-5-5 xhigh"
+  },
   "status": "draft",
   "drafted_by": "claude-fable-5-2 (max)",
   "reviewed_by": "",

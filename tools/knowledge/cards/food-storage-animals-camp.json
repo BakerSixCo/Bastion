@@ -44,6 +44,11 @@
     { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
       "text": "It is necessary to eliminate all possible food sources. Garbage and other food sources should be stored in rodent-proof containers. Garbage collection should be conducted so that excess amounts of material do not build up." }
   ],
+  "review": {
+    "verdict": "fail",
+    "notes": "Fail. (1) Bear country gap. The kit is used in Idaho (its regulations note grizzly bears may be encountered in several units), yet no kit source has bear-specific food storage guidance (searched Idaho regulations, ATP 3-50.21, TC 21-3, FEMA). The card answers 'how high should i hang my food' with ATP's 'several feet off the ground is out of reach of most animals' and TC 21-3's 6.5 feet, which TC 21-3 gives for 'small animals'; read by someone in bear country this can be a wrong answer. Fix: keep the 6.5-ft line explicitly as the Army figure for small animals, and add a plain line that the kit has no guidance for storing food against bears. (2) 'Burying food is a good method' keeps ATP's condition ('as long as there are no scavengers'); keep that condition prominent, and the same bear gap applies. Other lines verified: never store food in the shelter, wrap-brush-wrap dead-air bundle against insects and birds, cache, no eating in sleeping areas (ATP 4-25.12), leftover food and meal trash attract pests (TC 4-02.3), designated eating area, rodent-proof garbage containers (ATP 4-25.12). Kind fact correct.",
+    "by": "claude-opus-5-5 xhigh"
+  },
   "status": "draft",
   "drafted_by": "claude-fable-5-2 (max)",
   "reviewed_by": "",

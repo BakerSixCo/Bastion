@@ -85,8 +85,13 @@
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "Wood used as fuel must be free of poisonous plants such as poison ivy or poison oak. These plants can cause respiratory distress if burned and inhaled." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Checked against ATP 3-50.21 ch. 5: three phases, base and brace (forearm-size brace; porous rock explodes), tinder definition and natural/manmade lists (the card rightly drops the manual's mislabel of inner bark as 'heartwood' and omits gunpowder/hexamine), cap-or-cupped-hand quantity, petroleum tinder in smaller amounts, drying tinder in clothing, mound against the brace lit from the bottom edge away from the brace, kindling by the handful with gaps (blanket smothers it), next handful perpendicular/diagonal, pencil-lead to thumb sizes, 12-18 in, a soda-can bundle of each, fuel at least forearm diameter, damp fuel acceptable once established, standing dead wood, rotten wood smolders, hardwood vs softwood, split wood burns hotter; warnings (3 ft cleared soil, porous rock, poison ivy/oak smoke, split bamboo). Order of the build is correct. Minor (recommended, not blocking): the kindling-examples line drops the source's caveat that in winter dormant live deciduous vegetation may appear dead, which is exactly the 'my fire keeps going out' failure; add it back. Kind fact acceptable: it mixes definitions with the build order.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

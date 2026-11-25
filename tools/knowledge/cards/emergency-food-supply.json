@@ -73,8 +73,13 @@
       "text": "Do not consume food or liquids that were left uncovered outdoors and may be contaminated by fallout." }
   ],
   "conflict": "(1) Cold-holding temperature: FEMA P-2064 (2020) uses 40 degrees Fahrenheit ('exposed to temperatures 40 degrees or higher for two hours or more'; 'above 40 degrees Fahrenheit for over two hours'); HHS Ship's Medicine Chest (2003) and ATP 4-25.12 use 41 degrees Fahrenheit (5 C) for cold food. (2) Time limits differ by setting: FEMA gives two hours above 40 F, and four hours for a closed refrigerator without power; ATP 4-25.12 lets food in insulated containers be kept 'for up to 4 hours' and forbids serving it 'after the maximum of 5 hours'; the HHS manual says leftovers should be 'below 41 F in a total of four hours'. (3) Height of dry stores above the floor: HHS at least 15 cm (6 inches); ATP 4-25.12 12 to 18 inches. The card shows the figures side by side; the owner must choose.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. All lines verified against FEMA P-2064, HHS Ship's Medicine Chest and ATP 4-25.12; the cold-holding (FEMA 40 F vs HHS/ATP 41 F) and shelf-height (HHS 6 in vs ATP 12-18 in) conflicts are shown attributed with their settings; FEMA's 4-hour closed-fridge and 2-hours-above-40-F rules are consistent with each other. All asks answered. Optional for 'is a dented or swollen can safe': USDA Complete Guide to Home Canning, 'Do not taste food from a jar with an unsealed lid or food that shows signs of spoilage' and 'Even a taste of food containing this toxin can be fatal', which strengthens FEMA's throw-it-out line for home-canned food. The kit gives no freezer hold time in an outage (searched), so its absence is fine.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

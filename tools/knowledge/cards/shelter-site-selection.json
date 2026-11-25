@@ -85,8 +85,13 @@
       "text": "Occupying areas away from insect/arthropod breeding areas such as natural bodies of water. Avoiding areas with high grass or dense vegetation." }
   ],
   "conflict": "Natural shelter under rock: the Army manuals say to use natural shelters such as caves, rock ledges and overhanging ledges (TC 21-3 2025, ATP 3-50.21 2018). FEMA P-2064 (2020, landslide section) says 'During landslide conditions, avoid rock ledges, bases of steep slopes, ravines, drainages, or narrow canyons.' The card gives both: the Army line in the answer, the FEMA line as a warning. Water nearby: ATP 3-50.21 lists a site that 'Contains adequate food and water'; ATP 4-25.12 says to occupy areas 'away from insect/arthropod breeding areas such as natural bodies of water'. The card gives both.",
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Each line checked against ATP 3-50.21 ch. 6, TC 21-3 ch. 5/7, ATP 4-25.12 and FEMA P-2064; meaning kept. Both real conflicts are shown attributed in the card: Army 'use caves and rock ledges' vs FEMA landslide 'avoid rock ledges'; ATP 3-50.21 'adequate food and water' vs ATP 4-25.12 'away from natural bodies of water' for insects. Avalanche lines match the snow-cave card (TC 21-3 5-12 lee slopes; FEMA 30 degrees). Notes for the drafter: (1) record in the conflict field one more passage, ATP 3-50.21 7-6 (desert evasion): 'Hide or seek shelter in dry washes (wadis)...' - evasion context that contradicts the flash-flood rule; correctly not used, but it should be listed. (2) The 'dry creek bed' ask is answered only implicitly (flash-flood areas, high-water marks); no kit text says it more directly, so this is acceptable. (3) The kit has no lightning site guidance outside FEMA's buildings/vehicles advice, so nothing is missing on that point. Kind fact correct.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

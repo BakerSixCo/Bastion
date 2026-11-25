@@ -45,8 +45,13 @@
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "If you only have a digital watch, draw a clock face on a circle of paper with the correct time on it and use it to determine your direction at that time. You may also choose to draw a clock face on the ground or lay your watch on the ground for a more accurate reading." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. North temperate zone (hour hand to the sun; south midway between hour hand and 1200; daylight saving 1300; sun east before noon, west after), south temperate zone (1200 to the sun; north halfway to the hour hand; daylight saving 1300), digital-watch clock face, lay watch on the ground, inaccuracy/circling with the shadow-clock reset, approximate true north/south: all match ATP 3-50.21 ch. 7, and TC 21-3 6-35 agrees. Military-context 'do not rely on one form of navigation' is attributed with its context. Kind protocol right. All asks answered, including daylight saving and digital watch.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

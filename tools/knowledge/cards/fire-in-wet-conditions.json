@@ -76,8 +76,13 @@
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "Highly flammable liquids should not be poured on an existing fire. Even a smoldering fire can cause liquids to explode and cause serious burns." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. All lines rest on ATP 3-50.21 ch. 5 and keep their meaning: standing/leaning dead wood is dry, split to the inner wood, baton-split wood under 3 in and 1-2 ft long, dead lower conifer branches for kindling, dry base off wet ground, dry damp tinder between clothing layers, enough tinder, metal match unaffected by wet and good sparks compensate for some moisture, waterproof matches and damp matches burn weak, tepee lay burns well with wet wood, damp fuel once established (more white smoke), green wood finely split and mixed with dry as a last resort, two-layer green-log base on deep snow, site protected from wind and away from snow-laden trees. Warnings (porous rock, flammable liquids) correct. No contradicting kit text found (TC 21-3's 'sticks laid out like the spokes of a wheel' is another lay, not a conflict). All asks answered, including the ferro-rod-when-wet ask. Optional: TC 21-3 ch. 7 'Carry candles... help start fires' would help the 'need a fire fast' ask.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }

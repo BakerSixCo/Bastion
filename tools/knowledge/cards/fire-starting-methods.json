@@ -110,8 +110,13 @@
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "When leaving an area after having a fire, ensure that the ground under where the fire was built is cool to the touch." }
   ],
-  "status": "draft",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. Every line checked against ATP 3-50.21 ch. 5: start from the upwind side; modern vs primitive; matches (waterproof, head pointing down, protect from wind, bottom edge of tinder, do not push into the tinder); lighter (freezes in extreme cold, warm with body heat, spent liquid lighter's sparker used like a metal match); metal match (same material as lighter flints, 90-degree striker, even downward stroke, stop before disturbing tinder; knife back as striker); battery (one insulated wire to each post, ends touched to a third bare wire; steel wool across the posts; hydrogen-gas warning); lens (bright sunny days only); flint and carbon steel (stainless does not spark; char cloth); fire plow; bow and drill; hand drill; practice note. Warnings faithful (3 ft cleared soil, no flammable liquids on a fire, water for non-petroleum fires and dirt/sand for petroleum fires, ground cool to the touch before leaving). No military-only context left in. No conflicting kit text found (TC 21-3 ch. 7 'strike the flint on the waterproof match box with the blade of a knife' agrees). Kind fact is right: alternative methods, not one sequence. All asks answered. Optional: ATP 5-5 fire-site criteria (flat dry area, protected from wind, away from snow-laden trees) as one extra line.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
   "drafted_by": "claude-fable-5-2 (max)",
-  "reviewed_by": "",
+  "reviewed_by": "claude-opus-5-5",
   "approved_by": ""
 }
