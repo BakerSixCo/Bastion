@@ -44,6 +44,8 @@ object CheckedAnswer {
         // Degree words describe the subject, they are not it.
         "severe", "severely", "serious", "seriously", "mild", "minor", "major", "big", "small", "little",
         "quick", "quickly", "fast", "real", "bad", "worse", "worst",
+        // Qualifiers and units: they shape the question, the source need not repeat them.
+        "without", "caught", "catch", "quart", "gallon", "pint",
     ).map(Grounding::stem).toSet()
 
     fun check(question: String, answer: String, passages: List<Passage>, restated: String? = null): Decision {
@@ -114,9 +116,11 @@ object CheckedAnswer {
         search: suspend (wording: String, restated: Boolean) -> List<Passage>,
         write: suspend (List<Passage>) -> String,
         onStage: (String) -> Unit = {},
+        /** A restatement already made (e.g. for the card router), so it is not made twice. */
+        knownPlan: QueryPlan? = null,
     ): Result {
         onStage("Understanding the question…")
-        val plan = QueryPlan.make(model, question) ?: return Result(Grounding.NO_ANSWER, emptyList(), Failed.REFUSAL, "plan")
+        val plan = knownPlan ?: QueryPlan.make(model, question) ?: return Result(Grounding.NO_ANSWER, emptyList(), Failed.REFUSAL, "plan")
         onStage("Searching for “${plan.keyword}”…")
         val pk = search(plan.keyword, true)
         if (pk.isEmpty()) return Result(Grounding.NO_ANSWER, emptyList(), Failed.REFUSAL, "restated-search")
@@ -155,8 +159,28 @@ QUESTION: should I give aspirin for a headache | ANSWER: No. Do not give aspirin
     fun missingSubject(question: String, lowerText: String): List<String> {
         val all = Grounding.keyTerms(question)
         val subject = all.filterNot { it in FILLER || Grounding.isAspectTerm(it) }.ifEmpty { all.filterNot { it in FILLER } }
-        return subject.filterNot { Regex("\\b" + Regex.escape(it)).containsMatchIn(lowerText) }
+        fun present(stem: String) = Regex("\\b" + Regex.escape(stem)).containsMatchIn(lowerText)
+        return subject.filterNot { t ->
+            present(t) || SYNONYMS.any { g -> g.any { t.startsWith(it) || it.startsWith(t) } && g.any(::present) }
+        }
     }
+
+    /**
+     * Words an official source uses for the same thing the asker said. Without these the EPA's
+     * "8 drops of bleach per gallon" was withheld because the question said "purify" and EPA says
+     * "disinfect" (emulator, 2026-11-24). Measured with [FILLER]'s qualifier words on the PC set:
+     * more good answers pass, no extra trap passes. Letting any one word go missing was rejected:
+     * it let "start a fire with my phone screen" through.
+     */
+    private val SYNONYMS = listOf(
+        listOf("purif", "disinfect", "sanitiz", "steriliz", "treat"),
+        listOf("leg", "arm", "limb", "extremit"),
+        listOf("rain", "wet", "damp"),
+        listOf("car", "vehicle", "truck", "auto"),
+        listOf("clorox", "bleach"),
+        listOf("tylenol", "paracetamol", "acetaminophen"),
+        listOf("creek", "stream", "river"),
+    )
 
     /** Numbers as values ("1,000" = "1000", "2.0" = "2"), so formatting differences are not "invented". */
     fun numbers(text: String): List<String> = Regex("\\d+(?:\\.\\d+)?")

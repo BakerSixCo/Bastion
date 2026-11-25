@@ -20,6 +20,7 @@ import java.util.Locale
  * the screen recomposes from them.
  */
 class AskSession private constructor(context: Context) {
+    private val app = context.applicationContext
     private val ai = LocalAi.get(context)
     private val retriever = Retriever(context)
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -51,12 +52,15 @@ class AskSession private constructor(context: Context) {
     /** What the checked answer is doing now ("Understanding the question…"), while [generating]. */
     var stage by mutableStateOf("")
         private set
+    /** The verified card shown as the answer, when one matched (see [CardRouter]). */
+    var card by mutableStateOf<Card?>(null)
+        private set
 
     private var job: Job? = null
     private var running: LocalModel? = null
 
     private fun resetAnswer() {
-        answer = ""; answerError = null; stats = null; check = null; withheld = null; stage = ""
+        answer = ""; answerError = null; stats = null; check = null; withheld = null; stage = ""; card = null
     }
 
     fun search() {
@@ -90,11 +94,25 @@ class AskSession private constructor(context: Context) {
             running = model
             modelLabel = model.label
             try {
+                // Verified cards first (tools/knowledge): shown exactly as approved, never generated.
+                stage = "Understanding the question…"
+                val plan = QueryPlan.make(model, question)
+                val cards = CardStore.get(app)
+                if (cards.isNotEmpty()) {
+                    stage = "Checking verified answers…"
+                    CardRouter.route(model, question, cards, plan?.standalone)?.let { c ->
+                        card = c
+                        answer = CardRouter.text(c)
+                        Log.i(TAG, "verified card: ${c.id}")
+                        return@launch
+                    }
+                }
                 // Not streamed to the screen: the answer is checked first (CheckedAnswer.twoPaths), so
                 // a wrong answer is never shown, even briefly. Anything that fails shows exactly
                 // Grounding.NO_ANSWER. The search shown before (raw words) is the second path.
+                if (plan == null) { answer = Grounding.NO_ANSWER; return@launch }
                 val result = CheckedAnswer.twoPaths(
-                    model, question,
+                    model, question, knownPlan = plan,
                     search = { wording, restated -> if (restated) retriever.retrieve(wording) else sources },
                     write = { ps ->
                         val sb = StringBuilder()

@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.bastion.terminal.ai.AiState
 import com.bastion.terminal.ai.AskSession
+import com.bastion.terminal.ai.Card as VerifiedCard
 import com.bastion.terminal.ai.CheckedAnswer
 import com.bastion.terminal.kiwix.ZimLibrary
 import com.bastion.terminal.kiwix.ZimState
@@ -121,7 +122,7 @@ fun AskScreen(
         }
 
         if (s.answer.isNotEmpty() || s.answerError != null) {
-            item { AnswerCard(s.answer, s.answerError, s.modelLabel, s.stats, s.check, s.generating, s.withheld, s.stage) }
+            item { AnswerCard(s.answer, s.answerError, s.modelLabel, s.stats, s.check, s.generating, s.withheld, s.stage, s.card) }
         }
     }
 }
@@ -203,6 +204,7 @@ private fun AnswerCard(
     generating: Boolean,
     withheld: CheckedAnswer.Decision?,
     stage: String,
+    card: VerifiedCard?,
 ) {
     Card {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -212,10 +214,25 @@ private fun AnswerCard(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            if (card != null) Text(
+                "Verified answer · " + card.title,
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+            )
             if (answer.isNotEmpty()) Text(answer, style = MaterialTheme.typography.bodyMedium)
+            card?.let { c ->
+                Text("Source: " + c.sources.joinToString("; "), style = MaterialTheme.typography.bodySmall)
+                c.quotes.forEach { q ->
+                    Text("“" + q.text + "”", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                Text(
+                    "Prepared from official sources, quotes checked word for word, approved by the owner. Not written by the model.",
+                    style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             withheld?.let { Text(withheldReason(it), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
             error?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
-            if (!generating && check != null) {
+            if (!generating && check != null && card == null) {
                 when {
                     withheld != null -> Unit
                     check.isNoAnswer -> Text(

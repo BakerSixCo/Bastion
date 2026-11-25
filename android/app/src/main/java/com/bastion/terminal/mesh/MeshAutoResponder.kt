@@ -297,6 +297,7 @@ object MeshAutoResponder {
      */
     internal suspend fun answerFor(
         retriever: Retriever, question: String, openQuestion: String? = null, openAnswer: String? = null,
+        cards: List<com.bastion.terminal.ai.Card> = emptyList(),
         model: suspend () -> com.bastion.terminal.ai.LocalModel,
     ): String? {
         // MESH scope: only packs the owner allowed to be answered over the radio. The search on the
@@ -308,12 +309,19 @@ object MeshAutoResponder {
         // A follow-up ("what about kids?") takes its subject from the open topic.
         val asked = if (followUp) "$openQuestion. $question" else question
         val m = model()
+        val plan = com.bastion.terminal.ai.QueryPlan.make(m, asked)
+        // A verified card (tools/knowledge) goes out exactly as approved, never generated.
+        if (cards.isNotEmpty()) com.bastion.terminal.ai.CardRouter.route(m, asked, cards, plan?.standalone)?.let { c ->
+            Log.i(TAG, "radio answer from verified card ${c.id}")
+            return "[Verified: ${c.title.take(SOURCE_CHARS)}] " + com.bastion.terminal.ai.CardRouter.text(c)
+        }
+        if (plan == null) return null
         // Checked answer (CheckedAnswer.twoPaths): restated search and raw search must both reach an
         // answer that passes the code checks and the answer judge. This replaced naming the source
         // as the only guard: "can I weld with a car battery" was answered with "disconnect the
         // battery when welding ON a car" (seen from a real phone 2026-11-23); it now gets no answer.
         val result = com.bastion.terminal.ai.CheckedAnswer.twoPaths(
-            m, asked,
+            m, asked, knownPlan = plan,
             search = { wording, restated -> if (restated) retriever.retrieve(wording, Scope.MESH) else raw },
             write = { passages ->
                 val prompt = buildString {
@@ -356,7 +364,7 @@ object MeshAutoResponder {
         // Don't run two generations at once: wait for an answer in the Ask tab to finish.
         val session = AskSession.get(app)
         withTimeoutOrNull(180_000) { while (session.generating) delay(1_000) }
-        val answer = answerFor(retriever, question, open?.question, open?.answer) {
+        val answer = answerFor(retriever, question, open?.question, open?.answer, com.bastion.terminal.ai.CardStore.get(app)) {
             LocalAi.get(app).obtain() ?: error("the local AI model is not available")
         }
         val followUp = open != null && retriever.lastContinuedTopic

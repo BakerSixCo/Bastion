@@ -170,4 +170,16 @@ class CheckedAnswerTest {
         val dose = "1. Add 4 tablespoons of bottled lemon juice per quart."
         assertEquals(Failed.NUMBER, CheckedAnswer.check("how much lemon juice do I add to a quart of tomatoes when canning", dose, listOf(canning)).failed)
     }
+
+    // Emulator 2026-11-24: the EPA answer was withheld because the question said "purify".
+    @Test fun anOfficialSourcesOwnWordForTheSameThingCounts() {
+        val epa = Passage(1, 7, "EPA Emergency Disinfection of Drinking Water",
+            "Disinfect water using household bleach: add 8 drops of 6% bleach to each gallon of water.")
+        val a = "Add 8 drops of 6% bleach to each gallon of water [1]."
+        assertTrue(CheckedAnswer.check("how many drops of bleach to purify a gallon of water", a, listOf(epa)).isAnswer)
+        assertTrue(CheckedAnswer.check("how much clorox per gallon to make creek water safe", a,
+            listOf(epa.copy(markedText = epa.markedText + " Stream water should be filtered first."))).isAnswer)
+        // A different subject is still blocked.
+        assertEquals(Failed.SUBJECT, CheckedAnswer.check("how many drops of iodine to purify a gallon of water", a, listOf(epa)).failed)
+    }
 }
