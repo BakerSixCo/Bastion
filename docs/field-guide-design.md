@@ -70,8 +70,12 @@ design — yes. The AI stays on the phone (no base station).
   match the question; if unsure, show the 2–3 closest topics as buttons.
 - **Follow-ups:** answered only from that topic's own sources, through the existing checked-answer
   pipeline; otherwise "not covered" plus the nearest topic.
-- **Open:** whether free-written answers from the whole library remain as a labelled fallback for
-  questions the tree does not cover, or are removed (strictest). Owner to decide.
+- **Not covered by the tree (owner decision 2026-11-25, risk-based):** medical or other life-safety
+  questions get no AI-written answer — "not covered", the nearest topics, and the matching source passages
+  highlighted to read. Other questions may get a checked AI answer labelled "AI summary, not verified —
+  check the sources below", with sources shown. Over the radio: approved text only; otherwise "not
+  covered". What counts as life-safety is decided by a code check (medical/hazard terms, the tree's
+  medical branch), erring toward "life-safety". The mesh auto-answer stops sending AI-written answers.
 
 ## 9. Trust shown on screen
 
