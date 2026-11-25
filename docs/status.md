@@ -1985,8 +1985,9 @@ references are not used for answers. Unit tests: `SourceTierTest` (6).
 PDFs added to the kit and pinned with SHA-256 in `tools/kit-manifest.json`, plus EPA's emergency
 water disinfection page saved as text. Each was checked: real PDF, expected title, licence text
 (Army "Approved for public release; distribution is unlimited"; WHO CC BY-NC-SA 3.0 IGO; the
-ORNL nuclear book's 1986 additions carry their author's permission to reproduce). Not obtained:
-FEMA nuclear-detonation guides and CDC emergency-water sheets (the sites refuse scripted
-downloads: fetch by hand), TC 3-25.26 land navigation (armypubs sends it to a CAC sign-in).
+ORNL nuclear book's 1986 additions carry their author's permission to reproduce). FEMA's two nuclear-detonation guides and CDC's two emergency-water sheets refuse scripted
+downloads; the owner saved them in a browser and they were verified and pinned the same way.
+FM 21-76 (1992) was removed from the kit (owner decision): ATP 3-50.21 (2018) replaces it.
+Not obtained: TC 3-25.26 land navigation (armypubs sends it to a CAC sign-in).
 The download research fetched one PDF by mistake while checking a size (FEMA *Are You Ready?*,
 deleted at once; later downloaded properly as approved).

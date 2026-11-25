@@ -785,6 +785,54 @@
       "bytes": 1364687,
       "licence": "CC BY-NC-SA 3.0 IGO (notice inside the file; keep it with the file)",
       "note": "Added 2026-11-24 (docs/library-plan.md). Verified: real PDF, title, licence text."
+    },
+    {
+      "id": "doc-cdc-make-water-safe-during-an-emergency-2024",
+      "title": "Document: CDC Make Water Safe During an Emergency 2024",
+      "kind": "doc",
+      "default": true,
+      "file": "docs/CDC-Make-Water-Safe-During-an-Emergency-2024.pdf",
+      "url": "https://www.cdc.gov/water-emergency/media/pdfs/make-water-safe-during-emergency-p.pdf",
+      "sha256": "c39b55b4d8f3dd40ecd2b13175f7661b52dfc6e73e4a24ef189de64fb9d513b1",
+      "bytes": 730926,
+      "licence": "US government work (public domain)",
+      "note": "Added 2026-11-24. The site refuses scripted downloads: save it in a browser, then the builder verifies it. Verified: real PDF, title."
+    },
+    {
+      "id": "doc-cdc-use-safe-water-during-an-emergency-2024",
+      "title": "Document: CDC Use Safe Water During an Emergency 2024",
+      "kind": "doc",
+      "default": true,
+      "file": "docs/CDC-Use-Safe-Water-During-an-Emergency-2024.pdf",
+      "url": "https://www.cdc.gov/water-emergency/media/pdfs/334749-B_UseSafeWater-OnePager-508.pdf",
+      "sha256": "f7bda1f9e7827ee74278d408001e9cdf4529924fa70144e0696ee0fd4ee39bad",
+      "bytes": 141092,
+      "licence": "US government work (public domain)",
+      "note": "Added 2026-11-24. The site refuses scripted downloads: save it in a browser, then the builder verifies it. Verified: real PDF, title."
+    },
+    {
+      "id": "doc-fema-nuclear-detonation-first-72-hours-2023",
+      "title": "Document: FEMA Nuclear Detonation First 72 Hours 2023",
+      "kind": "doc",
+      "default": true,
+      "file": "docs/FEMA-Nuclear-Detonation-First-72-Hours-2023.pdf",
+      "url": "https://www.fema.gov/sites/default/files/documents/fema_oet-72-hour-nuclear-detonation-response-guidance.pdf",
+      "sha256": "e312a9e0c64b8e4cda0c12677695744abd254cfbdc45c10b14d290a7e7c1ee1f",
+      "bytes": 5894390,
+      "licence": "US government work (public domain)",
+      "note": "Added 2026-11-24. The site refuses scripted downloads: save it in a browser, then the builder verifies it. Verified: real PDF, title."
+    },
+    {
+      "id": "doc-fema-nuclear-detonation-planning-guidance-3rd-2022",
+      "title": "Document: FEMA Nuclear Detonation Planning Guidance 3rd 2022",
+      "kind": "doc",
+      "default": true,
+      "file": "docs/FEMA-Nuclear-Detonation-Planning-Guidance-3rd-2022.pdf",
+      "url": "https://www.fema.gov/sites/default/files/documents/fema_nuc-detonation-planning-guide.pdf",
+      "sha256": "d77550685227d652e13d515d717031ca81517eb150b5cb68aa79dbe2ac25aa1a",
+      "bytes": 16470095,
+      "licence": "US government work (public domain)",
+      "note": "Added 2026-11-24. The site refuses scripted downloads: save it in a browser, then the builder verifies it. Verified: real PDF, title."
     }
   ]
 }
