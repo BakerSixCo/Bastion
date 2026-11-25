@@ -372,6 +372,13 @@ public final class Figures {
                 found.add(new Candidate("", band.pad(5, width, height)));
             }
         }
+        // An infographic can mix artwork and body text across several full-width bands.
+        if (found.isEmpty() && bands.size() >= 2 && bands.getFirst().top <= 12
+                && bands.getLast().bottom >= height - 12
+                && bands.stream().filter(band -> band.width() >= width * 0.9)
+                        .mapToInt(Box::height).sum() >= height * 0.7) {
+            found.add(new Candidate("", null));
+        }
         return found;
     }
 

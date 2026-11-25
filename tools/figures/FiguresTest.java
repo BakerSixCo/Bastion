@@ -26,7 +26,7 @@ public final class FiguresTest {
         Path first = root.resolve("first");
         Path second = root.resolve("second");
         List<Figures.Entry> entries = Figures.extract(sources, first);
-        check(entries.size() == 9, "Expected nine candidates: " + entries);
+        check(entries.size() == 10, "Expected ten candidates: " + entries);
         checkEntry(entries.get(0), 1, "C-11", "Figure C-1. Example & diagram", "rendered-region", "high");
         checkEntry(entries.get(1), 2, null, "Fig. 2: Caption above", "rendered-region", "high");
         checkEntry(entries.get(2), 3, null, "Figure 3. No drawing", "full-page", "low");
@@ -36,6 +36,7 @@ public final class FiguresTest {
         checkEntry(entries.get(6), 6, null, "", "rendered-region", "low");
         checkEntry(entries.get(7), 9, "9", "Figure 9a. Left", "rendered-region", "high");
         checkEntry(entries.get(8), 9, "9", "Figure 9b. Right", "rendered-region", "high");
+        checkEntry(entries.get(9), 10, null, "", "full-page", "low");
         check(!entries.get(7).hash().equals(entries.get(8).hash()), "Side-by-side figures get separate images");
         check(entries.getFirst().width() < entries.get(2).width(), "Expected a crop narrower than the page");
         check(entries.getFirst().height() < entries.get(2).height(), "Expected a crop shorter than the page");
@@ -95,7 +96,7 @@ public final class FiguresTest {
     private static void createFixture(Path path) throws IOException {
         try (PDDocument doc = new PDDocument()) {
             doc.getDocumentInformation().setTitle("Fixture & test");
-            for (int pageNumber = 1; pageNumber <= 9; pageNumber++) {
+            for (int pageNumber = 1; pageNumber <= 10; pageNumber++) {
                 var page = new PDPage(new PDRectangle(300, 400));
                 doc.addPage(page);
                 if (pageNumber == 8) {
@@ -139,6 +140,17 @@ public final class FiguresTest {
                             text(stream, 168, 153, "Figure 9b. Right ");
                             text(stream, 35, 20, "9 ");
                             text(stream, 120, 20, "Sample footer");
+                        }
+                        case 10 -> {
+                            stream.setNonStrokingColor(0.65f, 0.75f, 0.85f);
+                            stream.addRect(0, 215, 300, 185);
+                            stream.addRect(0, 0, 300, 175);
+                            stream.fill();
+                            for (int y : List.of(240, 40)) {
+                                for (int i = 0; i < 6; i++) {
+                                    text(stream, 30, y + i * 17, "Body text over the artwork");
+                                }
+                            }
                         }
                         default -> throw new AssertionError(pageNumber);
                     }
