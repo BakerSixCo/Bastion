@@ -2047,3 +2047,18 @@ Next calculator: USDA canning time by altitude.
 Review result (Opus xhigh, 2026-11-24): batch 1 12/12 pass (status reviewed); batch 2a 11/20 pass. Failed, fix per each card's
 review notes: burn-first-aid, anaphylaxis, cpr-adult, choking-adult, diarrhea-field-care, insect-sting, spider-scorpion,
 potassium-iodide (add FDA Q&A age doses). Batch 2b (22 cards) not reviewed yet. Next: fix the 8, review 2b, then sync.pl export + review page.
+
+## Resume here (2026-11-25, Fable limit until Nov 30 3am PT)
+
+Cards: 55 files (animal-bite-first-aid split from dangerous-animals-encounter), all pass `build.pl -v`.
+52 reviewed/pass (Opus xhigh). 3 draft, fixed by Opus because Fable was out: choking-adult, drowning-rescue-care,
+wound-cleaning. Their drafted_by says "needs independent review by a non-Opus model".
+After the Fable reset:
+1. Fable max reviews those 3 (same review brief as before: faithfulness, attributed conflicts, pulse rule matches cpr-adult).
+   Also fix cpr-adult's stale `conflict` sentence saying drowning-rescue-care has unconditional compressions.
+2. sync.pl export -> review page -> owner approves. Approve together: lightning-safety + burn + choking + drowning with
+   cpr-adult; dangerous-animals-encounter with animal-bite-first-aid; animal-bite with bleeding-severe-limb.
+Owner decisions (in each card's `conflict`): edibility-test induce vomiting (removed, safer); ATP "blue/black berries generally
+safe" (left off); lost search-party step; HHS capture-or-kill on bites; latrine Army-units warning; wound antiseptic choice
+(card says sources differ; ATP list incl. bleach/peroxide kept off); KI doses by age (reviewer trusts FDA 2001 table rows).
+Owner flag: kit CPR uses a pulse check; current lay-rescuer guidance (AHA, outside kit) skips it -> needs a newer CPR source.
