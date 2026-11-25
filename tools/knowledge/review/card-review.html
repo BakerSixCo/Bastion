@@ -1,0 +1,234 @@
+<title>BASTION Card Review</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: a single column of review sheets, like pages pulled from a field manual, each with its source excerpts and a decision strip. */
+:root {
+  --bg: #f3f4f1; --sheet: #ffffff; --ink: #1d2320; --muted: #5b6660; --line: #d5dad4;
+  --accent: #c2410c; --accent-ink: #ffffff; --quote-bg: #eef1ec;
+  --ok: #2f6b3a; --ok-bg: #e3f1e5; --warn: #8a5a00; --warn-bg: #fbf0d8; --bad: #9b1c1c; --bad-bg: #fbe4e2;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-head: "IBM Plex Sans Condensed", "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #141917; --sheet: #1c2220; --ink: #e6ebe7; --muted: #9aa7a0; --line: #2f3833;
+  --accent: #f07a3c; --accent-ink: #1a1009; --quote-bg: #232b27;
+  --ok: #7cc98a; --ok-bg: #1d3323; --warn: #e6b450; --warn-bg: #3a2e14; --bad: #f19a92; --bad-bg: #3d1d1b; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #141917; --sheet: #1c2220; --ink: #e6ebe7; --muted: #9aa7a0; --line: #2f3833;
+  --accent: #f07a3c; --accent-ink: #1a1009; --quote-bg: #232b27;
+  --ok: #7cc98a; --ok-bg: #1d3323; --warn: #e6b450; --warn-bg: #3a2e14; --bad: #f19a92; --bad-bg: #3d1d1b; color-scheme: dark }
+body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--font-body); }
+.wrap { max-width: 760px; margin: 0 auto; padding-block: 20px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { display: grid; gap: 6px; margin-bottom: 18px; }
+h1 { font: 700 1.6rem/1.15 var(--font-head); letter-spacing: .01em; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: 0; max-width: 62ch; }
+.tally { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; font: 600 .78rem var(--font-mono); text-transform: uppercase; letter-spacing: .06em; }
+.tally span { padding: 3px 8px; border: 1px solid var(--line); border-radius: 4px; font-variant-numeric: tabular-nums; }
+.tabs { display: flex; gap: 6px; margin: 14px 0 6px; flex-wrap: wrap; }
+.tabs button { font: 600 .85rem var(--font-body); padding: 6px 12px; border-radius: 4px; border: 1px solid var(--line); background: var(--sheet); color: var(--ink); cursor: pointer; }
+.tabs button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.status { color: var(--muted); font-size: .9rem; margin: 8px 0 16px; min-height: 1.4em; }
+.list { display: grid; gap: 18px; }
+.sheet { background: var(--sheet); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.sheet-head { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; padding: 14px 16px 6px; flex-wrap: wrap; }
+.sheet h2 { font: 700 1.15rem/1.25 var(--font-head); margin: 0; min-width: 0; text-wrap: balance; }
+.kind { font: 600 .7rem var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.id { font: .72rem var(--font-mono); color: var(--muted); }
+.body { padding: 4px 16px 14px; display: grid; gap: 12px; }
+.label { font: 600 .7rem var(--font-mono); text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 4px; }
+.answer { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; }
+ul.answer { list-style: square; }
+.warnings { background: var(--warn-bg); color: var(--ink); border-left: 3px solid var(--warn); padding: 8px 12px; border-radius: 3px; }
+.warnings ul { margin: 0; padding-left: 1.2em; }
+.conflict { background: var(--bad-bg); border-left: 3px solid var(--bad); padding: 8px 12px; border-radius: 3px; }
+.conflict strong { color: var(--bad); }
+details { border-top: 1px dashed var(--line); padding-top: 8px; }
+summary { cursor: pointer; font-weight: 600; font-size: .9rem; }
+.quote { background: var(--quote-bg); padding: 8px 10px; border-radius: 3px; margin: 8px 0 0; }
+.quote p { margin: 0 0 4px; font-size: .92rem; }
+.quote cite { font: .74rem var(--font-mono); color: var(--muted); font-style: normal; word-break: break-word; }
+.asks { color: var(--muted); font-size: .88rem; margin: 6px 0 0; }
+.review { font-size: .9rem; }
+.review .who { font: .74rem var(--font-mono); color: var(--muted); }
+.decide { display: grid; gap: 8px; padding: 12px 16px 14px; border-top: 1px solid var(--line); background: color-mix(in srgb, var(--sheet) 85%, var(--line)); }
+.decide-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.decide button { font: 600 .9rem var(--font-body); padding: 8px 14px; border-radius: 4px; border: 1px solid var(--line); background: var(--sheet); color: var(--ink); cursor: pointer; }
+.decide button.approve { background: var(--ok); color: #fff; border-color: var(--ok); }
+.decide button.fix { border-color: var(--warn); color: var(--warn); }
+.decide button.reject { border-color: var(--bad); color: var(--bad); }
+.decide button:disabled { opacity: .5; cursor: not-allowed; }
+.decide textarea { width: 100%; box-sizing: border-box; min-height: 64px; font: 14px/1.4 var(--font-body); padding: 8px; border-radius: 4px; border: 1px solid var(--line); background: var(--sheet); color: var(--ink); }
+.verdict { font: 600 .78rem var(--font-mono); text-transform: uppercase; letter-spacing: .06em; padding: 3px 8px; border-radius: 4px; }
+.verdict.approve { background: var(--ok-bg); color: var(--ok); }
+.verdict.fix { background: var(--warn-bg); color: var(--warn); }
+.verdict.reject { background: var(--bad-bg); color: var(--bad); }
+.verdict.stale { background: var(--warn-bg); color: var(--warn); }
+.empty { background: var(--sheet); border: 1px dashed var(--line); border-radius: 6px; padding: 24px 16px; color: var(--muted); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>BASTION Card Review</h1>
+    <p class="lede">Each card is shown exactly as BASTION will show it in an emergency, with the official sentences it rests on. Approve only what you would stake a life on. Needs fix and Reject ask for a short note.</p>
+    <div class="tally" id="tally" aria-live="polite"></div>
+  </header>
+  <div class="tabs" role="group" aria-label="Show">
+    <button type="button" id="tab-waiting" aria-pressed="true">Waiting</button>
+    <button type="button" id="tab-decided" aria-pressed="false">Decided</button>
+    <button type="button" id="tab-all" aria-pressed="false">All</button>
+  </div>
+  <p class="status" id="status">Loading cards…</p>
+  <div class="list" id="list"></div>
+</div>
+
+<script>
+(function () {
+  const state = { cards: [], decisions: {}, tab: "waiting", canDecide: false, db: null, me: null, busy: {} };
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, attrs, ...kids) => {
+    const n = document.createElement(tag);
+    if (attrs) for (const [k, v] of Object.entries(attrs)) { if (k === "class") n.className = v; else if (k === "text") n.textContent = v; else n.setAttribute(k, v); }
+    for (const k of kids) if (k != null) n.append(k);
+    return n;
+  };
+  const arr = (v) => Array.isArray(v) ? v.map(String) : [];
+
+  function decisionFor(card) {
+    const d = state.decisions[card.id];
+    if (!d) return null;
+    if (String(d.version || "") !== String(card.version || "")) return { ...d, stale: true };
+    return d;
+  }
+
+  function renderTally() {
+    const t = { waiting: 0, approve: 0, fix: 0, reject: 0 };
+    for (const c of state.cards) { const d = decisionFor(c); if (!d || d.stale) t.waiting++; else t[d.decision] = (t[d.decision] || 0) + 1; }
+    $("tally").replaceChildren(
+      el("span", { text: t.waiting + " waiting" }), el("span", { text: t.approve + " approved" }),
+      el("span", { text: t.fix + " needs fix" }), el("span", { text: t.reject + " rejected" }));
+  }
+
+  function sheet(card) {
+    const d = decisionFor(card);
+    const protocol = card.kind === "protocol";
+    const answer = el(protocol ? "ol" : "ul", { class: "answer" }, ...arr(card.answer).map((l) => el("li", { text: l })));
+    const parts = [el("div", null, el("p", { class: "label", text: "BASTION shows" }), answer)];
+    const warns = arr(card.warnings);
+    if (warns.length) parts.push(el("div", { class: "warnings" }, el("p", { class: "label", text: "Warnings" }), el("ul", null, ...warns.map((w) => el("li", { text: w })))));
+    if (card.conflict) parts.push(el("div", { class: "conflict" }, el("strong", { text: "Sources disagree: " }), document.createTextNode(String(card.conflict))));
+    const quotes = Array.isArray(card.quotes) ? card.quotes : [];
+    const q = el("details", { open: "" }, el("summary", { text: "Source sentences (" + quotes.length + ")" }),
+      ...quotes.map((x) => el("blockquote", { class: "quote" }, el("p", { text: "“" + String(x.text || "") + "”" }),
+        el("cite", { text: String(x.doc || "") + (x.page ? "  ·  p." + x.page : "") }))));
+    parts.push(q);
+    if (card.review) {
+      const r = card.review;
+      parts.push(el("div", { class: "review" }, el("p", { class: "label", text: "Second-model review" }),
+        el("p", { text: String(r.verdict || "") + (r.notes ? " — " + String(r.notes) : "") }),
+        el("span", { class: "who", text: String(r.by || "") })));
+    }
+    const asks = arr(card.asks);
+    if (asks.length) parts.push(el("p", { class: "asks", text: "Answers questions like: " + asks.slice(0, 6).join(" · ") }));
+
+    const note = el("textarea", { id: "note-" + card.id, "aria-label": "Note for " + card.title, placeholder: "What is wrong or missing? (needed for Needs fix and Reject)" });
+    if (d && d.note) note.value = String(d.note);
+    const status = el("span", { class: "verdict " + (d ? (d.stale ? "stale" : d.decision) : ""), text: d ? (d.stale ? "card changed since your decision" : ({ approve: "approved", fix: "needs fix", reject: "rejected" })[d.decision] || "") : "" });
+    const btn = (kind, label) => {
+      const b = el("button", { type: "button", class: kind, text: label });
+      b.disabled = !state.canDecide || !!state.busy[card.id];
+      b.addEventListener("click", () => decide(card, kind, note.value.trim(), status));
+      return b;
+    };
+    const decide = el("div", { class: "decide" },
+      el("div", { class: "decide-row" }, btn("approve", "Approve"), btn("fix", "Needs fix"), btn("reject", "Reject"), status),
+      note);
+    if (!state.canDecide) decide.append(el("p", { class: "asks", text: "Only the owner can record decisions." }));
+
+    return el("article", { class: "sheet", id: "card-" + card.id },
+      el("div", { class: "sheet-head" }, el("h2", { text: String(card.title || card.id) }),
+        el("span", { class: "kind", text: protocol ? "Protocol" : "Fact" })),
+      el("div", { class: "body" }, el("span", { class: "id", text: card.id + (card.batch ? "  ·  batch " + card.batch : "") }), ...parts),
+      decide);
+  }
+
+  function render() {
+    renderTally();
+    const list = $("list");
+    const shown = state.cards.filter((c) => {
+      const d = decisionFor(c);
+      if (state.tab === "waiting") return !d || d.stale;
+      if (state.tab === "decided") return d && !d.stale;
+      return true;
+    });
+    if (!state.cards.length) {
+      list.replaceChildren(el("div", { class: "empty", text: "No cards here yet. Cards appear once they have been drafted from official sources and checked by a second model." }));
+      return;
+    }
+    if (!shown.length) {
+      list.replaceChildren(el("div", { class: "empty", text: state.tab === "waiting" ? "Nothing waiting. Every card has your decision." : "No decided cards yet." }));
+      return;
+    }
+    list.replaceChildren(...shown.map(sheet));
+  }
+
+  async function decide(card, kind, note, statusEl) {
+    if ((kind === "fix" || kind === "reject") && !note) {
+      statusEl.className = "verdict fix"; statusEl.textContent = "add a note first";
+      document.getElementById("note-" + card.id)?.focus();
+      return;
+    }
+    if (!state.db) return;
+    state.busy[card.id] = true;
+    statusEl.className = "verdict"; statusEl.textContent = "saving…";
+    try {
+      await state.db.doc("decisions/" + card.id).set({ decision: kind, note: note || "", version: String(card.version || ""), by: state.me || "", at: Date.now() });
+      $("status").textContent = "Saved: " + card.title + " → " + ({ approve: "approved", fix: "needs fix", reject: "rejected" })[kind] + ".";
+    } catch (e) {
+      statusEl.className = "verdict reject"; statusEl.textContent = "not saved";
+      $("status").textContent = "Could not save the decision (" + (e && e.code ? e.code : "error") + "). Try again.";
+    } finally { delete state.busy[card.id]; }
+  }
+
+  for (const t of ["waiting", "decided", "all"]) {
+    $("tab-" + t).addEventListener("click", () => {
+      state.tab = t;
+      for (const u of ["waiting", "decided", "all"]) $("tab-" + u).setAttribute("aria-pressed", String(u === t));
+      try { localStorage.setItem("bastion-review-tab", t); } catch (e) {}
+      render();
+    });
+  }
+  try { const t = localStorage.getItem("bastion-review-tab"); if (t && $("tab-" + t)) $("tab-" + t).click(); } catch (e) {}
+
+  render();
+
+  async function start() {
+    const claude = window.claude;
+    if (!claude || !claude.use) { $("status").textContent = "Open this page in Claude to see the cards."; return; }
+    const [db, user] = await Promise.all([claude.use("db"), claude.use("user")]);
+    if (!db) { $("status").textContent = "Sign in to Claude to review cards."; return; }
+    state.db = db;
+    if (user) {
+      try { state.canDecide = !!(await user.isOwner()); } catch (e) {}
+      try { state.me = await user.id(); } catch (e) {}
+    }
+    const timer = setTimeout(() => { if (!state.cards.length) $("status").textContent = "Still waiting for the card store…"; }, 10000);
+    db.collection("cards").orderBy("order").onSnapshot((snap) => {
+      clearTimeout(timer);
+      state.cards = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      $("status").textContent = state.cards.length ? "" : "";
+      render();
+    }, (e) => { clearTimeout(timer); $("status").textContent = "Could not load cards (" + (e && e.code ? e.code : "error") + ")."; });
+    db.collection("decisions").onSnapshot((snap) => {
+      const m = {}; for (const d of snap.docs) m[d.id] = d.data();
+      state.decisions = m; render();
+    }, () => {});
+  }
+  start();
+})();
+</script>

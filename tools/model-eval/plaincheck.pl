@@ -19,7 +19,9 @@ while (<$in>) { my $r = $j->decode($_); my $c = $case{$r->{id}} or next; my $a =
         my @src = grep { $cited{$_->{index}} } @$ps;
         @src = @$ps if !@src;   # uncited answer: the subject must still be in the passages it was given
         if (0) { }
-        else { my $text = join "\n", map { "$_->{label}\n$_->{text}" } @src; my @miss = grep { my $t = $_; $text !~ /\b\Q$t\E/i } terms($c->{question});
+        else { my $text = join "\n", map { "$_->{label}\n$_->{text}" } @src; my @miss = grep { !present($_, $text) } terms($c->{question});
+            # Slang: the restated question's subject words may stand in (as CheckedAnswer.check does).
+            if (@miss && (my $p = $plans->{$r->{id}})) { @miss = () if $p->{valid} && !grep { !present($_, $text) } terms($p->{standalone_question}) }
             if (@miss) { $fail = 'cover:' . join(',', @miss) }
             else { my %have = map { $_ => 1 } map { nums($_->{text}) } @$ps; my @m = grep { !$have{$_} } nums($a =~ s/\[[\d,\s]+\]//gr); $fail = 'number:' . join(',', @m) if @m; } } }
     my %o = (id => $r->{id}, cat => $r->{cat}, shown => $fail ? $NO : $a, failed => $fail, answer => $a);

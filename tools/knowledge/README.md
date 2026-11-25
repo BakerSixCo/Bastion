@@ -45,6 +45,14 @@ Searches every kit document (text cached in `tools/kit/.textcache/`, same extrac
 verifier, so its paragraphs can be quoted directly) and prints the best paragraphs with document
 and page. Drafters and reviewers use it instead of reading whole manuals.
 
+## Owner review page
+
+https://claude.ai/artifact/H8nmtGzCwuGvoh54FEj2dz (private to the owner; source `review/card-review.html`).
+Each card shows exactly what the phone shows, its source sentences, the second model's review and
+any conflict; the owner picks Approve, Needs fix or Reject. `review/sync.pl export` packs reviewed
+cards for the page (each with a content fingerprint); `review/sync.pl import <dir>` applies the
+owner's decisions to the card files. A decision for a card that changed since is ignored.
+
 ## Build
 
     perl tools/knowledge/build.pl            # verify every card, write the app's cards file
