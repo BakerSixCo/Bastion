@@ -87,12 +87,26 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
 
     /** Nearest road within [maxM] metres of a position (searches the position's cell and its neighbours). */
     private fun snap(la: Double, lo: Double, maxM: Double, skip: Set<Long> = emptySet()): Snap? {
+        var best: Snap? = null
+        nearby(la, lo, maxM) { i, frac, dist ->
+            if (edges[i].id !in skip && (best == null || dist < best!!.dist)) best = Snap(i, frac, dist)
+        }
+        return best
+    }
+
+    /** Every road passing within [radiusM] metres of a position. */
+    fun roadsWithin(la: Double, lo: Double, radiusM: Double): Set<Long> {
+        val out = HashSet<Long>()
+        nearby(la, lo, radiusM) { i, _, _ -> out += edges[i].id }
+        return out
+    }
+
+    /** Calls [hit] with (edge index, fraction along it, distance) for each road segment within [maxM] of a position. */
+    private fun nearby(la: Double, lo: Double, maxM: Double, hit: (Int, Double, Double) -> Unit) {
         val cx = Geo.tileX(lo, grid); val cy = Geo.tileY(la, grid)
         for (x in cx - 1..cx + 1) for (y in cy - 1..cy + 1) ensureCell(x, y)
-        var best: Snap? = null
         val kx = 111_320.0 * cos(Math.toRadians(la)); val ky = 110_574.0
         for ((i, e) in edges.withIndex()) {
-            if (e.id in skip) continue
             val line = shape(e)
             var along = 0.0; var total = 0.0
             val segs = ArrayList<Double>()
@@ -107,13 +121,10 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
                 val t = if (len2 == 0.0) 0.0 else (-(ax * vx + ay * vy) / len2).coerceIn(0.0, 1.0)
                 val px = ax + t * vx; val py = ay + t * vy
                 val dist = sqrt(px * px + py * py)
-                if (dist <= maxM && (best == null || dist < best.dist)) {
-                    best = Snap(i, if (total > 0) (along + t * segs[k - 1]) / total else 0.0, dist)
-                }
+                if (dist <= maxM) hit(i, if (total > 0) (along + t * segs[k - 1]) / total else 0.0, dist)
                 along += segs[k - 1]
             }
         }
-        return best
     }
 
     /** a, shape points, b as lat/lon ints. */
@@ -173,7 +184,7 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
         val heap = java.util.PriorityQueue<Pair<Double, Int>>(compareBy { it.first })
         val tla = toLat; val tlo = toLon
         fun h(n: Int) = meters(lat[n] / 1e6, lon[n] / 1e6, tla, tlo) / (75 * 0.44704)
-        fun cost(e: Edge) = if (e.id in blocked) Double.POSITIVE_INFINITY else e.seconds * (penalty[e.id] ?: 1.0)
+        fun cost(e: Edge) = if (e.id in blocked) Double.POSITIVE_INFINITY else e.seconds * (penalty[e.id] ?: 1.0) * classFactor(e.cls)
         // Leave the start road toward b, and toward a unless it is one-way a->b.
         fun seed(n: Int, c: Double) { if (c < (g[n] ?: Double.POSITIVE_INFINITY)) { g[n] = c; via[n] = -1; heap += (c + h(n)) to n } }
         if (se.id !in blocked) {
@@ -275,7 +286,12 @@ class RoadGraph(private val grid: Int, private val cellBytes: (Int, Int) -> Byte
         operator fun get(i: Int) = a[i]
     }
 
+    /** Parking lots, drive-throughs and alleys (service) are used to reach a place, not as shortcuts. */
+    private fun classFactor(cls: Int) = if (cls == SERVICE) 3.0 else 1.0
+
     companion object {
+        const val SERVICE = 8   // index of "service" in tools/RoadGraph.java CLASSES
+
         fun meters(la1: Double, lo1: Double, la2: Double, lo2: Double): Double {
             val p1 = Math.toRadians(la1); val p2 = Math.toRadians(la2)
             val dp = p2 - p1; val dl = Math.toRadians(lo2 - lo1)

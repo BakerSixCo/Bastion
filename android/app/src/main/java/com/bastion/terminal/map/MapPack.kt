@@ -246,7 +246,8 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
         val g = roadGraph ?: return emptyList()
         if (!contains(fromLat, fromLon) || !contains(toLat, toLon)) return emptyList()
         return synchronized(g) {
-            val blocked = blockedAt.mapNotNull { (la, lo) -> g.roadNear(la, lo)?.first }.toSet()
+            // A block closes every road within 50 m of the spot, so a route cannot slip round it through a lot or a side lane.
+            val blocked = blockedAt.flatMap { (la, lo) -> g.roadsWithin(la, lo, 50.0) }.toSet()
             g.routes(fromLat, fromLon, toLat, toLon, blocked, count)
         }
     }

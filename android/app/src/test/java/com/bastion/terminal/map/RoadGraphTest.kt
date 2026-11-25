@@ -81,6 +81,35 @@ class RoadGraphTest {
         assertTrue(detour.meters > direct.meters + 1000)
     }
 
+    /** Main road A-B, 2 km, and a service lane looping 30 m beside it through C and D (found on real Boise data). */
+    private fun bypassCell(): ByteArray {
+        val bo = ByteArrayOutputStream(); val o = DataOutputStream(bo)
+        val la = 43_600_000; val north = la + 270   // about 30 m
+        val nodes = listOf(la to -116_200_000, la to -116_180_000, la to -116_190_500, north to -116_190_500, north to -116_189_500, la to -116_189_500)
+        o.writeBytes("BRG1"); o.writeInt(0); o.writeInt(nodes.size)
+        nodes.forEachIndexed { i, (a, b) -> o.writeLong(i + 1L); o.writeInt(a); o.writeInt(b) }
+        // A(0) - E(2) - F(5) - B(1) main street; E - C(3) - D(4) - F service lane.
+        val es = listOf(intArrayOf(0, 2, 6), intArrayOf(2, 5, 6), intArrayOf(5, 1, 6), intArrayOf(2, 3, 8), intArrayOf(3, 4, 8), intArrayOf(4, 5, 8))
+        o.writeInt(es.size)
+        es.forEachIndexed { k, e ->
+            val (a1, b1) = nodes[e[0]]; val (a2, b2) = nodes[e[1]]
+            o.writeLong(k + 10L); o.writeInt(e[0]); o.writeInt(e[1]); o.writeByte(e[2]); o.writeByte(0); o.writeByte(if (e[2] == 8) 10 else 30)
+            o.writeInt(-1); o.writeFloat(RoadGraph.meters(a1 / 1e6, b1 / 1e6, a2 / 1e6, b2 / 1e6).toFloat()); o.writeShort(0)
+        }
+        o.flush(); return bo.toByteArray()
+    }
+
+    @Test fun aBlockAlsoClosesTheLaneBesideIt() {
+        val g = graph(bypassCell())
+        // Normally the main street, not the parking-lot lane.
+        val normal = g.routes(43.600, -116.200, 43.600, -116.180, count = 1).single()
+        assertTrue(normal.edgeIds.none { it in 13L..15L })
+        // Blocking the main street mid-block also closes the lane 30 m away: no way through.
+        val blocked = g.roadsWithin(43.600, -116.190, 50.0)
+        assertTrue(11L in blocked && 14L in blocked)
+        assertTrue(g.routes(43.600, -116.200, 43.600, -116.180, blocked = blocked).isEmpty())
+    }
+
     @Test fun oneWayStreetIsOnlyDrivenOneWay() {
         // Bottom row one-way eastbound (a -> b is west -> east).
         val g = graph(gridCell(oneWayRow = 0))

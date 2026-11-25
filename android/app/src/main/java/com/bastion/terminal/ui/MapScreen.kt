@@ -684,12 +684,12 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         )
                         if (showLegs) Column(Modifier.heightIn(max = 190.dp).verticalScroll(rememberScrollState())) {
                             r.steps.forEachIndexed { i, s -> Text("${i + 1}. ${s.name} — ${RoadGraph.miles(s.meters)}", style = MaterialTheme.typography.bodyMedium) }
-                        }
-                        Text(
-                            "Times assume the speed limit and no traffic. The map does not know closures, washouts, snow, gates or " +
-                                "damage — long-press a road and choose \"Road blocked here\" to route around it.",
-                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                            Text(
+                                "Times assume the speed limit and no traffic. The map does not know closures, washouts, snow, gates or " +
+                                    "damage — long-press a road and choose \"Road blocked here\" to route around it.",
+                                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        } else Text("Not traffic- or closure-aware. Long-press a road: Road blocked here.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     if (!drive) route?.let { r ->
                         Text((if (destName.isNotBlank()) "To $destName: " else "Route: ") + r.summary(), style = MaterialTheme.typography.titleSmall)
