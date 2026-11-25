@@ -10,16 +10,18 @@
     "mice are getting into our food at camp",
     "can i bury my food to hide it from animals",
     "where do i put food at night when camping",
+    "how do i store food in bear country",
     "how 2 keep critters out of my food",
     "something raided our food last night, how should we store it, over"
   ],
   "answer": [
     "Never store food in your shelter: it may attract wild animals and could be hazardous to you.",
+    "Bears: this library has no guidance on storing food against bears. The hanging and burying advice below comes from Army manuals and is general, or written for small animals; do not take it as bear-proof.",
     "Many animals and insects will devour your food supply if it is not correctly stored.",
-    "In most cases, food stored several feet off the ground is out of reach of most animals. Hang the food in a cache.",
-    "To protect supplies from small animals, hang them about 6.5 feet (about 2 meters) from the ground.",
+    "The Army survival manual says that, in most cases, food stored several feet off the ground will be out of reach of most animals: hang the food in a cache. It gives no exact height.",
+    "The only height in the library is the Army cold-weather manual's figure for small animals: to protect supplies from small animals, hang them about 6.5 feet (about 2 meters) from the ground.",
     "To protect food from insects and birds: wrap it in material, wrap and tie brush around the bundle, then wrap it with another layer of material. The dead air space makes it more difficult for insects and birds to get to the food.",
-    "Burying food is a good method of storage as long as there are no scavengers in the area to uncover it. Consider insects and small animals when burying food.",
+    "Burying food: the Army survival manual calls it a good method of storage only as long as there are no scavengers in the area to uncover it. Consider insects and small animals when burying food. The library has nothing on bears here either.",
     "Do not eat in sleeping areas, to avoid attracting insects, rodents and other animals. Uneaten food or meal trash left in living areas can quickly attract rodents and other potentially dangerous pests.",
     "Eating in a designated area and keeping trash to a minimum reduces the likelihood that pests will be attracted.",
     "Store garbage and other food sources in rodent-proof containers, and do not let garbage build up."
@@ -44,13 +46,14 @@
     { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
       "text": "It is necessary to eliminate all possible food sources. Garbage and other food sources should be stored in rodent-proof containers. Garbage collection should be conducted so that excess amounts of material do not build up." }
   ],
+  "conflict": "No disagreement between sources. Gap, now stated on the card: no kit source has food-storage guidance for bears (searched the Idaho regulations, ATP 3-50.21, TC 21-3, FEMA P-2064 and the rest of the kit for bear, grizzly, food storage, bear-resistant, attractant); the Idaho big game rules only note 'Caution: grizzly bears may be encountered' in several units, and TC 21-3 para 5-71 only observes that animals scavenge garbage ('Polar bears are known to boldly come into human habitations to scavenge'). The two hanging lines are now attributed: ATP 3-50.21 para 4-40 'several feet off the ground... out of reach of most animals' (no figure) and TC 21-3 para 7-26 'about 6.5 feet', which that manual gives for 'small animals'. If the owner wants bear-country storage on the phone, an official source (for example a Forest Service or National Park Service food-storage sheet) would have to be added to the kit.",
   "review": {
-    "verdict": "fail",
-    "notes": "Fail. (1) Bear country gap. The kit is used in Idaho (its regulations note grizzly bears may be encountered in several units), yet no kit source has bear-specific food storage guidance (searched Idaho regulations, ATP 3-50.21, TC 21-3, FEMA). The card answers 'how high should i hang my food' with ATP's 'several feet off the ground is out of reach of most animals' and TC 21-3's 6.5 feet, which TC 21-3 gives for 'small animals'; read by someone in bear country this can be a wrong answer. Fix: keep the 6.5-ft line explicitly as the Army figure for small animals, and add a plain line that the kit has no guidance for storing food against bears. (2) 'Burying food is a good method' keeps ATP's condition ('as long as there are no scavengers'); keep that condition prominent, and the same bear gap applies. Other lines verified: never store food in the shelter, wrap-brush-wrap dead-air bundle against insects and birds, cache, no eating in sleeping areas (ATP 4-25.12), leftover food and meal trash attract pests (TC 4-02.3), designated eating area, rodent-proof garbage containers (ATP 4-25.12). Kind fact correct.",
-    "by": "claude-opus-5-5 xhigh"
+    "verdict": "",
+    "notes": "previous review: (verdict fail, by claude-opus-5-5 xhigh) Fail. (1) Bear country gap. The kit is used in Idaho (its regulations note grizzly bears may be encountered in several units), yet no kit source has bear-specific food storage guidance (searched Idaho regulations, ATP 3-50.21, TC 21-3, FEMA). The card answers 'how high should i hang my food' with ATP's 'several feet off the ground is out of reach of most animals' and TC 21-3's 6.5 feet, which TC 21-3 gives for 'small animals'; read by someone in bear country this can be a wrong answer. Fix: keep the 6.5-ft line explicitly as the Army figure for small animals, and add a plain line that the kit has no guidance for storing food against bears. (2) 'Burying food is a good method' keeps ATP's condition ('as long as there are no scavengers'); keep that condition prominent, and the same bear gap applies. Other lines verified: never store food in the shelter, wrap-brush-wrap dead-air bundle against insects and birds, cache, no eating in sleeping areas (ATP 4-25.12), leftover food and meal trash attract pests (TC 4-02.3), designated eating area, rodent-proof garbage containers (ATP 4-25.12). Kind fact correct.",
+    "by": ""
   },
   "status": "draft",
-  "drafted_by": "claude-fable-5-2 (max)",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review",
   "reviewed_by": "",
   "approved_by": ""
 }

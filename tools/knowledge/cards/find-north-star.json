@@ -9,6 +9,7 @@
     "how do i use the big dipper to find north",
     "where is polaris",
     "how to navigate by the stars at night",
+    "can i steer by any bright star or the moon",
     "cant find the north star",
     "how 2 find north at nite",
     "night, no compass, clear sky, how do we find north, over"
@@ -24,13 +25,16 @@
     "At latitudes under 70 degrees, the North Star makes a good steering mark when traveling north: its bearing is usually only 1 degree from true north and never more than 2 1/2 degrees away. Above 70 degrees latitude it is too high in the sky to indicate good direction."
   ],
   "warnings": [
+    "Do not steer by any other star, or by the moon, as if it stood still. The Army survival manual says Polaris is considered to remain stationary, while the Big Dipper and Cassiopeia rotate around it. The Army cold-weather manual says: do not use the moon or stars as guides, because they travel in a circle through the night.",
+    "The Army manuals differ on other stars. The cold-weather manual says not to use them as guides at all. The survival manual allows steering by a star only with azimuth checks: a star near the north horizon serves for about half an hour; when moving south, check every 15 minutes; when moving east or west, the star is likely to climb too high in the sky or be lost behind the western horizon, and you must then change to another guide star.",
+    "The moon: the cold-weather manual says not to use it as a guide. The survival manual uses it for a rough east-west reference during the night: if the moon rises before the sun has set, its illuminated side is the west; if it rises after midnight, its illuminated side is the east.",
     "South of the equator, use the Southern Cross to find the general direction of south: no single star bright enough can be seen near the south celestial pole."
   ],
   "quotes": [
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "The location of the isolated person in the Northern or Southern Hemisphere determines which constellation is used to determine north or south direction." },
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
-      "text": "The main constellations to learn are Ursa Major, also known as the Big Dipper, the Little Dipper, and Cassiopeia, also known as the Lazy W. Use them to locate Polaris, also known as the polestar or the North Star." },
+      "text": "The main constellations to learn are Ursa Major, also known as the Big Dipper, the Little Dipper, and Cassiopeia, also known as the Lazy W. Use them to locate Polaris, also known as the polestar or the North Star. Polaris is considered to remain stationary, as it rotates only 1.08 degrees around the northern celestial pole." },
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "The North Star is the last star of the Little Dipper's handle and can be confused with the Big Dipper. However, the Little Dipper is made up of seven rather dim stars and is not easily seen unless far away from any town or city lights. Confusion can be prevented by using both the Big Dipper and Cassiopeia together. The Big Dipper and Cassiopeia are generally opposite each other and rotate counterclockwise around Polaris, with Polaris in the center. The Big Dipper is a seven-star constellation in the shape of a dipper." },
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
@@ -44,18 +48,24 @@
     { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
       "text": "The North Star can be used to determine true north. (See figure 6-8.) This star is easily found by its position relative to the Big Dipper. In latitudes under 70 degrees when traveling north, the North Star makes a good steering mark since its bearing is usually only 1 degree from true north and is never more than 2 1/2 degrees away. In higher latitudes above 70 degrees, the North Star is too high in the sky to indicate good direction." },
     { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "Note. Do not use the moon or stars as guides because they travel in a circle through the night." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Depending on the star selected for navigation, azimuth checks are necessary. A star near the north horizon serves for about half an hour. When moving south, azimuth checks should be made every 15 minutes. When moving east or west, the difficulty of staying on azimuth is caused more by the likelihood of the star climbing too high in the sky or losing itself behind the western horizon than it is by the star changing direction angle. When this happens, it is necessary to change to another guide star." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "If the moon rises before the sun has set, the illuminated side will be the west. If the moon rises after midnight, the illuminated side will be the east. This obvious discovery provides a rough east-west reference during the night." },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
       "text": "South of the equator, locating the Southern Cross constellation helps find the general direction South and any other direction." },
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
       "text": "There is no single star bright enough, which can be seen near the south celestial pole. Therefore, use a constellation known as the Southern Cross." }
   ],
-  "conflict": "Not about the North Star itself, but the two Army manuals differ on steering by other sky objects: TC 21-3 (2025) has a note right after its North Star paragraph, 'Do not use the moon or stars as guides because they travel in a circle through the night', while ATP 3-50.21 (2018) describes steering by a star ('A star near the north horizon serves for about half an hour. When moving south, azimuth checks should be made every 15 minutes') and using the moon for 'a rough east-west reference during the night'. This card covers only the North Star, on which both agree.",
+  "conflict": "Not about the North Star itself, on which both Army manuals agree, but on steering by other sky objects, which the revised card now shows in its warnings, attributed: TC 21-3 (2025) has a note right after its North Star paragraph (6-36), 'Do not use the moon or stars as guides because they travel in a circle through the night', while ATP 3-50.21 (2018) para 7-39 describes steering by a star with checks ('A star near the north horizon serves for about half an hour. When moving south, azimuth checks should be made every 15 minutes') and para 7-31 uses the moon for 'a rough east-west reference during the night'; its para 7-87 also says the shadow-tip method can be used with a moon bright enough to cast a shadow (not on this card). ATP 3-50.21 para 7-33 says 'Polaris is considered to remain stationary, as it rotates only 1.08 degrees around the northern celestial pole'. ATP's para 7-39 stands under its 'Southern Sky' heading but speaks of stars near the north horizon, so the card treats it as general. The owner may prefer to show only TC 21-3's plain rule.",
   "review": {
-    "verdict": "fail",
-    "notes": "Fail. The card carries the ask 'how to navigate by the stars at night', and the conflict field records the kit's guidance on exactly that (TC 21-3, note after 6-36: 'Do not use the moon or stars as guides because they travel in a circle through the night'; ATP 3-50.21 7-39: a star near the north horizon serves for about half an hour, and when moving south azimuth checks should be made every 15 minutes), but the card shows none of it. Someone steering on any star other than Polaris can walk far off course. Fix: add an attributed warning: only the North Star stays in place; TC 21-3 says do not use the moon or other stars as guides because they travel in a circle through the night; ATP 3-50.21 says a steering star must be rechecked (about half an hour for a star near the north horizon, every 15 minutes when moving south). Or drop that ask. Everything else verified: Big Dipper pointer stars extended about 5 times, Cassiopeia lazy-side bisector about 5 times, the two opposite and rotating counterclockwise, Little Dipper dim, altitude equals latitude, imaginary line down to the earth, under 70 degrees a good steering mark (usually 1 degree, never more than 2 1/2), above 70 too high (TC 21-3 6-36), Southern Cross warning.",
-    "by": "claude-opus-5-5 xhigh"
+    "verdict": "",
+    "notes": "previous review: (verdict fail, by claude-opus-5-5 xhigh) Fail. The card carries the ask 'how to navigate by the stars at night', and the conflict field records the kit's guidance on exactly that (TC 21-3, note after 6-36: 'Do not use the moon or stars as guides because they travel in a circle through the night'; ATP 3-50.21 7-39: a star near the north horizon serves for about half an hour, and when moving south azimuth checks should be made every 15 minutes), but the card shows none of it. Someone steering on any star other than Polaris can walk far off course. Fix: add an attributed warning: only the North Star stays in place; TC 21-3 says do not use the moon or other stars as guides because they travel in a circle through the night; ATP 3-50.21 says a steering star must be rechecked (about half an hour for a star near the north horizon, every 15 minutes when moving south). Or drop that ask. Everything else verified: Big Dipper pointer stars extended about 5 times, Cassiopeia lazy-side bisector about 5 times, the two opposite and rotating counterclockwise, Little Dipper dim, altitude equals latitude, imaginary line down to the earth, under 70 degrees a good steering mark (usually 1 degree, never more than 2 1/2), above 70 too high (TC 21-3 6-36), Southern Cross warning.",
+    "by": ""
   },
   "status": "draft",
-  "drafted_by": "claude-fable-5-2 (max)",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review",
   "reviewed_by": "",
   "approved_by": ""
 }

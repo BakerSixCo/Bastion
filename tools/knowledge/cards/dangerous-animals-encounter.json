@@ -1,21 +1,20 @@
 {
   "id": "dangerous-animals-encounter",
   "kind": "fact",
-  "title": "Wild and dangerous animals: keep your distance, and first aid for an animal bite",
+  "title": "Wild and dangerous animals: keep your distance",
   "asks": [
     "is it ok to get close to a bear or a moose",
     "can i feed or pet a stray dog out here",
-    "bitten by a wild animal what do i do",
-    "a dog bit me do i need a rabies shot",
+    "how do i keep wild animals away from my shelter",
     "wounded bear went into the brush do i follow it",
     "is it safe to walk up to an animal i just shot",
-    "how do i keep wild animals away from my shelter",
-    "raccoon bit me",
-    "bit by a stray dog wat now",
-    "animal bite, skin is broken, far from a hospital, what do we do, over"
+    "are wild animals more dangerous after a storm or flood",
+    "can i pet a stray dog if it looks frendly",
+    "moose with a calf on the trail ahead, do we go closer or keep back, over"
   ],
   "answer": [
     "Do not approach, feed or handle wild or stray animals.",
+    "Mammals have teeth and will bite in self-defense. Any mother mammal can be extremely aggressive in defense of her young, and any mammal with no route of escape will fight when cornered. The amount of injury a mammal can inflict is in direct proportion to its size.",
     "Avoid handling insects, snakes and other animals, to prevent bites or injury.",
     "Do not place your hands or feet anywhere without first looking to see what is there.",
     "Inspect a shelter site for venomous snakes, ticks, mites, scorpions and stinging ants.",
@@ -23,22 +22,17 @@
     "Bears are always dangerous. A wounded bear is most dangerous and should not be followed into cover.",
     "Make sure a hunted animal is dead before approaching it: it may attack when wounded. A snared animal that is still alive becomes quite aggressive when approached.",
     "After a disaster, be aware of snakes and other pests that may have come with the storm. Disasters and life-threatening situations increase the unpredictable nature of wild animals.",
-    "If an animal bites you: first remove yourself from further harm, and make sure you are no longer at risk of being bitten again.",
-    "Control bleeding: apply direct pressure with a clean cloth or sterile gauze. Elevating the wound, if possible, can also help reduce bleeding.",
-    "Clean the wound: rinse it thoroughly with clean water or saline solution, and gently remove any debris using mild soap and water. The Army field sanitation manual says that after a possible rabies exposure, cleaning the wound with soap and water for at least 15 minutes is the most important first step in treatment.",
-    "The Army first aid manual says to apply an antiseptic solution or ointment that is suitable for use on open wounds; the JTS wound-care guideline says additives such as iodine, bacitracin or alcohol are not associated with reduced infection. Cover the wound with a sterile dressing or clean bandage, and change the dressing regularly.",
-    "Seek medical evaluation for all animal bites, especially those from unfamiliar or wild animals, deep wounds, or wounds that become red, swollen or increasingly painful. If animal saliva gets on broken skin or in your eyes or mouth, immediately wash the area with soap and water and seek immediate medical attention.",
-    "Rabies is the primary concern. The Army first aid manual says that unless the animal is someone's pet and verified to be up to date on rabies, the person bitten must get the rabies post-exposure vaccine. The older HHS ship's medical manual says rabies treatment can usually be withheld after a provoked bite by a domestic dog or cat, if the animal is available for observation and appears healthy over a 10 day period.",
-    "Rabies treatment after an exposure is still effective if given weeks, months or even years later, so older exposures still require evaluation.",
-    "If you are unable to capture or kill the animal, give medical personnel any information that will help identify it."
+    "Not covered: this library has no guidance on what to do when a bear, mountain lion, moose or other large animal approaches, charges or attacks you. The lines above are about keeping your distance; they do not tell you what to do when the animal comes at you.",
+    "If an animal bites you, or its saliva gets on broken skin or in your eyes or mouth: immediately wash the area with soap and water and seek immediate medical attention. The full steps are on this library's card 'Animal bite: first aid and rabies'."
   ],
   "warnings": [
-    "You cannot always tell if an animal has rabies. Once the signs and symptoms of rabies develop, the disease is almost always fatal. Rabies is preventable if an exposed person receives prompt medical care.",
-    "Suturing is rarely appropriate for bite or puncture wounds: it can increase the risk of infection."
+    "You cannot always tell if an animal has rabies. Once the signs and symptoms of rabies develop, the disease is almost always fatal. Rabies is preventable if an exposed person receives prompt medical care."
   ],
   "quotes": [
     { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
       "text": "Do not approach, feed or handle wild or stray animals. If you are bitten or get animal saliva on broken skin or in your eyes or mouth, immediately wash the area with soap and water and seek immediate medical attention. Rabies is preventable if exposed individuals receive prompt medical care after being exposed." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Take caution, mammals have teeth and will bite in self-defense. The bite from a mammal can cause a severe infection. The amount of injury that a mammal can inflict is in direct proportion to its size. Any mother mammal can be extremely aggressive in defense of her young. Any mammal with no route of escape will fight when cornered." },
     { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
       "text": "Remind Soldiers to avoid handling insects, arthropods, snakes, and other animals to prevent bites or injury." },
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
@@ -55,37 +49,17 @@
       "text": "Check snares every few hours so that another animal does not take the catch. A snared animal that is still alive becomes quite aggressive when approached." },
     { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
       "text": "Be aware of potential pest problems, such as mice, rats, insects, or snakes that may have come with the storm. Remember that disasters and life-threatening situations will increase the unpredictable nature of wild animals." },
-    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
-      "text": "First aid for human or animal bites aims to prevent infection and provide initial care for the wound. To perform first aid for a human or animal bite: Remove yourself from further harm. If dealing with an animal bite, ensure that you are no longer at risk of being bitten again. Control bleeding. If the bite wound is bleeding, apply direct pressure with a clean cloth or sterile gauze to stop or minimize the bleeding. Elevating the wound, if possible, can also help reduce bleeding." },
-    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
-      "text": "Clean the wound. Rinse the bite wound thoroughly with clean water or saline solution to flush out any dirt, bacteria, or saliva that may have entered the wound. Gently remove any debris from the wound using mild soap and water. Apply an antiseptic. After cleaning, apply an antiseptic solution or ointment to the wound to help reduce the risk of infection. Follow the instructions on the product label and ensure it is suitable for use on open wounds. Cover the wound. Use a sterile dressing or clean bandage to cover the wound. This will protect it from further contamination and promote healing. Change dressing regularly to maintain cleanliness." },
-    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
-      "text": "Seek medical attention. It is important to seek medical evaluation for all animal bites, especially those from unfamiliar or wild animals, deep wounds, or those that become red, swollen, or increasingly painful. A health care professional can assess the severity of the bite, prescribe antibiotics if necessary, and administer tetanus prophylaxis if required." },
-    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
-      "text": "If someone gets bitten by an animal, whether known, unknown, wild, or domestic, the primary concern is rabies. Unless the animal is someone's pet and verified to be up to date on rabies, the individual who has been bitten must get the rabies post-exposure vaccine. Seemingly minor bites can lead to infection, so it is essential to consult a health care professional to determine the appropriate course of action and receive any necessary medical treatment." },
-    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
-      "text": "If unable to capture or kill the animal, provide medical personnel with any information that will help identify it." },
-    { "doc": "JTS-CPG-Wound_Management_PFC_24_Jul_2017_ID62.pdf",
-      "text": "Additives such as iodine, bacitracin, or alcohol are not associated with reduced infection." },
     { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
-      "text": "Cleaning of the wound or exposure site with soap and water for at least 15 minutes is the most important first step in treatment, followed by administration of postexposure prophylaxis. Postexposure prophylaxis is still effective if given weeks, months, or even years after a potential exposure, so older exposures still require evaluation and, if required, treatment with postexposure prophylaxis." },
-    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
-      "text": "It is important to report and seek evaluation for all animal exposures regardless of how the animal was behaving." },
-    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
-      "text": "You cannot always tell if an animal has rabies. Once the signs and symptoms of rabies develop, the disease is almost always fatal in man." },
-    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
-      "text": "Most bites by domestic dogs and cats are provoked. If the history indicates this, usually rabies treatment can be withheld, if the animal is available for observation, and appears to be healthy over a 10 day period. However, the dog or cat that bites without apparent provocation may be considered rabid." },
-    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
-      "text": "Immediate shipside wound care includes cleansing and irrigation to remove as many microorganisms (including rabies virus) as possible. Soap and water, or saline solution, can be used. Suturing is rarely appropriate for bite or puncture wounds since it can increase the risk of infection." }
+      "text": "You cannot always tell if an animal has rabies. Once the signs and symptoms of rabies develop, the disease is almost always fatal in man." }
   ],
-  "conflict": "(1) Who needs rabies treatment: ATP 4-02.11 (2026) says the person bitten 'must get the rabies post-exposure vaccine' unless the animal is someone's pet verified up to date on rabies, and ATP 4-25.12 says to seek evaluation for all animal exposures 'regardless of how the animal was behaving'; HHS Ship's Medicine Chest (2003) says treatment can usually be withheld after a provoked bite by a domestic dog or cat that stays healthy over a 10 day observation period. The card shows both. (2) The biting animal, not decided on the card: ATP 4-25.12 says capturing or euthanizing an animal for rabies testing 'is best performed by qualified veterinary or force health protection personnel'; the HHS manual says a domestic dog or cat should be captured and observed for 10 days and that any wild mammalian carnivore or bat that bites or scratches a person 'should be humanely killed at once' with the head kept refrigerated for a laboratory; ATP 4-02.11 only says what to do 'If unable to capture or kill the animal'. (3) Wound washing: ATP 4-25.12 says soap and water for at least 15 minutes; ATP 4-02.11 and the HHS manual give no time. (4) Antiseptic on the bite: ATP 4-02.11 (2026) says 'apply an antiseptic solution or ointment to the wound'; the JTS Wound Management guideline (2017) says 'Additives such as iodine, bacitracin, or alcohol are not associated with reduced infection'. The card shows both. No kit source says what to do when a bear, mountain lion or moose approaches or attacks.",
+  "conflict": "No disagreement between sources on this card. Split in revision (2026-11-25), as the reviewer asked: the animal-bite first aid and the rabies questions, with their source disagreements, moved to the new protocol card animal-bite-first-aid; this card keeps only 'keep your distance' and points to it by title ('Animal bite: first aid and rabies'). Dependency for the owner: approve this card only together with animal-bite-first-aid, or remove the pointer sentence; if that card's title changes, change it here too. Gap, now stated on the card: no kit source (including the Idaho regulations, which only say 'Caution: grizzly bears may be encountered') says what to do when a bear, mountain lion, moose or other large animal approaches, charges or attacks (searched every document). Added in revision from ATP 3-50.21 para 4-80: mammals bite in self-defense, a mother defends her young, a cornered mammal fights. Not used: ATP 3-50.21 para 5-1 lists 'Repels mosquitos and dangerous animals' among the uses of fire; left out because it is a bare list item and could be over-trusted against large animals; owner to decide.",
   "review": {
-    "verdict": "fail",
-    "notes": "Fail. Drafter flag verdicts: the rabies conflict is correctly shown attributed (ATP 4-02.11: vaccine unless a pet verified up to date; ATP 4-25.12: evaluate all exposures; HHS 2003: provoked bite by a domestic dog/cat observed healthy 10 days). No-approach guidance: confirmed, no kit source (including the Idaho regulations, which only say 'Caution: grizzly bears may be encountered') says what to do when a bear, mountain lion or moose approaches or charges. Problems: (1) The HHS line drops the sentence right after it in its own quote: 'However, the dog or cat that bites without apparent provocation may be considered rabid.' With stray-dog asks on the card it is needed. Fix: add it. (2) Conflict shown one way only: the last line (ATP 4-02.11 'If unable to capture or kill the animal...') implies the bitten person may try; ATP 4-25.12 says 'Capturing animals for observation or euthanizing animals for rabies testing is best performed by qualified veterinary or force health protection personnel who are already vaccinated against the disease.' Fix: show that line beside it, attributed. (3) Honest gap: add a plain line that the kit has no guidance for an approaching or charging bear, mountain lion or moose, so 'do not approach' is not taken as covering it. (4) Kind: the bite section is ordered first-aid steps inside a 'fact' card; split it (fact: keep away from animals; protocol: animal bite first aid) or make the bite part a protocol. (5) Wording: 'still effective if given weeks, months or even years later' can read as 'no hurry' to someone far from help; keep it after the prompt-care line and phrase it as 'even if time has passed, still get evaluated'. Verified faithful: avoid/feed/handle, look before placing hands or feet, site inspection, no food in the shelter, wounded bear, make sure a shot animal is dead, snared animal, FEMA post-disaster animals, bite steps, 15-minute wash (attributed), antiseptic conflict (ATP 4-02.11 vs JTS) shown, saliva in eyes or mouth, suturing warning. Optional: ATP 4-02.11 mentions tetanus prophylaxis by a health professional.",
-    "by": "claude-opus-5-5 xhigh"
+    "verdict": "",
+    "notes": "previous review: (verdict fail, by claude-opus-5-5 xhigh; given on this card before it was split into this card and animal-bite-first-aid) Fail. Drafter flag verdicts: the rabies conflict is correctly shown attributed (ATP 4-02.11: vaccine unless a pet verified up to date; ATP 4-25.12: evaluate all exposures; HHS 2003: provoked bite by a domestic dog/cat observed healthy 10 days). No-approach guidance: confirmed, no kit source (including the Idaho regulations, which only say 'Caution: grizzly bears may be encountered') says what to do when a bear, mountain lion or moose approaches or charges. Problems: (1) The HHS line drops the sentence right after it in its own quote: 'However, the dog or cat that bites without apparent provocation may be considered rabid.' With stray-dog asks on the card it is needed. Fix: add it. (2) Conflict shown one way only: the last line (ATP 4-02.11 'If unable to capture or kill the animal...') implies the bitten person may try; ATP 4-25.12 says 'Capturing animals for observation or euthanizing animals for rabies testing is best performed by qualified veterinary or force health protection personnel who are already vaccinated against the disease.' Fix: show that line beside it, attributed. (3) Honest gap: add a plain line that the kit has no guidance for an approaching or charging bear, mountain lion or moose, so 'do not approach' is not taken as covering it. (4) Kind: the bite section is ordered first-aid steps inside a 'fact' card; split it (fact: keep away from animals; protocol: animal bite first aid) or make the bite part a protocol. (5) Wording: 'still effective if given weeks, months or even years later' can read as 'no hurry' to someone far from help; keep it after the prompt-care line and phrase it as 'even if time has passed, still get evaluated'. Verified faithful: avoid/feed/handle, look before placing hands or feet, site inspection, no food in the shelter, wounded bear, make sure a shot animal is dead, snared animal, FEMA post-disaster animals, bite steps, 15-minute wash (attributed), antiseptic conflict (ATP 4-02.11 vs JTS) shown, saliva in eyes or mouth, suturing warning. Optional: ATP 4-02.11 mentions tetanus prophylaxis by a health professional.",
+    "by": ""
   },
   "status": "draft",
-  "drafted_by": "claude-fable-5-2 (max)",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review (bite first aid split off into animal-bite-first-aid)",
   "reviewed_by": "",
   "approved_by": ""
 }

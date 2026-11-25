@@ -16,14 +16,15 @@
   "answer": [
     "Do not soil the ground in the camp area with urine or feces. When no latrine is available, dig a cat hole and cover your waste. The Army uses the cat-hole latrine when a unit is on the move.",
     "Pick the spot away from water. The Army survival manual says to locate latrines 200 feet from water and away from shelter. The Army field sanitation manual says at least 100 feet from any ground water source, and downslope from wells, springs, streams and other water sources (30 meters or more).",
-    "Keep it away from food: at least 300 feet downwind and downhill from where food is prepared and served. Another passage of the same manual says as far from food operations as possible (100 meters or more).",
+    "Keep it away from food. The Army field sanitation manual says at least 300 feet downwind and downhill from where food is prepared and served; another passage of the same manual says as far from food operations as possible (100 meters or more).",
     "Do not dig down to the ground water level, or in a place where the contents may drain into a water source.",
     "Dig a hole about one foot deep and one foot in diameter.",
     "After using the cat hole, fill it in completely and pack the dirt down.",
     "Wash or sanitize your hands after using the latrine."
   ],
   "warnings": [
-    "The Army manuals say the use of improvised latrines such as cat holes is generally prohibited in the United States, and that it has become less common due to ecological and statutory restrictions."
+    "For Army units: the Army's field hygiene manual and its field waste bulletin, written for soldiers and units in the field, say that the use of improvised latrines is generally prohibited in the United States; the field hygiene manual adds that improvised latrines such as cat holes and slit trenches have become less common due to ecological and statutory restrictions. These manuals do not state the rules for a civilian.",
+    "The Army field sanitation manual says that local, state and federal laws on waste disposal must always be considered. This library does not hold those laws for any particular land."
   ],
   "quotes": [
     { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
@@ -46,17 +47,25 @@
       "text": "When to wash and or sanitize the hands (at a minimum)— Before eating or snacking. After eating or snacking. Before handling and or preparing food. After using the latrine." },
     { "doc": "Army-TC-4-02.3-Field-Hygiene-and-Sanitation-2015.pdf",
       "text": "Generally, the use of improvised latrines in the U.S. is prohibited. The use of improvised latrines such as cat holes and slit trenches has become less common due to ecological and statutory restrictions." },
+    { "doc": "Army-TC-4-02.3-Field-Hygiene-and-Sanitation-2015.pdf",
+      "text": "Individual Soldier waste management responsibilities include the following:" },
     { "doc": "Army-TB-MED-593-Field-Waste-Management-2006.pdf",
-      "text": "The types of improvised latrines listed below can be used for field use. Generally, the use of improvised latrines in the United States is prohibited." }
+      "text": "The types of improvised latrines listed below can be used for field use. Generally, the use of improvised latrines in the United States is prohibited." },
+    { "doc": "Army-TB-MED-593-Field-Waste-Management-2006.pdf",
+      "text": "It is imperative to use proper human waste disposal to prevent disease during contingency operations and training exercises." },
+    { "doc": "Army-TB-MED-593-Field-Waste-Management-2006.pdf",
+      "text": "Chemical latrines are the preferred means of human waste disposal during field training exercises." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Compliance with local, state, federal, and host-nation laws pertaining to waste disposal techniques must always be considered. In situations where a unit must hastily occupy an area in which no infrastructure exists, construction and placement of improvised latrine facilities (where permitted by law) may be necessary." }
   ],
-  "conflict": "Distance from water differs between Army manuals: ATP 3-50.21 (2018) 'Locate latrines 200 feet from water'; ATP 4-25.12 (2014, change 2 2025) and TB MED 593 (2006) 'at least 100 feet from any unit ground water source'; ATP 4-25.12 also says 'Downslope from wells, springs, streams, and other water sources (30 meters or more)' and 'at least 30 meters down gradient from any ground water source'; TB MED 577 (2010) says 'at least 30 yards (yd) downgradient'. Distance from food: ATP 4-25.12 gives both 'at least 300 feet' and '100 meters or more'. The card shows the figures side by side; the owner must choose.",
+  "conflict": "Distance from water differs between Army manuals: ATP 3-50.21 (2018) 'Locate latrines 200 feet from water'; ATP 4-25.12 (2014, change 2 2025) and TB MED 593 (2006) 'at least 100 feet from any unit ground water source'; ATP 4-25.12 also says 'Downslope from wells, springs, streams, and other water sources (30 meters or more)' and 'at least 30 meters down gradient from any ground water source'; TB MED 577 (2010) says 'at least 30 yards (yd) downgradient'. Distance from food: ATP 4-25.12 gives both 'at least 300 feet' and '100 meters or more'. The card shows the figures side by side, each attributed; the owner must choose. 'Prohibited in the U.S.' (restated in revision): TC 4-02.3 (2015) para 2-27 and TB MED 593 (2006) para 6-2c say 'Generally, the use of improvised latrines in the U.S. is prohibited'; both are written for Army units (TC 4-02.3: individual Soldier waste management in the field; TB MED 593: 'contingency operations and training exercises', chemical latrines 'preferred... during field training exercises'), so the card now gives the line as a rule for Army units and says the manuals do not state the rules for civilians. ATP 4-25.12 para 5-41 says 'Compliance with local, state, federal, and host-nation laws pertaining to waste disposal techniques must always be considered' and speaks of improvised latrines 'where permitted by law'; the kit holds no civilian land-management rules on human waste (searched). The owner may prefer to drop the first warning altogether, as the reviewer allowed.",
   "review": {
-    "verdict": "fail",
-    "notes": "Fail. Drafter flag verdicts: (a) Distance conflict - correctly shown attributed (ATP 3-50.21 200 ft; ATP 4-25.12 and TB MED 593 at least 100 ft and 30 m down-gradient; TB MED 577 30 yd recorded in conflict); keep side by side. Line 3's first sentence should also name its manual ('The Army field sanitation manual says at least 300 feet downwind and downhill from food; another passage of it says 100 meters or more'). (b) 'Generally prohibited in the U.S.' - military context misapplied to a civilian. TC 4-02.3 2-27 and TB MED 593 6-2 speak about Army units on field training exercises (same sections: DOD environmental compliance, chemical latrines 'preferred... during field training exercises', 'Commanders should consult with... garrison environmental authorities'). As written, the warning tells a civilian that digging a cat hole is generally illegal in the U.S., which the sources do not say, and it would discourage safe waste disposal in an emergency. Fix: remove it, or keep its context: 'For Army units training in the U.S., improvised latrines such as cat holes are generally not allowed because of ecological and statutory restrictions.' (TB MED 593 6-1 adds that disposal must follow 'local, state, Federal, and host nation regulatory requirements'.) Other lines verified: do not soil the camp area, cat hole when on the move, not to ground-water level or where it drains to water, 1 ft deep by 1 ft across, fill and pack, wash hands after. Optional: TB MED 593 'at least 100 feet from billeting' supports 'away from shelter'.",
-    "by": "claude-opus-5-5 xhigh"
+    "verdict": "",
+    "notes": "previous review: (verdict fail, by claude-opus-5-5 xhigh) Fail. Drafter flag verdicts: (a) Distance conflict - correctly shown attributed (ATP 3-50.21 200 ft; ATP 4-25.12 and TB MED 593 at least 100 ft and 30 m down-gradient; TB MED 577 30 yd recorded in conflict); keep side by side. Line 3's first sentence should also name its manual ('The Army field sanitation manual says at least 300 feet downwind and downhill from food; another passage of it says 100 meters or more'). (b) 'Generally prohibited in the U.S.' - military context misapplied to a civilian. TC 4-02.3 2-27 and TB MED 593 6-2 speak about Army units on field training exercises (same sections: DOD environmental compliance, chemical latrines 'preferred... during field training exercises', 'Commanders should consult with... garrison environmental authorities'). As written, the warning tells a civilian that digging a cat hole is generally illegal in the U.S., which the sources do not say, and it would discourage safe waste disposal in an emergency. Fix: remove it, or keep its context: 'For Army units training in the U.S., improvised latrines such as cat holes are generally not allowed because of ecological and statutory restrictions.' (TB MED 593 6-1 adds that disposal must follow 'local, state, Federal, and host nation regulatory requirements'.) Other lines verified: do not soil the camp area, cat hole when on the move, not to ground-water level or where it drains to water, 1 ft deep by 1 ft across, fill and pack, wash hands after. Optional: TB MED 593 'at least 100 feet from billeting' supports 'away from shelter'.",
+    "by": ""
   },
   "status": "draft",
-  "drafted_by": "claude-fable-5-2 (max)",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review",
   "reviewed_by": "",
   "approved_by": ""
 }
