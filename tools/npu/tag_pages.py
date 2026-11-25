@@ -9,6 +9,7 @@ phone and is never treated as true: every line that ships is still quote-checked
 Resumable: pages already in the output are skipped.
 
   tools\\.venv-npu\\Scripts\\python -I tools\\npu\\tag_pages.py [--device NPU] [--model DIR] [--limit N]
+  tools\\.venv-npu\\Scripts\\python -I tools\\npu\\tag_pages.py --refilter   # re-check saved answers
 """
 import argparse
 import json
@@ -78,12 +79,30 @@ def keywords(topic_id):
 
 def accept(topic_id, raw_lower, page_lower):
     """Code check on the model's pick: the id must be in its answer (a longer variant like
-    radiation-sickness-symptoms counts), and one of the topic's own key words must be on the page.
-    Stops the model padding with topics copied from the top of the list."""
+    radiation-sickness-symptoms counts), and every one of the topic's own key words must be on the
+    page. Stops the model padding with topics copied from the list: with "any key word",
+    altitude-illness-treatment passed on 118 pages that only said "illness"."""
     if topic_id not in raw_lower:
         return False
     kws = keywords(topic_id)
-    return bool(kws) and any(k[:6] in page_lower for k in kws)
+    return bool(kws) and all(k[:6] in page_lower for k in kws)
+
+
+def pick(ids, raw, page_text):
+    """Accepted topics in the order the model gave them, at most 3."""
+    raw_lower, page_lower = raw.lower(), page_text.lower()
+    found = [k for k in ids if accept(k, raw_lower, page_lower)]
+    return sorted(found, key=lambda k: raw_lower.find(k))[:3]
+
+
+def refilter(ids):
+    """Re-applies the code check to the saved model answers (no model run)."""
+    text = {(d, p): t for d, p, t in pages()}
+    rows = [json.loads(l) for l in OUT.read_text(encoding="utf-8").splitlines()]
+    for r in rows:
+        r["topics"] = pick(ids, r["raw"], text.get((r["doc"], r["page"]), ""))
+    OUT.write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+    print(f"refiltered {len(rows)} pages")
 
 
 def prompt(topic_list, text):
@@ -101,12 +120,16 @@ def main():
     ap.add_argument("--device", default="NPU")
     ap.add_argument("--model", default=str(ROOT / "tools" / "npu" / "models" / "Qwen3-8B-int4-cw-ov"))
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--refilter", action="store_true", help="re-check saved answers, no model run")
     a = ap.parse_args()
-
-    import openvino_genai as ov_genai
 
     t = topics()
     ids = set(t)
+    if a.refilter:
+        return refilter(ids)
+
+    import openvino_genai as ov_genai
+
     topic_list = "\n".join(f"{k}: {v}" for k, v in t.items())
     OUT.parent.mkdir(parents=True, exist_ok=True)
     done = set()
@@ -131,8 +154,7 @@ def main():
                 continue
             raw = str(pipe.generate(prompt(topic_list, text), gen))
             raw = re.sub(r"<think>.*?</think>", "", raw, flags=re.S).strip()
-            low = text.lower()
-            found = [k for k in ids if accept(k, raw.lower(), low)][:3]
+            found = pick(ids, raw, text)
             out.write(json.dumps({"doc": doc, "page": page, "topics": found, "raw": raw[:200]}) + "\n")
             out.flush()
             n += 1
