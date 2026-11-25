@@ -12,6 +12,8 @@ off-grid terminal.** The phone provides local AI, an offline reference
 library with grounded search and open-able sources, offline mapping alongside
 ATAK/TAK, and off-grid messaging via Meshtastic with external radio hardware.
 
+**Base station (owner 2026-11-25):** a laptop/PC BASTION with a larger model and its own Meshtastic radio serves radio users without BASTION (`docs/build-sheet.md`, Owner decisions 2026-11-25).
+
 **Out of scope:** home automation (no Home Assistant, no home server, no
 home-control agent), cloud AI fallback in field mode, custom ROMs/rooting
 (discussed, not selected), the discarded DIY 12V power bus.

@@ -153,3 +153,17 @@ their official sources rather than redistributing them. To confirm before
 publishing: libkiwix's exact licence, ATAK-CIV's public-release terms, a
 notices page listing bundled libraries, and trademark-safe wording ("works
 with Meshtastic and ATAK").
+
+## Owner decisions, 2026-11-25
+
+- **BASTION base station** (new milestone): a laptop/PC running BASTION's library and checked-answer
+  pipeline with a larger local model (GPU), connected directly to its own Meshtastic radio (USB,
+  Bluetooth or network via Meshtastic's official libraries — allowed here because the radio is
+  dedicated, unlike the phone rule). It answers radio users who do not have BASTION, under the same
+  rules: `?`/`@` symbols only, approved radios, rate limits, never an unchecked answer, cards only as
+  approved short radio versions. Builds on `tools/model-eval` (the PC mirror of the pipeline).
+  Order: ChatGPT review fixes → field-guide design (topic tree, figures, AI picks topics) → field
+  guide → base station.
+- Radio answers are for people without BASTION; cards go over radio only as approved short versions.
+- Organic Maps dropped; BASTION's map does driving routes (`docs/navigation-design.md`).
+- ChatGPT may be used as a read-only reviewer (`docs/chatgpt-review-tasks.md`); building side by side later.
