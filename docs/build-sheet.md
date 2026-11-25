@@ -156,14 +156,9 @@ with Meshtastic and ATAK").
 
 ## Owner decisions, 2026-11-25
 
-- **BASTION base station** (new milestone): a laptop/PC running BASTION's library and checked-answer
-  pipeline with a larger local model (GPU), connected directly to its own Meshtastic radio (USB,
-  Bluetooth or network via Meshtastic's official libraries — allowed here because the radio is
-  dedicated, unlike the phone rule). It answers radio users who do not have BASTION, under the same
-  rules: `?`/`@` symbols only, approved radios, rate limits, never an unchecked answer, cards only as
-  approved short radio versions. Builds on `tools/model-eval` (the PC mirror of the pipeline).
-  Order: ChatGPT review fixes → field-guide design (topic tree, figures, AI picks topics) → field
-  guide → base station.
+- **No base station** (owner, same day): a laptop base station with a larger model was proposed and rejected —
+  the AI stays on the phone. Radio users without BASTION are served by a BASTION phone (auto-answer).
+  Order: ChatGPT review fixes → field-guide design (topic tree, figures, AI picks topics) → field guide.
 - Radio answers are for people without BASTION; cards go over radio only as approved short versions.
 - Organic Maps dropped; BASTION's map does driving routes (`docs/navigation-design.md`).
 - ChatGPT may be used as a read-only reviewer (`docs/chatgpt-review-tasks.md`); building side by side later.
