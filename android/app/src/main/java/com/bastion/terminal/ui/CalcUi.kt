@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.bastion.terminal.calc.Angles
+import com.bastion.terminal.calc.Ballistics
 import com.bastion.terminal.calc.WaterBleach
 
 /** Bleach dose for drinking water, computed by `calc/WaterBleach` from the EPA and CDC tables. */
@@ -172,6 +173,96 @@ fun AngleCalculator(modifier: Modifier = Modifier) {
                 lines.filterNot { it.first().isDigit() || it.first() == '-' }.forEach {
                     Text("• $it", style = MaterialTheme.typography.bodySmall)
                 }
+            }
+        }
+    }
+}
+
+/** Windage and elevation from a rifle profile and today's air, computed by `calc/Ballistics` (never by the AI). */
+@Composable
+fun BallisticCalculator(modifier: Modifier = Modifier) {
+    var drag by rememberSaveable { mutableStateOf(Ballistics.Drag.G7) }
+    var bc by rememberSaveable { mutableStateOf("0.243") }
+    var mv by rememberSaveable { mutableStateOf("2750") }
+    var grains by rememberSaveable { mutableStateOf("168") }
+    var sight by rememberSaveable { mutableStateOf("1.5") }
+    var zero by rememberSaveable { mutableStateOf("100") }
+    var twist by rememberSaveable { mutableStateOf("") }
+    var diam by rememberSaveable { mutableStateOf("") }
+    var len by rememberSaveable { mutableStateOf("") }
+    var alt by rememberSaveable { mutableStateOf("4000") }
+    var press by rememberSaveable { mutableStateOf("") }
+    var temp by rememberSaveable { mutableStateOf("40") }
+    var hum by rememberSaveable { mutableStateOf("30") }
+    var windMph by rememberSaveable { mutableStateOf("10") }
+    var clock by rememberSaveable { mutableStateOf("9") }
+    var range by rememberSaveable { mutableStateOf("400") }
+    var angle by rememberSaveable { mutableStateOf("0") }
+    var unit by rememberSaveable { mutableStateOf(Angles.AngleUnit.MOA) }
+    var click by rememberSaveable { mutableStateOf("0.25") }
+
+    val rifle = run {
+        val b = num(bc); val v = num(mv); val g = num(grains); val s = num(sight); val z = num(zero)
+        if (b == null || v == null || g == null || s == null || z == null) null
+        else Ballistics.Rifle(drag, b, v * 0.3048, g, s * 0.0254, z * 0.9144,
+            num(diam) ?: 0.0, num(len) ?: 0.0, num(twist) ?: 0.0)
+    }
+    val air = num(temp)?.let { tf ->
+        val tc = (tf - 32) * 5 / 9; val h = (num(hum) ?: 0.0) / 100
+        num(press)?.let { Ballistics.Air(it * 3386.389, tc, h) } ?: num(alt)?.let { Ballistics.Air.atAltitude(it * 0.3048, tc, h) }
+    }
+    val row = if (rifle != null && air != null) {
+        val r = num(range); val w = num(windMph) ?: 0.0; val c = num(clock) ?: 12.0; val a = num(angle) ?: 0.0
+        if (r == null || a !in -60.0..60.0) null
+        else Ballistics.solve(rifle, air, Ballistics.Wind(w * 0.44704, c), listOf(r * 0.9144), Math.toRadians(a))?.firstOrNull()
+    } else null
+
+    Card(modifier.fillMaxWidth()) {
+        Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text("Ballistics: windage and elevation", style = MaterialTheme.typography.titleMedium)
+            Text(
+                "Computed by a point-mass solver (G1/G7), not by the AI. Only as good as your inputs: true it with real " +
+                    "drops at known distances. Does not know gusts, wind that changes along the path, or Coriolis.",
+                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text("Rifle and load", style = MaterialTheme.typography.labelLarge)
+            Chips(Ballistics.Drag.entries, drag, { it.name }) { drag = it }
+            NumField(bc, "Ballistic coefficient (${drag.name}, from the box)") { bc = it }
+            NumField(mv, "Muzzle velocity (ft/s)") { mv = it }
+            NumField(grains, "Bullet weight (grains)") { grains = it }
+            NumField(sight, "Scope height over bore (in)") { sight = it }
+            NumField(zero, "Zero distance (yd)") { zero = it }
+            NumField(twist, "Twist (in per turn, optional, for spin drift)") { twist = it }
+            if (twist.isNotBlank()) {
+                NumField(diam, "Bullet diameter (in)") { diam = it }
+                NumField(len, "Bullet length (in)") { len = it }
+            }
+            Text("Air now", style = MaterialTheme.typography.labelLarge)
+            NumField(press, "Station pressure (inHg, optional: from the phone or a Kestrel)") { press = it }
+            if (press.isBlank()) NumField(alt, "Altitude (ft), used when pressure is blank") { alt = it }
+            NumField(temp, "Temperature (°F)") { temp = it }
+            NumField(hum, "Humidity (%)") { hum = it }
+            Text("Shot", style = MaterialTheme.typography.labelLarge)
+            NumField(range, "Distance (yd)") { range = it }
+            NumField(windMph, "Wind (mph)") { windMph = it }
+            NumField(clock, "Wind from (clock: 12 = in your face, 3 = from right, 9 = from left)") { clock = it }
+            NumField(angle, "Uphill (+) or downhill (-) angle (degrees)") { angle = it }
+            Chips(listOf(Angles.AngleUnit.MOA, Angles.AngleUnit.MRAD), unit, { it.label }) { unit = it; click = it.clickDefault.toString() }
+            NumField(click, "Scope click value (${unit.label})") { click = it }
+            if (row == null) Text("Fill in every field with a sensible number.", color = MaterialTheme.colorScheme.error)
+            else {
+                val k = 0.001 / unit.radians
+                val e = row.elevationMrad * k; val w = row.windageMrad * k
+                val cv = num(click)
+                fun clicks(x: Double) = cv?.let { Angles.clicks(kotlin.math.abs(x), it) }?.let { " ($it clicks)" } ?: ""
+                Text("Elevation: ${if (e >= 0) "UP" else "DOWN"} ${fmt(kotlin.math.abs(e), 1)} ${unit.label}${clicks(e)}",
+                    style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text("Windage: ${if (w >= 0) "RIGHT" else "LEFT"} ${fmt(kotlin.math.abs(w), 1)} ${unit.label}${clicks(w)}",
+                    style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+                Text("Drop ${fmt(row.path / 0.0254, 1)} in, drift ${fmt(row.windage / 0.0254, 1)} in, " +
+                    "${fmt(row.velocity / 0.3048, 0)} ft/s, ${fmt(row.energyJ / 1.3558179, 0)} ft-lb, ${fmt(row.time, 2)} s",
+                    style = MaterialTheme.typography.bodyMedium)
+                Text("• Zero assumed made in standard air (59 °F, sea level).", style = MaterialTheme.typography.bodySmall)
             }
         }
     }

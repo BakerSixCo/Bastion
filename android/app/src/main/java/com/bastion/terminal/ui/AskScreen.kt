@@ -56,6 +56,7 @@ fun AskScreen(
     val s = remember { AskSession.get(ctx) }
     var showBleach by rememberSaveable { mutableStateOf(false) }
     var showAngles by rememberSaveable { mutableStateOf(false) }
+    var showBallistics by rememberSaveable { mutableStateOf(false) }
 
     LazyColumn(
         modifier.fillMaxSize().padding(16.dp),
@@ -98,6 +99,12 @@ fun AskScreen(
             }
         }
         if (showAngles) item { AngleCalculator() }
+        item {
+            OutlinedButton(onClick = { showBallistics = !showBallistics }) {
+                Text(if (showBallistics) "Hide ballistics" else "Ballistics: windage and elevation")
+            }
+        }
+        if (showBallistics) item { BallisticCalculator() }
         if (s.searching) item { LinearProgressIndicator(Modifier.fillMaxWidth()) }
 
         if (s.searched && !s.searching && s.passages.isEmpty()) {
