@@ -104,6 +104,7 @@ fun SecurityCard() {
                 }
                 if (hasApp) TextButton(onClick = { message = null; dialog = "remove" }) { Text("Remove") }
             }
+            if (hasApp && hasWipe) TextButton(onClick = { message = null; dialog = "unwipe" }) { Text("Remove wipe PIN") }
             message?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary) }
         }
     }
@@ -115,7 +116,7 @@ fun SecurityCard() {
         var err by remember(kind) { mutableStateOf<String?>(null) }
         AlertDialog(
             onDismissRequest = { dialog = null },
-            title = { Text(when (kind) { "app" -> "App PIN"; "wipe" -> "Wipe PIN"; else -> "Remove PINs" }) },
+            title = { Text(when (kind) { "app" -> "App PIN"; "wipe" -> "Wipe PIN"; "unwipe" -> "Remove wipe PIN"; else -> "Remove PINs" }) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
                     if (kind == "wipe") Text(
@@ -123,8 +124,12 @@ fun SecurityCard() {
                             "undone. It must be different from your app PIN — pick one you won't type by accident.",
                         style = MaterialTheme.typography.bodySmall,
                     )
+                    if (kind == "unwipe") Text(
+                        "Your app PIN stays. Afterwards no PIN erases BASTION's data.",
+                        style = MaterialTheme.typography.bodySmall,
+                    )
                     if (hasApp) PinField(current, { current = it; err = null }, "Current app PIN")
-                    if (kind != "remove") {
+                    if (kind != "remove" && kind != "unwipe") {
                         PinField(a, { a = it; err = null }, "New PIN (4–12 digits)")
                         PinField(b, { b = it; err = null }, "Repeat")
                     }
@@ -137,6 +142,7 @@ fun SecurityCard() {
                     if (hasApp && !AppLock.checkAppPin(ctx, current)) { err = "Current PIN is wrong."; return@TextButton }
                     when (kind) {
                         "remove" -> { AppLock.clearPins(ctx); message = "PINs removed." }
+                        "unwipe" -> { AppLock.clearWipePin(ctx); message = "Wipe PIN removed. Your app PIN is unchanged." }
                         else -> {
                             if (!AppLock.validPin(a)) { err = "Use 4 to 12 digits."; return@TextButton }
                             if (a != b) { err = "The two entries don't match."; return@TextButton }

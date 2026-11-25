@@ -193,11 +193,6 @@ class LibraryStore private constructor(
         )
     }
 
-    suspend fun importSample(): ImportResult = withContext(Dispatchers.IO) {
-        val bytes = app.assets.open("sample_field_notes.md").use { it.readBytes() }
-        indexBytes(bytes, "SAMPLE - Bastion field notes.md", "Bundled sample document (demo data, clearly labeled)")
-    }
-
     /** Imports raw bytes through the same checks/indexing as the picker (tests and evals). */
     internal suspend fun importBytes(bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null): ImportResult =
         withContext(Dispatchers.IO) { indexBytes(bytes, name, provenanceNote, packId) }

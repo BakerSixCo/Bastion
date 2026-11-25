@@ -65,7 +65,7 @@ class ZimRetrievalEvalTest {
 
         val testAssets = InstrumentationRegistry.getInstrumentation().context.assets
         val store = LibraryStore.isolated(ctx, "zim-eval")
-        store.importSample()
+        store.importBytes(testAssets.open("sample_field_notes.md").use { it.readBytes() }, "SAMPLE - Bastion field notes.md", "Bundled sample document (demo data, clearly labeled)")
         store.importBytes(testAssets.open("qa/field-manual.md").use { it.readBytes() }, "field-manual.md", "eval fixture")
         for (i in 1..3) {
             store.importBytes(testAssets.open("qa/distractor-$i.md").use { it.readBytes() }, "distractor-$i.md", "eval fixture")

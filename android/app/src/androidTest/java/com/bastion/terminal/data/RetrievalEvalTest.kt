@@ -48,7 +48,7 @@ class RetrievalEvalTest {
         val ctx = InstrumentationRegistry.getInstrumentation().targetContext
         val testAssets = InstrumentationRegistry.getInstrumentation().context.assets
         val store = LibraryStore.isolated(ctx, "retrieval-eval")
-        store.importSample()
+        store.importBytes(testAssets.open("sample_field_notes.md").use { it.readBytes() }, "SAMPLE - Bastion field notes.md", "Bundled sample document (demo data, clearly labeled)")
         store.importBytes(testAssets.open("qa/field-manual.md").use { it.readBytes() }, "field-manual.md", "eval fixture")
         store.importBytes(testAssets.open("qa/injection-test.txt").use { it.readBytes() }, "injection-test.txt", "eval fixture")
         for (i in 1..6) {

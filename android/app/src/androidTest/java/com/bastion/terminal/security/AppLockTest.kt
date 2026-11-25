@@ -44,6 +44,12 @@ class AppLockTest {
             repeat(5) { assertEquals(AppLock.Result.WRONG, AppLock.submit(ctx, "0000", now = 1_000L)) }
             assertEquals(AppLock.Result.LOCKED_OUT, AppLock.submit(ctx, "4821", now = 2_000L))
             assertEquals(AppLock.Result.OPEN, AppLock.submit(ctx, "4821", now = 1_000L + 31_000L))
+
+            // Removing the wipe PIN keeps the app PIN; the old wipe PIN is then just a wrong PIN.
+            AppLock.clearWipePin(ctx)
+            assertFalse(AppLock.hasWipePin(ctx))
+            assertTrue(AppLock.checkAppPin(ctx, "4821"))
+            assertEquals(AppLock.Result.WRONG, AppLock.submit(ctx, "9900", now = 100_000_000L))
         } finally {
             prefs.edit().clear().commit()
             prefs.edit().apply { saved.forEach { (k, v) -> if (v is String) putString(k, v) } }.commit()

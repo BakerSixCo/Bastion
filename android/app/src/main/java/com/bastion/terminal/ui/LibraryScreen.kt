@@ -197,16 +197,6 @@ fun LibraryScreen(modifier: Modifier = Modifier, onOpen: (Long, String) -> Unit)
                 onEdit = { d -> scope.launch { editing = Editing(d.id, null, d.title, store.docText(d.id).orEmpty()) } },
                 actions = {
                     OutlinedButton(onClick = { editing = Editing(-1, null, "Note", "") }) { Text("Write note") }
-                    TextButton(
-                        onClick = {
-                            scope.launch {
-                                message = when (val r = store.importSample()) {
-                                    is ImportResult.Ok -> "Added the labeled sample document."
-                                    is ImportResult.Rejected -> r.reason
-                                }
-                            }
-                        },
-                    ) { Text("Add sample (demo)") }
                 },
             )
         }
