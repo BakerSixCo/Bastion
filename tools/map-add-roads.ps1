@@ -3,15 +3,20 @@ Adds (or refreshes) the driving-road network in an existing map pack without dow
 
   .\map-add-roads.ps1 -Pack maps\state-id.bmap            # then copy the pack to the phone again
   .\map-add-roads.ps1 -Pack maps\state-id.bmap -Push
+  .\map-add-roads.ps1 -Pack maps\state-id.bmap -Pbf osm\dl\idaho-latest.osm.pbf   # fast: from a downloaded extract
 
-Roads come from OpenStreetMap (Overpass, one request per grid cell, kept in <pack>.osm\streets so a
-rerun only asks for missing cells) and are cut into per-cell files by RoadGraph.java (needs Java 17+).
+Roads come from OpenStreetMap. With -Pbf they are cut out of extract files already downloaded (for
+example Geofabrik state extracts, ODbL) by Osmosis (tools\osm\osmosis-*). Without it they come from
+Overpass, one request per grid cell, kept in <pack>.osm\streets so a rerun only asks for missing cells.
+Either way RoadGraph.java (Java 17+) cuts them into per-cell files.
 The pack is updated in place; the old road files in it are replaced.
 #>
 param(
     [Parameter(Mandatory = $true)] [string] $Pack,
     [switch] $Push,
-    [switch] $Sd
+    [switch] $Sd,
+    # One or more .osm.pbf extracts covering the pack (e.g. the state and its neighbours). Skips Overpass.
+    [string[]] $Pbf
 )
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression, System.IO.Compression.FileSystem
@@ -53,13 +58,36 @@ function Overpass([string]$q, [string]$dest) {
     return $false
 }
 
-# --- download, one grid cell at a time ---
+# --- get the roads: from extracts (-Pbf), or one grid cell at a time from Overpass ---
 $x0 = TileX $West $GridZoom; $x1 = TileX $East $GridZoom; $y0 = TileY $North $GridZoom; $y1 = TileY $South $GridZoom
+$java = (Get-Command java -ErrorAction SilentlyContinue).Source
+if (-not $java) { $jdk = Get-ChildItem 'C:\Program Files\Eclipse Adoptium' -Directory -Filter 'jdk-*' | Sort-Object Name -Descending | Select-Object -First 1; $java = Join-Path $jdk.FullName 'bin\java.exe' }
+$failed = 0; $start = Get-Date
+if ($Pbf) {
+    $rawDir = "$base.osm\streets-pbf"
+    if (Test-Path $rawDir) { Remove-Item -Recurse -Force $rawDir }
+    New-Item -ItemType Directory -Force $rawDir | Out-Null
+    $osmosis = Get-ChildItem (Join-Path $PSScriptRoot 'osm') -Directory -Filter 'osmosis-*' | Sort-Object Name -Descending | Select-Object -First 1
+    if (-not $osmosis) { throw 'Osmosis not found in tools\osm (unzip osmosis-<version>.zip there).' }
+    $env:JAVA_HOME = Split-Path (Split-Path $java)
+    $env:JAVACMD_OPTIONS = '-Xmx8g'
+    foreach ($p in $Pbf) {
+        $src = (Resolve-Path $p).Path
+        $out = Join-Path $rawDir (([IO.Path]::GetFileName($src) -replace '\.osm\.pbf$', '') + '.xml')
+        Write-Host "  Cutting roads and turn rules out of $src ..."
+        # Roads with the nodes they use, plus every turn-restriction relation; RoadGraph.java filters further.
+        & (Join-Path $osmosis.FullName 'bin\osmosis.bat') -q `
+            --read-pbf file="$src" --tf accept-ways highway=* --tf reject-relations --used-node outPipe.0=W `
+            --read-pbf file="$src" --tf accept-relations type=restriction --tf reject-ways --tf reject-nodes outPipe.0=R `
+            --merge inPipe.0=W inPipe.1=R --write-xml file="$out"
+        if ($LASTEXITCODE -ne 0) { throw "Osmosis failed on $src" }
+    }
+    Write-Host ("  Extracts read in {0:N1} min" -f ((Get-Date) - $start).TotalMinutes)
+} else {
 $rawDir = "$base.osm\streets"
-$cells = ($x1 - $x0 + 1) * ($y1 - $y0 + 1); $done = 0; $failed = 0
+$cells = ($x1 - $x0 + 1) * ($y1 - $y0 + 1); $done = 0
 $inv = [Globalization.CultureInfo]::InvariantCulture
 $body = 'way["highway"~"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|service|track|road|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link)$"]["service"!~"^(parking_aisle|drive-through|emergency_access)$"]["area"!="yes"];out body geom qt;rel(bw)["type"="restriction"];out body qt;'
-$start = Get-Date
 for ($cx = $x0; $cx -le $x1; $cx++) { for ($cy = $y0; $cy -le $y1; $cy++) {
     $done++
     $w = [math]::Max($West, (TileLon $cx $GridZoom)); $e = [math]::Min($East, (TileLon ($cx + 1) $GridZoom))
@@ -69,10 +97,9 @@ for ($cx = $x0; $cx -le $x1; $cx++) { for ($cy = $y0; $cy -le $y1; $cy++) {
     Write-Host ("  Roads: cell {0} of {1} ({2:N0} min so far)" -f $done, $cells, ((Get-Date) - $start).TotalMinutes)
 } }
 if ($failed) { Write-Warning "$failed of $cells cells could not be downloaded; run the same command again to fetch them. Building with what is here." }
+}
 
 # --- cut at junctions ---
-$java = (Get-Command java -ErrorAction SilentlyContinue).Source
-if (-not $java) { $jdk = Get-ChildItem 'C:\Program Files\Eclipse Adoptium' -Directory -Filter 'jdk-*' | Sort-Object Name -Descending | Select-Object -First 1; $java = Join-Path $jdk.FullName 'bin\java.exe' }
 $graphDir = "$base.roads"
 if (Test-Path $graphDir) { Remove-Item -Recurse -Force $graphDir }
 $report = & $java -Xmx8g (Join-Path $PSScriptRoot 'RoadGraph.java') $rawDir $graphDir $GridZoom $x0 $y0 $x1 $y1

@@ -280,13 +280,21 @@ public class RoadGraph {
                 if (ev == XMLStreamConstants.START_ELEMENT) {
                     switch (r.getLocalName()) {
                         case "way" -> { id = Long.parseLong(r.getAttributeValue(null, "id")); nds = new ArrayList<>(); tags = new HashMap<>(); }
+                        // Standard OSM XML (from Osmosis / a Geofabrik extract) lists nodes with their
+                        // positions first and ways refer to them by id; Overpass "out geom" puts the
+                        // position on each nd instead. Both are read.
+                        case "node" -> {
+                            String la = r.getAttributeValue(null, "lat"), lo = r.getAttributeValue(null, "lon");
+                            if (la != null && lo != null) coord.putIfAbsent(Long.parseLong(r.getAttributeValue(null, "id")),
+                                new int[]{(int) Math.round(Double.parseDouble(la) * 1e6), (int) Math.round(Double.parseDouble(lo) * 1e6)});
+                        }
                         case "nd" -> {
                             if (nds == null) break;
                             long ref = Long.parseLong(r.getAttributeValue(null, "ref"));
                             String la = r.getAttributeValue(null, "lat"), lo = r.getAttributeValue(null, "lon");
-                            if (la == null || lo == null) break;
-                            nds.add(ref);
-                            coord.putIfAbsent(ref, new int[]{(int) Math.round(Double.parseDouble(la) * 1e6), (int) Math.round(Double.parseDouble(lo) * 1e6)});
+                            if (la != null && lo != null)
+                                coord.putIfAbsent(ref, new int[]{(int) Math.round(Double.parseDouble(la) * 1e6), (int) Math.round(Double.parseDouble(lo) * 1e6)});
+                            if (coord.containsKey(ref)) nds.add(ref);
                         }
                         case "relation" -> { rel = new long[]{-1, -1, -1, 0}; relViaWays = new ArrayList<>(); tags = new HashMap<>(); }
                         case "member" -> {
