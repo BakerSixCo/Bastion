@@ -8,6 +8,10 @@ set -e
 cd "$(dirname "$0")"
 TAG=$1; RAW=$2; VAR=$3; PLANS=${4:-plans/plan-e2b-v2.json}
 BIN=${LLAMA_BIN:-../kit/pc-eval/llama-vulkan}; MODEL=../kit/pc-eval/models/${MODEL_FILE:-gemma-4-E2B-it-Q4_0.gguf}
+# Guard: exports made before the source-tier filter (2026-11-24) carry forum passages; refuse them.
+for f in "$RAW" "$VAR"; do
+  if grep -q -E "\"label\": \"[^\"]*(Q&A|FM-21-76)" "$f"; then echo "$f has forum or removed-source passages (stale export?): stopping" >&2; exit 1; fi
+done
 perl mkarm.pl "$RAW" "$VAR" keyword "evalset-$TAG-kw.json" > /dev/null
 [ "$RAW" -ef "evalset-$TAG-raw.json" ] || cp "$RAW" "evalset-$TAG-raw.json"
 "$BIN/llama-server.exe" -m "$MODEL" -c 4096 -t 4 --port 8089 --host 127.0.0.1 -ngl 99 --jinja -rea off --no-webui > "results/$TAG.server.log" 2>&1 &

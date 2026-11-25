@@ -9,7 +9,7 @@
 # Prints a summary and a compact list of shown answers (for reading), and writes results/<tag>.jsonl.
 use strict; use warnings; use JSON::PP; binmode STDOUT, ':utf8';
 my ($tag) = @ARGV; my $j = JSON::PP->new->utf8->canonical;
-sub rows { my %h; open my $f, '<:raw', $_[0] or die "$_[0]: $!"; while (<$f>) { my $r = $j->decode($_); $h{$r->{id}} = $r } \%h }
+sub rows { my %h; open my $f, '<:raw', $_[0] or die "$_[0]: $!"; while (my $l = <$f>) { my $r = $j->decode($l); $h{$r->{id}} = $r } \%h }
 my ($kc, $kj, $rc, $rj) = map { rows("results/$tag-$_.jsonl") } qw(kw-checked kw-checked-judge raw-checked raw-checked-judge);
 my $NO = 'The library does not contain an answer to that.';
 my (%n, @shown);

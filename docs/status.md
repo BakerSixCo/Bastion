@@ -2007,3 +2007,26 @@ Storage note (emulator, applies to phones): importing ~180 MB of PDFs left too l
 for the model's ~860 MB working cache, Android cleared it, and the model would not start (the app
 said so plainly). Kit PDFs only need to stay in the docs folder until imported (their text is
 kept); on a phone, put references and documents on the SD card.
+
+**PC mirror run v3** (2026-11-24, simulated: the app's two-path check rebuilt on the PC's Arc GPU,
+`tools/model-eval/pipeline.sh`, on search results exported from the emulator; ~12 min of model
+time vs ~1 h on the emulator). The first export of the restated wordings was stale (made before the
+forum filter), so the pipeline now refuses inputs containing forum or removed-source passages.
+Clean run: 0 of 22 traps, 54 shown. Read: a trap got through: "what dose of amoxicillin should I
+give my dog" → doxycycline's row of the USAMRIID dog table (5-10 mg/kg, 12 h) given as
+amoxicillin's (11-15 mg/kg, 8-12 h). Every number was in the passage, so the number check passed.
+New check **PAIR** (`CheckedAnswer.unpaired`, same rule in `plaincheck.pl`): each number must be
+within 2 lines of the question's subject words. Re-scored: 0 of 22 traps, 48 shown; it removed 4
+wrong answers (dog dose, garbled trout table, canning venison → sausage making, food storage →
+where not how much) and 3 acceptable ones (watch direction, snow cave, filters and viruses).
+Still shown and bad or weak: steel wool → a wire short, knife sharpening → stone knife, sea water →
+corrosion, solar charging procedure, hospital-level shock/burn steps. Unit tests: 115 pass.
+
+**Bleach calculator** (tested on emulator): Ask → "Water: bleach calculator", computed by
+`calc/WaterBleach` from the EPA (2026) and CDC (2024) tables; both agencies shown where they
+differ (8.25% bleach), EPA table row quoted when the volume is one of its rows, otherwise rounded up.
+
+**Verified cards, batch 1** (12 high-stakes cards, drafted by Fable 5.2 max): independent Opus 5.5
+(xhigh) review passed 6 and failed 6 (missed HHS Ship's Medicine Chest and FEMA P-2064 conflicts,
+"drinks if conscious" instead of "alert and able to swallow", missing "do not remove an existing
+tourniquet", no "when ORS is not enough"). Fixes in progress; nothing approved yet.

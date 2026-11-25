@@ -177,7 +177,8 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   exactly `Grounding.NO_ANSWER`. Never stream or send an answer before it is checked.
 - The checks are code, not the model's say-so: subject words of the question must be in the
   cited sources (`CheckedAnswer.check`, with `FILLER` words ignored), every number must be in
-  the sources. The model is only trusted for the narrow "does this answer respond to this
+  the sources, within 2 lines of the question's subject words (PAIR: stops a dose taken from
+  the wrong row of a table). The model is only trusted for the narrow "does this answer respond to this
   question" judgement, which fails closed.
 - Changes to search, prompts or checks are measured on `tools/model-eval/questions-v2.json`
   (on device: `CheckedAnswerEvalTest`) and read, not only word-scored. Add questions for new

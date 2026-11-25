@@ -295,6 +295,8 @@ private fun withheldReason(d: CheckedAnswer.Decision): String = when (d.failed) 
         d.missing.joinToString(", ") { "“$it”" } + ", so they are about something else."
     CheckedAnswer.Failed.NUMBER -> "BASTION withheld the model's answer: it gave a number (" +
         d.missing.joinToString(", ") + ") that is not in the sources."
+    CheckedAnswer.Failed.PAIR -> "BASTION withheld the model's answer: a number it gave (" +
+        d.missing.joinToString(", ") + ") is in the sources, but not next to what you asked about."
     CheckedAnswer.Failed.OFF_TARGET -> "BASTION withheld the model's answer: on checking, it answers a different question than the one asked."
     else -> ""
 }

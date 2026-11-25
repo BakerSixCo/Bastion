@@ -163,6 +163,24 @@ class CheckedAnswerTest {
         assertEquals(Failed.NUMBER, rawInvents.failed)
     }
 
+    // PC run v3 (2026-11-24): doxycycline's row given as amoxicillin's dose; every number was in the passage.
+    @Test fun aNumberFromAnotherRowOfTheTableIsBlocked() {
+        val table = Passage(1, 9, "USAMRIID-Medical-Management-Biological-Casualties-10th-2025",
+            "Selected Antibiotic Dosages for MWDs14\n\nGeneric Name Dose Frequency Route Comments\n\n" +
+                "Amikacin 15-30 24 h IV Can be given IV, IM, or\nmg/kg SC once daily.\n\n" +
+                "Amoxicillin 11-15 8-12h PO None\nmg/kg\n\nChloramphenicol 40-50 8h PO, Recommend higher end\nmg/kg IV, SC, for BWA\n\nIM\n" +
+                "Ciprofloxacin 35 mg/kg 24h IV or Bioavailability variable in\n\nPO dog\n" +
+                "Doxycycline 5-10 12h IV or Treatment for 14-28 days\n\nmg/kg PO recommended in most")
+        val q = "what dose of amoxicillin should I give my dog"
+        val wrong = CheckedAnswer.check(q, "The recommended dose of amoxicillin for dogs is 5-10 mg/kg, given every 12 hours [1].", listOf(table))
+        assertEquals(Failed.PAIR, wrong.failed)
+        assertEquals(Grounding.NO_ANSWER, wrong.shown)
+        // The right row passes when every subject word is near it...
+        assertTrue(CheckedAnswer.check("what is the dose of amoxicillin", "Amoxicillin: 11-15 mg/kg every 8-12 hours by mouth [1].", listOf(table)).isAnswer)
+        // ...but the table says "MWDs", not "dog", so for this question even the right row is withheld (fails safe).
+        assertEquals(Failed.PAIR, CheckedAnswer.check(q, "Amoxicillin for dogs: 11-15 mg/kg every 8-12 hours by mouth [1].", listOf(table)).failed)
+    }
+
     @Test fun stepNumbersAreLayoutNotInventedNumbers() {
         val radio = "1. Apply direct pressure to the wound. 2. If it does not stop, apply a tourniquet above the wound.\n3) Keep pressure on."
         assertTrue(CheckedAnswer.check("how do I stop bleeding from a leg wound", radio, listOf(bleeding)).isAnswer)

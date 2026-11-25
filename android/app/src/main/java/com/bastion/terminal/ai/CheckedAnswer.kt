@@ -18,13 +18,16 @@ package com.bastion.terminal.ai
  *     sources if it cites none). "What channel does the Custer county sheriff use" answered from
  *     NOAA weather-radio passages fails here ("sheriff"), as does a Garmin eTrex reset given for
  *     an inReach. Slang can pass through [restated] — the question in standard words — instead;
- *  3. NUMBER: every number in the answer appears in the sources (no invented doses or times).
+ *  3. NUMBER: every number in the answer appears in the sources (no invented doses or times);
+ *  4. PAIR: and appears there next to what the question is about: within 2 lines of the
+ *     subject words (or in a passage whose label names them). The model gave doxycycline's dog
+ *     dose as amoxicillin's, both rows being in one table passage (PC run v3, 2026-11-24).
  *
  * Pure JVM: the same rules as tools/model-eval/plaincheck.pl.
  */
 object CheckedAnswer {
 
-    enum class Failed { REFUSAL, SUBJECT, NUMBER, OFF_TARGET }
+    enum class Failed { REFUSAL, SUBJECT, NUMBER, PAIR, OFF_TARGET }
 
     /** [shown] is either the model's answer or exactly [Grounding.NO_ANSWER]. */
     data class Decision(val shown: String, val failed: Failed?, val missing: List<String> = emptyList()) {
@@ -67,6 +70,8 @@ object CheckedAnswer {
         val facts = a.replace(Regex("\\[[\\d,\\s]+]"), "").replace(LIST_NUMBER, "")
         val invented = numbers(facts).filterNot { it in have }.distinct()
         if (invented.isNotEmpty()) return no(Failed.NUMBER, invented)
+        val unpaired = unpaired(question, facts, passages, restated)
+        if (unpaired.isNotEmpty()) return no(Failed.PAIR, unpaired)
         return Decision(a, null)
     }
 
@@ -156,6 +161,28 @@ QUESTION: should I give aspirin for a headache | ANSWER: No. Do not give aspirin
     private val LIST_NUMBER = Regex("(?m)(^|(?<=[.!?]\\s))\\s*(step\\s+)?\\d{1,2}[.):]\\s+", RegexOption.IGNORE_CASE)
 
     /** Subject terms of [question] that do not start a word anywhere in [lowerText]. */
+    /**
+     * Numbers in [facts] not found within 2 lines of a line where every subject word of the
+     * question (or of [restated]) is present, counting the passage label as part of every window.
+     */
+    fun unpaired(question: String, facts: String, passages: List<Passage>, restated: String? = null): List<String> {
+        val wanted = numbers(facts).distinct()
+        if (wanted.isEmpty()) return emptyList()
+        val ok = HashSet<String>()
+        for (p in passages) {
+            val lines = Grounding.forModel(p.plainText).split('\n')
+            for (i in lines.indices) {
+                val here = numbers(lines[i])
+                if (here.isEmpty() || ok.containsAll(here)) continue
+                val win = (listOf(p.label) + lines.subList(maxOf(0, i - 2), minOf(lines.size, i + 3))).joinToString("\n").lowercase()
+                val about = missingSubject(question, win).isEmpty() ||
+                    (!restated.isNullOrBlank() && missingSubject(restated, win).isEmpty())
+                if (about) ok += here
+            }
+        }
+        return wanted.filterNot { it in ok }
+    }
+
     fun missingSubject(question: String, lowerText: String): List<String> {
         val all = Grounding.keyTerms(question)
         val subject = all.filterNot { it in FILLER || Grounding.isAspectTerm(it) }.ifEmpty { all.filterNot { it in FILLER } }
