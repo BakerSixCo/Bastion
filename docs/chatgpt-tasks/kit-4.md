@@ -1,12 +1,14 @@
-# Task kit-4: fetch the owner-approved gap-fill documents (branch `chatgpt/kit-4`)
+# Task kit-4: fetch the owner-approved gap-fill documents, batch 1 (branch `chatgpt/kit-4`)
 
-**Queue:** after `kit-3`. **Owner approved the list on 2026-11-26** (Claude recorded the approval, two holds and three conditions under "Owner approval" in
-`docs/library-plan.md`, "Contingency gap audit"; only the items approved there may be downloaded, and the
-conditions apply). **Previous step:** kit-1 tool, kit-3 measurement. **Next step:** Claude reviews, moves the
-files into the kit, then kit-3's eval is re-run with new questions for these topics.
+**Queue:** after `kit-2`. **Scope: batch 1 only**, approved by the owner on 2026-11-26 (Claude recorded the
+approval, two holds and three conditions under "Owner approval" in `docs/library-plan.md`, "Contingency gap
+audit"; only the items approved there may be downloaded, and the conditions apply). Batches 2 and 3 are
+`kit-5`. **Previous step:** kit-1 (the `kit.py` tool). **Next step:** `kit-5`; then Claude reviews, moves the
+files into the kit, and `kit-3` measures the whole new kit once.
 
 ```powershell
 git fetch origin
+# Branch from Claude's branch if kit-1 is merged there; otherwise from your kit-1 branch (say which in the report).
 git switch -c chatgpt/kit-4 origin/claude/hello-e9r4rq
 ```
 
