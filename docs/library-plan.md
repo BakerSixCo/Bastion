@@ -208,3 +208,48 @@ Rules for these, for cards and answers:
 
 Still missing for feeding yourself: gardening and seed saving, goats and animal health, tanning hides,
 beekeeping, drying and fermenting at home, long-term food storage (being checked, see the gap audit).
+
+
+## Contingency gap audit (2026-11-26)
+
+Owner: "fill as many gaps" for any contingency. Candidates checked by a research agent (web pages and
+search only, nothing downloaded); verdicts below. "OK" = U.S. government work or explicitly free to
+share; download only after the owner approves the list, through the kit tool (ChatGPT task kit-4).
+
+| Need | Source (edition) | Verdict |
+|---|---|---|
+| Rescue, triage, team response | FEMA CERT Basic Training Participant Manual (2019) and CERT Hazard Annexes (2019) | OK |
+| Mass-casualty triage | HHS CHEMM SALT and START triage pages (2026) | OK with attribution (check algorithm image credits) |
+| Austere surgery / trauma reference | *Emergency War Surgery*, 5th U.S. revision (Borden Institute, 2018) | OK (government work) |
+| Medicines in a disaster | FDA insulin storage and switching in an emergency; FDA safe drug use after a disaster; CDC managing insulin in an emergency | OK (pages) |
+| Carpentry | TM 3-34.47 / MCRP 3-40D.3 (2022) | OK, public release |
+| Concrete and masonry | TM 3-34.44 with C1 (2021) | OK, public release |
+| Electrical wiring | TM 3-34.46 (2013) | OK, public release |
+| Plumbing, pipe fitting, sewerage | TM 3-34.70 (2012) | OK, public release |
+| Power generation and distribution | ATP 3-34.45 (2018) | OK per mirror; confirm on file |
+| Welding | TC 9-237 (1993, active) | OK, public release |
+| Machine tools | TC 9-524 (1996) | OK, public release |
+| Wood stoves | EPA Burn Wise best practices and tip sheet (archived 2025) | OK; label archived |
+| Generators and fuel | CPSC Pub. 5123 (2021), OSHA FS-3286, FEMA generator fact sheet (2023) | OK |
+| Solar and batteries | DOE Consumer Guide to Residential Renewable Energy (2022); PNNL PV battery storage for outages (2021); Sandia stand-alone PV handbook (1995) | OK, but **content gap**: no current government guide for off-grid lithium systems |
+| Household water | EPA Manual of Individual and Non-Public Water Supply Systems (1991: wells, springs, cisterns, disinfection); EPA Drinking Water from Household Wells (2002); CDC rainwater and clean-water-in-emergency pages; Peace Corps M0009 hand-dug wells | OK |
+| Gardening | USDA HG 202 *Growing Vegetables in the Home Garden* (1985, dated pesticide advice); Peace Corps R0025 *Intensive Vegetable Gardening* (2014) | OK (confirm R0025 front matter) |
+| Seed saving | UF/IFAS EDIS ENH1383 (2024) | OK with attribution (CC BY-NC-ND; no federal manual exists) |
+| Drying and storage | Peace Corps T0020 *Improved Food Drying and Storage* (1984); NCHFP drying and fermenting pages (non-commercial with credit) | OK / OK with attribution |
+| Tanning hides | USDA FB 1334 *Home Tanning of Leather and Small Fur Skins* (1962) | OK; dated chemicals |
+| Beekeeping | USDA AH 335 *Beekeeping in the United States* (1980), FB 2255 bee diseases (1983), FB 2204 equipment (1977) | OK; all predate Varroa mites (1987) |
+| Long-term food storage | FEMA 477 is superseded; FEMA P-2064 (have) + FSIS shelf-stable food | Gap: no current federal multi-year storage guide |
+| Weather | NWS SKYWARN *Weather Spotter's Field Guide* (2011) and *Advanced* (2009); NWS cloud chart | OK (cloud chart: check photo credits) |
+| Boating | USCG *A Boater's Guide to the Federal Requirements* (2023) | OK |
+| Celestial and marine navigation | NGA Pub. 9 Bowditch *American Practical Navigator* (2024) | OK with attribution (some third-party sections) |
+| Units and conversions | NIST SP 811 (2008) and SP 330 (2019 SI) | OK |
+| Money and documents | FEMA *Emergency Financial First Aid Kit* (P-2034, 2019) | Licence unconfirmed (co-authored with Operation HOPE) |
+
+**Not free: needs written permission from the publisher** (owner's call whether to ask):
+Hesperian *Where There Is No Dentist* and *A Book for Midwives* (digital formats need permission);
+WHO *Psychological First Aid* (2011, pre-CC); *Where There Is No Animal Doctor* (Christian Veterinary
+Mission); FAO *Manual for the primary animal health care worker* (1994, all rights reserved).
+
+**Still open, no source checked yet**: dental care (the SOF Medical Handbook has a dental chapter);
+mental health after disasters (SAMHSA disaster materials are likely public domain); goat and cattle
+health (no free manual found); hunter education; childcare and infant feeding in emergencies.
