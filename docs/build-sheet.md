@@ -94,6 +94,16 @@ Milestone 2.
 6. Voice in/out — optional later investigation.
 7. Distribution beyond prototype APK (store/sideload/kit image) — M4.
 8. Custom ROM — not selected; requires a demonstrated need.
+9. **Compatible-device list** (owner, 2026-11-26) — to be published with the kit (M4) and grown
+   from phone passes. Three tiers, each labelled like any result: **Verified** (named phone, tested:
+   model loads and answers, ZIM search, maps and routing, GPS, Meshtastic text share and inbox,
+   ATAK-CIV installs, device-owner setup, SD card), **Expected** (meets the floor, not tested),
+   **Not supported** (with the reason). Hard requirements already set by the code: Android 10+
+   (`minSdk 29`), 64-bit ARM (`arm64-v8a`; no 32-bit build), GPS, Bluetooth LE for the Meshtastic
+   app; storage for the 2.6 GB model plus about 1 GB free to start it (measured on the emulator) plus
+   references and maps (microSD preferred). Judged, to confirm on phones: ≥8 GB RAM (12 GB for
+   Gemma 4 E4B), a mid-range chip, OpenCL GPU optional (CPU fallback). Per-phone measurements to
+   record: model load time, tokens/s, app RAM, battery per hour, routing time on a state pack.
 
 ## Licensing watchlist (for resale ambitions)
 
