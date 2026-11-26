@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "BASTION kit document sources",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "entries"],
+  "properties": {
+    "schemaVersion": { "type": "integer", "const": 1 },
+    "entries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "file", "title", "publisher", "edition", "sha256", "origin",
+        "url", "licence", "tier", "flags"
+      ],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" },
+        "file": {
+          "type": "string",
+          "pattern": "^(?!.*(?:^|/)\\.{1,2}(?:/|$))(?:[^/\\\\:*?\"<>|\\u0000-\\u001f]+/)*[^/\\\\:*?\"<>|\\u0000-\\u001f]+\\.(?:pdf|md|txt)$"
+        },
+        "title": { "type": "string", "minLength": 1 },
+        "publisher": { "type": "string", "minLength": 1 },
+        "edition": { "type": ["string", "null"], "pattern": "^\\d{4}(?:-\\d{2}(?:-\\d{2})?)?$" },
+        "sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+        "origin": { "enum": ["url", "browser-copy", "owner-download", "derived"] },
+        "url": { "type": ["string", "null"], "pattern": "^https://[^\\s]+$" },
+        "licence": { "type": ["string", "null"], "minLength": 1 },
+        "tier": { "enum": ["own", "reference"] },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$" }
+        },
+        "script": { "type": "string", "pattern": "^tools/kit-build/[a-z0-9_-]+\\.py$" },
+        "inputs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "trim": { "$ref": "#/$defs/trim" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "origin": { "const": "url" } } },
+          "then": { "properties": { "url": { "type": "string" } } }
+        },
+        {
+          "if": { "properties": { "origin": { "const": "derived" } } },
+          "then": { "required": ["script", "inputs"] }
+        },
+        {
+          "if": { "properties": { "file": { "pattern": "^reference/" } } },
+          "then": { "properties": { "tier": { "const": "reference" } } }
+        },
+        {
+          "if": { "properties": { "tier": { "const": "reference" } } },
+          "then": { "properties": { "file": { "pattern": "^reference/" } } }
+        }
+      ]
+    },
+    "trim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["output", "ranges"],
+      "properties": {
+        "output": { "type": "string", "pattern": "^[^/\\\\:*?\"<>|\\u0000-\\u001f]+\\.pdf$" },
+        "ranges": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/range" }
+        }
+      }
+    },
+    "range": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pdfStart", "pdfEnd", "printed"],
+      "properties": {
+        "pdfStart": { "type": "integer", "minimum": 1 },
+        "pdfEnd": { "type": "integer", "minimum": 1 },
+        "printed": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}
