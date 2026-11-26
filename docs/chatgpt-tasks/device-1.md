@@ -21,6 +21,10 @@ template, never card or protocol text.
 No physical phone has been tested yet. Build the tool that tests a phone the same way every time, and the
 list it feeds, so that each phone pass adds one honest row.
 
+The first two phones are on the way (owner, 2026-11-26): a Samsung Galaxy S24+ (12 GB) and a Google
+Pixel 9a (8 GB). Neither has a microSD slot, so the SD-card lines must say "no SD slot" rather than fail.
+The check should be ready to run on them the day they arrive.
+
 ## Goal
 
 1. **Phone check in the app** (new package `hw/`; one entry point in an existing settings or Home screen,

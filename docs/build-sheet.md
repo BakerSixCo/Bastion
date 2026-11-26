@@ -53,11 +53,22 @@ Milestone 4; nothing here re-opens the discarded 12V bus or home automation.
 (each with case), iPhone (owner's current phone — possible second comms
 endpoint later, subject to its actual TAK/Meshtastic app capabilities).
 
-**Not purchased / not decided:** the Android phone itself (model, RAM,
-storage, quantity — decide *after* Milestone 2 measurements; expect the RAM
-requirement to be set by the model chosen, not by the UI), LoRa node
-(Wio Tracker L1 Pro is the candidate — verify hardware/firmware/region
-before configuring), GMRS handhelds, RTL-SDR, rugged phone case.
+**Ordered 2026-11-26 (owner; used, via Swappa), in transit:**
+
+| Role | Phone | Price | Notes to check on arrival |
+|---|---|---|---|
+| 12 GB kit phone | Samsung Galaxy S24+, 12 GB RAM / 256 GB, black | $374 | Chip (U.S. units are Snapdragon 8 Gen 3; others Exynos 2400); Android/One UI version; GPU (OpenCL) backend; Gemma 4 E4B fits; factory reset, no Google or Samsung account before device-owner setup. No microSD slot. |
+| 8 GB test phone | Google Pixel 9a, 8 GB RAM / 256 GB, Iris | $370 | Tensor G4; whether the GPU backend loads or BASTION falls back to CPU; Gemma 4 E2B at the 8 GB floor. No microSD slot. |
+
+LoRa radios for Meshtastic: ordered 2026-11-26, in transit (model to record on arrival; verify
+hardware, firmware and US 915 MHz region before configuring). The first tests on them replace
+"simulated radio" with "tested on named physical hardware".
+
+Neither phone has a microSD slot: references, maps and models go in the 256 GB internal storage
+(enough for the current kit: about 12 GB of references, 2.6 GB model, state map packs of 0.8–1.7 GB
+each). The SD-card checks in decision 9 need another phone.
+
+**Not purchased / not decided:** GMRS handhelds, RTL-SDR, rugged phone case.
 
 **R&D buy scope (owner decision, 2026-11-22):** only the phone and the
 mesh/ATAK hardware for now — nothing else until R&D says otherwise.
@@ -84,7 +95,9 @@ Milestone 2.
 
 ## Open decisions (tracked)
 
-1. Phone model/RAM/storage/Android version/quantity — after M2 measurements.
+1. Phone model/RAM/storage/Android version/quantity — R&D phones ordered 2026-11-26 (Galaxy
+   S24+ 12 GB, Pixel 9a 8 GB; see Hardware). The kit phone model and quantity are decided after
+   both have been measured.
 2. Inference runtime + model + licensing — M2. Provisionally LiteRT-LM +
    Gemma 4 E2B (Apache-2.0); confirm on the physical phone (CPU vs GPU).
 3. ZIM-wide search vs. selected imported documents first — current answer:
