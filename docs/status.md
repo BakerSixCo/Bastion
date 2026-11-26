@@ -2166,3 +2166,20 @@ Rejected: TC 3-25.26 (2013) land navigation, restricted to U.S. government agenc
 
 Rejected: FM 3-25.26 January 2005 with Change 1 (2006), marked FOUO and "Distribution authorized to
 U.S. Government agencies and their contractors only"; copy deleted.
+
+### Food and Chinese-medicine sources (2026-11-26)
+
+| File | SHA-256 |
+|---|---|
+| PeaceCorps-Practical-Poultry-Raising-M0011-2015.pdf | b32cf43fd6fb2af6f1aa8866905b22c915536c48250722c667dc6ae4dce51fea |
+| PeaceCorps-Backyard-Rabbit-Production-R0041-2014.pdf | e3e0e3dfd8ca01cf087e867600af96824d603eecaeeaa9c108ceb4f0cc0ebb68 |
+| USDA-FB2265-Pork-Slaughtering-Cutting-Preserving-Cooking-on-the-Farm-1981.txt | 0ee4db74827da468524f8556f0b576f6d33dea6758b1335fc0ccaee112a964ea |
+| USDA-Historic-Slaughtering-Cutting-Processing-Beef-on-the-Farm-1973.pdf | e62448bd7ff34563a945da80885cdc938de8f51c2bca9fe333514426d02ba521 |
+| USDA-Historic-FB2152-Slaughtering-Cutting-Processing-Lamb-Mutton-1967.pdf | 21164d45f0a4b3016350c271b7358765de9ef6add949227e87af4c5f0ec1d820 |
+| USDA-Historic-FB876-Making-Butter-on-the-Farm-1924.pdf | c3bf03fb82a0d9141bbe989c0645240dd61065d49e3bceac0da6159cb63c90ed |
+| USDA-Historic-FB1775-Homemade-Bread-Cake-Pastry-1942.pdf | ca562783783a6f16586d1d51cc6655c94620dd8aa3853467af4cc31af46d04ca |
+| USDA-FSIS-Meat-Food-Safety-2026.md | 1ae314ce91625db11c9d6a6cc9e988abe3247c145d5cefed40ad6768ef16960b |
+| NIH-NCCIH-Chinese-Medicine-and-Herbs-at-a-Glance-2026.md | 3d00ab895bac96cf587bbea6ddfc1765a73602bb1aa395ef1c5af28fff603133 |
+
+The four NAL scans matched the Internet Archive MD5s. The FSIS text was copied through the in-app
+browser and each section matched the live page (whitespace-normalised SHA-256). Not on the phone yet.

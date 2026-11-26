@@ -175,3 +175,36 @@ the owner approves each download, and they reach the phone's `docs/` or `zim/` f
 | NWCG IRPG (2025) | Keep whole | Yes |
 | NCVEC Technician pool (answers only) | Keep (Own tier, docs folder) | Yes |
 | Meshtastic user guide | Trim to overview, getting started, configuration, antennas, Android user pages (77 pages, ~91,000 words); add the owner's radio's device and flashing pages once the model is known; Reference tier | Trimmed; in `tools/kit/docs/reference/`, which BASTION imports as Reference tier |
+
+
+## Feeding yourself and Chinese medicine (owner request 2026-11-26)
+
+Owner asked for basic recipes, bread, butter, raising livestock, butchering ("how to feed yourself")
+and Chinese medicine. Downloaded 2026-11-26 into `tools/kit/docs/` (not committed; hashes in
+`docs/status.md`).
+
+| File | Source | Notes |
+|---|---|---|
+| `PeaceCorps-Practical-Poultry-Raising-M0011-2015.pdf` | Peace Corps (files.peacecorps.gov), May 2015 revised edition | U.S. government work ("produced by the Peace Corps with funding from USAID"). |
+| `PeaceCorps-Backyard-Rabbit-Production-R0041-2014.pdf` | Peace Corps, 2014 revision | Same. |
+| `USDA-FB2265-Pork-Slaughtering-Cutting-Preserving-Cooking-on-the-Farm-1981.txt` | USDA Farmers' Bulletin 2265 (1981), text from Project Gutenberg's mirror | Public domain. 1981: curing and food-safety steps are dated; current safety comes from the FSIS file. |
+| `USDA-Historic-Slaughtering-Cutting-Processing-Beef-on-the-Farm-1973.pdf` | USDA, 1973 (National Agricultural Library scan, Internet Archive CAT73401140, MD5 matched) | Carries USDA's banner "Historic, archived document. Do not assume content reflects current scientific knowledge". |
+| `USDA-Historic-FB2152-Slaughtering-Cutting-Processing-Lamb-Mutton-1967.pdf` | USDA FB 2152, 1967 (NAL scan) | Same banner. |
+| `USDA-Historic-FB876-Making-Butter-on-the-Farm-1924.pdf` | USDA FB 876, 1924 revision (NAL scan) | Same banner. |
+| `USDA-Historic-FB1775-Homemade-Bread-Cake-Pastry-1942.pdf` | USDA FB 1775, 1942 (NAL scan) | Same banner. |
+| `USDA-FSIS-Meat-Food-Safety-2026.md` | USDA FSIS fact sheets: safe minimum internal temperatures (2025), jerky (2016), smoking meat (2024), food in power outages/floods/fires (2013) | Current guidance; overrides the historic bulletins. Copied through the browser (FSIS refuses command-line downloads); every section's text matched the live page by whitespace-normalised SHA-256. |
+| `NIH-NCCIH-Chinese-Medicine-and-Herbs-at-a-Glance-2026.md` | NIH NCCIH: Traditional Chinese Medicine, acupuncture, using supplements wisely, safe use of complementary products, and all 56 Herbs at a Glance fact sheets | Public domain. What each herb is, what the science says, side effects, interactions. Herb photo credits remain as text; photos not included. |
+
+Rules for these, for cards and answers:
+- Historic bulletins teach the skill (how to slaughter, cut, churn, bake); any food-safety step
+  (temperatures, curing, storage times, canning) is quoted from FSIS or the USDA canning guide, never
+  from a historic bulletin.
+- Chinese medicine: BASTION answers what a remedy is, what NCCIH says the evidence shows, and its risks
+  and interactions. No TCM treatment manual is used as a trusted source; NCCIH reports that many Chinese
+  herbal products have been contaminated or substituted.
+- To remove: the post-disaster bundle's "under the tongue diagnosis.doc" (origin unknown). Bundle
+  documents cannot be removed one at a time yet: needs a per-document exclude list in
+  `LibraryStore.importKit` (also for the other unclear bundle documents listed in the audit above).
+
+Still missing for feeding yourself: gardening and seed saving, goats and animal health, tanning hides,
+beekeeping, drying and fermenting at home, long-term food storage (being checked, see the gap audit).
