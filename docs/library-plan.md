@@ -268,3 +268,24 @@ attribution, except the two holds below. This is the only list kit-4 may downloa
 - Owner follow-ups outside kit-4: ask Hesperian (permissions@hesperian.org) for non-commercial digital use
   of *Where There Is No Dentist* and *A Book for Midwives*; add the owner's power-station manual as an own
   document (no government source covers off-grid lithium systems).
+
+**Owner approval, second batch (2026-11-26): weapons care, trapping, leather and textiles, metals.**
+Same rules as the first batch (check each file's own release or licence statement at download; reject
+restricted, unmarked-but-required, or permission-only material). Approved for kit-4:
+
+| Need | Source | Note |
+|---|---|---|
+| Rifle and carbine care | Army TC 3-22.9 *Rifle and Carbine* (2016) with Change 3 (2019) | "Approved for public release" per copies seen; confirm the newest change on armypubs or the CAR |
+| Pistol care | Army TC 3-23.35 *Pistol* (2017) with Change 2 (2020) | M9 (Beretta 92 pattern); confirm marking |
+| Legal limits on repairs and modifications | ATF P 5300.4 *Federal Firearms Regulations Reference Guide* (2014) and its errata letter | atf.gov/file/11241 |
+| Axes and edged tools | USDA Forest Service *One Moving Part: The Forest Service Ax Manual* (2020, chapter PDFs) | Federal work |
+| Trapping | AFWA *Best Management Practices for Trapping in the United States*: introduction and every species guide (NY DEC-hosted copies) | "Document may be photocopied": free to share with credit, unchanged |
+| Trapping, wildlife damage | USDA APHIS Wildlife Damage Management Technical Series (beaver 2017, coyote 2020) and the foothold-trap and cage-trap technical reviews | Federal works |
+| Sewing, canvas, clothing repair | Army TM 4-42.21 *General Fabric Repair* (2013) | "Approved for public release" per copies seen |
+| Leather and footwear repair | Army TM 10-268 *Repair of Footwear and Leather Goods* (1948) | Only if the file itself shows a public-release marking; label historic |
+| Metals, heat treating, cutting, welding, sheet metal | Navy NAVEDTRA 14250 and 14251 *Steelworker* Vol. 1 and 2 (newest edition found, e.g. 14250A) | Vol. 2 marked Distribution A; check Vol. 1 |
+| Hand and power tools | Navy NAVEDTRA 14256 *Tools and Their Uses* (newest edition, e.g. 14256A) | Marked Distribution A |
+| Blacksmithing | John Lord Bacon, *Forge Practice* (Project Gutenberg, public domain) | Label historic: sound methods, dated safety practice |
+
+Weapons rules for cards and answers: maintenance, function checks, malfunction clearing, safe storage and the
+legal limits only; nothing on illegal modifications. The owner's own firearm manuals go in as own documents.
