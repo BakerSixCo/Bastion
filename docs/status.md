@@ -2134,7 +2134,7 @@ establish communication, and ATAK. Added to `tools/kit/docs/` (not committed); s
 | Navy-NEETS-Module-19-Technicians-Handbook-Safety-and-Tools-NAVEDTRA-14191.pdf | a139de1f66b1cbede85c3a97e98fa9f923ab54e51e479d60fc2779dc415ebd7d |
 | Navy-NEETS-Module-20-Master-Glossary-NAVEDTRA-14192.pdf | 2dd888d7826a6c222894248c291b818d1f92fb74f21072461fd7190b1eaf5c41 |
 | Navy-NEETS-Module-21-Test-Methods-and-Practices-Troubleshooting-NAVEDTRA-14193A.pdf | ef450c3d6801bfabfc14ab0ba0afc9c0bfec10d414a7192c616c89365eeab835 |
-| ATAK-CIV-User-Guide-v4.6-2022.pdf | a13b49bd35b7c67f3519d8c00008b9a6abecd701c18e5fade7a5e1bdf248623b |
+| ATAK-CIV-User-Guide-v4.6-2022.pdf (removed same day: replaced by the 5.5 guide) | a13b49bd35b7c67f3519d8c00008b9a6abecd701c18e5fade7a5e1bdf248623b |
 | ATAK-CIV-Icon-Glossary-v5.5-2024.pdf | f5d512bdf04a75e96fe51564bd7011ccaa45e3531eebd780a4e61b8fae2aa298 |
 | NCVEC-Technician-Question-Pool-2026-2030-Answers.md | 9881253080e9210792f1f53e989900d77e06dbede89e472f7ee12ea965c137ad |
 | NCVEC-Technician-Question-Pool-2026-2030-Diagrams.pdf | 0b2f636a399100ab42a929328e187cef925d6d50666599ad58aff318cd81147c |
@@ -2142,3 +2142,15 @@ establish communication, and ATAK. Added to `tools/kit/docs/` (not committed); s
 Checks: every NEETS cover reads "DISTRIBUTION STATEMENT A: Approved for public release; distribution
 is unlimited" and each file's MD5 matched the Internet Archive listing. The NCVEC pool was converted to
 question + correct answer (409 of 409 parsed) so the wrong choices never enter the library.
+
+Owner downloads, checked by Claude (same day; details in `docs/library-plan.md`):
+
+| File | SHA-256 |
+|---|---|
+| Army-ATP-6-02.53-Tactical-Radios-and-Retransmission-2025.pdf | a3298c64f3201a52226130b54eda80fa58aaafa00866d36ee52d33fc944b2f03 |
+| Army-TC-3-21.76-Ranger-Handbook-2025.pdf | 9f3200372a6f5e555ade0f6ea59f9471ca6ab9735313bda0563567f5c0c440f6 |
+| ATAK-CIV-User-Guide-v5.5-2025.pdf | 2f019b5a8636072378234684003b26a34343a2c58c187192442930d0c2583cf4 |
+| USCG-Emergency-Radio-Procedures-Placard.pdf | 3058ad1f912e0c4ef513245d109daf85980b83c283044595a2079d0d4ad453f6 |
+| FCC-Consumer-Guide-Personal-Radio-Services.md (text pasted by the owner) | e6018f73b07f10e47400bf6ba7e4d5067f8a1d51fb575ec3accc9ef7a220772b |
+
+Rejected: TC 3-25.26 (2013) land navigation, restricted to U.S. government agencies and contractors.

@@ -83,12 +83,22 @@ in `docs/status.md`.
 | `NWCG-IRPG-...-PMS-461-2025.pdf` | NWCG (federal interagency), Jan 2025 | Field radio practice in incidents: size-up and medical incident reports, helicopter landing zones, radio safety (UXO, lightning, no patient names on air). |
 | `tools/kit/reference-pending/Meshtastic-Documentation-2026-11.md` | Meshtastic docs, GPL-3.0, commit 8210e9d | Node setup, channels, LoRa regions, antennas, device buttons, Android app. **Community docs: Reference tier.** Not in the docs folder yet, because every kit document is currently Own tier; needs a `SourceTier` rule for it (with a `SourceTierTest`) first. |
 
+Downloaded by the owner in a browser (2026-11-26) and checked by Claude:
+
+| File | Source | Notes |
+|---|---|---|
+| `Army-ATP-6-02.53-Tactical-Radios-and-Retransmission-2025.pdf` | Army, 31 July 2025 | "Approved for public release; distribution is unlimited". Military radio networks, retransmission and range extension, network planning: above "common level", kept as reference. |
+| `Army-TC-3-21.76-Ranger-Handbook-2025.pdf` | Army, 19 September 2025 | "Approved for public release; distribution is unlimited"; supersedes the 2017 edition. Its "CUI" mentions are only other manuals in its reference list. |
+| `ATAK-CIV-User-Guide-v5.5-2025.pdf` | TAK Product Center via tak.gov (owner's account), 17 July 2025 | Matches the kit's ATAK 5.5.1.8; replaces the 4.6 guide (removed). **No release marking in the file**: fine in the owner's kit; check tak.gov's terms before handing the kit to others. |
+| `USCG-Emergency-Radio-Procedures-Placard.pdf` | U.S. Coast Guard, one page | Fill-in MAYDAY placard for fishing vessels, "post next to radio". Its MAYDAY sequence differs in order and detail from the NAVCEN text: a card quotes one source, never a mix. |
+| `FCC-Consumer-Guide-Personal-Radio-Services.md` | FCC consumer guide (https://www.fcc.gov/consumers/guides/personal-radio-services-prs-keeping-touch), text copied by the owner | Adds FRS range (under half a mile on 0.5 W channels, up to two miles on 2 W), CB power limits (12 W PEP SSB, 4 W AM), MURS no-repeater rule, Part 15 unlicensed devices. |
+
+Rejected: TC 3-25.26 *Map Reading and Land Navigation* (2013): marked "Distribution authorized to
+U.S. government agencies and their contractors only" with a destruction notice. Not for the kit; the
+owner's copy stays out of `tools/kit/docs/` (it is in `tools/kit/incoming/manual/`, Part 1 only).
+Land navigation still needs a public source.
+
 Not obtained, and why:
-- ATP 6-02.53 *Techniques for Tactical Radios and Retransmission* (2025) and TC 3-21.76 *Ranger
-  Handbook* (2025): Army Publishing lists no public PDF (CAC sign-in). The public 2017 Ranger
-  Handbook is superseded; not used.
-- FCC "Personal Radio Services" consumer PDF and the USCG *Emergency Radio Procedures* PDF: the
-  servers refuse non-browser downloads; the same content is covered by the FCC pages and NAVCEN text above.
 - Repeater directories (RepeaterBook, ARRL): not free to share. Local repeaters are owner data (a note).
 - Device manuals (a specific GMRS handheld, the Wio Tracker L1 Pro, a weather radio): copyrighted by the
   maker. The owner may import the manuals for radios they own as their own documents.
@@ -110,17 +120,18 @@ soldering) and ATAK, thinking about every skill someone needs to reach others.
 | Troubleshooting and repair | NEETS 21 (test methods and practices), NEETS 19 (technician's handbook), NEETS 14 |
 | Safety: shock, RF exposure, lightning | NEETS 19, AUXFOG section 1, NCVEC T0, NWCG IRPG |
 | How radio works (modulation, RF) | NEETS 12, 17; glossary NEETS 20 |
-| Mesh and team awareness | Meshtastic docs (pending tier), ATAK-CIV user guide 4.6 and icon glossary 5.5 |
+| Mesh and team awareness | Meshtastic docs (pending tier), ATAK-CIV user guide 5.5 and icon glossary 5.5 |
+| Military-style radio practice, antennas, network planning | Ranger Handbook 2025, ATP 6-02.53 (2025) |
 | Receive alerts | NOAA station list, NWS SAME |
 
 | File | Source | Notes |
 |---|---|---|
 | `Navy-NEETS-Module-NN-...pdf` (14 of 24 modules: 1, 2, 3, 4, 6, 7, 10, 12, 14, 16, 17, 19, 20, 21) | U.S. Navy Electricity and Electronics Training Series, NAVEDTRA 14173–14193 | Each cover: "DISTRIBUTION STATEMENT A: Approved for public release; distribution is unlimited". Copies from the Internet Archive collection `neetsmodules_202003`, MD5 matched the archive. Modules 14 and 19 carry a Navy notice that NETPDTC no longer maintains the content: label as archival. Left out: generators, amplifiers, wave-shaping, microwave, logic, synchros, radar, computers, recording, fiber optics. |
-| `ATAK-CIV-User-Guide-v4.6-2022.pdf` | DoD TAK, from `github.com/deptofdefense/AndroidTacticalAssaultKit-CIV` (the guide shipped inside ATAK 4.6) | Federal work, public domain in the U.S. (repo README), GPL-3.0 elsewhere. **Older than the kit's ATAK 5.5.1.8**: menus may differ. |
 | `ATAK-CIV-Icon-Glossary-v5.5-2024.pdf` | Extracted from the kit's own `atak-civ.apk` 5.5.1.8 (`assets/support/docs/`) | What each ATAK icon means; matches the installed version. |
 | `NCVEC-Technician-Question-Pool-2026-2030-Answers.md` (+ `-Diagrams.pdf`) | NCVEC Question Pool Committee, Technician pool with errata of 2026-02-19, in effect 2026-07-01 to 2030-06-30 | Public domain (NCVEC). **Not a government work**; the FCC-accepted exam. Converted to question + keyed correct answer only, all 409 questions: the three wrong choices were removed so search cannot quote them as facts. |
 
-Not obtained: the 2025 ATAK-CIV 5.x user guide (tak.gov needs an account); ACP 125(G)
+The ATAK 4.6 guide from the DoD GitHub repository (federal work) was replaced the same day by the
+owner's 5.5 copy. Not obtained: ACP 125(G)
 radiotelephone procedures (unclassified but marked for official purposes only, so not free to share);
 FEMA's family communication plan PDF (Ready.gov refuses downloads; the NWS copy has a broken text
 layer; *Are You Ready?* covers the same plan). Next candidates: DOE/NREL small solar and battery
