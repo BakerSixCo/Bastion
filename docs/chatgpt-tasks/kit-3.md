@@ -1,8 +1,8 @@
 # Task kit-3: load the new kit on the emulator and measure search on the new topics (branch `chatgpt/kit-3`)
 
 **Queue:** after `kit-5` (and after Claude has moved the kit-4 and kit-5 files into the kit). **Previous step:** kit-1 (manifest, `kit.py verify`), kit-2 (exclude list), kit-4 and kit-5 (new documents).
-**Next step:** Claude drafts cards from what this run shows is findable; `kit-4` adds the gap-fill documents
-and re-runs this measurement.
+**Next step:** Claude drafts cards from what this run shows is findable; later additions re-run this
+measurement with new questions.
 
 ```powershell
 git fetch origin
