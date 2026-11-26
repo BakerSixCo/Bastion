@@ -30,11 +30,12 @@
     {
       "id": "conflict-scan",
       "title": "Flag places where two kit sources give different instructions or numbers for the same question (e.g. Ranger Handbook TCCC vs the 2026 TCCC manual, NAVCEN vs the USCG placard, historic bulletins vs FSIS), for Claude's review",
-      "cmd": [],
+      "cmd": ["{python}", "-I", "tools/npu/conflict_scan.py"],
       "approved": true,
       "after": ["source-packs-comms-food"],
       "est_hours": 1.0,
-      "note": "to build: tools/npu/conflict_scan.py (Claude)"
+      "output": "tools/npu/out/conflicts.md",
+      "note": "built 2026-11-26: code pairs number-vs-number disagreements across two docs under one topic; the model only adds an advisory CONFLICT/DIFFERENT/UNSURE verdict. For Claude's review, never the phone."
     },
     {
       "id": "gemma-npu-checked-answers",
