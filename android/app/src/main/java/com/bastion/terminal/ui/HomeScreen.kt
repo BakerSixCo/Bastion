@@ -42,6 +42,7 @@ import com.bastion.terminal.ai.LocalAi
 import com.bastion.terminal.kiwix.ZimLibrary
 import com.bastion.terminal.kiwix.ZimState
 import com.bastion.terminal.data.LibraryStore
+import com.bastion.terminal.hw.DeviceCheckScreen
 import kotlinx.coroutines.launch
 import com.bastion.terminal.data.TextUtil
 
@@ -58,8 +59,13 @@ fun HomeScreen(modifier: Modifier = Modifier, onEmergency: () -> Unit = {}) {
     val ctx = LocalContext.current
     val setup = rememberSetupStatus()
     var showGuide by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
+    var showPhoneCheck by androidx.compose.runtime.saveable.rememberSaveable { mutableStateOf(false) }
     if (showGuide) {
         androidx.compose.foundation.layout.Box(modifier) { SetupGuide(setup, onClose = { showGuide = false }) }
+        return
+    }
+    if (showPhoneCheck) {
+        DeviceCheckScreen(modifier, onClose = { showPhoneCheck = false })
         return
     }
     val store = remember { LibraryStore.get(ctx) }
@@ -111,6 +117,7 @@ fun HomeScreen(modifier: Modifier = Modifier, onEmergency: () -> Unit = {}) {
         ScreenCard()
 
         DeviceCard()
+        OutlinedButton(onClick = { showPhoneCheck = true }) { Text("Phone check") }
 
         Card {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
