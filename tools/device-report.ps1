@@ -54,7 +54,9 @@ $remote = '/sdcard/Android/media/com.bastion.terminal/device-check/device-check.
 $temp = [IO.Path]::GetTempFileName()
 try {
     & $adb -s $serials[0] pull $remote $temp *> $null
-    if ($LASTEXITCODE -ne 0) { throw 'Could not pull the report. Open the BASTION device check and save the report first.' }
+    if ($LASTEXITCODE -ne 0 -or (Get-Item -LiteralPath $temp).Length -eq 0) {
+        throw 'Could not pull the report. Open the BASTION device check and save the report first.'
+    }
     $report = Get-Content -LiteralPath $temp -Raw -Encoding UTF8 | ConvertFrom-Json
 } finally {
     [IO.File]::Delete($temp)
