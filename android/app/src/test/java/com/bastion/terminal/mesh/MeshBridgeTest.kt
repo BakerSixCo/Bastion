@@ -15,48 +15,64 @@ class MeshBridgeTest {
     }
 
     @Test
-    fun fit_longTextCutAtWordWithinByteLimit() {
+    fun fit_leavesOverLimitTextForManualEditing() {
         val long = (1..80).joinToString(" ") { "word$it" }
         val (t, cut) = MeshBridge.fit(long)
-        assertTrue(cut)
-        assertTrue(MeshBridge.byteLength(t) <= MeshBridge.MAX_BYTES)
-        assertTrue(t.endsWith("…"))
-        assertTrue("ends on a whole word", Regex("word[0-9]+$").containsMatchIn(t.dropLast(1)))
+        assertEquals(long, t)
+        assertFalse(cut)
+        assertTrue(MeshBridge.byteLength(t) > MeshBridge.MAX_BYTES)
     }
 
     @Test
-    fun fit_neverSplitsMultiByteCharacters() {
+    fun fit_preservesOverLimitMultibyteText() {
         val emoji = "🚑".repeat(100) // 4 bytes each
         val (t, cut) = MeshBridge.fit(emoji)
-        assertTrue(cut)
-        assertTrue(MeshBridge.byteLength(t) <= MeshBridge.MAX_BYTES)
-        // Round-trips cleanly: no broken surrogate pair.
-        assertEquals(t, String(t.toByteArray(Charsets.UTF_8), Charsets.UTF_8))
-        assertFalse(t.contains('�'))
-        val accents = "é".repeat(300)
-        assertTrue(MeshBridge.byteLength(MeshBridge.fit(accents).first) <= MeshBridge.MAX_BYTES)
+        assertEquals(emoji, t)
+        assertEquals(400, MeshBridge.byteLength(t))
+        assertFalse(cut)
     }
 
     @Test
-    fun split_numberedStepsBecomeNumberedMessagesWithinTheLimit() {
-        val steps = (1..6).joinToString("\n") { "$it. Step number $it tells the person to do one clear practical thing right now [1]." }
-        val parts = MeshBridge.split(steps, 4) { i, n -> if (n == 1) "AI: " else "AI $i/$n: " }
-        assertTrue(parts.size in 2..4)
-        parts.forEachIndexed { i, p ->
-            assertTrue("part ${i + 1} within the limit", MeshBridge.byteLength(p) <= MeshBridge.MAX_BYTES)
-            assertTrue(p.startsWith("AI ${i + 1}/${parts.size}: "))
-            assertFalse(p.contains("[1]"))
-        }
-        // Nothing lost and order kept when it all fits.
-        val joined = parts.joinToString(" ") { it.substringAfter(": ") }
-        assertTrue(joined.indexOf("1. Step") < joined.indexOf("6. Step"))
-        // A short answer stays one plain message.
-        assertEquals(listOf("AI: Boil water for one minute."), MeshBridge.split("Boil water for one minute. [2]", 4) { i, n -> if (n == 1) "AI: " else "AI $i/$n: " })
-        // Too long for the part limit: capped, last part ends with an ellipsis.
-        val long = (1..40).joinToString("\n") { "$it. " + "word ".repeat(12).trim() + "." }
-        val capped = MeshBridge.split(long, 3) { i, n -> "AI $i/$n: " }
-        assertEquals(3, capped.size)
-        assertTrue(capped.last().endsWith("…"))
-        assertTrue(capped.all { MeshBridge.byteLength(it) <= MeshBridge.MAX_BYTES })
+    fun navigation_sendsWholeSummaryAndLegsInOrder() {
+        val parts = MeshBridge.splitForNavigation("Mock route.", listOf("1. Mock leg A.", "2. Mock leg B."))
+        assertEquals(listOf("NAV 2/2: Mock route. 1. Mock leg A. 2. Mock leg B."), parts)
+    }
+
+    @Test
+    fun navigation_accountsForPrefixAtExactByteLimit() {
+        val summary = "é".repeat(95) + "."
+        val parts = MeshBridge.splitForNavigation(summary, emptyList())
+        assertEquals(listOf("NAV 2/2: $summary"), parts)
+        assertEquals(MeshBridge.MAX_BYTES, MeshBridge.byteLength(parts.single()))
+    }
+
+    @Test
+    fun navigation_reservesSpaceForOmissionNoticeWithinThreeParts() {
+        val legs = (1..4).map { "$it. " + "é".repeat(86) + "." }
+        val parts = MeshBridge.splitForNavigation("Mock route.", legs)
+        assertEquals(
+            listOf(
+                "NAV 2/4: Mock route. ${legs[0]}",
+                "NAV 3/4: ${legs[1]}",
+                "NAV 4/4: +2 more legs, too long for radio.",
+            ),
+            parts,
+        )
+        assertTrue(parts.all { MeshBridge.byteLength(it) <= MeshBridge.MAX_BYTES })
+    }
+
+    @Test
+    fun navigation_omitsAnOversizedLegAndAllFollowingLegs() {
+        val longLeg = "1. Mock leg A. " + "é".repeat(100)
+        val parts = MeshBridge.splitForNavigation("Mock route.", listOf(longLeg, "2. Mock leg B."))
+        assertEquals(listOf("NAV 2/2: Mock route. +2 more legs, too long for radio."), parts)
+    }
+
+    @Test
+    fun navigation_usesABoundedNoticeForAnOversizedSummary() {
+        val longSummary = "Mock route. " + "é".repeat(100)
+        val parts = MeshBridge.splitForNavigation(longSummary, listOf("1. Mock leg A."))
+        assertEquals(listOf("NAV 2/2: Route summary too long for radio. +1 more legs, too long for radio."), parts)
+        assertTrue(MeshBridge.byteLength(parts.single()) <= MeshBridge.MAX_BYTES)
     }
 }

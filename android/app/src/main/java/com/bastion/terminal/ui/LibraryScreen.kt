@@ -247,8 +247,8 @@ private fun PackCard(
             Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             SwitchRow("Use in Ask", "The AI on this phone answers from it.", inAsk, onInAsk)
             SwitchRow(
-                "Answer over the mesh",
-                "Teammates on your radio channel can ask about it with “?question”. Off = this phone only.",
+                "Include in mesh retrieval",
+                "Saved as a library preference. Automatic radio replies use approved cards only.",
                 meshOk, onMeshOk,
             )
             docs.forEach { d ->

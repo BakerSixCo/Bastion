@@ -33,80 +33,101 @@ object MeshBridge {
 
     fun byteLength(text: String): Int = text.toByteArray(Charsets.UTF_8).size
 
+    private val sentenceBreak = Regex("(?<=[.!?;])\\s+")
+
+    private fun packingUnits(text: String): List<String> = text.split('\n').flatMap { raw ->
+        val line = raw.trim { it == ' ' || it in '\t'..'\r' }
+        when {
+            line.isEmpty() -> emptyList()
+            byteLength(line) <= MAX_BYTES - 10 -> listOf(line)
+            else -> line.split(sentenceBreak)
+        }
+    }
+
     /**
-     * Makes a text fit one mesh message: whitespace collapsed, AI citation
-     * markers like "[1]" dropped (they mean nothing to the receiver), then
-     * cut at a word boundary with "…" if still too long. Never splits a
-     * multi-byte character. Returns the text and whether it was shortened.
+     * Packs approved text as a whole or returns null. Prefixes count toward each part's byte
+     * budget. Keep this in sync with tools/knowledge/build.pl. Line and sentence breaks may
+     * become spaces on the radio; the words, punctuation and interior text are preserved.
      */
-    fun fit(text: String, maxBytes: Int = MAX_BYTES): Pair<String, Boolean> {
+    internal fun split(text: String, maxParts: Int, prefix: (Int, Int) -> String): List<String>? =
+        packUnits(packingUnits(text), maxParts, prefix)
+
+    private fun packUnits(units: List<String>, maxParts: Int, prefix: (Int, Int) -> String): List<String>? {
+        require(maxParts > 0)
+        if (units.isEmpty()) return null
+
+        fun pack(total: Int): List<String>? {
+            val parts = ArrayList<String>(total)
+            var current = ""
+            for (unit in units) {
+                val joined = if (current.isEmpty()) unit else "$current $unit"
+                val header = prefix(parts.size + 1, total)
+                if (byteLength(header + joined) <= MAX_BYTES) {
+                    current = joined
+                    continue
+                }
+                if (current.isEmpty() || parts.size + 1 == total) return null
+                parts += header + current
+                current = unit
+                if (byteLength(prefix(parts.size + 1, total) + current) > MAX_BYTES) return null
+            }
+            parts += prefix(parts.size + 1, total) + current
+            return parts
+        }
+
+        // Try real part totals so the budget always includes the actual prefix.
+        for (total in 1..maxParts) {
+            val parts = pack(total)
+            if (parts?.size == total) return parts
+        }
+        return null
+    }
+
+    /**
+     * Normalizes the initial text for the manual share editor. The editor shows the byte
+     * count and requires the user to edit any over-limit message before handing it over.
+     * The second value in the editor's existing API indicates automatic shortening.
+     */
+    fun fit(text: String): Pair<String, Boolean> {
         val clean = text
             .replace(Regex("\\s*\\[\\d+(\\s*,\\s*\\d+)*]"), "")
             .replace(Regex("^\\s*[-•]\\s+", RegexOption.MULTILINE), "- ")
             .replace(Regex("[ \\t]+"), " ")
             .replace(Regex("\\s*\\n\\s*"), "\n")
             .trim()
-        if (byteLength(clean) <= maxBytes) return clean to false
-        val ell = "…"
-        val budget = maxBytes - byteLength(ell)
-        val sb = StringBuilder()
-        var used = 0
-        var i = 0
-        while (i < clean.length) {
-            val cp = clean.codePointAt(i)
-            val s = String(Character.toChars(cp))
-            val n = byteLength(s)
-            if (used + n > budget) break
-            sb.append(s)
-            used += n
-            i += Character.charCount(cp)
-        }
-        // Prefer ending on a word if that doesn't throw away much.
-        val cut = sb.toString()
-        val lastSpace = cut.lastIndexOfAny(charArrayOf(' ', '\n'))
-        val out = if (lastSpace > cut.length * 2 / 3) cut.substring(0, lastSpace) else cut
-        return (out.trimEnd() + ell) to true
+        return clean to false
     }
 
     /**
-     * Splits an answer into at most [maxParts] mesh messages, each within
-     * [MAX_BYTES] including its prefix ("AI 1/3: "). Breaks between lines
-     * (numbered steps) and then between sentences, never inside a word or a
-     * multi-byte character. If it still doesn't fit, the last part ends with
-     * "…". Citation markers are removed like in [fit]. [prefix] gets the part
-     * number and the total.
+     * Packs up to three route messages after the initial position reply. The summary
+     * and each leg stay whole. If the route is too long, keep the longest prefix of
+     * legs that fits with the omission notice included in the byte budget.
      */
-    fun split(text: String, maxParts: Int, prefix: (Int, Int) -> String): List<String> {
-        val clean = fit(text, Int.MAX_VALUE).first
-        // Units that should stay whole: lines, and sentences inside long lines.
-        val units = clean.split('\n').filter { it.isNotBlank() }.flatMap { line ->
-            if (byteLength(line) <= MAX_BYTES - 10) listOf(line.trim())
-            else line.split(Regex("(?<=[.!?;])\\s+")).map { it.trim() }.filter { it.isNotEmpty() }
+    internal fun splitForNavigation(summary: String, legs: List<String>): List<String> {
+        val maxParts = 3
+        val prefix: (Int, Int) -> String = { part, total -> "NAV ${part + 1}/${total + 1}: " }
+        fun omitted(count: Int) = "+$count more legs, too long for radio."
+
+        val bodyBudget = MAX_BYTES - byteLength(prefix(1, maxParts))
+        val summaryBytes = byteLength(summary)
+        if (summaryBytes > bodyBudget) {
+            val notice = "Route summary too long for radio."
+            return listOf(prefix(1, 1) + if (legs.isEmpty()) notice else "$notice ${omitted(legs.size)}")
         }
-        fun pack(total: Int): List<String> {
-            val out = ArrayList<String>()
-            var cur = ""
-            for (u in units) {
-                val budget = MAX_BYTES - byteLength(prefix(out.size + 1, total))
-                val joined = if (cur.isEmpty()) u else "$cur $u"
-                if (byteLength(joined) <= budget) { cur = joined; continue }
-                if (cur.isNotEmpty()) { out += cur; cur = "" }
-                // A single unit longer than one message: cut it at a word.
-                cur = if (byteLength(u) <= budget) u else fit(u, budget).first
-            }
-            if (cur.isNotEmpty()) out += cur
-            return out
+
+        // Bound the search by the total body budget before trying actual packet breaks.
+        var bytesLeft = maxParts * bodyBudget - summaryBytes
+        val upperBound = legs.takeWhile { leg ->
+            bytesLeft -= byteLength(leg)
+            bytesLeft >= 0
+        }.size
+        for (kept in upperBound downTo 0) {
+            val units = listOf(summary) + legs.take(kept)
+            val left = legs.size - kept
+            val withNotice = if (left == 0) units else units + omitted(left)
+            packUnits(withNotice, maxParts, prefix)?.let { return it }
         }
-        var bodies = pack(maxParts)
-        if (bodies.size > maxParts) {
-            val head = bodies.take(maxParts - 1)
-            val budget = MAX_BYTES - byteLength(prefix(maxParts, maxParts))
-            val last = fit(bodies.drop(maxParts - 1).joinToString(" "), budget).first.trimEnd('…', ' ') + "…"
-            bodies = head + fit(last, budget).first
-        }
-        val n = bodies.size.coerceAtLeast(1)
-        return if (bodies.isEmpty()) listOf(prefix(1, 1).trim())
-        else bodies.mapIndexed { i, b -> prefix(i + 1, n) + b }
+        error("The route summary and omission notice must fit in separate messages.")
     }
 
     /** Hands [text] to the Meshtastic app's share screen. False if it can't be opened. */
