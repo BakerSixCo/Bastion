@@ -151,11 +151,19 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   fixed notices — never AI-written text** (owner 2026-11-25). Card matching
   (`MeshAutoResponder.matchCard`): exact title/asked wording → code shortlist
   (`CardRouter.candidates` + subject check) → the local model may only *pick*
-  from that shortlist (`CardRouter.route`, re-checked) → otherwise a menu of up to
-  3 card titles for the asker to send back → otherwise "Not covered by radio."
+  from that shortlist (`CardRouter.route`, re-checked) → if fewer than 2 pass,
+  `mesh/RadioCardFallback`: the model picks from the top 5 by title/asked wording,
+  accepted only if `supportsChoice` (the sole card whose title + asks cover every
+  question term, light spelling slack, one rare subject term) → otherwise a menu of up to
+  3 card titles for the asker to send back, only when the best score ≥ `MIN_MENU_SCORE`
+  → otherwise "Not covered by radio." Ask's `CardRouter` defaults are unchanged.
   Up to 4 whole 200-byte messages; never truncated. Measured on
-  `tools/model-eval/radio-questions.json` (`RadioCardCodeEvalTest` on the JVM,
-  `RadioCardEvalTest` on device): wrong card must stay 0.
+  `tools/model-eval/radio-questions.json` (tuning) and the frozen
+  `radio-questions-holdout.json` (never tune on it), with `RadioCardCodeEvalTest` on
+  the JVM and `RadioCardEvalTest` on device: wrong card must stay 0 on both.
+- Android's ICU regex rejects some patterns the JVM accepts (a bare `}`), so JVM tests
+  cannot prove a regex works: `RegexLiteralPortabilityTest` (JVM) and
+  `RegexInitializationSmokeTest` (device) guard this.
 - SMS / satellite SMS as a channel: on hold (owner). Long range = Starlink
   Mini bridging meshes.
 - Privacy: backups are off (`allowBackup=false` + extraction rules); keep

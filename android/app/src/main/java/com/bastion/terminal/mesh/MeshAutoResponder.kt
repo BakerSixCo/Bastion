@@ -279,22 +279,30 @@ object MeshAutoResponder {
         val exact = exactCards(key, cards)
         exact.singleOrNull()?.let { return CardMatch.Found(it) }
 
-        val shortlist = CardRouter.candidates(question, exact.ifEmpty { cards })
+        val pool = exact.ifEmpty { cards }
+        val shortlist = CardRouter.candidates(question, pool)
             .filter { CardRouter.subjectMatches(question, it) }
-        if (shortlist.isEmpty()) return CardMatch.NotCovered
         shortlist.singleOrNull()?.let {
-            return if (CardRouter.subjectMatches(question, it, useListedQuestions = true)) CardMatch.Found(it)
-                else CardMatch.NotCovered
+            if (CardRouter.subjectMatches(question, it, useListedQuestions = true) &&
+                RadioCardFallback.supportsChoice(question, it, pool)) return CardMatch.Found(it)
         }
 
+        val fallback = if (shortlist.size < 2) RadioCardFallback.shortlist(question, pool) else null
+        val options = fallback?.cards ?: shortlist
+        if (options.isEmpty()) return CardMatch.NotCovered
         val picked = try {
-            model()?.let { CardRouter.route(it, question, shortlist) }
+            model()?.let { local ->
+                if (fallback == null) CardRouter.route(local, question, options, requireChoiceObject = true)
+                else CardRouter.pick(local, question, options, requireChoiceObject = true)
+                    ?.takeIf { RadioCardFallback.supportsChoice(question, it, pool) }
+            }
         } catch (cancelled: CancellationException) {
             throw cancelled
         } catch (_: Exception) {
             null
         }
-        return picked?.let { CardMatch.Found(it) } ?: CardMatch.Menu(shortlist)
+        if (picked != null) return CardMatch.Found(picked)
+        return menuFor(fallback?.menuCards ?: options)
     }
 
     /** The complete packets for a card question. */
@@ -304,22 +312,23 @@ object MeshAutoResponder {
         model: suspend () -> LocalModel? = { null },
     ): List<String> = when (val match = matchCard(question, cards, model)) {
         is CardMatch.Found -> cardReply(match.card)
-        is CardMatch.Menu -> listOf(menuReply(match.cards))
+        is CardMatch.Menu -> listOf(menuText(match.cards))
         CardMatch.NotCovered -> listOf(REPLY_PREFIX + NOT_COVERED)
     }
 
     private fun prefix(part: Int, total: Int): String =
         if (total == 1) REPLY_PREFIX else "BASTION $part/$total: "
 
-    private fun menuReply(cards: List<Card>): String {
-        val header = REPLY_PREFIX + "Not sure which."
+    private fun menuText(cards: List<Card>): String =
+        REPLY_PREFIX + "Not sure which. Send one: " + cards.joinToString(" / ") { "?${it.title}" }
+
+    private fun menuFor(cards: List<Card>): CardMatch {
         val top = cards.take(3)
         for (count in top.size downTo 1) {
-            val choices = top.take(count).joinToString(" / ") { "?${it.title}" }
-            val message = "$header Send one: $choices"
-            if (MeshBridge.byteLength(message) <= MeshBridge.MAX_BYTES) return message
+            val choices = top.take(count)
+            if (MeshBridge.byteLength(menuText(choices)) <= MeshBridge.MAX_BYTES) return CardMatch.Menu(choices)
         }
-        return header
+        return CardMatch.NotCovered
     }
 
     private fun cardReply(card: Card): List<String> {
