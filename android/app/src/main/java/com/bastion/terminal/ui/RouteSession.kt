@@ -89,25 +89,30 @@ class RouteSession private constructor(private val app: Context) {
             if (navigating) { planOnFix = true; routeNote = "Waiting for a current GPS position…"; return }
             routeNote = "Destination set. No GPS position yet — long-press the map and choose \"Start here\"."; return
         }
-        if (!store.covers(from.first, from.second)) {
-            routeNote = "The start is off the map. Long-press the map and choose \"Start here\"."; navFailed(); return
-        }
         if (drive) {
-            if (!store.hasRoads(from.first, from.second)) {
-                routeNote = "No driving roads on the maps here. Rebuild this area's map pack on the PC to add them."; navFailed(); return
-            }
             routeNote = "Working out driving routes…"
             scope.launch {
-                val rs = store.drive(from.first, from.second, to.first, to.second, blockedAt.toList(), vehicle = vehicle)
+                val blocks = blockedAt.toList()
+                val result = store.drive(from.first, from.second, to.first, to.second, blocks, vehicle = vehicle)
                 if (req != request) return@launch   // cleared or replaced while searching
-                drives = rs; planned++
-                routeNote = if (rs.isNotEmpty()) "" else
-                    "No driving route found: both ends must be within about 2 km of a road on one map pack, and " +
-                        "the roads must connect" + (if (blockedAt.isNotEmpty()) " around the ${blockedAt.size} blocked road(s)" else "") +
-                        ". Straight line: ${bearingText(from, to)}."
-                if (rs.isEmpty()) navFailed()
+                drives = (result as? MapPacks.DriveResult.Found)?.routes.orEmpty()
+                planned++
+                routeNote = when (result) {
+                    is MapPacks.DriveResult.Found -> ""
+                    is MapPacks.DriveResult.MissingRoadPack -> "No route: the ${result.state} road pack is not on this phone."
+                    MapPacks.DriveResult.NoRoute -> {
+                        val detour = if (blocks.isEmpty()) "" else " around blocked roads"
+                        "No driving route found. Both ends must be within about 2 km of roads that connect$detour. " +
+                            "Check that the road packs for both ends and the areas between them are on this phone. " +
+                            "Straight line: ${bearingText(from, to)}."
+                    }
+                }
+                if (drives.isEmpty()) navFailed()
             }
             return
+        }
+        if (!store.covers(from.first, from.second)) {
+            routeNote = "The start is off the map. Long-press the map and choose \"Start here\"."; navFailed(); return
         }
         routeNote = "Working out the route…"
         scope.launch {

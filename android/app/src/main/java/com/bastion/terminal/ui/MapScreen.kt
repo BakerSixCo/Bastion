@@ -672,6 +672,7 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         )
                         if (it.offRoute > 60) Text("Off the route — rerouting if you keep going.", color = MaterialTheme.colorScheme.error)
                     }
+                    drives.getOrNull(chosen)?.let { DriveRouteInfo(it) }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(
                             onClick = { rs.blockAhead() },
@@ -713,12 +714,10 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         )
                         if (showLegs) Column(Modifier.heightIn(max = 190.dp).verticalScroll(rememberScrollState())) {
                             r.steps.forEachIndexed { i, s -> Text("${i + 1}. ${s.name} — ${RoadGraph.miles(s.meters)}", style = MaterialTheme.typography.bodyMedium) }
-                            Text(
-                                "Times assume the speed limit and no traffic. The map does not know closures, washouts, snow, gates or " +
-                                    "damage — long-press a road and choose \"Road blocked here\" to route around it.",
-                                style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        } else Text("Not traffic- or closure-aware. Long-press a road: Road blocked here.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        DriveRouteInfo(r)
+                        Text("Long-press a road and choose \"Road blocked here\" to route around it.",
+                            style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     if (!drive) route?.let { r ->
                         Text((if (destName.isNotBlank()) "To $destName: " else "Route: ") + r.summary(), style = MaterialTheme.typography.titleSmall)
@@ -732,7 +731,6 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                         }
                     }
                     if (routeNote.isNotBlank()) Text(routeNote, style = MaterialTheme.typography.bodyMedium)
-                    if (drive && drives.getOrNull(chosen)?.reducedCoverage == true) Text(RouteSession.COVERAGE_NOTE, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
                     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         if ((!drive && route != null) || (drive && drives.isNotEmpty())) TextButton(onClick = { showLegs = !showLegs }) { Text(if (showLegs) "Hide steps" else "Show steps") }
                         if (drive && drives.isNotEmpty() && fix != null) Button(onClick = {
@@ -913,6 +911,20 @@ private fun MapView(store: MapPacks, packs: List<MapPack>, modifier: Modifier) {
                 }
             },
         )
+    }
+}
+
+@Composable
+private fun DriveRouteInfo(route: RoadGraph.Route) {
+    if (route.packsUsed.isNotEmpty()) {
+        Text("Road packs used · " + route.packsUsed.joinToString(", "), style = MaterialTheme.typography.bodySmall)
+    }
+    Text(
+        "Times assume speed limits and no traffic. The map does not know closures, washouts, snow, gates, road damage or private land.",
+        style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    if (route.reducedCoverage) {
+        Text(RouteSession.COVERAGE_NOTE, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
     }
 }
 

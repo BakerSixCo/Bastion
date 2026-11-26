@@ -2183,3 +2183,23 @@ U.S. Government agencies and their contractors only"; copy deleted.
 
 The four NAL scans matched the Internet Archive MD5s. The FSIS text was copied through the in-app
 browser and each section matched the live page (whitespace-normalised SHA-256). Not on the phone yet.
+
+
+## Cross-state driving routes merged (2026-11-26)
+
+ChatGPT's `chatgpt/map-1` (reviewed by Claude, merged on the owner's yes). Tested on the PC JVM, map-1 merged
+onto `claude/hello-e9r4rq` at 171e023, `BASTION_MAPS` = the seven state road packs, `-PunitTestHeap=256m`:
+246 tests, 0 failures, 0 skipped.
+
+| Cross-state drive | Miles | Hours | Packs | Peak MiB |
+|---|---:|---:|---|---:|
+| Boise -> Spokane | 367.3 | 6.6 | ID, WA | 197 |
+| Salt Lake City -> Boise | 339.9 | 4.4 | UT, ID | 254 |
+| Portland -> Boise | 430.5 | 6.4 | OR, ID | 252 |
+| Reno -> Boise | 421.6 | 6.2 | NV, OR, ID | 220 |
+| Missoula -> Spokane | 197.6 | 2.8 | MT, ID, WA | 231 |
+| Cheyenne -> Salt Lake City | 439.4 | 5.9 | WY, UT | 242 |
+
+In-state routes unchanged to the metre (8 trips). Compute 1.3–5.8 s per drive with the NPU job running.
+Not tested on the emulator or a phone (the emulator holds only a small Idaho road pack). Memory headroom is
+thin (Seattle -> Spokane 255 MiB of 256): first check on the S24+ and Pixel 9a.
