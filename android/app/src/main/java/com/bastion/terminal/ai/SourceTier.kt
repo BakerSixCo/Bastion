@@ -39,12 +39,21 @@ enum class SourceTier(val label: String, val usedForAnswers: Boolean) {
         private val FROM_ZIM = Regex("\\(([^()]+\\.zim)\\)")
 
         /**
+         * Provenance of documents from the docs folder's `reference` subfolder: community or
+         * volunteer-written material the owner chose to keep (e.g. the Meshtastic user guide).
+         */
+        const val REFERENCE_DOCS_PROVENANCE = "From BASTION's reference docs folder"
+
+        /**
          * Tier of a library document, from its provenance. PDFs taken out of a ZIM bundle
          * ("From “Post-disaster…” (zimgit-post-disaster_en_2024-05.zim)") get that ZIM's tier;
-         * everything else in the library was put there by the owner.
+         * documents from the docs folder's `reference` subfolder are [REFERENCE]; everything else
+         * in the library was put there by the owner.
          */
-        fun forProvenance(provenance: String): SourceTier =
-            FROM_ZIM.find(provenance)?.let { forZim(it.groupValues[1]) } ?: OWN
+        fun forProvenance(provenance: String): SourceTier = when {
+            provenance.startsWith(REFERENCE_DOCS_PROVENANCE) -> REFERENCE
+            else -> FROM_ZIM.find(provenance)?.let { forZim(it.groupValues[1]) } ?: OWN
+        }
     }
 }
 

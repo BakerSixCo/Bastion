@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
 import android.provider.OpenableColumns
+import com.bastion.terminal.ai.SourceTier
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
@@ -222,16 +223,21 @@ class LibraryStore private constructor(
                 if (r is ImportResult.Ok) added++
                 else if (!(r as ImportResult.Rejected).reason.startsWith("Already")) problems += "$label: ${r.reason}"
             }
+            fun docsIn(dir: File) =
+                dir.listFiles { f -> f.isFile && f.extension.lowercase() in DOC_TYPES }?.toList().orEmpty()
+            // docs/ holds the owner's trusted documents; docs/reference/ holds community or volunteer-written
+            // ones (SourceTier.REFERENCE: used only when no trusted passage answers).
             val files = docFolders().flatMap { d ->
-                d.listFiles { f -> f.isFile && f.extension.lowercase() in DOC_TYPES }?.toList().orEmpty()
-            }.sortedBy { it.length() }
-            for (f in files) {
+                docsIn(d).map { it to DOCS_PROVENANCE } +
+                    docsIn(File(d, REFERENCE_DIR)).map { it to SourceTier.REFERENCE_DOCS_PROVENANCE }
+            }.sortedBy { it.first.length() }
+            for ((f, provenanceNote) in files) {
                 val key = "file|${f.name}|${f.length()}"
                 if (bulkPrefs.contains(key)) continue
                 bulkStatus.value = "Adding ${f.name} to the library…"
                 record(key, f.name, runCatching {
                     if (f.length() > BULK_MAX_BYTES) ImportResult.Rejected("larger than ${TextUtil.formatSize(BULK_MAX_BYTES)}")
-                    else indexBytes(f.readBytes(), f.name, "From BASTION's docs folder", bulk = true)
+                    else indexBytes(f.readBytes(), f.name, provenanceNote, bulk = true)
                 }.getOrElse { ImportResult.Rejected("could not be read (${it.javaClass.simpleName})") })
             }
             for (zi in zims.currentInfos()) {
@@ -552,6 +558,9 @@ class LibraryStore private constructor(
         private const val BULK_MAX_BYTES = 200L * 1024 * 1024
         private val GENERIC_NAME = Regex(".*\\(\\d+\\)$")
         const val NOTE_PROVENANCE = "Written in BASTION"
+        private const val DOCS_PROVENANCE = "From BASTION's docs folder"
+        /** Subfolder of each docs folder for reference-tier (community or volunteer-written) documents. */
+        const val REFERENCE_DIR = "reference"
         private const val MAX_CANDIDATES = 5000
 
         @Volatile

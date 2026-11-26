@@ -44,6 +44,15 @@ class SourceTierTest {
         assertEquals(OFFICIAL, SourceTier.forProvenance("From “Military medicine” (irp.fas.org_en_military-medicine_2026-10.zim) · PDF"))
     }
 
+    @Test fun documentsInTheReferenceSubfolderAreReferenceTier() {
+        // docs/reference/ holds community documentation the owner kept (e.g. the Meshtastic user guide):
+        // usable, but never over an official or owner source.
+        assertEquals(REFERENCE, SourceTier.forProvenance(SourceTier.REFERENCE_DOCS_PROVENANCE + " · Markdown · 2026-11-26 · SHA-256 97a53fedf223…"))
+        assertFalse(SourceTier.forProvenance(SourceTier.REFERENCE_DOCS_PROVENANCE).isTruth)
+        // The plain docs folder stays the owner's own.
+        assertEquals(OWN, SourceTier.forProvenance("From BASTION's docs folder · Markdown · 2026-11-26"))
+    }
+
     private val official = OFFICIAL to "CDC: Water treatment\nBoil water for one full minute to make it safe to drink."
     private val wiki = REFERENCE to "WikiMed: Water purification\nBoiling water for one minute kills most pathogens, says the article on boiling."
     private val forum = FORUM to "Outdoors Q&A: boiling\nwater does not even have to boil to be safe to drink"

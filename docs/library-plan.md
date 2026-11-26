@@ -160,3 +160,18 @@ where the card's own lines fit (`radio` field).
 
 BASTION never downloads (it never connects to the internet). The PC kit tool fetches files,
 the owner approves each download, and they reach the phone's `docs/` or `zim/` folder over USB.
+
+## Keep or kill: communications sources (owner, 2026-11-26)
+
+| Source | Owner decision | Done? |
+|---|---|---|
+| FCC pages, consumer guide, Parts 95/97; USCG NAVCEN text and placard; NWS SAME; NOAA list; NWCG land navigation; FM 3-25.26 (2001); USGS symbols; ATAK 5.5 guide and icon glossary | Keep (clear keeps, no question) | Yes |
+| NEETS 1, 2, 3, 4, 7, 10, 16, 17, 19, 20, 21 | Keep | Yes |
+| NEETS 6 (tubes), 12 (modulation), 14 (microelectronics, unmaintained) | Kill | Removed |
+| NIFOG | Trim: keep printed pages 1–120 (channels, tones, SAR, aviation, marine, amateur), 139–143 (satellite-phone dialing), 181–183 (time zones, UTC, phonetic alphabet); drop agency contacts, carrier help desks, IT, cybersecurity, page 184 medical | **Pending**: needs a PDF page tool |
+| AUXFOG (2016) | Trim: keep safety, go kit, amateur band plan and frequencies, antennas (App. D), connectors (E), cables (F), coded squelch (G), ICS forms (I.5), glossary; drop the pre-2017 GMRS/FRS appendix (H, contradicts current FCC rules), blank contact templates (A), ICS org charts and positions (I.1–I.4), URL list (K) | **Pending**: needs a PDF page tool |
+| Ranger Handbook (2025) | Keep whole (its TCCC appendix is a second trauma source beside the 2026 TCCC manual: cards and answers must show both if they differ) | Yes |
+| ATP 6-02.53 (2025) | Trim to appendices A (jamming and interference), E (HF networks), G (adverse conditions), H (antennas) | **Pending**: needs a PDF page tool |
+| NWCG IRPG (2025) | Keep whole | Yes |
+| NCVEC Technician pool (answers only) | Keep (Own tier, docs folder) | Yes |
+| Meshtastic user guide | Trim to overview, getting started, configuration, antennas, Android user pages (77 pages, ~91,000 words); add the owner's radio's device and flashing pages once the model is known; Reference tier | Trimmed; in `tools/kit/docs/reference/`, which BASTION imports as Reference tier |

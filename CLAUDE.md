@@ -210,7 +210,10 @@ JDK 25 — set `JAVA_HOME` to the installed Temurin 21
   OWN/OFFICIAL passage covers the question (`SourcePolicy.preferTruth`); the same text is kept
   once, from the most trusted copy.
 - A new reference stays UNRATED (unused) until it is classified in `SourceTier` with a test in
-  `SourceTierTest`. Only government works or material published free to share go in the kit.
+  `SourceTierTest`.
+- Library documents: the docs folder (`Android/media/com.bastion.terminal/docs/`, kit `tools/kit/docs/`)
+  is OWN; its `reference/` subfolder is REFERENCE (community or volunteer docs the owner kept, e.g. the
+  Meshtastic user guide), by provenance (`SourceTier.REFERENCE_DOCS_PROVENANCE`). Only government works or material published free to share go in the kit.
 
 ## Packs (Library)
 
