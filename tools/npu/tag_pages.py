@@ -177,12 +177,19 @@ def prompt(topic_list, text, chars=4500):
 
 
 def main():
+    global OUT
     ap = argparse.ArgumentParser()
     ap.add_argument("--device", default="NPU")
     ap.add_argument("--model", default=str(ROOT / "tools" / "npu" / "models" / "Qwen3-8B-int4-cw-ov"))
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--refilter", action="store_true", help="re-check saved answers, no model run")
+    ap.add_argument("--out", default=str(OUT), help="output .jsonl (default: out/page-topics.jsonl)")
+    ap.add_argument("--docs-file", default="", help="tag only the documents listed in this file, one per line")
     a = ap.parse_args()
+    OUT = pathlib.Path(a.out)
+    only = set()
+    if a.docs_file:
+        only = {l.strip() for l in pathlib.Path(a.docs_file).read_text(encoding="utf-8").splitlines() if l.strip()}
 
     t = topics()
     ids = set(t)
@@ -211,7 +218,7 @@ def main():
     t0 = time.time()
     with OUT.open("a", encoding="utf-8") as out:
         for doc, page, text in pages():
-            if (doc, page) in done:
+            if (doc, page) in done or (only and doc not in only):
                 continue
             raw = None
             # Dense pages (tables, numbers) can pass the NPU's prompt limit: retry with less of the page.

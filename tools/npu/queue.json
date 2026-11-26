@@ -1,0 +1,64 @@
+{
+  "about": "NPU job queue (owner 2026-11-26: the NPU should always be tasked). Run with tools\\.venv-npu\\Scripts\\python -I tools\\npu\\run_queue.py; state in tools/npu/out/queue-state.json. Jobs with approved=false need the owner's OK (downloads, installs) and are skipped until then. Local-model output is a drafting aid only: it never reaches the phone unchecked.",
+  "jobs": [
+    {
+      "id": "tag-new-2026-11-26",
+      "title": "Tag the pages of the 2026-11-26 kit additions with card topics (109 topics)",
+      "cmd": ["{python}", "-I", "tools/npu/tag_pages.py"],
+      "approved": true,
+      "est_hours": 6.5,
+      "output": "tools/npu/out/page-topics.jsonl"
+    },
+    {
+      "id": "retag-old-109",
+      "title": "Re-tag the 55 older kit documents with the full 109-topic list (radio, food, knots, signals in older manuals)",
+      "cmd": ["{python}", "-I", "tools/npu/tag_pages.py", "--docs-file", "tools/npu/old-docs.txt", "--out", "tools/npu/out/page-topics-retag.jsonl"],
+      "approved": true,
+      "after": ["tag-new-2026-11-26"],
+      "est_hours": 7.3,
+      "output": "tools/npu/out/page-topics-retag.jsonl"
+    },
+    {
+      "id": "source-packs-comms-food",
+      "title": "Source packs: word-for-word verified quotes for 40 planned card questions (radio, electronics, navigation, livestock, butchering, food safety, herbs)",
+      "cmd": ["{python}", "-I", "tools/npu/source_packs.py"],
+      "approved": true,
+      "after": ["tag-new-2026-11-26", "retag-old-109"],
+      "est_hours": 1.2,
+      "output": "tools/npu/out/source-packs/"
+    },
+    {
+      "id": "conflict-scan",
+      "title": "Flag places where two kit sources give different instructions or numbers for the same question (e.g. Ranger Handbook TCCC vs the 2026 TCCC manual, NAVCEN vs the USCG placard, historic bulletins vs FSIS), for Claude's review",
+      "cmd": [],
+      "approved": true,
+      "after": ["source-packs-comms-food"],
+      "est_hours": 1.0,
+      "note": "to build: tools/npu/conflict_scan.py (Claude)"
+    },
+    {
+      "id": "gemma-npu-checked-answers",
+      "title": "Run the phone's model (Gemma 4 E2B) on the NPU over questions-v2 to measure checked answers on the PC instead of the emulator CPU",
+      "cmd": [],
+      "approved": false,
+      "needs": "download Gemma 4 E2B instruction weights from Hugging Face (Apache-2.0, about 5 GB) and pip-install optimum-intel to convert them to OpenVINO",
+      "est_hours": 4.0
+    },
+    {
+      "id": "embed-library",
+      "title": "Embed every kit passage with a small embedding model to test meaning-based search against today's word search",
+      "cmd": [],
+      "approved": false,
+      "needs": "download Qwen3-Embedding-0.6B (Apache-2.0, about 1.2 GB) converted for OpenVINO",
+      "est_hours": 3.0
+    },
+    {
+      "id": "figure-descriptions",
+      "title": "Describe the figures in the kit PDFs (diagrams, knots, antennas, tables) so their content becomes searchable text",
+      "cmd": [],
+      "approved": false,
+      "needs": "download a vision-language model for OpenVINO (licence to be checked before asking)",
+      "est_hours": 8.0
+    }
+  ]
+}
