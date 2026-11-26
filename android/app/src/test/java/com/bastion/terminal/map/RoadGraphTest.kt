@@ -273,6 +273,33 @@ class RoadGraphTest {
     }
 
     /** Task 1, finding 3: a forbidden turn onto the target road is caught even when its junction's cell was not read yet. */
+    /**
+     * Road hierarchy: between the two ends only main roads are searched, so a state-length drive fits
+     * in a phone's memory. A side street far from both ends is not used even when it would be faster
+     * (the accepted trade-off), and the route is still found along the main roads.
+     */
+    @Test fun betweenTheEndsOnlyMainRoadsAreUsed() {
+        val net = Net(grid)
+        net.node(1, 43.60, -116.20); net.node(5, 43.60, -115.70); net.node(6, 43.60, -115.45)
+        net.node(4, 43.85, -115.575); net.node(3, 43.60, -114.95)
+        net.edge(20, 1, 5, "US 20", mph = 65, cls = 1); net.edge(21, 5, 4, "US 20", mph = 65, cls = 1)
+        net.edge(22, 4, 6, "US 20", mph = 65, cls = 1); net.edge(23, 6, 3, "US 20", mph = 65, cls = 1)
+        net.edge(30, 5, 6, "Cutoff Ln", mph = 30, cls = 6)   // residential, faster, ~40 km from both ends
+        val r = net.graph().routes(43.60, -116.199, 43.60, -114.951, count = 1).single()
+        assertEquals(listOf(20L, 21L, 22L, 23L), r.edgeIds)
+    }
+
+    /** An end reached only by a long track (beyond the first detail area) is still routed: the search widens. */
+    @Test fun aLongTrackToTheEndStillRoutes() {
+        val net = Net(grid)
+        net.node(1, 43.60, -116.20); net.node(2, 43.60, -115.60); net.node(3, 43.60, -115.00)
+        net.node(8, 43.78, -115.60)   // 20 km up the track
+        net.edge(20, 1, 2, "US 20", mph = 65, cls = 1); net.edge(21, 2, 3, "US 20", mph = 65, cls = 1)
+        net.edge(40, 2, 8, "Lick Creek Rd", mph = 25, cls = 9)
+        val r = net.graph().routes(43.60, -116.199, 43.779, -115.60, count = 1).single()
+        assertEquals(listOf("US 20", "Lick Creek Rd"), r.steps.map { it.name })
+    }
+
     @Test fun coldAndWarmGraphsGiveTheSameRoute() {
         val net = Net(16)   // small cells (~450 m) so the junction is outside both snap windows
         net.node(1, 43.6000, -116.2300); net.node(2, 43.6000, -116.2000); net.node(3, 43.6000, -116.1700)

@@ -5,6 +5,8 @@ plugins {
 }
 
 android {
+    // -PunitTestHeap=256m runs the JVM tests in a phone-size heap (StatePackRouteTest memory checks).
+    testOptions.unitTests.all { t -> (project.findProperty("unitTestHeap") as String?)?.let { t.maxHeapSize = it } }
     namespace = "com.bastion.terminal"
     compileSdk = 35
 
