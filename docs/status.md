@@ -2085,3 +2085,29 @@ routes as the old router where it could finish. `android:largeHeap` added: the e
   route uses tracks only near the ends.
 - Still open: snapping scans every loaded road (slow once a big network is read); cross-pack (two-state)
   routes; mixed drive → walk trips.
+
+## Radio frequency and operation sources (2026-11-26)
+
+Owner asked for ham/GMRS/radio frequency lists and how to operate the radios at a common level.
+Downloaded from official sites (owner approved) into `tools/kit/docs/` (managed assets, not committed);
+details and gaps in `docs/library-plan.md` "Radio frequencies and operation". Not yet on the emulator
+or phone, not yet indexed, no cards drafted (cards wait for the Fable reset, then review and approval).
+
+| File | SHA-256 |
+|---|---|
+| CISA-NIFOG-National-Interoperability-Field-Operations-Guide-v2.02-2025.pdf | 45c2f5d94861b3ed1b80f7ce5962a160fdd56092211586bdee711b68ca3d3142 |
+| CISA-AUXFOG-Auxiliary-Communications-Field-Operations-Guide-v1.1-2016.pdf | 9dd33816afd6e3e388532186f876f43c80258eafb77fed75e596807116dc687f |
+| NWCG-IRPG-Incident-Response-Pocket-Guide-PMS-461-2025.pdf | fe37094a3a7ceb8722cfe49f340757951a76d1122a316892608da2de74f3a92a |
+| FCC-Personal-Radio-Services-Channels-2026.md | e6d24900832e67187cdb3c5024b47e2223368da4cec59dad10a2db3afb683b84 |
+| FCC-47-CFR-Part-95-Personal-Radio-Services-2026.md | 6b82d661284f3eb41025632501691810a8843433a717adc4650b750abc4d90f0 |
+| FCC-47-CFR-Part-97-Amateur-Radio-Service-2026.md | b5b7b5e815fe1ae9da62279d64b45877b75dc44f3e0ea14d880e5a16c4ed9f97 |
+| USCG-NAVCEN-Marine-VHF-Channels-2026.md | 9a2df260d5b32a515edbd16194b5fb7e9261fbd1b6d22ce299d2056f1553485b |
+| NWS-NOAA-Weather-Radio-SAME-Codes-2026.md | 3e1771534185f018025543b09e6ef1cc50a06ca7f7d31cf4a8710dd823cf3c7d |
+| reference-pending/Meshtastic-Documentation-2026-11.md (GPL-3.0; needs a Reference-tier rule first) | d38fa44570e4fd8fdf91f84c00e607da2deb88a851def1edaf6853c3b0616c33 |
+
+How they were made: the two CISA PDFs and the NWCG PDF are the agencies' files unchanged. The
+FCC rule files are the eCFR XML (current 2026-11-24) converted to Markdown, tables kept. FCC, NAVCEN
+and NWS pages were copied as text through the in-app browser or `curl`, with page menus removed;
+FCC.gov and NAVCEN refuse command-line downloads. The NAVCEN DSC page contradicts a retail
+how-to found in search ("turn the radio off and on" vs "DO NOT power off the radio before cancelling
+the alert"); only the Coast Guard text is kept.
