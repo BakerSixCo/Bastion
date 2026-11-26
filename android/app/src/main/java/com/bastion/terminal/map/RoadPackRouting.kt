@@ -30,7 +30,7 @@ internal object CrossPackDrive {
     ): List<RoadGraph.Route> {
         for (plan in plans(packs, fromLat, fromLon, toLat, toLon)) {
             val graph = RoadGraph(plan.first().grid, plan)
-            val blocked = blockedAt.flatMap { (lat, lon) -> graph.roadsWithin(lat, lon, 50.0) }.toSet()
+            val blocked = blockedAt.flatMap { (lat, lon) -> graph.roadsForBlock(lat, lon) }.toSet()
             val routes = graph.routes(fromLat, fromLon, toLat, toLon, blocked, count, vehicle = vehicle)
             if (routes.isNotEmpty()) return routes
         }

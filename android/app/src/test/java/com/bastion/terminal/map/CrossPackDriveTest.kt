@@ -51,6 +51,17 @@ class CrossPackDriveTest {
     }
 
     @Test
+    fun aPositionBlockClosesASideRoadWhoseEndpointsAreOutsideSnapDetail() {
+        val start = west.copy(lon = -116.46)
+        val left = pack("West", start.lon, seam.lon, listOf(start, seam), listOf(Road(1, 0, 1, roadClass = 6)))
+        val right = pack("East", seam.lon, east.lon, listOf(seam, east), listOf(Road(2, 0, 1)))
+        val packs = listOf(left, right)
+        assertTrue(CrossPackDrive.routes(packs, latitude, start.lon, latitude, east.lon, count = 1).isNotEmpty())
+        val block = listOf(latitude to (start.lon + seam.lon) / 2)
+        assertTrue(CrossPackDrive.routes(packs, latitude, start.lon, latitude, east.lon, block, count = 1).isEmpty())
+    }
+
+    @Test
     fun duplicateGeometryCannotBypassATurnRestrictionInTheOtherPack() {
         val left = pack("West", west.lon, seam.lon, listOf(west, seam), listOf(Road(0, 0, 1, oneway = true)))
         val right = pack(
@@ -81,7 +92,7 @@ class CrossPackDriveTest {
         CrossPackDrive.routes(sources.toList(), latitude, west.lon, latitude, east.lon, blockedAt, count = 1)
 
     private data class Node(val id: Long, val lon: Double)
-    private data class Road(val id: Long, val from: Int, val to: Int, val oneway: Boolean = false)
+    private data class Road(val id: Long, val from: Int, val to: Int, val oneway: Boolean = false, val roadClass: Int = 0)
     private data class TurnRule(val from: Long, val via: Long, val to: Long)
 
     private fun pack(
@@ -103,7 +114,7 @@ class CrossPackDriveTest {
                 d.writeLong(road.id)
                 d.writeInt(road.from)
                 d.writeInt(road.to)
-                d.writeByte(0)
+                d.writeByte(road.roadClass)
                 d.writeByte(if (road.oneway) 1 else 0)
                 d.writeByte(60)
                 d.writeByte(0)

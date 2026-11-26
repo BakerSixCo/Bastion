@@ -405,6 +405,8 @@ class RoadGraph(
                 val rule = ruleNodes[node]
                 if (rule.noTo.any { matchesRoadAt(it, out, u) }) return false
                 if (rule.onlyNext.any { touches(it, u) } && rule.onlyNext.none { sameRoad(it, out) }) return false
+                // A differently split copy of the next via edge cannot carry this rule's history.
+                if (rule.next.keys.any { !sameRoad(it, out) && matchesRoadAt(it, out, u) }) return false
                 // Do not drop active history by switching to a pack that cannot represent a
                 // restricted approach. Identical edges carry their identities in both packs.
                 if (!shareSource(inEdge, out)) return false
@@ -491,6 +493,18 @@ class RoadGraph(
         val out = HashSet<Long>()
         nearby(la, lo, radiusM) { i, _, _ -> out += edges[i].id }
         return out
+    }
+
+    /** Include side roads whose geometry crosses the block even if neither endpoint is nearby. */
+    internal fun roadsForBlock(la: Double, lo: Double): Set<Long> {
+        val radius = 50.0
+        val dy = radius / 110_574.0
+        val dx = radius / (111_320.0 * cos(Math.toRadians(la))).coerceAtLeast(1.0)
+        // Pack cells include each road whose geometry crosses them.
+        val xs = Geo.tileX(lo - dx, grid)..Geo.tileX(lo + dx, grid)
+        val ys = Geo.tileY(la + dy, grid)..Geo.tileY(la - dy, grid)
+        for (x in xs) for (y in ys) ensureCell(x, y)
+        return roadsWithin(la, lo, radius)
     }
 
     /** Calls [hit] with (edge index, fraction along it, distance) for each road segment within [maxM] of a position. */

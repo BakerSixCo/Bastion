@@ -275,7 +275,7 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
         return synchronized(this) {
             val g = roadGraph() ?: return@synchronized emptyList()
             // A block closes every road within 50 m of the spot, so a route cannot slip round it through a lot or a side lane.
-            val blocked = blockedAt.flatMap { (la, lo) -> g.roadsWithin(la, lo, 50.0) }.toSet()
+            val blocked = blockedAt.flatMap { (la, lo) -> g.roadsForBlock(la, lo) }.toSet()
             g.routes(fromLat, fromLon, toLat, toLon, blocked, count, vehicle = vehicle)
         }
     }
