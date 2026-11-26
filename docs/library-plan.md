@@ -289,3 +289,73 @@ restricted, unmarked-but-required, or permission-only material). Approved for ki
 
 Weapons rules for cards and answers: maintenance, function checks, malfunction clearing, safe storage and the
 legal limits only; nothing on illegal modifications. The owner's own firearm manuals go in as own documents.
+
+
+## Cradle to grave: a library to rebuild a community (proposal, 2026-11-26)
+
+Owner: "what would I need to know to rebuild society, law books, constitution ... from cradle to grave",
+plus "blue-collar repair" and "plumbing trade skills". This maps every domain to what the kit has (H),
+what the owner already approved (A, batches 1 and 2 above) and what is proposed (P). Licence notes are
+from known publisher terms; every file is still checked at download (kit-4 rules). "Reference" = imported
+into `docs/reference/` (Reference tier: used only when no official or owner source answers).
+
+### Life stages
+
+| Stage | Need | Sources |
+|---|---|---|
+| Birth | Pregnancy and delivery complications | H: WHO *Managing Complications in Pregnancy and Childbirth*; Hesperian *A Book for Midwives* needs permission |
+| Infancy | Newborn care, breastfeeding, infant feeding in emergencies | P: CDC infant and young child feeding in emergencies; CDC breastfeeding pages (public domain) |
+| Childhood | Vaccines, growth, milestones, child illness | H: CDC, MedlinePlus, WikiMed. P: CDC immunization schedules and developmental milestones (public domain) |
+| Schooling | Reading, writing, arithmetic, science | P: McGuffey Readers and Ray's Arithmetic (public domain, Project Gutenberg); OpenStax textbooks (CC BY 4.0): Prealgebra, Algebra and Trigonometry, Statistics, Biology, Chemistry, Physics, Anatomy and Physiology, Microbiology (Reference) |
+| Adult work | Trades and repair (below), farming, food | H/A: food, trades and tools batches above |
+| Old age | Caring for the elderly, dementia, falls | P: NIH National Institute on Aging caregiving guides (public domain) |
+| Death | Certifying death, caring for and burying the dead, mass fatalities, grief | P: CDC NCHS *Physicians' Handbook on Medical Certification of Death*; PAHO/WHO/ICRC *Management of Dead Bodies after Disasters* (2016, licence to check); SAMHSA disaster grief and coping materials (public domain) |
+
+### Running a community
+
+| Need | Sources |
+|---|---|
+| Founding law | P: U.S. Constitution, Bill of Rights and all amendments, Declaration of Independence, Articles of Confederation (National Archives text, public domain); *Constitution of the United States: Analysis and Interpretation* (Congress.gov, public domain); Idaho Constitution |
+| Political thought | P: *The Federalist Papers*, Anti-Federalist papers (public domain, Gutenberg) |
+| Laws in force | P: selected U.S. Code titles (uscode.house.gov, public domain); selected Idaho Code titles (laws are not copyrightable: *Georgia v. Public.Resource.Org*, 2020) |
+| Courts and procedure | P: Federal Rules of Civil Procedure, Criminal Procedure and Evidence (public domain); Federal Judicial Center *Benchbook for U.S. District Court Judges* (public domain) |
+| Legal language and common law | P: *Black's Law Dictionary*, 2nd edition (1910, public domain); Blackstone's *Commentaries* (public domain) |
+| Meetings and decisions | P: *Robert's Rules of Order*, 4th edition (1915, public domain) |
+| Civics | P: OpenStax *American Government* (CC BY 4.0, Reference) |
+| Emergency organisation | P: FEMA NIMS doctrine and ICS forms (public domain); H: CERT manual approved |
+| Human rights and laws of war | P: Universal Declaration of Human Rights (UN); Geneva Conventions (ICRC, free to share) |
+| Weights, measures, trade | A: NIST SP 811 and SP 330. P: NIST Handbook 44 (scales and measuring devices, public domain); OpenStax *Principles of Accounting* and *Principles of Economics* (CC BY 4.0, Reference) |
+| Records | P: CDC NCHS vital-records handbooks (births and deaths) |
+
+### Trades and repair (blue collar)
+
+| Trade | Sources |
+|---|---|
+| Plumbing, pipe fitting, sewage | A: Army TM 3-34.70. P: Navy *Utilitiesman* Basic and Advanced (plumbing, water and sewage plants, pumps, boilers, heating, refrigeration and air conditioning) |
+| Electrical | A: Army TM 3-34.46, ATP 3-34.45, NEETS. P: Navy *Construction Electrician* Basic and Advanced |
+| Carpentry and building | A: Army TM 3-34.47, TM 3-34.44. P: Navy *Builder* Basic and Advanced |
+| Vehicles, engines, diesel, brakes | P: Army TM 9-8000 *Principles of Automotive Vehicles* (1985); Navy NAVEDTRA 14050 *Construction Mechanic* Advanced (and Basic, newest edition); Army ATP 4-31 *Ground Equipment Battle Damage Assessment, Repair, and Recovery* (2025, public release: field-expedient repairs and vehicle recovery) |
+| Heavy equipment | P: Navy NAVEDTRA 14081 *Equipment Operator* Basic |
+| Hydraulics | P: Navy *Fluid Power* (NAVEDTRA 14105) |
+| Blueprints and drawings | P: Navy *Blueprint Reading and Sketching* (NAVEDTRA 14040) |
+| Surveying | P: Navy *Engineering Aid* Basic |
+| Metals, welding, machining, tools | A: TC 9-237, TC 9-524, Steelworker, Tools and Their Uses, *Forge Practice* |
+| Chainsaws and crosscut saws | P: USFS *Saws That Sing* (2012) and *Crosscut Saw Manual*; NWCG S-212 *Wildland Fire Chain Saws* student workbook |
+| Electronics and appliances | H: NEETS, iFixit (Reference) |
+| Rigging and lifting | P: Army rigging manual (current number to find; FM 5-125 successor) |
+
+### General knowledge (large, owner decides on storage)
+
+| Library | Size (approx.) | Licence |
+|---|---|---|
+| Wikipedia English, no pictures (Kiwix ZIM) | ~50 GB | CC BY-SA (Reference) |
+| Wikibooks, Wikisource (legal texts, classics), Wikiversity (ZIMs) | ~10 GB together | CC BY-SA (Reference) |
+| Project Gutenberg library (ZIM) | ~70 GB | public domain |
+| LibreTexts (math, science, medicine, engineering, K-12, workforce/trades) ZIMs | ~10 to 20 GB | mostly CC BY-NC-SA (Reference) |
+
+The phones have 256 GB and no SD slot. The large ZIMs need an owner decision: which to carry on the phone,
+and whether a second device (USB drive or a spare phone running Kiwix) holds the rest.
+
+**Not free (permission needed):** Hesperian (dentist, midwives), WHO *Psychological First Aid* (2011),
+*Where There Is No Animal Doctor*, FAO animal health (1994). Commercial classics (e.g. *The Knowledge*,
+*Foxfire*, NEC, IPC/UPC plumbing codes) are copyrighted and stay out.
