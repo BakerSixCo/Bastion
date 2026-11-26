@@ -133,7 +133,7 @@ Reply with JSON: {"choice": <number>}.
         """{"type":"object","additionalProperties":false,"properties":{"choice":{"type":"integer","enum":[${(0..n).joinToString(",")}]}},"required":["choice"]}"""
 
     private val CHOICE = Regex("\"choice\"\\s*:\\s*(\\d+)")
-    private val CHOICE_OBJECT = Regex("\\{\\s*\"choice\"\\s*:\\s*(0|[1-9][0-9]*)\\s*}")
+    private val CHOICE_OBJECT = Regex("\\{\\s*\"choice\"\\s*:\\s*(0|[1-9][0-9]*)\\s*\\}")
 
     /** The card that answers [question], or null. Fails closed: any doubt is null. */
     suspend fun route(

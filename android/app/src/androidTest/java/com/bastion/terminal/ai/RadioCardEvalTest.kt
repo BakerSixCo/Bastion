@@ -13,9 +13,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Match both radio question sets against test-only copies of all source cards with the local model.
+ * Match both radio question sets against test-only copies of all source cards.
  * Stage bastion-radio-cards.json, bastion-radio-questions.json and bastion-radio-questions-holdout.json
  * under /data/local/tmp. The test reads those files as shell and keeps the cards local to the test.
+ * Pass -e codeOnly true to run the production matcher without loading a model.
  */
 @RunWith(AndroidJUnit4::class)
 class RadioCardEvalTest {
@@ -31,11 +32,12 @@ class RadioCardEvalTest {
 
     private suspend fun evaluate(filename: String, minimumCases: Int, minimumNone: Int) {
         val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val codeOnly = InstrumentationRegistry.getArguments().getString("codeOnly") == "true"
         fun readStaged(name: String): String {
             val file = "/data/local/tmp/$name"
             val descriptor = instrumentation.uiAutomation.executeShellCommand("cat $file")
             return ParcelFileDescriptor.AutoCloseInputStream(descriptor).bufferedReader().use { it.readText() }
-                .also { assumeTrue("stage $file before running RadioCardEvalTest", it.startsWith("{")) }
+                .also { check(it.startsWith("{")) { "stage $file before running RadioCardEvalTest" } }
         }
 
         val cards = CardStore.parse(readStaged("bastion-radio-cards.json"))
@@ -43,8 +45,8 @@ class RadioCardEvalTest {
         val cases = JSONObject(readStaged("bastion-$filename")).getJSONArray("cases")
         check(cardIds.size >= 55 && cardIds.size == cards.size) { "stage the full set of unique real cards" }
         check(cases.length() >= minimumCases) { "stage the complete $filename corpus" }
-        val ai = LocalAi.get(instrumentation.targetContext)
-        assumeTrue("needs an imported on-device model", ai.currentModelFile() != null)
+        val ai = if (codeOnly) null else LocalAi.get(instrumentation.targetContext)
+        if (ai != null) assumeTrue("needs an imported on-device model", ai.currentModelFile() != null)
         var model: LocalModel? = null
         var modelRequests = 0
         var right = 0
@@ -62,6 +64,7 @@ class RadioCardEvalTest {
                 "$filename: unknown expected card $expected"
             }
             when (val decision = MeshAutoResponder.matchCard(question, cards) {
+                if (ai == null) return@matchCard null
                 modelRequests++
                 if (modelRequests == 1) model = ai.obtain()
                 model
@@ -78,14 +81,16 @@ class RadioCardEvalTest {
                 CardMatch.NotCovered -> notCovered++
             }
         }
+        val mode = if (codeOnly) "code-only" else "local-model"
         Log.i(
             TAG,
-            "SUMMARY corpus=$filename cards=${cards.size} cases=${cases.length()} right-card=$right wrong-card=$wrong " +
+            "SUMMARY mode=$mode corpus=$filename cards=${cards.size} cases=${cases.length()} right-card=$right wrong-card=$wrong " +
                 "menu-with-expected=$menuWithExpected menu-without-expected=$menuWithoutExpected " +
                 "menu-on-none=$menuOnNone not-covered=$notCovered model=${model?.label} model-requests=$modelRequests",
         )
         check(noneCases >= minimumNone) { "$filename needs at least $minimumNone unmatched cases" }
-        check(modelRequests == 0 || model != null) { "The local model did not load: ${ai.state.value}" }
+        if (codeOnly) check(wrong == 0) { "$filename: $wrong wrong code-only matches" }
+        check(modelRequests == 0 || model != null) { "The local model did not load: ${ai?.state?.value}" }
     }
 
     private companion object { const val TAG = "RadioEval" }

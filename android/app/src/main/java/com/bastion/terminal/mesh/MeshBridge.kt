@@ -90,7 +90,7 @@ object MeshBridge {
      */
     fun fit(text: String): Pair<String, Boolean> {
         val clean = text
-            .replace(Regex("\\s*\\[\\d+(\\s*,\\s*\\d+)*]"), "")
+            .replace(Regex("\\s*\\[\\d+(\\s*,\\s*\\d+)*\\]"), "")
             .replace(Regex("^\\s*[-•]\\s+", RegexOption.MULTILINE), "- ")
             .replace(Regex("[ \\t]+"), " ")
             .replace(Regex("\\s*\\n\\s*"), "\n")
