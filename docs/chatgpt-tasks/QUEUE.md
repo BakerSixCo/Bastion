@@ -6,7 +6,7 @@ and next step.
 
 | # | Task | Status (2026-11-26) | Depends on | Unblocks |
 |---|---|---|---|---|
-| 1 | `map-1`: driving routes across state packs, indexed snapping | Committed on `chatgpt/map-1`; Claude reviewing | — | Cross-state trips on the phones |
+| 1 | `map-1`: driving routes across state packs, indexed snapping | **Merged** 2026-11-26 | — | Cross-state trips on the phones |
 | 2 | `device-1`: phone check, `docs/devices.md`, adb report tool | Queued (phones in transit: Galaxy S24+, Pixel 9a) | — | First Verified phone rows |
 | 3 | `kit-1`: kit manifest (`sources.json`), `kit.py verify/fetch/trim`, the owner's NIFOG/AUXFOG/ATP trims | Queued | — | kit-2, kit-4, kit-5, kit-3 |
 | 4 | `kit-2`: exclude list for unvetted bundle documents (e.g. "under the tongue diagnosis") | Queued | kit-1 | kit-3 |
