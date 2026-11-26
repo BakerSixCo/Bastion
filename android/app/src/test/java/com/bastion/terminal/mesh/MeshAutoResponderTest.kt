@@ -81,6 +81,51 @@ class MeshAutoResponderTest {
     }
 
     @Test
+    fun aSoleCandidateMustCoverRequestedIntentAsWellAsTopic() = runBlocking {
+        assertEquals(CardMatch.NotCovered, MeshAutoResponder.matchCard("what causes practice glyphs", listOf(card)))
+    }
+
+    @Test
+    fun fallbackCanConfirmASpellingSlipAndOnlySendsApprovedLines() = runBlocking {
+        val glimmer = card.copy(title = "Glimmer sigils", asks = listOf("sort glimmer sigils"))
+        val picker = Picker("""{"choice":1}""")
+        val parts = MeshAutoResponder.answerFor("sort glimer sigils", listOf(glimmer)) { picker }
+        assertTrue(picker.prompt.contains(glimmer.title))
+        assertEquals(listOf("BASTION: Glimmer sigils 1. $first 2. $warning"), parts)
+    }
+
+    @Test
+    fun fallbackMenuNeedsStrongRankingAndTheModelCannotFillInAnUnsupportedIntent() = runBlocking {
+        val glimmer = card.copy(title = "Glimmer sigils", asks = listOf("sort glimmer sigils"))
+        val otherCards = (1..40).map { n ->
+            card.copy(id = "paper-$n", title = "Fold paper moon $n", asks = listOf("fold paper moons"))
+        }
+        val cards = listOf(glimmer) + otherCards
+        val typo = "sort glimer sigils"
+        assertEquals(CardMatch.Menu(listOf(glimmer)), MeshAutoResponder.matchCard(typo, cards))
+        assertEquals(CardMatch.NotCovered, MeshAutoResponder.matchCard(typo, listOf(glimmer)))
+        assertEquals(CardMatch.Menu(listOf(glimmer)), MeshAutoResponder.matchCard(typo, cards) { Picker("""{"choice":0}""") })
+        assertEquals(CardMatch.Menu(listOf(glimmer)), MeshAutoResponder.matchCard(typo, cards) { Picker("""Extra text {"choice":1}""") })
+        val differentIntent = MeshAutoResponder.matchCard("sort glimer sigils for barter", cards) { Picker("""{"choice":1}""") }
+        assertFalse(differentIntent is CardMatch.Found)
+    }
+
+    @Test
+    fun fallbackUsesOnlyTheTopFiveAndRequiresUniqueEvidence() = runBlocking {
+        val cards = (1..8).map { n ->
+            card.copy(id = "sigil-$n", title = "Glimmer sigils $n", asks = listOf("sort glimmer sigils"))
+        }
+        val validNumber = Picker("""{"choice":1}""")
+        val outsideShortlist = Picker("""{"choice":6}""")
+        val match = MeshAutoResponder.matchCard("sort glimer sigils", cards) { validNumber }
+        val invalid = MeshAutoResponder.matchCard("sort glimer sigils", cards) { outsideShortlist }
+        assertTrue(validNumber.prompt.contains("5. Glimmer sigils 5"))
+        assertFalse(validNumber.prompt.contains("6. Glimmer sigils 6"))
+        assertFalse(match is CardMatch.Found)
+        assertEquals(match, invalid)
+    }
+
+    @Test
     fun menuTitlesTakePrecedenceOverAnAliasAndNavigationVerbs() = runBlocking {
         val title = "Find the pretend glyphs"
         val intended = card.copy(title = title)
@@ -113,6 +158,7 @@ class MeshAutoResponderTest {
         assertEquals(expected, MeshAutoResponder.answerFor(ask, cards) { error("Model unavailable") })
         assertEquals(expected, MeshAutoResponder.answerFor(ask, cards) { Picker("""{"choice":0}""") })
         assertEquals(expected, MeshAutoResponder.answerFor(ask, cards) { Picker("""{"choice":9}""") })
+        assertEquals(expected, MeshAutoResponder.answerFor(ask, cards) { Picker("""{"choice":1.5}""") })
         assertEquals(expected, MeshAutoResponder.answerFor(ask, cards) { Picker(null) })
         assertEquals(CardMatch.Found(other), MeshAutoResponder.matchCard("Classroom glyphs", cards))
     }
