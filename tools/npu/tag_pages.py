@@ -45,7 +45,51 @@ EXTRA = {
     "weather-and-radio": "weather warnings, NOAA weather radio",
     "cold-weather-operations": "cold weather travel, clothing, equipment",
     "heat-stress-prevention": "preventing heat injury, work/rest, water",
+    # Communications, electronics, navigation, food and herbs (kit additions 2026-11-26,
+    # docs/library-plan.md). Ids are chosen so their key words appear on a matching page (see accept()).
+    "radio-channels-frequencies": "radio services and their channel or frequency lists (FRS, GMRS, MURS, CB, marine, amateur, NOAA)",
+    "distress-call-mayday": "calling for help by radio, MAYDAY and distress procedure",
+    "radio-operating-procedure": "radio procedure, prowords, phonetic alphabet, calling a station",
+    "radio-licensing-rules": "who needs a licence, radio service rules",
+    "field-expedient-antenna": "building or improvising an antenna",
+    "weather-radio-programming": "programming a NOAA weather radio, SAME codes, alert codes",
+    "voltage-current-resistance": "volts, amps, ohms, Ohm's law, basic circuits",
+    "multimeter-measurement": "measuring voltage, current or resistance with a meter",
+    "soldering-wiring": "soldering, splicing and wiring",
+    "battery-charging": "batteries, charging, battery safety",
+    "electrical-troubleshooting": "finding faults in electrical or radio equipment",
+    "electrical-shock": "electric shock hazards and rescue",
+    "map-reading-contours": "reading topographic maps, contour lines, map symbols",
+    "compass-bearing-declination": "using a compass, bearings, magnetic declination",
+    "grid-coordinates": "latitude/longitude, UTM, MGRS grid coordinates, plotting a position",
+    "pace-count-distance": "estimating distance on the ground, pace count",
+    "atak-mapping-tools": "ATAK map tools, markers, routes, sharing positions",
+    "mesh-messaging-meshtastic": "Meshtastic mesh radios, channels, messaging",
+    "poultry-chickens": "raising chickens and poultry",
+    "rabbits-breeding": "raising and breeding rabbits",
+    "slaughter-carcass": "slaughtering livestock, handling the carcass",
+    "meat-cutting-curing": "cutting, curing and preserving meat",
+    "meat-smoking": "smoking meat safely",
+    "jerky-drying": "making jerky, drying meat",
+    "food-safety-temperatures": "safe cooking and holding temperatures",
+    "food-power-outage": "food safety after a power outage, flood or fire",
+    "bread-baking": "making bread and baking",
+    "butter-cream": "making butter from cream",
+    "herbal-supplement": "herbs and supplements: uses, evidence, side effects, interactions",
+    "chinese-medicine": "traditional Chinese medicine, acupuncture, Chinese herbal products",
+    "helicopter-landing-zone": "preparing a helicopter landing zone",
+    "wildfire-entrapment": "surviving when caught by a wildfire",
+    "knots-rope": "knots and rope work",
+    "hand-signals": "hand and arm signals",
 }
+
+# A Markdown or text document is one "page" in the cache (no form feeds); long ones are tagged in
+# sections of about this many characters, split at headings or blank lines. Their "page" in the output
+# is the section number.
+SECTION_CHARS = 3500
+
+# Not tagged: not a card source (find.pl skips the 2001 SOF handbook by default) or pure lookup tables.
+SKIP_DOCS = {"Special-Operations-Forces-Medical-Handbook-2001.pdf", "NOAA-Weather-Radio-Stations-US.md"}
 
 
 def topics():
@@ -57,10 +101,27 @@ def topics():
     return t
 
 
+def sections(text):
+    """Splits a long Markdown/text document at headings or blank lines into ~SECTION_CHARS pieces."""
+    blocks = re.split(r"\n(?=#{1,6} )|\n\s*\n", text)
+    cur = ""
+    for b in blocks:
+        if cur and len(cur) + len(b) > SECTION_CHARS:
+            yield cur
+            cur = ""
+        cur += b + "\n\n"
+    if cur.strip():
+        yield cur
+
+
 def pages():
     for f in sorted(CACHE.glob("*.txt")):
         doc = f.name[:-4]
-        for i, text in enumerate(f.read_text(encoding="utf-8", errors="replace").split("\f"), start=1):
+        if doc in SKIP_DOCS:
+            continue
+        raw = f.read_text(encoding="utf-8", errors="replace")
+        parts = raw.split("\f") if (doc.lower().endswith(".pdf") or "\f" in raw) else list(sections(raw))
+        for i, text in enumerate(parts, start=1):
             text = re.sub(r"[ \t]+", " ", text).strip()
             if len(text) >= 200:
                 yield doc, i, text
