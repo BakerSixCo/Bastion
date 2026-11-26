@@ -2111,3 +2111,34 @@ and NWS pages were copied as text through the in-app browser or `curl`, with pag
 FCC.gov and NAVCEN refuse command-line downloads. The NAVCEN DSC page contradicts a retail
 how-to found in search ("turn the radio off and on" vs "DO NOT power off the radio before cancelling
 the alert"); only the Coast Guard text is kept.
+
+### Electronics, repair and ATAK sources (2026-11-26, same day)
+
+Owner asked for general radio repair, basic electronics (volts, amps, ohms, soldering), the skills to
+establish communication, and ATAK. Added to `tools/kit/docs/` (not committed); skills map and gaps in
+`docs/library-plan.md`. Not on the phone or emulator, not indexed, no cards yet.
+
+| File | SHA-256 |
+|---|---|
+| Navy-NEETS-Module-01-Matter-Energy-and-Direct-Current-NAVEDTRA-14173A.pdf | 059df1a69617a337069aa03baf84dc247dbeb7fbb2185d96233e9c7ae93eb0c6 |
+| Navy-NEETS-Module-02-Alternating-Current-and-Transformers-NAVEDTRA-14174A.pdf | c564bd2029c34ccb9091a943297745125ea1a815d416c205c2fdbb1e6e839619 |
+| Navy-NEETS-Module-03-Circuit-Protection-Control-and-Measurement-NAVEDTRA-14175A.pdf | f3f12f8dc2ce95ffc519e0f5659a76b1ba244b2ab3de8b88b900af2b8316185c |
+| Navy-NEETS-Module-04-Conductors-Wiring-Soldering-and-Schematics-NAVEDTRA-14176A.pdf | 8aaab4efbc9404bee1437c13755429830b217ad8846770e89140849f9a6ee171 |
+| Navy-NEETS-Module-06-Electron-Tubes-and-Power-Supplies-NAVEDTRA-14178A.pdf | ace94784dc301e1bb083689b5fed4b4f07d2fde6b27bbb3c64a4aefbf559c8e6 |
+| Navy-NEETS-Module-07-Solid-State-Devices-and-Power-Supplies-NAVEDTRA-14179A.pdf | bc68cb805cbdfb3a170407c79caddeb6ec3ad3db50fe9e760601de97f8cd3ef0 |
+| Navy-NEETS-Module-10-Wave-Propagation-Transmission-Lines-and-Antennas-NAVEDTRA-14182A.pdf | 10700b200041b437c6ff0f95c20f9950a140f23045debc9740bf0b98ffdfc979 |
+| Navy-NEETS-Module-12-Modulation-Principles-NAVEDTRA-14184A.pdf | 606a62ecb3f885380a97c8dfee468627ffb2f28b58e62341ecf982207b2cbc4b |
+| Navy-NEETS-Module-14-Microelectronics-and-Circuit-Board-Repair-NAVEDTRA-14186.pdf | 95f889ce55cf93b8a1ac21b06492ebbc3760cc6d208a74e710c56eb907e6e0d1 |
+| Navy-NEETS-Module-16-Test-Equipment-Multimeters-NAVEDTRA-14188A.pdf | 9447687e0b46f880f6d86530a11b48bb1757e5999665b7f24b196450b76444aa |
+| Navy-NEETS-Module-17-Radio-Frequency-Communications-Principles-NAVEDTRA-14189A.pdf | 63c8aaa5fefcae92282f383a6f982460664ec56d6e600589b523d378d2bbfb49 |
+| Navy-NEETS-Module-19-Technicians-Handbook-Safety-and-Tools-NAVEDTRA-14191.pdf | a139de1f66b1cbede85c3a97e98fa9f923ab54e51e479d60fc2779dc415ebd7d |
+| Navy-NEETS-Module-20-Master-Glossary-NAVEDTRA-14192.pdf | 2dd888d7826a6c222894248c291b818d1f92fb74f21072461fd7190b1eaf5c41 |
+| Navy-NEETS-Module-21-Test-Methods-and-Practices-Troubleshooting-NAVEDTRA-14193A.pdf | ef450c3d6801bfabfc14ab0ba0afc9c0bfec10d414a7192c616c89365eeab835 |
+| ATAK-CIV-User-Guide-v4.6-2022.pdf | a13b49bd35b7c67f3519d8c00008b9a6abecd701c18e5fade7a5e1bdf248623b |
+| ATAK-CIV-Icon-Glossary-v5.5-2024.pdf | f5d512bdf04a75e96fe51564bd7011ccaa45e3531eebd780a4e61b8fae2aa298 |
+| NCVEC-Technician-Question-Pool-2026-2030-Answers.md | 9881253080e9210792f1f53e989900d77e06dbede89e472f7ee12ea965c137ad |
+| NCVEC-Technician-Question-Pool-2026-2030-Diagrams.pdf | 0b2f636a399100ab42a929328e187cef925d6d50666599ad58aff318cd81147c |
+
+Checks: every NEETS cover reads "DISTRIBUTION STATEMENT A: Approved for public release; distribution
+is unlimited" and each file's MD5 matched the Internet Archive listing. The NCVEC pool was converted to
+question + correct answer (409 of 409 parsed) so the wrong choices never enter the library.

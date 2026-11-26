@@ -93,13 +93,51 @@ Not obtained, and why:
 - Device manuals (a specific GMRS handheld, the Wio Tracker L1 Pro, a weather radio): copyrighted by the
   maker. The owner may import the manuals for radios they own as their own documents.
 
+### Skills to establish communication, and where the kit covers them (owner request 2026-11-26)
+
+The owner asked for radio repair at a general level, basic electronics (volts, amps, ohms,
+soldering) and ATAK, thinking about every skill someone needs to reach others.
+
+| Skill | Covered by (kit docs) |
+|---|---|
+| Pick the service and know its rules | FCC service pages, Parts 95/97, NCVEC Technician pool |
+| Calling procedure, distress calls, phonetics | USCG NAVCEN (MAYDAY, calling a ship), NIFOG (phonetic alphabet), NCVEC (T2: repeaters, simplex, emergency nets) |
+| Plan who calls whom, when, on what | FEMA *Are You Ready?* (family communication plan, out-of-state contact), AUXFOG (ICS 205/213 forms) |
+| Antennas, range, line of sight | NEETS 10, AUXFOG Appendix D (field-expedient antennas), NIFOG line-of-sight formulas |
+| Power: batteries, power supplies | NEETS 1 (batteries), 6 and 7 (power supplies), NCVEC T0 (battery safety) |
+| Basic electricity: volts, amps, ohms, Ohm's law, AC/DC | NEETS 1, 2, 3; NCVEC T5 |
+| Tools: multimeter, soldering, wiring, connectors | NEETS 16 (test equipment), NEETS 4 (wiring, soldering, schematics), NEETS 14 (circuit-board repair), AUXFOG Appendix E (connectors) |
+| Troubleshooting and repair | NEETS 21 (test methods and practices), NEETS 19 (technician's handbook), NEETS 14 |
+| Safety: shock, RF exposure, lightning | NEETS 19, AUXFOG section 1, NCVEC T0, NWCG IRPG |
+| How radio works (modulation, RF) | NEETS 12, 17; glossary NEETS 20 |
+| Mesh and team awareness | Meshtastic docs (pending tier), ATAK-CIV user guide 4.6 and icon glossary 5.5 |
+| Receive alerts | NOAA station list, NWS SAME |
+
+| File | Source | Notes |
+|---|---|---|
+| `Navy-NEETS-Module-NN-...pdf` (14 of 24 modules: 1, 2, 3, 4, 6, 7, 10, 12, 14, 16, 17, 19, 20, 21) | U.S. Navy Electricity and Electronics Training Series, NAVEDTRA 14173–14193 | Each cover: "DISTRIBUTION STATEMENT A: Approved for public release; distribution is unlimited". Copies from the Internet Archive collection `neetsmodules_202003`, MD5 matched the archive. Modules 14 and 19 carry a Navy notice that NETPDTC no longer maintains the content: label as archival. Left out: generators, amplifiers, wave-shaping, microwave, logic, synchros, radar, computers, recording, fiber optics. |
+| `ATAK-CIV-User-Guide-v4.6-2022.pdf` | DoD TAK, from `github.com/deptofdefense/AndroidTacticalAssaultKit-CIV` (the guide shipped inside ATAK 4.6) | Federal work, public domain in the U.S. (repo README), GPL-3.0 elsewhere. **Older than the kit's ATAK 5.5.1.8**: menus may differ. |
+| `ATAK-CIV-Icon-Glossary-v5.5-2024.pdf` | Extracted from the kit's own `atak-civ.apk` 5.5.1.8 (`assets/support/docs/`) | What each ATAK icon means; matches the installed version. |
+| `NCVEC-Technician-Question-Pool-2026-2030-Answers.md` (+ `-Diagrams.pdf`) | NCVEC Question Pool Committee, Technician pool with errata of 2026-02-19, in effect 2026-07-01 to 2030-06-30 | Public domain (NCVEC). **Not a government work**; the FCC-accepted exam. Converted to question + keyed correct answer only, all 409 questions: the three wrong choices were removed so search cannot quote them as facts. |
+
+Not obtained: the 2025 ATAK-CIV 5.x user guide (tak.gov needs an account); ACP 125(G)
+radiotelephone procedures (unclassified but marked for official purposes only, so not free to share);
+FEMA's family communication plan PDF (Ready.gov refuses downloads; the NWS copy has a broken text
+layer; *Are You Ready?* covers the same plan). Next candidates: DOE/NREL small solar and battery
+guides (power for radios), NASA workmanship soldering standard (too detailed for "common level"
+unless asked).
+
 Cards to draft (Fable, after the 2026-11-30 reset; Opus review; owner approval), each quoting these
 files verbatim: calling for help by radio (CB 9, marine 16 MAYDAY, GMRS/FRS, amateur emergency
 frequencies); marine MAYDAY wording; cancelling a false DSC alert; programming a weather radio; FRS
 vs GMRS (licence, which channels need one); MURS channels; using a handheld at a common level (listen
 before talk, range and height, what CTCSS/DCS tones are: NIFOG/AUXFOG coded squelch; the common
 claim that "privacy codes" give no privacy is in none of these files, so a card may say it only
-once a source does); phonetic alphabet; field-expedient antenna (AUXFOG Appendix D). Radio-short versions only
+once a source does); phonetic alphabet; field-expedient antenna (AUXFOG Appendix D); Ohm's law and
+measuring volts, amps and ohms with a multimeter (NEETS 1, 16); soldering a wire and a connector
+(NEETS 4); checking a dead radio: power, antenna, connections, fuse (NEETS 21, only steps the source
+states); battery safety (NCVEC T0, NEETS 1); ATAK first setup and sending a position (ATAK guide;
+check against 5.5 on the phone before approval). Radio-short versions only
 where the card's own lines fit (`radio` field).
 
 ## Getting them
