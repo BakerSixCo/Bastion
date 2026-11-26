@@ -251,7 +251,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             state = if (status.autoAnswerOn) "On." else "Off.",
             steps = listOf(
                 "Finish steps 3 and 4 and set up a private channel (step 5). In the Mesh tab, switch on “Auto-answer questions” and approve the radios that can use it.",
-                "For “?question”, use a question listed on an approved card. BASTION sends the card’s radio version when available. “@base” asks for this phone’s position.",
+                "Start with “?” to ask for an approved card reply. If offered a choice, reply with “?” and one of the card titles shown. “@base” asks for this phone’s position.",
                 "It only answers on private channels unless you also switch on “Also answer on public channels”.",
             ),
         )

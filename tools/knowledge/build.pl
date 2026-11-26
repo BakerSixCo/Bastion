@@ -42,10 +42,10 @@ sub radio_fit {
         next unless length $line;
         push @units, radio_bytes($line) > 190 ? split(/(?<=[.!?;])$radio_space+/, $line) : $line;
     }
-    my $bytes = radio_bytes('AI: ' . join ' ', @units);
+    my $bytes = radio_bytes('BASTION: ' . join ' ', @units);
     return (1, $bytes) if $bytes <= 200;
 
-    my $budget = 200 - radio_bytes('AI 1/4: ');
+    my $budget = 200 - radio_bytes('BASTION 1/4: ');
     my ($parts, $used) = (1, 0);
     for my $unit (@units) {
         my $size = radio_bytes($unit);

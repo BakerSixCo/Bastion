@@ -133,8 +133,8 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                                 Text("Auto-answer questions", style = MaterialTheme.typography.titleSmall)
                                 Text(
                                     "Start a command with one of these symbols.\n" +
-                                        "?question — ask a question listed on an approved card. BASTION sends the card’s " +
-                                        "radio version when available. Unmatched questions get “Not covered by radio.”\n" +
+                                        "?question — ask for an approved card reply, or send ? and a card title. " +
+                                        "If BASTION offers a choice, reply with one of the titles shown.\n" +
                                         "@callsign — where is that unit (@base for this phone).\n" +
                                         "@gas, @hospital, @pharmacy, @water… — the nearest one on the offline maps.\n" +
                                         "+Name 44.12345,-114.12345 — saves that pin on this phone's map.\n" +

@@ -87,25 +87,25 @@ $blank->{radio} = ['a1'];
 rejects($blank, qr/radio reference 'a1' must point to a non-blank text line/, 'blank referenced line');
 
 my $boundary = fixture('fake-boundary');
-$boundary->{title} = 'T' . ("\x{e9}" x 95);
+$boundary->{title} = "\x{e9}" x 93;
 $boundary->{answer} = ['X'];
 $boundary->{radio} = ['a1'];
 ($exit, $log) = run_build($boundary);
-is($exit, 0, 'a 200-byte single part fits with the short prefix') or diag($log);
+is($exit, 0, 'a 200-byte single part fits with the BASTION prefix') or diag($log);
 $boundary->{title} .= 'z';
 ($exit, $log) = run_build($boundary);
-is($exit, 0, 'a 192-byte unit fits the numbered prefix') or diag($log);
+is($exit, 0, 'a 187-byte unit fits the numbered BASTION prefix') or diag($log);
 $boundary->{title} .= 'z';
 rejects($boundary, qr/radio cannot fit without truncation: 202 UTF-8 bytes/, 'UTF-8 unit exceeds multipart capacity');
 
 my $parts = fixture('fake-parts');
 $parts->{title} = 'Pretend test';
-$parts->{answer} = [('x' x 176) x 5];
+$parts->{answer} = [('x' x 171) x 5];
 $parts->{radio} = [map { "a$_" } (1 .. 4)];
 ($exit, $log) = run_build($parts);
 is($exit, 0, 'four full-length parts fit the limit') or diag($log);
 push @{ $parts->{radio} }, 'a5';
-rejects($parts, qr/radio cannot fit without truncation: 916 UTF-8 bytes/, 'answer needs a fifth part');
+rejects($parts, qr/radio cannot fit without truncation: 896 UTF-8 bytes/, 'answer needs a fifth part');
 
 my $sentences = fixture('fake-sentences');
 $sentences->{answer} = [('x' x 120) . '.  ' . ('y' x 120) . '!'];
