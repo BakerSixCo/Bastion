@@ -359,3 +359,43 @@ and whether a second device (USB drive or a spare phone running Kiwix) holds the
 **Not free (permission needed):** Hesperian (dentist, midwives), WHO *Psychological First Aid* (2011),
 *Where There Is No Animal Doctor*, FAO animal health (1994). Commercial classics (e.g. *The Knowledge*,
 *Foxfire*, NEC, IPC/UPC plumbing codes) are copyrighted and stay out.
+
+**Batch 3 keep or kill (2026-11-26).** The owner asked Claude to decide from its recommendations; the
+"keep" lines are approved for kit-4 (same file checks), the owner may veto any line.
+
+| Keep (approved) | Why |
+|---|---|
+| Navy *Utilitiesman* Basic and Advanced | Plumbing, water and sewage systems, pumps, heating, refrigeration: the core trade for a community |
+| Navy *Construction Electrician* Basic | House and generator wiring at a practical level |
+| Navy *Builder* Basic | Framing, roofing, finishing beyond the Army carpentry manual |
+| Army TM 9-8000 *Principles of Automotive Vehicles* (1985) | How every vehicle system works, for diagnosis |
+| Navy *Construction Mechanic* Basic (newest edition) | Engine, diesel and brake repair procedure |
+| Army ATP 4-31 (2025) | Field-expedient vehicle repair and recovery |
+| NWCG S-212 *Wildland Fire Chain Saws* student workbook; USFS *Saws That Sing* | Chainsaw maintenance and safe felling; crosscut saws when fuel runs out |
+| CDC infant and young child feeding in emergencies | Infant deaths in disasters are often feeding failures |
+| McGuffey Readers, Ray's Arithmetic (public domain) | Teach children to read and count with no internet, tiny files |
+| OpenStax Prealgebra, Biology, Chemistry, Anatomy and Physiology, Microbiology (CC BY 4.0, Reference) | Foundations for medicine, farming, water treatment |
+| NIA caregiving guides | Elder care at home |
+| PAHO/WHO/ICRC *Management of Dead Bodies after Disasters* | Only if its licence allows sharing |
+| SAMHSA disaster grief and coping materials | Fills the mental-health gap left by WHO PFA |
+| Constitution, all amendments, Declaration, Articles of Confederation; Idaho Constitution | Founding law, tiny |
+| *Constitution Annotated* (Congress.gov) | What each clause has been held to mean |
+| *The Federalist Papers* | Why the structure is what it is |
+| Federal Rules of Evidence, Criminal Procedure, Civil Procedure | Templates for fair hearings |
+| *Robert's Rules of Order* (1915) | Running meetings and votes |
+| OpenStax *American Government* (Reference) | Civics teaching text |
+| FEMA NIMS doctrine and ICS forms | Organising a community response |
+| Universal Declaration of Human Rights | Baseline rights, one page |
+
+| Kill | Why |
+|---|---|
+| Navy *Construction Electrician* Advanced, *Builder* Advanced, *Construction Mechanic* Advanced (1992) | Overlap the basics and the Army manuals; utility-scale work |
+| Navy *Equipment Operator*, *Fluid Power*, *Blueprint Reading*, *Engineering Aid*; rigging manual | Low use without heavy equipment; land navigation covers basic surveying |
+| USFS *Crosscut Saw Manual* (older) | Covered by *Saws That Sing* |
+| CDC immunization schedules and milestones | No vaccine supply to schedule; child health is covered by WikiMed and MedlinePlus |
+| OpenStax Algebra and Trigonometry, Statistics, Physics, Accounting, Economics | Beyond common level; NEETS covers electricity |
+| CDC death certification and vital-records handbooks; NIST Handbook 44 | Paperwork and commercial regulation |
+| Selected U.S. Code and Idaho Code titles | Too large to choose well now; revisit with a specific need |
+| FJC *Benchbook*; *Black's Law Dictionary* (1910); Blackstone; Anti-Federalist papers; Geneva Conventions | Specialist, archaic or wartime-only |
+
+Large ZIMs (Wikipedia, Wikibooks/Wikisource, Gutenberg, LibreTexts): **later**, with the owner's storage decision.
