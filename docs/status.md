@@ -2062,3 +2062,26 @@ Owner decisions (in each card's `conflict`): edibility-test induce vomiting (rem
 safe" (left off); lost search-party step; HHS capture-or-kill on bites; latrine Army-units warning; wound antiseptic choice
 (card says sources differ; ATP list incl. bleach/peroxide kept off); KI doses by age (reviewer trusts FDA 2001 table rows).
 Owner flag: kit CPR uses a pulse check; current lay-rescuer guidance (AHA, outside kit) skips it -> needs a newer CPR source.
+
+## Driving routes on state-size packs (2026-11-25)
+
+Road packs built for all seven states (ID, MT, NV, OR, UT, WA, WY) from Geofabrik extracts with Osmosis:
+`tools/maps/state-XX-roads.bmap`, 750 MB – 1.65 GB. Wyoming: 24 of 29 via-way relations are skipped — all are
+interstate "no U-turn" through emergency-access median crossovers, which the builder already leaves out (cars
+cannot use them), so nothing is lost.
+
+`StatePackRouteTest` (PC JVM, `BASTION_MAPS=tools\maps`, skipped without it) drives 8 long trips on the real packs.
+First run: 425–490 MB per drive, Portland ran out of memory — would crash a phone. Fixed (e1a9d2e): search
+state and id tables in primitive arrays; road hierarchy (every road within 8 km of each end, main roads —
+motorway to unclassified, links — between; widens to 40 km, then all roads, only if no route). Now all 8
+run in a 256 MB heap (`-PunitTestHeap=256m`), 0.8–3.3 s each, times plausible (Boise–Coeur d'Alene
+378.6 mi / 6 h 49 min, Seattle–Spokane 279 mi / 4 h 6 min, Reno–Las Vegas 442 mi / 6 h 55 min); same best
+routes as the old router where it could finish. `android:largeHeap` added: the emulator's normal app limit is
+192 MB, a long drive peaks around 240 MB.
+- Tested on emulator (road-only copy of the Idaho pack, the emulator has no room for the full 1.5 GB):
+  Boise → Coeur d'Alene in the Map screen, 378.9 mi / 6 h 50 min plus 2 alternatives, under 9 s;
+  Java heap 63 MB afterwards. Not tested on a physical phone.
+- Trade-off: a faster side street far from both ends is not used (the main-road route is shown). A 4x4
+  route uses tracks only near the ends.
+- Still open: snapping scans every loaded road (slow once a big network is read); cross-pack (two-state)
+  routes; mixed drive → walk trips.
