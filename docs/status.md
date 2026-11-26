@@ -2154,3 +2154,15 @@ Owner downloads, checked by Claude (same day; details in `docs/library-plan.md`)
 | FCC-Consumer-Guide-Personal-Radio-Services.md (text pasted by the owner) | e6018f73b07f10e47400bf6ba7e4d5067f8a1d51fb575ec3accc9ef7a220772b |
 
 Rejected: TC 3-25.26 (2013) land navigation, restricted to U.S. government agencies and contractors.
+
+### Land navigation sources (2026-11-26, replacing the restricted TC 3-25.26)
+
+| File | Source and marking | SHA-256 |
+|---|---|---|
+| NWCG-Basic-Land-Navigation-PMS-475-2016.pdf | NWCG, May 2016; "All other NWCG information is in the public domain" | ea958624cc1ae95a71fe479e689ec19ca4459097399b4fbb9468a949442306f4 |
+| Army-FM-3-25.26-Map-Reading-and-Land-Navigation-2001.pdf | Army, 20 July 2001; "Approved for public release; distribution is unlimited" (Internet Archive copy) | e86dadb55f03d0cddb8b6c9a20458514743ce67ed7e29eef106b53211716d9f1 |
+| USGS-Topographic-Map-Symbols.pdf | USGS booklet (pubs.usgs.gov), public domain | edb97e137a1831e75f6fddb4971e5e46b9a68cd8ca17ef2c44480b453f49aa59 |
+| USGS-US-Topo-Map-Symbols.pdf | USGS US Topo symbol guide (usgs.gov), public domain | 3c18cade6976ab2b9d424729aa849d347a32f38d2a488887735dc28b20a2ec34 |
+
+Rejected: FM 3-25.26 January 2005 with Change 1 (2006), marked FOUO and "Distribution authorized to
+U.S. Government agencies and their contractors only"; copy deleted.

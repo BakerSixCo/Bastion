@@ -54,7 +54,12 @@ check the current edition, title or licence before adding.
 7. **Nuclear, chemical, biological.** Nuclear War Survival Skills (Kearny, ORNL, public domain);
    FEMA nuclear detonation response planning *(confirm title)*; CDC radiation emergencies; FDA
    potassium iodide guidance.
-8. **Navigation, communications.** TC 3-25.26 Map Reading and Land Navigation; NOAA list (have);
+8. **Navigation, communications.** Land navigation (have, 2026-11-26): NWCG *Basic Land Navigation*
+   PMS 475 (May 2016; maps, contours, lat/long, UTM, PLSS, compass and declination, GPS, pacing),
+   Army FM 3-25.26 *Map Reading and Land Navigation* (20 July 2001: the newest edition approved for
+   public release; the 2005/2006 FM and the 2013 TC are restricted to government agencies and
+   contractors, so not in the kit), USGS *Topographic Map Symbols* and *US Topo Map Symbols* (the
+   symbols on BASTION's USGS topo tiles); NOAA list (have);
    FCC Part 97 (amateur) and Part 95 (GMRS/FRS) (have); Meshtastic documentation (have, pending
    tier). See "Radio frequencies and operation" below.
 9. **Rebuilding.** Peace Corps technical manuals (water systems, gardening, small livestock); FAO
@@ -96,7 +101,7 @@ Downloaded by the owner in a browser (2026-11-26) and checked by Claude:
 Rejected: TC 3-25.26 *Map Reading and Land Navigation* (2013): marked "Distribution authorized to
 U.S. government agencies and their contractors only" with a destruction notice. Not for the kit; the
 owner's copy stays out of `tools/kit/docs/` (it is in `tools/kit/incoming/manual/`, Part 1 only).
-Land navigation still needs a public source.
+Land navigation now comes from public sources instead (item 8 above).
 
 Not obtained, and why:
 - Repeater directories (RepeaterBook, ARRL): not free to share. Local repeaters are owner data (a note).
