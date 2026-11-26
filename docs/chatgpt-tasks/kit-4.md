@@ -1,8 +1,8 @@
 # Task kit-4: fetch the owner-approved gap-fill documents (branch `chatgpt/kit-4`)
 
-**Queue:** after `kit-3`. **Run only once the owner has approved the list** (Claude records the approval and
-the exact items in `docs/library-plan.md`, "Contingency gap audit"; items marked approved there are the only
-allowed downloads). **Previous step:** kit-1 tool, kit-3 measurement. **Next step:** Claude reviews, moves the
+**Queue:** after `kit-3`. **Owner approved the list on 2026-11-26** (Claude recorded the approval, two holds and three conditions under "Owner approval" in
+`docs/library-plan.md`, "Contingency gap audit"; only the items approved there may be downloaded, and the
+conditions apply). **Previous step:** kit-1 tool, kit-3 measurement. **Next step:** Claude reviews, moves the
 files into the kit, then kit-3's eval is re-run with new questions for these topics.
 
 ```powershell

@@ -253,3 +253,18 @@ Mission); FAO *Manual for the primary animal health care worker* (1994, all righ
 **Still open, no source checked yet**: dental care (the SOF Medical Handbook has a dental chapter);
 mental health after disasters (SAMHSA disaster materials are likely public domain); goat and cattle
 health (no free manual found); hunter education; childcare and infant feeding in emergencies.
+
+**Owner approval (2026-11-26) for kit-4 downloads.** Approved: every row above marked OK or OK with
+attribution, except the two holds below. This is the only list kit-4 may download.
+
+- Holds (not approved): FEMA *Emergency Financial First Aid Kit* (licence unconfirmed); the NWS cloud chart
+  unless the copy carries no individual photographer credits.
+- Condition 1: label `historic` and never use for safety steps: USDA AH 335, FB 2255, FB 2204 (beekeeping,
+  pre-Varroa), FB 1334 (tanning, dated chemicals), HG 202 (gardening, dated pesticide advice), EPA Burn Wise
+  (archived 2025), Peace Corps T0020 (1984), Sandia stand-alone PV handbook (1995).
+- Condition 2: UF/IFAS EDIS ENH1383 (CC BY-NC-ND) and the NCHFP drying and fermenting pages (non-commercial,
+  with credit) go in unchanged, with their credit line; no trimming or rewording.
+- Condition 3: *Emergency War Surgery* is reference for trained users: no cards drawn from it for untrained people.
+- Owner follow-ups outside kit-4: ask Hesperian (permissions@hesperian.org) for non-commercial digital use
+  of *Where There Is No Dentist* and *A Book for Midwives*; add the owner's power-station manual as an own
+  document (no government source covers off-grid lithium systems).
