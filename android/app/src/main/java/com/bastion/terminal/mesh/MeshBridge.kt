@@ -33,6 +33,57 @@ object MeshBridge {
 
     fun byteLength(text: String): Int = text.toByteArray(Charsets.UTF_8).size
 
+    private val sentenceBreak = Regex("(?<=[.!?;])\\s+")
+
+    private fun packingUnits(text: String): List<String> = text.split('\n').flatMap { raw ->
+        val line = raw.trim { it == ' ' || it in '\t'..'\r' }
+        when {
+            line.isEmpty() -> emptyList()
+            byteLength(line) <= MAX_BYTES - 10 -> listOf(line)
+            else -> line.split(sentenceBreak)
+        }
+    }
+
+    /**
+     * Packs approved text as a whole or returns null. Prefixes count toward each part's byte
+     * budget. Keep this in sync with tools/knowledge/build.pl. Line and sentence breaks may
+     * become spaces on the radio; the words, punctuation and interior text are preserved.
+     */
+    internal fun split(text: String, maxParts: Int, prefix: (Int, Int) -> String): List<String>? {
+        require(maxParts > 0)
+        val units = packingUnits(text)
+        if (units.isEmpty()) return null
+
+        val single = prefix(1, 1) + units.joinToString(" ")
+        if (byteLength(single) <= MAX_BYTES) return listOf(single)
+
+        fun pack(total: Int): List<String>? {
+            val parts = ArrayList<String>(total)
+            var current = ""
+            for (unit in units) {
+                val joined = if (current.isEmpty()) unit else "$current $unit"
+                val header = prefix(parts.size + 1, total)
+                if (byteLength(header + joined) <= MAX_BYTES) {
+                    current = joined
+                    continue
+                }
+                if (current.isEmpty() || parts.size + 1 == total) return null
+                parts += header + current
+                current = unit
+                if (byteLength(prefix(parts.size + 1, total) + current) > MAX_BYTES) return null
+            }
+            parts += prefix(parts.size + 1, total) + current
+            return parts
+        }
+
+        // Try real part totals so the budget always includes the actual prefix.
+        for (total in 2..maxParts) {
+            val parts = pack(total)
+            if (parts?.size == total) return parts
+        }
+        return null
+    }
+
     /**
      * Makes a text fit one mesh message: whitespace collapsed, AI citation
      * markers like "[1]" dropped (they mean nothing to the receiver), then
@@ -69,20 +120,16 @@ object MeshBridge {
     }
 
     /**
-     * Splits an answer into at most [maxParts] mesh messages, each within
+     * Splits an optional navigation route into at most [maxParts] mesh messages, each within
      * [MAX_BYTES] including its prefix ("AI 1/3: "). Breaks between lines
      * (numbered steps) and then between sentences, never inside a word or a
      * multi-byte character. If it still doesn't fit, the last part ends with
      * "…". Citation markers are removed like in [fit]. [prefix] gets the part
      * number and the total.
      */
-    fun split(text: String, maxParts: Int, prefix: (Int, Int) -> String): List<String> {
-        val clean = fit(text, Int.MAX_VALUE).first
+    internal fun splitForNavigation(text: String, maxParts: Int, prefix: (Int, Int) -> String): List<String> {
         // Units that should stay whole: lines, and sentences inside long lines.
-        val units = clean.split('\n').filter { it.isNotBlank() }.flatMap { line ->
-            if (byteLength(line) <= MAX_BYTES - 10) listOf(line.trim())
-            else line.split(Regex("(?<=[.!?;])\\s+")).map { it.trim() }.filter { it.isNotEmpty() }
-        }
+        val units = packingUnits(fit(text, Int.MAX_VALUE).first)
         fun pack(total: Int): List<String> {
             val out = ArrayList<String>()
             var cur = ""

@@ -132,10 +132,9 @@ fun MeshScreen(modifier: Modifier = Modifier, onAsk: (String) -> Unit) {
                             Column(Modifier.weight(1f)) {
                                 Text("Auto-answer questions", style = MaterialTheme.typography.titleSmall)
                                 Text(
-                                    "A message that starts with a symbol is for BASTION; everything else is " +
-                                        "ordinary chat and is never answered.\n" +
-                                        "?question — ask the AI (your mesh-enabled packs and the offline reference). " +
-                                        "A follow-up ? within 10 minutes continues the same topic.\n" +
+                                    "Start a command with one of these symbols.\n" +
+                                        "?question — ask a question listed on an approved card. BASTION sends the card’s " +
+                                        "radio version when available. Unmatched questions get “Not covered by radio.”\n" +
                                         "@callsign — where is that unit (@base for this phone).\n" +
                                         "@gas, @hospital, @pharmacy, @water… — the nearest one on the offline maps.\n" +
                                         "+Name 44.12345,-114.12345 — saves that pin on this phone's map.\n" +

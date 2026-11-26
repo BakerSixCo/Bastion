@@ -18,6 +18,7 @@ data class Card(
     val answer: List<String>,
     val warnings: List<String>,
     val quotes: List<Quote>,
+    val radio: List<String> = emptyList(),
 ) {
     data class Quote(val doc: String, val text: String)
 
@@ -40,19 +41,28 @@ object CardStore {
 
     private fun load(context: Context): List<Card> = runCatching {
         val json = context.assets.open("knowledge/cards.json").bufferedReader().use { it.readText() }
+        parse(json)
+    }.getOrDefault(emptyList())
+
+    internal fun parse(json: String): List<Card> {
         val a = JSONObject(json).getJSONArray("cards")
         fun JSONArray?.strings() = if (this == null) emptyList() else (0 until length()).map { getString(it) }
-        (0 until a.length()).map { i ->
+        return (0 until a.length()).map { i ->
             val o = a.getJSONObject(i)
             val q = o.getJSONArray("quotes")
+            val radio = o.optJSONArray("radio")?.let { lines ->
+                (0 until lines.length()).map { lines.opt(it) }.takeIf { items -> items.all { it is String } }
+                    ?.filterIsInstance<String>()
+            }.orEmpty()
             Card(
                 id = o.getString("id"), kind = o.getString("kind"), title = o.getString("title"),
                 asks = o.optJSONArray("asks").strings(), answer = o.optJSONArray("answer").strings(),
                 warnings = o.optJSONArray("warnings").strings(),
                 quotes = (0 until q.length()).map { Card.Quote(q.getJSONObject(it).getString("doc"), q.getJSONObject(it).getString("text")) },
+                radio = radio,
             )
         }
-    }.getOrDefault(emptyList())
+    }
 }
 
 /**

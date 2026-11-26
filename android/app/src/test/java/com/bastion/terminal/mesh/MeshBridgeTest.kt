@@ -40,7 +40,7 @@ class MeshBridgeTest {
     @Test
     fun split_numberedStepsBecomeNumberedMessagesWithinTheLimit() {
         val steps = (1..6).joinToString("\n") { "$it. Step number $it tells the person to do one clear practical thing right now [1]." }
-        val parts = MeshBridge.split(steps, 4) { i, n -> if (n == 1) "AI: " else "AI $i/$n: " }
+        val parts = MeshBridge.splitForNavigation(steps, 4) { i, n -> if (n == 1) "AI: " else "AI $i/$n: " }
         assertTrue(parts.size in 2..4)
         parts.forEachIndexed { i, p ->
             assertTrue("part ${i + 1} within the limit", MeshBridge.byteLength(p) <= MeshBridge.MAX_BYTES)
@@ -51,10 +51,10 @@ class MeshBridgeTest {
         val joined = parts.joinToString(" ") { it.substringAfter(": ") }
         assertTrue(joined.indexOf("1. Step") < joined.indexOf("6. Step"))
         // A short answer stays one plain message.
-        assertEquals(listOf("AI: Boil water for one minute."), MeshBridge.split("Boil water for one minute. [2]", 4) { i, n -> if (n == 1) "AI: " else "AI $i/$n: " })
+        assertEquals(listOf("AI: Boil water for one minute."), MeshBridge.splitForNavigation("Boil water for one minute. [2]", 4) { i, n -> if (n == 1) "AI: " else "AI $i/$n: " })
         // Too long for the part limit: capped, last part ends with an ellipsis.
         val long = (1..40).joinToString("\n") { "$it. " + "word ".repeat(12).trim() + "." }
-        val capped = MeshBridge.split(long, 3) { i, n -> "AI $i/$n: " }
+        val capped = MeshBridge.splitForNavigation(long, 3) { i, n -> "AI $i/$n: " }
         assertEquals(3, capped.size)
         assertTrue(capped.last().endsWith("…"))
         assertTrue(capped.all { MeshBridge.byteLength(it) <= MeshBridge.MAX_BYTES })

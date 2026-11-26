@@ -183,7 +183,7 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
                 "Offline Wikipedia: download a .zim file from library.kiwix.org. “WikiMed” (medicine, about 1 GB) is a good first one; “Wikipedia top 1M, no pictures” is about 16 GB.",
                 "On Home, under Offline reference, tap “Add ZIM” and pick the file — or copy big files over USB into $zimFolder and tap Rescan.",
                 "Your own plans: Library tab → “New pack” → pick what it is (trip, hunting plan, bug-out plan, team plan, contact list) and fill in the form. Or import files (.txt, .md, .pdf with real text, .epub).",
-                "Each pack has two switches: “Use in Ask” and “Answer over the mesh”. Leave the second one off for anything teammates on the radio shouldn't be able to ask about.",
+                "The “Use in Ask” switch controls whether Ask searches a pack.",
             ),
         )
         Step(
@@ -250,8 +250,8 @@ fun SetupGuide(status: SetupStatus, onClose: () -> Unit) {
             n = 8, title = "Auto-answer for others on the mesh", done = status.autoAnswerOn, optional = true,
             state = if (status.autoAnswerOn) "On." else "Off.",
             steps = listOf(
-                "Needs steps 1, 2, 4 and a private channel (step 5). Mesh tab → switch on “Auto-answer questions”.",
-                "A message starting with a symbol is for BASTION: “?how do I treat a burn” asks the AI (a follow-up ? continues the topic), “@base” asks where a unit is. Anything else is ordinary chat and is never answered.",
+                "Finish steps 3 and 4 and set up a private channel (step 5). In the Mesh tab, switch on “Auto-answer questions” and approve the radios that can use it.",
+                "For “?question”, use a question listed on an approved card. BASTION sends the card’s radio version when available. “@base” asks for this phone’s position.",
                 "It only answers on private channels unless you also switch on “Also answer on public channels”.",
             ),
         )
