@@ -244,13 +244,36 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
 
     // ---- driving roads ----
 
-    private val roadGraph: RoadGraph? by lazy { roadGrid?.let { g -> RoadGraph(g, roadsComplete) { x, y -> bytes("layers/streets/$x/$y.bin") } } }
+    private fun streetBytes(x: Int, y: Int): ByteArray? = bytes("layers/streets/$x/$y.bin")
+
+    /** ZIP entry keys only. The cross-pack search reads the road bytes as needed. */
+    internal val roadSource: RoadPackSource? by lazy {
+        roadGrid?.let { grid ->
+            val cellKeys = entries.keys.asSequence().mapNotNull { path ->
+                if (!path.startsWith("layers/streets/") || !path.endsWith(".bin")) return@mapNotNull null
+                val xy = path.removePrefix("layers/streets/").removeSuffix(".bin")
+                val x = xy.substringBefore('/').toIntOrNull() ?: return@mapNotNull null
+                val y = xy.substringAfter('/', "").toIntOrNull() ?: return@mapNotNull null
+                RoadPackSource.cellKey(x, y)
+            }.toSet()
+            RoadPackSource(name, grid, roadsComplete, west, south, east, north, cellKeys, ::streetBytes)
+        }
+    }
+
+    private var cachedRoadGraph: RoadGraph? = null
+
+    // Accessed under this pack's lock, including discard before a multi-pack search.
+    private fun roadGraph(): RoadGraph? = cachedRoadGraph ?: roadGrid?.let { grid ->
+        RoadGraph(grid, roadsComplete, sourceName = name, cellBytes = ::streetBytes).also { cachedRoadGraph = it }
+    }
+
+    internal fun discardRoadGraph() = synchronized(this) { cachedRoadGraph = null }
 
     /** Driving routes between two positions, fastest first (empty if this pack cannot route them). Call off the main thread. */
     fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>>, count: Int, vehicle: RoadGraph.Vehicle): List<RoadGraph.Route> {
-        val g = roadGraph ?: return emptyList()
         if (!contains(fromLat, fromLon) || !contains(toLat, toLon)) return emptyList()
-        return synchronized(g) {
+        return synchronized(this) {
+            val g = roadGraph() ?: return@synchronized emptyList()
             // A block closes every road within 50 m of the spot, so a route cannot slip round it through a lot or a side lane.
             val blocked = blockedAt.flatMap { (la, lo) -> g.roadsWithin(la, lo, 50.0) }.toSet()
             g.routes(fromLat, fromLon, toLat, toLon, blocked, count, vehicle = vehicle)
@@ -259,12 +282,11 @@ class MapPack private constructor(val file: File, private val zip: ZipFile, priv
 
     /** The road nearest a position and the closest point on it (store that point to block the road). */
     fun roadNear(lat: Double, lon: Double): RoadGraph.RoadHit? {
-        val g = roadGraph ?: return null
         if (!contains(lat, lon)) return null
-        return synchronized(g) { g.roadNear(lat, lon) }
+        return synchronized(this) { roadGraph()?.roadNear(lat, lon) }
     }
 
-    fun close() = runCatching { zip.close() }
+    fun close() = synchronized(zip) { runCatching { zip.close() } }
 
     companion object {
         /** Largest elevation block held at once: about 46 MB, a 55 km square at 14 m cells. */
@@ -398,16 +420,33 @@ class MapPacks private constructor(private val app: Context) {
     private fun roadPacks(vararg at: Pair<Double, Double>): List<MapPack> =
         _packs.value.filter { p -> p.roadGrid != null && at.all { p.contains(it.first, it.second) } }.sortedBy { it.areaKm2 }
 
-    /**
-     * Driving routes, fastest first; the road nearest each of [blockedAt] is avoided. Empty if no pack on
-     * the phone has roads for both ends. The most local pack is tried first; if its road network is
-     * incomplete or finds no route, the other packs covering both ends are tried ([PackChoice]).
-     */
-    suspend fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>> = emptyList(), count: Int = 3, vehicle: RoadGraph.Vehicle = RoadGraph.Vehicle.CAR): List<RoadGraph.Route> =
+    internal sealed interface DriveResult {
+        data class Found(val routes: List<RoadGraph.Route>) : DriveResult
+        data class MissingRoadPack(val state: String) : DriveResult
+        data object NoRoute : DriveResult
+    }
+
+    /** Fastest first, trying the existing single-pack choices before a cross-pack network search. */
+    internal suspend fun drive(fromLat: Double, fromLon: Double, toLat: Double, toLon: Double, blockedAt: List<Pair<Double, Double>> = emptyList(), count: Int = 3, vehicle: RoadGraph.Vehicle = RoadGraph.Vehicle.CAR): DriveResult =
         withContext(Dispatchers.Default) {
             if (_packs.value.isEmpty()) rescan()
-            PackChoice.drive(roadPacks(fromLat to fromLon, toLat to toLon), { it.roadsComplete }) {
-                it.drive(fromLat, fromLon, toLat, toLon, blockedAt, count, vehicle)
+            // Keep rescan from closing pack files and other driving searches from building networks
+            // while this search holds its cells.
+            synchronized(this@MapPacks) {
+                val single = PackChoice.drive(roadPacks(fromLat to fromLon, toLat to toLon), { it.roadsComplete }) {
+                    it.drive(fromLat, fromLon, toLat, toLon, blockedAt, count, vehicle)
+                }
+                if (single.isNotEmpty()) return@synchronized DriveResult.Found(single)
+
+                val sources = _packs.value.mapNotNull { it.roadSource }
+                if (sources.size > 1) {
+                    _packs.value.forEach { it.discardRoadGraph() }
+                    val routes = CrossPackDrive.routes(sources, fromLat, fromLon, toLat, toLon, blockedAt, count, vehicle)
+                    if (routes.isNotEmpty()) return@synchronized DriveResult.Found(routes)
+                }
+                val missing = CrossPackDrive.missingEndpointPack(sources, fromLat, fromLon)
+                    ?: CrossPackDrive.missingEndpointPack(sources, toLat, toLon)
+                if (missing == null) DriveResult.NoRoute else DriveResult.MissingRoadPack(missing)
             }
         }
 
@@ -418,7 +457,9 @@ class MapPacks private constructor(private val app: Context) {
      * The road nearest a position (to block it), with the closest point on it. A block is applied to
      * every road within 50 m of the stored point, so store [RoadGraph.RoadHit.lat]/[lon], not the press.
      */
-    suspend fun roadNear(lat: Double, lon: Double): RoadGraph.RoadHit? = withContext(Dispatchers.Default) { roadPack(lat to lon)?.roadNear(lat, lon) }
+    suspend fun roadNear(lat: Double, lon: Double): RoadGraph.RoadHit? = withContext(Dispatchers.Default) {
+        synchronized(this@MapPacks) { roadPack(lat to lon)?.roadNear(lat, lon) }
+    }
 
     companion object {
         @Volatile private var inst: MapPacks? = null

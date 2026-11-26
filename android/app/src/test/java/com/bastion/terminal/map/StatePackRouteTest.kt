@@ -1,9 +1,15 @@
 package com.bastion.terminal.map
 
+import com.bastion.terminal.link.Cot
+import org.json.JSONObject
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.io.File
+import java.util.Locale
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
 import java.util.zip.ZipFile
+import kotlin.math.abs
 
 /**
  * Long drives on the real state road packs (tools/maps/state-XX-roads.bmap, built by
@@ -17,18 +23,38 @@ class StatePackRouteTest {
     private data class Trip(
         val pack: String, val from: String, val fLat: Double, val fLon: Double,
         val to: String, val tLat: Double, val tLon: Double, val minHours: Double, val maxHours: Double,
+        val baselineMetres: Double,
     )
 
     // Hours: a range around the usual drive time (speed limits, no traffic, so a little under it).
+    // Metres: count=3 on the 2026-11-23 state packs before the cross-pack/snap changes.
     private val trips = listOf(
-        Trip("id", "Boise", 43.6150, -116.2023, "Idaho Falls", 43.4917, -112.0339, 3.0, 4.5),
-        Trip("id", "Boise", 43.6150, -116.2023, "Coeur d'Alene", 47.6777, -116.7805, 5.5, 8.0),
-        Trip("mt", "Missoula", 46.8721, -113.9940, "Billings", 45.7833, -108.5007, 4.0, 5.8),
-        Trip("nv", "Reno", 39.5296, -119.8138, "Las Vegas", 36.1699, -115.1398, 6.0, 8.0),
-        Trip("or", "Portland", 45.5152, -122.6784, "Bend", 44.0582, -121.3153, 2.5, 4.0),
-        Trip("ut", "Salt Lake City", 40.7608, -111.8910, "St George", 37.0965, -113.5684, 3.5, 5.0),
-        Trip("wa", "Seattle", 47.6062, -122.3321, "Spokane", 47.6588, -117.4260, 3.5, 5.0),
-        Trip("wy", "Cheyenne", 41.1400, -104.8202, "Jackson", 43.4799, -110.7624, 5.5, 8.0),
+        Trip("id", "Boise", 43.6150, -116.2023, "Idaho Falls", 43.4917, -112.0339, 3.0, 4.5, 452_133.338),
+        Trip("id", "Boise", 43.6150, -116.2023, "Coeur d'Alene", 47.6777, -116.7805, 5.5, 8.0, 609_341.989),
+        Trip("mt", "Missoula", 46.8721, -113.9940, "Billings", 45.7833, -108.5007, 4.0, 5.8, 551_620.208),
+        Trip("nv", "Reno", 39.5296, -119.8138, "Las Vegas", 36.1699, -115.1398, 6.0, 8.0, 711_410.217),
+        Trip("or", "Portland", 45.5152, -122.6784, "Bend", 44.0582, -121.3153, 2.5, 4.0, 261_258.859),
+        Trip("ut", "Salt Lake City", 40.7608, -111.8910, "St George", 37.0965, -113.5684, 3.5, 5.0, 486_830.690),
+        Trip("wa", "Seattle", 47.6062, -122.3321, "Spokane", 47.6588, -117.4260, 3.5, 5.0, 449_169.651),
+        Trip("wy", "Cheyenne", 41.1400, -104.8202, "Jackson", 43.4799, -110.7624, 5.5, 8.0, 695_341.821),
+    )
+
+    private data class City(val name: String, val lat: Double, val lon: Double)
+    private data class CrossTrip(val states: List<String>, val from: City, val to: City, val minHours: Double, val maxHours: Double)
+
+    private val boise = City("Boise", 43.6150, -116.2023)
+    private val spokane = City("Spokane", 47.6588, -117.4260)
+    private val saltLakeCity = City("Salt Lake City", 40.7608, -111.8910)
+
+    // Sum of great-circle distances through towns approximates the length of each corridor.
+    // The hour bounds allow for road curvature, urban access and slower sections on US routes.
+    private val crossTrips = listOf(
+        CrossTrip(listOf("id", "wa"), boise, spokane, 4.5, 8.5), // US-95 and US-195, about 304 mi via Lewiston
+        CrossTrip(listOf("ut", "id"), saltLakeCity, boise, 4.0, 6.5), // I-15 and I-84, about 318 mi via Burley
+        CrossTrip(listOf("or", "id"), City("Portland", 45.5152, -122.6784), boise, 5.0, 8.5), // I-84, about 391 mi via La Grande
+        CrossTrip(listOf("nv", "or", "id"), City("Reno", 39.5296, -119.8138), boise, 5.0, 9.0), // I-80 and US-95, about 373 mi via Jordan Valley
+        CrossTrip(listOf("mt", "id", "wa"), City("Missoula", 46.8721, -113.9940), spokane, 2.3, 4.5), // I-90, about 173 mi via Lookout Pass
+        CrossTrip(listOf("wy", "ut"), City("Cheyenne", 41.1400, -104.8202), saltLakeCity, 5.0, 8.5), // I-80, about 391 mi via Rock Springs
     )
 
     @Test
@@ -48,31 +74,146 @@ class StatePackRouteTest {
                         zip.getInputStream(e).use { it.readBytes() }.also { cells++; bytes += it.size }
                     }
                 }
-                val rt = Runtime.getRuntime()
-                System.gc(); val before = rt.totalMemory() - rt.freeMemory()
-                // Peak heap, sampled while the search runs (java.lang.management is not on Android's classpath).
-                val top = java.util.concurrent.atomic.AtomicLong(before)
-                val running = java.util.concurrent.atomic.AtomicBoolean(true)
-                val sampler = Thread { while (running.get()) { top.accumulateAndGet(rt.totalMemory() - rt.freeMemory(), ::maxOf); Thread.sleep(10) } }
-                sampler.start()
-                val t0 = System.nanoTime()
-                val routes = graph.routes(trip.fLat, trip.fLon, trip.tLat, trip.tLon, count = 3)
-                val ms = (System.nanoTime() - t0) / 1_000_000
-                running.set(false); sampler.join()
-                val peak = (top.get() - before) / 1_048_576
-                System.gc()
-                val used = (rt.totalMemory() - rt.freeMemory() - before) / 1_048_576
+                val measured = measure { graph.routes(trip.fLat, trip.fLon, trip.tLat, trip.tLon, count = 3) }
+                val routes = measured.result
                 val best = routes.firstOrNull()
                 val hours = best?.seconds?.div(3600)
                 println(String.format(
-                    "ROUTE %s %s -> %s: %s, %d route(s), %d ms, %d cells (%.0f MB read), peak +%d MB, network kept %d MB (%d roads), alts %s",
-                    trip.pack, trip.from, trip.to, best?.summary() ?: "NO ROUTE", routes.size, ms, cells,
-                    bytes / 1_048_576.0, peak, used, graph.loadedEdges, routes.drop(1).joinToString { it.summary() },
+                    Locale.ROOT,
+                    "ROUTE %s %s -> %s: %s, metres=%.3f, routeSeconds=%.3f, %d route(s), computeSeconds=%.3f, " +
+                        "%d cells (%.1f MiB read), peakHeapMiB=%.1f, incrementalPeakMiB=%.1f, %d roads, alts %s",
+                    trip.pack, trip.from, trip.to, best?.summary() ?: "NO ROUTE",
+                    best?.meters ?: Double.NaN, best?.seconds ?: Double.NaN, routes.size, measured.elapsedSeconds, cells,
+                    bytes / MIB, measured.peakMiB, measured.incrementMiB, graph.loadedEdges,
+                    routes.drop(1).joinToString { it.summary() },
                 ))
                 if (hours == null || hours < trip.minHours || hours > trip.maxHours)
                     bad += "${trip.from} -> ${trip.to}: ${best?.summary() ?: "no route"}"
+                if (best != null && abs(best.meters - trip.baselineMetres) > trip.baselineMetres * 0.001)
+                    bad += "${trip.from} -> ${trip.to}: ${best.meters} m differs from baseline ${trip.baselineMetres} m by more than 0.1%"
+                if (routes.size != 3)
+                    bad += "${trip.from} -> ${trip.to}: expected 3 routes, got ${routes.size}"
             }
         }
-        if (bad.isNotEmpty()) throw AssertionError("implausible: " + bad.joinToString("; "))
+        if (bad.isNotEmpty()) throw AssertionError(bad.joinToString("\n"))
+    }
+
+    @Test
+    fun crossStateDrives() {
+        val dir = System.getenv("BASTION_MAPS")?.let(::File)
+        assumeTrue("BASTION_MAPS not set", dir != null && dir.isDirectory)
+        val only = System.getenv("BASTION_PACKS")?.split(",")
+        val bad = mutableListOf<String>()
+        var exercised = 0
+        for (trip in crossTrips) {
+            if (only != null && !only.containsAll(trip.states)) continue
+            val files = trip.states.map { File(dir, "state-$it-roads.bmap") }
+            val missing = files.filterNot { it.isFile }
+            val label = "${trip.from.name} -> ${trip.to.name}"
+            if (missing.isNotEmpty()) {
+                println("SKIP $label: missing ${missing.joinToString { it.name }}")
+                continue
+            }
+            exercised++
+            val archives = mutableListOf<ZipFile>()
+            try {
+                val reads = files.map { ReadStats() }
+                val sources = files.zip(reads).map { (file, stats) ->
+                    val archive = ZipFile(file).also(archives::add)
+                    roadSource(archive, stats)
+                }
+                val measured = measure {
+                    CrossPackDrive.routes(sources, trip.from.lat, trip.from.lon, trip.to.lat, trip.to.lon, count = 3)
+                }
+                val best = measured.result.firstOrNull()
+                val hours = best?.seconds?.div(3600.0)
+                println(String.format(
+                    Locale.ROOT,
+                    "CROSS %s: miles=%.2f, hours=%.3f, metres=%.3f, routeSeconds=%.3f, %d route(s), " +
+                        "computeSeconds=%.3f, peakHeapMiB=%.1f, incrementalPeakMiB=%.1f, packsUsed=%s, reads=%s",
+                    label, best?.meters?.div(METRES_PER_MILE) ?: Double.NaN, hours ?: Double.NaN,
+                    best?.meters ?: Double.NaN, best?.seconds ?: Double.NaN, measured.result.size,
+                    measured.elapsedSeconds, measured.peakMiB, measured.incrementMiB, best?.packsUsed.orEmpty(),
+                    sources.zip(reads).joinToString { (s, r) ->
+                        String.format(Locale.ROOT, "%s:%d cells/%.1f MiB", s.name, r.cells, r.bytes / MIB)
+                    },
+                ))
+                if (best == null || hours == null) {
+                    bad += "$label: no route"
+                    continue
+                }
+                if (hours !in trip.minHours..trip.maxHours)
+                    bad += "$label: $hours h outside ${trip.minHours}–${trip.maxHours} h"
+                if (best.packsUsed.distinct().size < 2 || !sources.map { it.name }.containsAll(best.packsUsed))
+                    bad += "$label: expected at least two of the input packs, used ${best.packsUsed}"
+                if (sources.any { !it.complete && it.name in best.packsUsed } && !best.reducedCoverage)
+                    bad += "$label: used an incomplete pack without reducedCoverage"
+                val direct = Cot.distanceMeters(trip.from.lat, trip.from.lon, trip.to.lat, trip.to.lon)
+                if (best.points.size < 2 || best.offRoadStart !in 0.0..2_000.0 || best.offRoadEnd !in 0.0..2_000.0 ||
+                    best.meters + best.offRoadStart + best.offRoadEnd < direct * 0.995
+                ) bad += "$label: invalid route geometry or endpoint snaps"
+            } finally {
+                archives.forEach(ZipFile::close)
+            }
+        }
+        assumeTrue("No selected cross-state trip has all its road packs", exercised > 0)
+        if (bad.isNotEmpty()) throw AssertionError(bad.joinToString("\n"))
+    }
+
+    private class ReadStats(var cells: Int = 0, var bytes: Long = 0L)
+
+    /** JVM-only adapter for the same manifest and cell data MapPack passes to the cross-pack router. */
+    private fun roadSource(archive: ZipFile, reads: ReadStats): RoadPackSource {
+        val meta = JSONObject(archive.getInputStream(archive.getEntry("pack.json")).bufferedReader().use { it.readText() })
+        val bbox = meta.getJSONArray("bbox")
+        val layers = meta.getJSONArray("layers")
+        val roads = (0 until layers.length()).map(layers::getJSONObject).single { it.optString("kind") == "roadgraph" }
+        val byCell = archive.entries().asSequence().mapNotNull { entry ->
+            val match = ROAD_CELL.matchEntire(entry.name.replace('\\', '/')) ?: return@mapNotNull null
+            val (x, y) = match.destructured
+            RoadPackSource.cellKey(x.toInt(), y.toInt()) to entry
+        }.toMap()
+        return RoadPackSource(
+            meta.getString("name"), roads.getInt("grid"), roads.optBoolean("complete", true),
+            bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3), byCell.keys,
+        ) { x, y ->
+            byCell[RoadPackSource.cellKey(x, y)]?.let { entry ->
+                archive.getInputStream(entry).use { it.readBytes() }.also { reads.cells++; reads.bytes += it.size }
+            }
+        }
+    }
+
+    private data class Measurement<T>(val result: T, val elapsedSeconds: Double, val peakMiB: Double, val incrementMiB: Double)
+
+    private fun <T> measure(block: () -> T): Measurement<T> {
+        val runtime = Runtime.getRuntime()
+        fun usedBytes() = runtime.totalMemory() - runtime.freeMemory()
+        System.gc()
+        val before = usedBytes()
+        val peak = AtomicLong(before)
+        val running = AtomicBoolean(true)
+        // Sample JVM used heap throughout the search. This can miss spikes between samples.
+        val sampler = Thread {
+            while (running.get()) {
+                peak.accumulateAndGet(usedBytes(), ::maxOf)
+                Thread.sleep(10)
+            }
+        }.apply { isDaemon = true; start() }
+        try {
+            val t0 = System.nanoTime()
+            val result = block()
+            val seconds = (System.nanoTime() - t0) / 1_000_000_000.0
+            val top = peak.accumulateAndGet(usedBytes(), ::maxOf)
+            return Measurement(result, seconds, top / MIB, (top - before) / MIB)
+        } finally {
+            running.set(false)
+            sampler.join()
+        }
+    }
+
+    private companion object {
+        const val MIB = 1_048_576.0
+        const val METRES_PER_MILE = 1_609.344
+        val ROAD_CELL = Regex("layers/streets/(\\d+)/(\\d+)\\.bin")
     }
 }
