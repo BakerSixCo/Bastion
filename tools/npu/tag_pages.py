@@ -105,11 +105,11 @@ def refilter(ids):
     print(f"refiltered {len(rows)} pages")
 
 
-def prompt(topic_list, text):
+def prompt(topic_list, text, chars=4500):
     return (
         "You label pages of survival and medical manuals.\n"
         "Topics:\n" + topic_list + "\n\n"
-        "Page text:\n\"\"\"\n" + text[:4500] + "\n\"\"\"\n\n"
+        "Page text:\n\"\"\"\n" + text[:chars] + "\n\"\"\"\n\n"
         "Which topics does this page give practical instructions or key facts about? "
         "Reply with at most 3 topic ids from the list, comma-separated, or the word none. No other words. /no_think"
     )
@@ -152,7 +152,18 @@ def main():
         for doc, page, text in pages():
             if (doc, page) in done:
                 continue
-            raw = str(pipe.generate(prompt(topic_list, text), gen))
+            raw = None
+            # Dense pages (tables, numbers) can pass the NPU's prompt limit: retry with less of the page.
+            for chars in (4500, 3000, 1800):
+                try:
+                    raw = str(pipe.generate(prompt(topic_list, text, chars), gen))
+                    break
+                except RuntimeError as e:
+                    if "MAX_PROMPT_LEN" not in str(e):
+                        raise
+            if raw is None:
+                print(f"skipped {doc} p{page}: too long even at 1800 chars", flush=True)
+                continue
             raw = re.sub(r"<think>.*?</think>", "", raw, flags=re.S).strip()
             found = pick(ids, raw, text)
             out.write(json.dumps({"doc": doc, "page": page, "topics": found, "raw": raw[:200]}) + "\n")
