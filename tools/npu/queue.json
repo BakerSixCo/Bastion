@@ -38,19 +38,17 @@
     },
     {
       "id": "gemma-npu-checked-answers",
-      "title": "Run the phone's model (Gemma 4 E2B) on the NPU over questions-v2 to measure checked answers on the PC instead of the emulator CPU",
+      "title": "DROPPED 2026-11-26: Gemma 4 E2B checked-answer runs on the PC already exist on the Arc GPU (tools/model-eval/pipeline.sh, llama.cpp Vulkan, gemma-4-E2B-it-Q4_0.gguf in tools/kit/pc-eval/models; 20 questions in 78 s). An OpenVINO copy would add a 5 GB download and nothing new. Owner approved the download; Claude withdrew it, nothing downloaded.",
       "cmd": [],
       "approved": false,
-      "needs": "download Gemma 4 E2B instruction weights from Hugging Face (Apache-2.0, about 5 GB) and pip-install optimum-intel to convert them to OpenVINO",
-      "est_hours": 4.0
+      "dropped": true
     },
     {
       "id": "embed-library",
-      "title": "Embed every kit passage with a small embedding model to test meaning-based search against today's word search",
+      "title": "DROPPED 2026-11-26: meaning-based search was already measured on the PC with EmbeddingGemma 2 and Qwen3-Reranker (tools/kit/pc-eval/models; docs/status.md 2026-11-24: semantic 24/26 vs alternate wording 26/26). No download needed or useful.",
       "cmd": [],
       "approved": false,
-      "needs": "download Qwen3-Embedding-0.6B (Apache-2.0, about 1.2 GB) converted for OpenVINO",
-      "est_hours": 3.0
+      "dropped": true
     },
     {
       "id": "figure-descriptions",

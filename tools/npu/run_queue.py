@@ -57,6 +57,9 @@ def runnable(jobs, state):
 def status(jobs, state):
     for j in jobs:
         s = state.get(j["id"], {})
+        if j.get("dropped"):
+            print(f"{'dropped':8} {j['id']:28}  {j['title'][:110]}")
+            continue
         flag = "" if j.get("approved") else "  [needs owner OK: " + j.get("needs", "") + "]"
         if not j.get("cmd"):
             flag += "  [to build]"
