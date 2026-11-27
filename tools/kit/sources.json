@@ -1249,6 +1249,19 @@
       "licence": "CC BY-NC-SA 3.0 IGO (notice inside the file; keep it with the file)",
       "tier": "own",
       "flags": []
+    },
+    {
+      "id": "doc-ornl-6404-simplified-wood-gas-generator-1989",
+      "file": "FEMA-ORNL-6404-Simplified-Wood-Gas-Generator-1989.pdf",
+      "title": "Construction of a Simplified Wood Gas Generator for Fueling Internal Combustion Engines in a Petroleum Emergency (ORNL-6404)",
+      "publisher": "Oak Ridge National Laboratory for the Federal Emergency Management Agency",
+      "edition": "1989-03",
+      "sha256": "bb649c6cf626ab8acd71c2ac4a05c9661003110522b230e89a7566b4738ece74",
+      "origin": "url",
+      "url": "https://www.osti.gov/servlets/purl/6054362",
+      "licence": "US government work; approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
     }
   ]
 }
