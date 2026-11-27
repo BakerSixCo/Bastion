@@ -53,11 +53,10 @@
     },
     {
       "id": "figure-descriptions",
-      "title": "Describe the figures in the kit PDFs (diagrams, knots, antennas, tables) so their content becomes searchable text",
+      "title": "RELOCATED 2026-11-26 to the GPU queue (tools/gpu/queue.json#figure-descriptions). The vision-language model (Phi-3.5-vision-instruct, MIT licence, int4 OpenVINO) runs on the Arc GPU, not the NPU: OpenVINO GenAI's VLMPipeline has no NPU path for VLMs yet, and run_queue runs jobs one at a time, so captioning here would block the NPU's ~9.5 h of text jobs for the whole pass. Model downloaded + licence-verified; tools/npu/tag_figures.py built and smoke-tested (ham-radio schematics + land-nav diagrams on the GPU). The approved job now lives on the GPU queue, in parallel with the NPU.",
       "cmd": [],
       "approved": false,
-      "needs": "owner APPROVED 2026-11-26; Claude to pick a free-licence OpenVINO vision-language model, verify its licence, download it, build tools/npu/tag_figures.py, then set approved true",
-      "est_hours": 8.0
+      "relocated_to": "tools/gpu/queue.json#figure-descriptions"
     }
   ]
 }
