@@ -68,6 +68,15 @@ phrasebook** ("I need water", "Where is the casualty?", "Do you have fuel?") and
 2. Allow Feature B's riskier cousin — user-reviewed free-MT send via MeshBridge — or phrasebook-only?
 3. Storage: Wiktionary (full English) is ~14 GB; acceptable, or ship a smaller subset / Wikivoyage only?
 
+## Recommended defaults (Claude's S-tier rec, 2026-11-27; owner to confirm)
+
+1. **Languages:** Spanish first (highest-value for US off-grid), then add on demand.
+2. **Send:** phrasebook-send only — verified phrases, no user-reviewed free-MT send. Keeps the radio
+   rule intact and the user never ships a translation they can't verify.
+3. **Storage:** **Wikivoyage phrasebooks on the phone, not the 14 GB Wiktionary.** Gemma handles
+   translate-on-receive; Wikivoyage covers verified phrases. Keep Wiktionary on the PC as an optional
+   offline dictionary the owner can push later if they want it, but don't burden the phone with 14 GB.
+
 ## Code touchpoints (when approved — not changed yet)
 
 - Receive path: `mesh/MeshInboxService` → a new "Translate" action next to "Ask AI".

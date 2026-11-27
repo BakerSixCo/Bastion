@@ -9,6 +9,15 @@ each branch, the owner decides merges. Each task file holds the full spec.
 one finishes there is always another that is not blocked. Keep this list deep (owner 2026-11-26: "NPU should
 always be going and we should keep ChatGPT queue full at all times... make it a heavy-lifting workhorse").
 
+**Merged 2026-11-27 (Claude reviewed + merged, branch pushed):** `route-perf-1`, `kit-4`, `kit-5`, `kit-6`,
+`kitconv-1`, `mapverify-1`, `evalclean-1`. `chunk-tables-1` stays open (needs a retrieval re-scope:
+`LibraryStore` + `ai/Retriever`, so it's owner/Claude work, not ChatGPT-scoped).
+
+**Backlog (low priority; spec when it reaches the head):** `meshsim-eval-1` — stand up Meshtasticator's
+discrete-event sim and stress-test the radio card-responder (`mesh/MeshAutoResponder`, `RadioCardFallback`)
+across a multi-hop mesh: does a 4×200-byte card answer actually propagate, hop-limit, airtime cost. PC/Python,
+no app code. It's life-safety-adjacent and only 2-node-tested today, so the coverage gap is real but not urgent.
+
 ## A. Runnable now — independent (pick any; always have one going)
 
 | Task | What | Where it runs |
