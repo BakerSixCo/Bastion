@@ -7,7 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.net.Uri
 import android.provider.OpenableColumns
 import com.bastion.terminal.ai.SourceTier
+import com.bastion.terminal.kiwix.ZimInfo
+import com.bastion.terminal.kiwix.ZimLibrary
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -136,14 +140,10 @@ class LibraryStore private constructor(
     }
 
     /** PDF text layer (PdfBox-Android). Pages and detected paragraphs become blank-line breaks for the chunker. */
-    /** The title written into the PDF most recently read by [pdfText] (imports run one at a time). */
-    @Volatile private var lastPdfTitle: String? = null
-
-    private fun pdfText(bytes: ByteArray): String {
-        lastPdfTitle = null
+    private fun pdfText(bytes: ByteArray, captureTitle: (String?) -> Unit): String {
         com.tom_roush.pdfbox.android.PDFBoxResourceLoader.init(app)
         com.tom_roush.pdfbox.pdmodel.PDDocument.load(bytes).use { doc ->
-            lastPdfTitle = runCatching { doc.documentInformation?.title }.getOrNull()
+            captureTitle(runCatching { doc.documentInformation?.title }.getOrNull())
             val s = com.tom_roush.pdfbox.text.PDFTextStripper()
             s.sortByPosition = true
             s.paragraphEnd = "\n\n"
@@ -205,6 +205,28 @@ class LibraryStore private constructor(
     private val bulkLock = Mutex()
     private val bulkPrefs by lazy { app.getSharedPreferences("library_bulk_$dbName", Context.MODE_PRIVATE) }
 
+    private data class BundlePdf(val archive: ZimInfo, val path: String, val name: String) {
+        val archiveName get() = archive.fileName
+        val memoKey get() = "zim|$archiveName|$path"
+    }
+
+    private data class IndexedBundle(val id: Long, val title: String, val name: String, val archive: String, val sha: String)
+
+    private fun indexedBundles(): List<IndexedBundle> = helper.readableDatabase.rawQuery(
+        "SELECT id,title,filename,provenance,sha256 FROM docs WHERE provenance LIKE ?",
+        arrayOf("From “%"),
+    ).use { cursor ->
+        buildList {
+            while (cursor.moveToNext()) {
+                val archive = BundleExclusions.importedArchive(cursor.getString(3)) ?: continue
+                add(IndexedBundle(cursor.getLong(0), cursor.getString(1), cursor.getString(2), archive, cursor.getString(4)))
+            }
+        }
+    }
+
+    private fun sha256(bytes: ByteArray): String =
+        MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
+
     /** BASTION's "docs" folders (phone storage and SD card): files copied here are added to the library. */
     fun docFolders(): List<File> =
         app.externalMediaDirs.filterNotNull().map { File(it, "docs").apply { mkdirs() } }.filter { it.isDirectory }
@@ -214,10 +236,61 @@ class LibraryStore private constructor(
      * docs folders, and PDFs inside references that are bundles of documents.
      * Each file is tried once; a file with no readable text is remembered and skipped.
      */
-    suspend fun importKit(zims: com.bastion.terminal.kiwix.ZimLibrary) = withContext(Dispatchers.IO) {
+    suspend fun importKit(zims: ZimLibrary) = withContext(Dispatchers.IO) {
         bulkLock.withLock {
             var added = 0
             val problems = ArrayList<String>()
+            val excluded = runCatching {
+                app.assets.open("library/exclude.json").bufferedReader().use { BundleExclusions.parse(it.readText()) }
+            }.getOrElse {
+                problems += "Could not read the bundle exclude list. Document bundles were skipped"
+                null
+            }
+            val bundles = if (excluded == null) emptyList() else zims.currentInfos().flatMap { archive ->
+                zims.pdfPaths(archive.file).map { (path, title) ->
+                    val name = title.ifBlank { path.substringAfterLast('/') }.replace(Regex("(?i)\\.pdf$"), "") + ".pdf"
+                    BundlePdf(archive, path, name)
+                }
+            }
+            val excludedDocuments = HashSet<String>()
+            val skippedPaths = HashSet<String>()
+            fun leaveOut(pdf: BundlePdf, sha: String?) {
+                skippedPaths += pdf.memoKey
+                excludedDocuments += sha ?: "path:${pdf.memoKey}"
+            }
+            if (excluded != null) {
+                val old = indexedBundles()
+                val removed = old.filter { excluded.matchesImportedTitle(it.archive, it.title, it.name, it.sha) }
+                    .associateByTo(LinkedHashMap()) { it.id }
+                val byArchive = old.groupBy { it.archive }
+                for (pdf in bundles) {
+                    ensureActive()
+                    if (!excluded.matches(pdf.archiveName, path = pdf.path)) continue
+                    val legacy = byArchive[pdf.archiveName].orEmpty().filterNot { it.id in removed }
+                    val digest = excluded.auditedPathSha(pdf.archiveName, pdf.path)
+                        ?: if (legacy.isEmpty()) null else zims.fileBytes(pdf.archive.file, pdf.path, BULK_MAX_BYTES)?.let(::sha256)
+                    leaveOut(pdf, digest)
+                    for (doc in legacy) if (doc.sha == digest) removed[doc.id] = doc
+                }
+                if (removed.isNotEmpty()) {
+                    val archiveNames = bundles.mapTo(HashSet()) { it.archiveName }
+                    val absentArchives = removed.values.map { it.archive }.filterNot { it in archiveNames }.toSet()
+                    val removedNames = removed.values.mapTo(HashSet()) { it.archive to it.name }
+                    val memo = bulkPrefs.edit()
+                    for ((key, status) in bulkPrefs.all) {
+                        // An owner file formerly skipped as duplicate may now be the only copy.
+                        if ((key.startsWith("file|") && status is String && status.startsWith("Already")) ||
+                            absentArchives.any { key.startsWith("zim|$it|") }) memo.remove(key)
+                    }
+                    for (pdf in bundles) if ((pdf.archiveName to pdf.name) in removedNames) memo.remove(pdf.memoKey)
+                    memo.apply()
+                    for (doc in removed.values) {
+                        deleteDocLocked(doc.id)
+                        excludedDocuments += doc.sha
+                    }
+                    changeCounter.value += 1
+                }
+            }
             fun record(key: String, label: String, r: ImportResult) {
                 bulkPrefs.edit().putString(key, if (r is ImportResult.Ok) "ok" else (r as ImportResult.Rejected).reason).apply()
                 if (r is ImportResult.Ok) added++
@@ -232,6 +305,7 @@ class LibraryStore private constructor(
                     docsIn(File(d, REFERENCE_DIR)).map { it to SourceTier.REFERENCE_DOCS_PROVENANCE }
             }.sortedBy { it.first.length() }
             for ((f, provenanceNote) in files) {
+                ensureActive()
                 val key = "file|${f.name}|${f.length()}"
                 if (bulkPrefs.contains(key)) continue
                 bulkStatus.value = "Adding ${f.name} to the library…"
@@ -240,49 +314,69 @@ class LibraryStore private constructor(
                     else indexBytes(f.readBytes(), f.name, provenanceNote, bulk = true)
                 }.getOrElse { ImportResult.Rejected("could not be read (${it.javaClass.simpleName})") })
             }
-            for (zi in zims.currentInfos()) {
-                for ((path, title) in zims.pdfPaths(zi.file)) {
-                    val key = "zim|${zi.fileName}|$path"
-                    if (bulkPrefs.contains(key)) continue
-                    val name = title.ifBlank { path.substringAfterLast('/') }.replace(Regex("(?i)\\.pdf$"), "") + ".pdf"
-                    bulkStatus.value = "Adding $name from ${zi.title}…"
-                    record(key, name, runCatching {
-                        val bytes = zims.fileBytes(zi.file, path, BULK_MAX_BYTES)
-                        if (bytes == null) ImportResult.Rejected("could not be read from ${zi.fileName}")
-                        else indexBytes(bytes, name, "From “${zi.title}” (${zi.fileName})", bulk = true)
-                    }.getOrElse { ImportResult.Rejected("could not be read (${it.javaClass.simpleName})") })
+            if (excluded != null) for (pdf in bundles) {
+                ensureActive()
+                if (pdf.memoKey in skippedPaths) continue
+                val previous = bulkPrefs.getString(pdf.memoKey, null)
+                if (previous?.startsWith(EXCLUDED_TITLE) == true) {
+                    val match = previous.removePrefix(EXCLUDED_TITLE)
+                    val digest = match.substringBefore('\n')
+                    val title = match.substringAfter('\n')
+                    if (excluded.matchesImportedTitle(pdf.archiveName, title, pdf.name, digest)) {
+                        leaveOut(pdf, digest)
+                        continue
+                    }
+                } else if (previous != null) continue
+                bulkStatus.value = "Adding ${pdf.name} from ${pdf.archive.title}…"
+                val result = runCatching {
+                    val bytes = zims.fileBytes(pdf.archive.file, pdf.path, BULK_MAX_BYTES)
+                    if (bytes == null) ImportResult.Rejected("could not be read from ${pdf.archiveName}")
+                    else indexBytes(bytes, pdf.name, "From “${pdf.archive.title}” (${pdf.archiveName})", bulk = true,
+                        excludeTitle = { title, digest -> excluded.matchesImportedTitle(pdf.archiveName, title, pdf.name, digest) })
+                }.getOrElse {
+                    if (it is CancellationException) throw it
+                    ImportResult.Rejected("could not be read (${it.javaClass.simpleName})")
+                }
+                if (result is ImportResult.Rejected && result.reason.startsWith(EXCLUDED_TITLE)) {
+                    leaveOut(pdf, result.reason.removePrefix(EXCLUDED_TITLE).substringBefore('\n'))
+                    bulkPrefs.edit().putString(pdf.memoKey, result.reason).apply()
+                } else {
+                    record(pdf.memoKey, pdf.name, result)
                 }
             }
-            bulkStatus.value = when {
-                added == 0 && problems.isEmpty() -> ""
-                else -> "Added $added document(s) from the docs folder and document collections." +
-                    (if (problems.isEmpty()) "" else " Not added: " + problems.take(6).joinToString("; ") +
-                        (if (problems.size > 6) "; and ${problems.size - 6} more" else "") + ".")
-            }
+            bulkStatus.value = buildList {
+                if (added > 0 || problems.isNotEmpty()) add("Added $added document(s) from the docs folder and document collections.")
+                if (excludedDocuments.isNotEmpty()) add("Left out ${excludedDocuments.size} document(s) on the exclude list.")
+                if (problems.isNotEmpty()) add("Not added: " + problems.take(6).joinToString("; ") +
+                    (if (problems.size > 6) "; and ${problems.size - 6} more" else "") + ".")
+            }.joinToString(" ")
         }
     }
 
-    private fun indexBytes(bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null, bulk: Boolean = false): ImportResult {
+    private fun indexBytes(
+        bytes: ByteArray, name: String, provenanceNote: String, packId: Long? = null, bulk: Boolean = false,
+        excludeTitle: ((title: String, sha: String) -> Boolean)? = null,
+    ): ImportResult {
         if (bytes.isEmpty()) return ImportResult.Rejected("The file is empty.")
         if (!bulk && bytes.size > TextUtil.MAX_IMPORT_BYTES) return tooLarge(bytes.size.toLong())
-        lastPdfTitle = null
-        val extracted = DocExtract.extract(bytes, name, ::pdfText)
+        var pdfTitle: String? = null
+        val extracted = DocExtract.extract(bytes, name) { blob -> pdfText(blob) { pdfTitle = it } }
         if (extracted is DocExtract.Result.Rejected) return ImportResult.Rejected(extracted.reason)
         extracted as DocExtract.Result.Ok
         val text = extracted.text
-        val sha = MessageDigest.getInstance("SHA-256").digest(bytes)
-            .joinToString("") { "%02x".format(it) }
+        val sha = sha256(bytes)
+        val base = name.replace(Regex("(?i)\\.(md|txt|markdown|pdf|epub)$"), "")
+        // A bundled PDF is often just numbered ("files/Water (6)"); its own first line says what it is.
+        val title = if (bulk && GENERIC_NAME.matches(base)) {
+            DocTitle.pick(if (extracted.kind == DocExtract.Kind.PDF) pdfTitle else null, text, base.substringAfterLast('/'))
+        } else base
+        if (excludeTitle?.invoke(title, sha) == true) return ImportResult.Rejected("$EXCLUDED_TITLE$sha\n$title")
         val db = helper.writableDatabase
         db.rawQuery("SELECT id FROM docs WHERE sha256=?", arrayOf(sha)).use {
             if (it.moveToFirst()) return ImportResult.Rejected("Already in the library (identical content).")
         }
         val now = System.currentTimeMillis()
         val date = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US).format(Date(now))
-        val base = name.replace(Regex("(?i)\\.(md|txt|markdown|pdf|epub)$"), "")
-        // A bundled PDF is often just numbered ("files/Water (6)"); its own first line says what it is.
-        val title = if (bulk && GENERIC_NAME.matches(base)) {
-            DocTitle.pick(if (extracted.kind == DocExtract.Kind.PDF) lastPdfTitle else null, text, base.substringAfterLast('/'))
-        } else base
         val kindNote = when (extracted.kind) {
             DocExtract.Kind.PDF -> " · PDF text layer extracted"
             DocExtract.Kind.EPUB -> " · EPUB text extracted"
@@ -557,6 +651,7 @@ class LibraryStore private constructor(
         private val DOC_TYPES = setOf("pdf", "md", "markdown", "txt", "epub")
         private const val BULK_MAX_BYTES = 200L * 1024 * 1024
         private val GENERIC_NAME = Regex(".*\\(\\d+\\)$")
+        private const val EXCLUDED_TITLE = "excluded-title:"
         const val NOTE_PROVENANCE = "Written in BASTION"
         private const val DOCS_PROVENANCE = "From BASTION's docs folder"
         /** Subfolder of each docs folder for reference-tier (community or volunteer-written) documents. */
