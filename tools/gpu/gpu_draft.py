@@ -19,7 +19,7 @@ import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 LLAMA = ROOT / "tools" / "kit" / "pc-eval" / "llama-vulkan" / "llama-server.exe"
-MODEL = ROOT / "tools" / "kit" / "pc-eval" / "models" / "gemma-4-E2B-it-Q4_0.gguf"
+MODEL = ROOT / "tools" / "kit" / "pc-eval" / "models" / "gemma-4-E4B-it-Q4_0.gguf"
 QUESTIONS = ROOT / "tools" / "npu" / "source-pack-questions.json"
 OUT = ROOT / "tools" / "gpu" / "out" / "drafts.jsonl"
 
@@ -50,14 +50,16 @@ def ask(port, question):
 
 
 def main():
-    global OUT
+    global OUT, MODEL
     ap = argparse.ArgumentParser()
     ap.add_argument("--questions", default=str(QUESTIONS))
     ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--model", default=str(MODEL))
     ap.add_argument("--port", type=int, default=8092)
     ap.add_argument("--limit", type=int, default=0)
     a = ap.parse_args()
     OUT = pathlib.Path(a.out)
+    MODEL = pathlib.Path(a.model)
 
     qs = json.loads(pathlib.Path(a.questions).read_text(encoding="utf-8"))
     if isinstance(qs, dict):   # a {cases:[...]} / {questions:[...]} wrapper (e.g. questions-v2.json)

@@ -284,8 +284,9 @@ Do not use `gradlew connectedDebugAndroidTest` on an emulator that holds a set-u
 - Flows are life-safety content: drafted, then put through a **hostile** adversarial review by a different
   model than the drafter — the reviewer assumes the flow is wrong and dangerous and tries to kill it (a wrong
   value, a dangerous step, a missing safety step), fail-closed — then approved by the owner, like cards.
-  Never hand-write protocol text in code. (`tools/gpu/gpu_screen.py` runs a cheap first-pass hostile review
-  on the GPU; the shipping gate is a strong model, never the small local one.)
+  Never hand-write protocol text in code. (`tools/gpu/gpu_screen.py` runs a first-pass hostile review on the
+  GPU with a strong 14B — Qwen2.5-14B-Instruct, a different family from the E4B drafter; it surfaces the gap
+  list but is only a review aid, never the shipping gate, which stays a strong model plus owner approval.)
 - Debug builds also read `Android/media/com.bastion.terminal/flows-test/` with a red "TEST FLOW — NOT
   APPROVED" banner; release builds never do. Test flows are obviously fake.
 - The casualty log (`files/guide/`) is private data and is erased by the wipe PIN.

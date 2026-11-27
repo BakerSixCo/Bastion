@@ -19,6 +19,7 @@ import argparse
 import glob
 import json
 import pathlib
+import re
 import subprocess
 import sys
 import time
@@ -26,7 +27,10 @@ import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 LLAMA = ROOT / "tools" / "kit" / "pc-eval" / "llama-vulkan" / "llama-server.exe"
-MODEL = ROOT / "tools" / "kit" / "pc-eval" / "models" / "gemma-4-E2B-it-Q4_0.gguf"
+# A STRONG reviewer, deliberately a different family from the drafter (gemma-4-E4B): the review gate
+# must not be the same small model that wrote the draft. Qwen2.5-14B-Instruct Q4_K_M is the largest
+# model the 16 GB Arc 140V runs at usable burst speed. Override with --model.
+MODEL = ROOT / "tools" / "kit" / "pc-eval" / "models" / "Qwen2.5-14B-Instruct-Q4_K_M.gguf"
 OUTDIR = ROOT / "tools" / "gpu" / "out"
 REVIEWS = OUTDIR / "reviews.jsonl"
 
@@ -47,14 +51,21 @@ def health(port):
 
 
 def attack(port, question, draft):
-    prompt = (f"<start_of_turn>user\n{SYSTEM}\n\nQuestion: {question}\nDraft answer: {draft}"
-              f"<end_of_turn>\n<start_of_turn>model\n")
-    body = json.dumps({"prompt": prompt, "temperature": 0.0, "n_predict": 48,
-                       "cache_prompt": False, "stop": ["<end_of_turn>", "<eos>"]}).encode()
-    req = urllib.request.Request(f"http://127.0.0.1:{port}/completion",
+    # Chat-completions with the model's own template (--jinja). Qwen takes a real system role, unlike
+    # Gemma. Read content, fall back to reasoning_content (some GGUFs route the answer there), and strip
+    # any <think>...</think> block so a reasoning model's scratch work never lands in the verdict.
+    body = json.dumps({
+        "messages": [{"role": "system", "content": SYSTEM},
+                     {"role": "user", "content": f"Question: {question}\nDraft answer: {draft}"}],
+        "temperature": 0.0, "max_tokens": 80, "cache_prompt": False,
+        "chat_template_kwargs": {"enable_thinking": False},
+    }).encode()
+    req = urllib.request.Request(f"http://127.0.0.1:{port}/v1/chat/completions",
                                  data=body, headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as r:
-        return json.loads(r.read())["content"].strip()
+    with urllib.request.urlopen(req, timeout=180) as r:
+        msg = json.loads(r.read())["choices"][0]["message"]
+    text = (msg.get("content") or msg.get("reasoning_content") or "").strip()
+    return re.sub(r"(?s)<think>.*?</think>", "", text).strip()
 
 
 def rate(text):
@@ -71,10 +82,13 @@ def rate(text):
 
 
 def main():
+    global MODEL
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=8092)
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--model", default=str(MODEL))
     a = ap.parse_args()
+    MODEL = pathlib.Path(a.model)
 
     drafts, seen = [], set()
     for f in sorted(glob.glob(str(OUTDIR / "drafts*.jsonl"))):
