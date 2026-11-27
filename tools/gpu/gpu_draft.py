@@ -62,6 +62,10 @@ def main():
     qs = json.loads(pathlib.Path(a.questions).read_text(encoding="utf-8"))
     if isinstance(qs, dict):   # a {cases:[...]} / {questions:[...]} wrapper (e.g. questions-v2.json)
         qs = qs.get("cases") or qs.get("questions") or []
+    stem = pathlib.Path(a.questions).stem
+    for i, q in enumerate(qs):   # some sets (radio-questions) carry no id; synthesize a stable one
+        if not q.get("id"):
+            q["id"] = f"{stem}-{i}"
     OUT.parent.mkdir(parents=True, exist_ok=True)
     done = set()
     if OUT.exists():

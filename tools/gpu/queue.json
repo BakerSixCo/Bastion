@@ -16,6 +16,24 @@
       "approved": true,
       "est_hours": 0.2,
       "output": "tools/gpu/out/drafts-v2.jsonl"
+    },
+    {
+      "id": "draft-radio-91",
+      "title": "Draft answers for the 91 radio-net questions (model-eval/radio-questions) on the GPU (drafting aid)",
+      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--questions", "tools/model-eval/radio-questions.json", "--out", "tools/gpu/out/drafts-radio.jsonl"],
+      "approved": true,
+      "after": ["draft-coverage-v2"],
+      "est_hours": 0.15,
+      "output": "tools/gpu/out/drafts-radio.jsonl"
+    },
+    {
+      "id": "screen-drafts",
+      "title": "Self-critique pass: flag GPU drafts that likely have a factual error / unsafe step / off-target answer, to prioritise human card-writing (review aid only; nothing ships on the model's say-so)",
+      "cmd": ["{python}", "-I", "tools/gpu/gpu_screen.py"],
+      "approved": true,
+      "after": ["draft-coverage-v2", "draft-radio-91"],
+      "est_hours": 0.3,
+      "output": "tools/gpu/out/screens.jsonl"
     }
   ]
 }
