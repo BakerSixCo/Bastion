@@ -8,6 +8,14 @@
       "approved": true,
       "est_hours": 0.3,
       "output": "tools/gpu/out/drafts.jsonl"
+    },
+    {
+      "id": "draft-coverage-v2",
+      "title": "Draft first-pass answers for the 156 coverage questions (model-eval/questions-v2) on the GPU, incl. the trap questions (drafting aid; re-grounded, checked, reviewed and owner-approved before any card ships)",
+      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--questions", "tools/model-eval/questions-v2.json", "--out", "tools/gpu/out/drafts-v2.jsonl"],
+      "approved": true,
+      "est_hours": 0.2,
+      "output": "tools/gpu/out/drafts-v2.jsonl"
     }
   ]
 }

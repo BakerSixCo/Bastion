@@ -50,13 +50,18 @@ def ask(port, question):
 
 
 def main():
+    global OUT
     ap = argparse.ArgumentParser()
     ap.add_argument("--questions", default=str(QUESTIONS))
+    ap.add_argument("--out", default=str(OUT))
     ap.add_argument("--port", type=int, default=8092)
     ap.add_argument("--limit", type=int, default=0)
     a = ap.parse_args()
+    OUT = pathlib.Path(a.out)
 
     qs = json.loads(pathlib.Path(a.questions).read_text(encoding="utf-8"))
+    if isinstance(qs, dict):   # a {cases:[...]} / {questions:[...]} wrapper (e.g. questions-v2.json)
+        qs = qs.get("cases") or qs.get("questions") or []
     OUT.parent.mkdir(parents=True, exist_ok=True)
     done = set()
     if OUT.exists():
