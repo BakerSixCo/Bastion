@@ -14,3 +14,20 @@ managed asset and is not in git; hashes are in `docs/status.md`, sources and dec
 
 Pages that refuse command-line downloads (fcc.gov, navcen.uscg.gov, fsis.usda.gov, ready.gov) were read in
 the in-app browser and copied as text; `bodyhash.py` proves each copy matches the live page.
+
+## Converter tests
+
+Run all six offline suites from the repository root:
+
+```powershell
+Get-ChildItem tools/kit-build/test_*.py | ForEach-Object {
+    python -I $_.FullName
+    if ($LASTEXITCODE -ne 0) { throw "Converter tests failed in $($_.Name)" }
+}
+```
+
+Each suite can also run directly with `python -I tools/kit-build/test_<name>.py`. The tests use
+small inputs and exact UTF-8/LF goldens in `testdata/`. They rerun the converters in temporary
+directories. The NCCIH suite serves its page fixtures through a mocked HTTP response.
+`bodyhash.py` emits UTF-8/LF even when stdout uses a different platform encoding. Its digests
+fold whitespace and preserve quote glyphs.
