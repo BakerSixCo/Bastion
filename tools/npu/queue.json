@@ -49,7 +49,7 @@
     {
       "id": "zim-enrich-energypedia",
       "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each Energypedia article (off-grid energy: micro-hydro, solar, mini-grids, biogas). SEARCH-INDEX AID ONLY — never shown as an answer, never treated as true; raises retrieval recall on the ZIM. Reads the ZIM via libzim (installed in the venv). Resumable per article.",
-      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/energypedia_en_all_nopic_2026-06.zim", "--backend", "openvino", "--device", "NPU"],
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/energypedia_en_all_nopic_2026-06.zim", "--backend", "openvino", "--device", "NPU", "--relevant-only"],
       "approved": true,
       "after": ["extract-quotes"],
       "est_hours": 20.0,
@@ -58,7 +58,7 @@
     {
       "id": "zim-enrich-postdisaster",
       "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each article of the post-disaster survival ZIM (zimgit). Search-index aid only, never an answer. Resumable.",
-      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/zimgit-post-disaster_en_2024-05.zim", "--backend", "openvino", "--device", "NPU"],
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/zimgit-post-disaster_en_2024-05.zim", "--backend", "openvino", "--device", "NPU", "--relevant-only"],
       "approved": true,
       "after": ["zim-enrich-energypedia"],
       "est_hours": 15.0,
@@ -67,7 +67,7 @@
     {
       "id": "zim-enrich-wikipedia-medicine",
       "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each Wikipedia-Medicine article (~1 GB ZIM). Search-index aid only, never an answer; the medical ZIM stays the source of record. Resumable.",
-      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/wikipedia_en_medicine_nopic_2026-10.zim", "--backend", "openvino", "--device", "NPU"],
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/wikipedia_en_medicine_nopic_2026-10.zim", "--backend", "openvino", "--device", "NPU", "--relevant-only"],
       "approved": true,
       "after": ["zim-enrich-postdisaster"],
       "est_hours": 24.0,

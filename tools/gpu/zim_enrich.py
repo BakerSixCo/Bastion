@@ -49,8 +49,61 @@ def article_text(item):
     return re.sub(r"\s+", " ", text).strip()
 
 
-def articles(zim_path):
-    """Yield (path, title, text) for each real HTML article (skips redirects, menus, tiny stubs)."""
+# --relevant-only: enrich the high-value slice first, not every obscure article equally. An article is
+# kept when it is English (Appropedia keeps translations as "/es", "/fr" ... subpages) and its title +
+# opening text hit at least 2 survival/off-grid terms below. This is a cheap pre-filter on the EXPENSIVE
+# model call, not a retrieval tier; the ZIM itself is still fully searched on the phone.
+LANG_SUFFIX = re.compile(r"/[a-z]{2,3}(-[a-z]{2,4})?$", re.I)
+NAMESPACE = re.compile(r"^(Appropedia|Category|Help|Template|File|User|Talk|Portal|Special|MediaWiki|"
+                       r"Image|Module|Property|Form|Concept|Draft):", re.I)
+RELEVANT = frozenset((
+    # medical / first aid
+    "wound", "bleed", "tourniquet", "hemorrhag", "fracture", "splint", "burn", "cpr", "shock", "hypotherm",
+    "frostbite", "dehydrat", "diarrhea", "snakebite", "venom", "infection", "antibiotic", "sepsis", "airway",
+    "bandage", "first aid", "triage", "poison", "sprain", "dislocat", "concussion", "seizure", "allerg",
+    "asthma", "insulin", "wound care", "dose", "medicine", "medical",
+    # water
+    "water", "purif", "filtrat", "disinfect", "chlorine", "boil", "rainwater", "well ", "spring", "potable",
+    # food
+    "food", "cook", "preserv", "canning", "ferment", "forag", "edible", "mushroom", "hunt", "fish", "trap",
+    "livestock", "poultry", "rabbit", "garden", "seed", "crop", "potato", "compost", "jerky", "smoking",
+    "butcher", "slaughter", "nutrition", "root cellar", "beekeep", "goat", "chicken",
+    # fire / heat / stove
+    "fire", "tinder", "kindling", "stove", "fuel", "firewood", "charcoal", "wood gas", "gasifier", "rocket stove",
+    # shelter / weather
+    "shelter", "tent", "tarp", "insulat", "lean-to", "bivouac", "cold weather", "heat stress", "wildfire",
+    "storm", "lightning", "flood", "tornado", "hurricane", "earthquake", "weather",
+    # navigation
+    "compass", "navigation", "bearing", "map reading", "contour", "latitude", "longitude", "pace count", "orient",
+    # comms / radio
+    "radio", "antenna", "frequency", "transceiver", "mesh", "meshtastic", "morse", "distress", "mayday",
+    "signal", "repeater", "ham radio", "callsign",
+    # power / energy
+    "solar", "photovolt", "battery", "generator", "hydro", "wind turbine", "charge", "voltage", "inverter",
+    "off-grid", "micro-hydro", "microhydro", "biogas", "charge controller", "power outage", "watt", "ampere",
+    # repair / tools / sanitation / rescue / rope
+    "repair", "engine", "pump", "wiring", "solder", "weld", "mechanic", "maintenance", "sanitation", "hygiene",
+    "latrine", "sewage", "soap", "handwash", "rescue", "flare", "beacon", "whistle", "knot", "lashing", "rope",
+    "hitch", "cordage", "survival", "emergency", "disaster",
+))
+
+
+def is_relevant(title, text):
+    if LANG_SUFFIX.search(title) or NAMESPACE.match(title):
+        return False
+    hay = (title + " " + text[:2000]).lower()
+    hits = 0
+    for k in RELEVANT:
+        if k in hay:
+            hits += 1
+            if hits >= 2:
+                return True
+    return False
+
+
+def articles(zim_path, relevant_only=False):
+    """Yield (path, title, text) for each real HTML article (skips redirects, menus, tiny stubs;
+    with relevant_only, also skips translations and off-topic articles)."""
     from libzim.reader import Archive
     a = Archive(str(zim_path))
     get = a._get_entry_by_id if hasattr(a, "_get_entry_by_id") else a.get_entry_by_id
@@ -63,7 +116,7 @@ def articles(zim_path):
             if "html" not in item.mimetype:
                 continue
             text = article_text(item)
-            if len(text) >= 200:
+            if len(text) >= 200 and (not relevant_only or is_relevant(e.title, text)):
                 yield e.path, e.title, text
         except Exception:
             continue
@@ -110,6 +163,8 @@ def main():
     ap.add_argument("--port", type=int, default=8095)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--dry", action="store_true", help="count articles and resume state; no model")
+    ap.add_argument("--relevant-only", action="store_true",
+                    help="enrich only the English survival/power/medical/comms slice (skip translations + off-topic)")
     a = ap.parse_args()
 
     zim = pathlib.Path(a.zim)
@@ -123,8 +178,9 @@ def main():
                 done.add(json.loads(line)["path"])
 
     if a.dry:
-        n = sum(1 for _ in articles(zim))
-        print(f"{zim.name}: {n} articles >=200 chars | already done: {len(done)} | remaining: {n - len(done)}",
+        n = sum(1 for _ in articles(zim, a.relevant_only))
+        tag = "relevant" if a.relevant_only else "articles"
+        print(f"{zim.name}: {n} {tag} >=200 chars | already done: {len(done)} | remaining: {n - len(done)}",
               flush=True)
         return 0
 
@@ -170,7 +226,7 @@ def main():
         n = 0
         t0 = time.time()
         with out.open("a", encoding="utf-8") as fout:
-            for path, title, text in articles(zim):
+            for path, title, text in articles(zim, a.relevant_only):
                 if path in done:
                     continue
                 summary, terms = parse(ask(text))

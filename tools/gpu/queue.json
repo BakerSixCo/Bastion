@@ -91,17 +91,19 @@
     {
       "id": "zim-enrich-appropedia",
       "title": "ZIM retrieval enrichment (GPU/llama, gemma-4-E4B): one-line summary + key terms for each of ~22,300 Appropedia articles (appropriate-tech: micro-hydro, solar, water, agriculture, stoves, construction). A SEARCH-INDEX AID ONLY, same category as the figure captions and PDF page-notes — never shown as an answer, never treated as true; it only raises retrieval recall on the ZIM, which stays the source of record. Reads the ZIM via libzim (installed in the venv). Resumable per article.",
-      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/appropedia_en_all_maxi_2026-02.zim"],
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/appropedia_en_all_maxi_2026-02.zim", "--relevant-only"],
       "approved": true,
       "after": ["gen-eval-questions"],
-      "est_hours": 32.0,
+      "est_hours": 14.0,
       "output": "tools/gpu/out/zim-notes/appropedia_en_all_maxi_2026-02.jsonl"
     },
     {
       "id": "zim-enrich-ifixit",
       "title": "ZIM retrieval enrichment (GPU/llama, gemma-4-E4B): summary + key terms for every iFixit repair guide (3.4 GB ZIM). Repair is otherwise only browsable; this makes the right guide findable by symptom/part/tool. Search-index aid only, never an answer. Resumable.",
-      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/ifixit_en_all_2025-12.zim"],
-      "approved": true,
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/ifixit_en_all_2025-12.zim", "--relevant-only"],
+      "approved": false,
+      "dropped": true,
+      "note": "DROPPED 2026-11-27 after the step-1 coverage diagnostic: enrichment is a modest lever and iFixit is ~3.4 GB of mostly consumer-electronics repair that barely survives the survival relevance filter. Not worth ~60h. Re-enable if gear-repair coverage is wanted.",
       "after": ["zim-enrich-appropedia"],
       "est_hours": 60.0,
       "output": "tools/gpu/out/zim-notes/ifixit_en_all_2025-12.jsonl"
