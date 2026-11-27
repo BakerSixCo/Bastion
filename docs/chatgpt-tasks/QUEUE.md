@@ -32,6 +32,24 @@ always be going and we should keep ChatGPT queue full at all times... make it a 
 | `kit-5` | Fetch batches 2 and 3 (weapons care, trapping, leather, metals; trades, cradle to grave, law) | kit-4 |
 | `kit-3` | Load the whole new kit on the emulator; `KitRetrievalEvalTest` on the new topics | kit-1,2,4,5 **and** Claude has moved the kit-4/kit-5 files into the kit |
 
+## D. App quality & UX wave — runnable now, independent
+
+Owner 2026-11-26: keep a deep, never-ending queue of real S-tier work — GUI/UX, optimization, compression, features (not make-work). Grounded in a codebase survey; every task file carries file:line evidence, a verify bar, and guardrails keeping it off the owner/Claude-only zones with all evals green. Tier 1 are mutually independent.
+
+| Task | What | Where |
+|---|---|---|
+| `a11y-insets-1` | Fix edge-to-edge insets on Reader / ZIM / Lock (content draws under the status bar on API 35) | Emulator. |
+| `perf-statfs-1` | Move the Home free-space `StatFs` off the main thread (cold-start disk I/O) | Emulator. |
+| `perf-strictmode-1` | Debug-only StrictMode to surface main-thread I/O + leaks (release untouched) | Emulator. |
+| `test-lint-1` | Turn on Android Lint as a gate + checked-in baseline (no lint/CI today) | PC. |
+| `a11y-semantics-1` | Roles, content descriptions, text state on cards + status dots (only 2 a11y labels app-wide) | Emulator. |
+| `gui-icon-1` | Add an adaptive launcher icon (app ships with the stock placeholder) | Emulator. |
+| `perf-libsearch-1` | Debounce Library live search (runs FTS on every keystroke) | Emulator. |
+| `mem-tilecache-1` | Size-aware map tile bitmap cache (count-based now → up to ~51 MB) | Emulator. |
+| `feat-reader-textsize-1` | Reader A−/A+ text size, persisted (outdoors/gloved legibility) | Emulator. |
+
+Deeper backlog, staged from the same survey (Claude writes the full spec when one reaches the head): `test-ui-smoke-1` (first Compose UI test), `feat-reader-find-1` (in-doc find next/prev), `apk-shrink-1` (resource shrink + locale filter), `mem-rgb565-1` (RGB_565 base tiles — pairs with `mem-tilecache-1`), `startup-baselineprofile-1` (Baseline Profile), `apk-pdfbox-audit-1` (trim PdfBox CMap/AFM assets), `mem-reader-1` (bounded Reader read of large originals).
+
 ## C. Parked — needs the physical phones (do **not** put at the queue head)
 
 - `device-1` **Verified** rows (the end-to-end functional pass on a named phone) — Galaxy S24+ (12 GB) and Pixel 9a (8 GB) in transit.
@@ -51,6 +69,9 @@ always be going and we should keep ChatGPT queue full at all times... make it a 
   — it uninstalls the app and the imported model.
 - **Android-source overlap:** `route-perf-1` (map/), `chunk-tables-1` (data/) and `device-1` (new hw/ + one UI
   entry) touch `android/` in different places; Claude reviews and merges them one at a time to avoid conflicts.
+  Within wave D: `perf-statfs-1` and `a11y-semantics-1` both touch `ui/HomeScreen.kt` (different lines);
+  `mem-tilecache-1` and the staged `mem-rgb565-1` both touch `ui/MapScreen.kt` (do together or sequence). Each
+  task branches from `origin/claude/hello-e9r4rq`; Claude merges them serially and resolves any overlap.
 
 ## Not for ChatGPT (Claude / Fable / owner)
 
