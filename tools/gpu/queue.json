@@ -78,6 +78,15 @@
       "after": ["draft-radio-14b"],
       "est_hours": 15.0,
       "output": "tools/gpu/out/page-notes.jsonl"
+    },
+    {
+      "id": "gen-eval-questions",
+      "title": "Generate CANDIDATE eval questions from the corpus (~10,100 pages) on the GPU with gemma-4-E4B: 1-3 short field questions per page that the page answers, with the page recorded as the expected source. Measures retrieval coverage on the 2026-11-26 kit additions (electronics, navigation, livestock, butchering, food safety, herbs) that the current eval sets predate. RAW MATERIAL ONLY: the owner/Claude curate a small careful eval set from these, like questions-v2; the checked-answer pipeline stays the real gate and nothing here is shown or treated as true. Reads tools/kit/.textcache. Resumable. Runs after enrich-pages so it never contends for the Arc.",
+      "cmd": ["{python}", "-I", "tools/gpu/gen_eval_questions.py"],
+      "approved": true,
+      "after": ["enrich-pages"],
+      "est_hours": 13.0,
+      "output": "tools/gpu/out/candidate-questions.jsonl"
     }
   ]
 }
