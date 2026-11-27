@@ -33,8 +33,8 @@ class RoadGraph(
     private class Cross(val sources: List<RoadPackSource>) {
         val movedNodes = HashMap<PositionedNode, Int>()
         val geometry = LongIntMap(1 shl 12)
-        val aliases = HashMap<Long, MutableList<Long>>()
-        val restrictedJunctions = HashSet<Long>()
+        val aliases = RoadLists<Long>()
+        val restrictedJunctions = LongIntMap()
         val tags = arrayListOf<List<Int>>(emptyList())
         val tagIds = HashMap<List<Int>, Int>()
         var conflict = false
@@ -91,14 +91,16 @@ class RoadGraph(
     private val edges = ArrayList<Edge>()
     /** Road id -> index in [edges]; [SKIPPED] for a road read but not usable (no speed). */
     private val edgeIndex = LongIntMap(1 shl 12)
-    private val adj = ArrayList<IntArrayList>()
+    private val adjacencyHeads = PagedInts()
+    private val adjacencyTails = PagedInts()
+    private val adjacencyNext = PagedInts()
     /** Cells read so far: [LEVEL_MAIN] (main roads only) or [LEVEL_FULL]. */
     private val cells = LongIntMap(256)
 
     /** A turn rule from one edge: at junction [via] (OSM node id; [NO_VIA] in BRG2 files) onto edge [to]; [only] = "only this turn". */
     private data class TurnRule(val via: Long, val to: Long, val only: Boolean)
     /** Turn rules by the edge they start from. */
-    private val turns = HashMap<Long, MutableList<TurnRule>>()
+    private val turns = RoadLists<TurnRule>()
     /**
      * Turn rules through a via WAY (BRG4): from edge, then one or more via edges, then onto a to edge.
      * Kept as a trie of edge sequences (from, via1, via2, ...); a search state carries the trie node it
@@ -113,6 +115,7 @@ class RoadGraph(
         val onlyNext = HashSet<Long>()
     }
     private val ruleNodes = arrayListOf(RuleNode())
+    private val ruleStarts = LongIntMap()
 
     /** Fastest speed limit read so far (mph), for the A* bound. */
     private var maxMph = 0
@@ -135,7 +138,7 @@ class RoadGraph(
 
     private fun addNode(id: Long, la: Int, lo: Int): Int {
         if (nNodes == lat.size) { lat = lat.copyOf(nNodes * 2); lon = lon.copyOf(nNodes * 2); osm = osm.copyOf(nNodes * 2) }
-        lat[nNodes] = la; lon[nNodes] = lo; osm[nNodes] = id; adj += IntArrayList()
+        lat[nNodes] = la; lon[nNodes] = lo; osm[nNodes] = id
         return nNodes++
     }
 
@@ -156,7 +159,7 @@ class RoadGraph(
         cells[k] = want
         // A cell is checked whole before any of it is used: a truncated turn table must not leave its
         // roads in the network without their restrictions. A bad cell is left out and counted.
-        readCells(cx, cy, countFailures = have == LongIntMap.MISSING) { publish(it, mainOnly = !full) }
+        readCells(cx, cy, mainOnly = !full, countFailures = have == LongIntMap.MISSING)
     }
 
     private fun ensureAt(la: Int, lo: Int, full: Boolean = true) =
@@ -176,25 +179,27 @@ class RoadGraph(
         ensureCell(cx, cy, full = false)
         if (!detailDone.add("$k:${(la * 1e4).roundToLong()}:${(lo * 1e4).roundToLong()}:${radius.toLong()}")) return
         val pla = (la * 1e6).toInt(); val plo = (lo * 1e6).toInt()
-        readCells(cx, cy) { cell ->
-            publish(cell, mainOnly = true) { nla, nlo -> near(nla, nlo, pla, plo) <= radius }
-        }
+        readCells(cx, cy, mainOnly = true) { nla, nlo -> near(nla, nlo, pla, plo) <= radius }
     }
 
-    private inline fun readCells(cx: Int, cy: Int, countFailures: Boolean = false, read: (Cell) -> Unit) {
+    private fun readCells(
+        cx: Int, cy: Int, mainOnly: Boolean, countFailures: Boolean = false,
+        keepSide: ((Int, Int) -> Boolean)? = null,
+    ) {
+        fun read(bytes: ByteArray?, source: Int) {
+            val cell = bytes?.let { runCatching { parse(it, source, mainOnly, keepSide) }.getOrNull() }
+            if (cell != null) publish(cell) else if (countFailures) badCells++
+        }
         val joined = cross
         if (joined == null) {
             val bytes = cellBytes(cx, cy) ?: return
-            val cell = runCatching { parse(bytes) }.getOrNull()
-            if (cell != null) read(cell) else if (countFailures) badCells++
+            read(bytes, 0)
             return
         }
         val key = cellKey(cx, cy)
         for ((i, source) in joined.sources.withIndex()) {
             if (key !in source.cells) continue
-            val bytes = source.cellBytes(cx, cy)
-            val cell = bytes?.let { runCatching { parse(it, i + 1) }.getOrNull() }
-            if (cell != null) read(cell) else if (countFailures) badCells++
+            read(source.cellBytes(cx, cy), i + 1)
         }
     }
 
@@ -215,7 +220,7 @@ class RoadGraph(
     )
 
     /** Reads and checks a whole cell file; throws if any part is malformed. Changes nothing. */
-    private fun parse(bytes: ByteArray, source: Int = 0): Cell {
+    private fun parse(bytes: ByteArray, source: Int, mainOnly: Boolean, keepSide: ((Int, Int) -> Boolean)?): Cell {
         DataInputStream(ByteArrayInputStream(bytes)).use { d ->
             // Pack builders allocate nonnegative ordinal road IDs independently. Leave node IDs
             // global and reserve the high bits of a road ID for its pack in a joined search.
@@ -248,7 +253,16 @@ class RoadGraph(
                 val ni = d.readInt(); val m = d.readFloat()
                 require(ni in -1 until names.size && m.isFinite() && m >= 0f) { "bad edge" }
                 val np = d.readShort().toInt(); require(np >= 0) { "bad shape" }
-                val pts = IntArray(np * 2) { d.readInt() }
+                val wanted = !mainOnly || isMain(cls) ||
+                    (keepSide != null && (keepSide(las[a], los[a]) || keepSide(las[b], los[b])))
+                if (!wanted || edgeIndex.containsKey(id)) {
+                    // Shape coordinates are stored as ints. Their byte count still has to fit,
+                    // and every turn rule is still validated before the cell can publish anything.
+                    val size = np * 2 * Int.SIZE_BYTES
+                    require(d.skipBytes(size) == size) { "truncated shape" }
+                    return@repeat
+                }
+                val pts = if (np == 0) EMPTY_SHAPE else IntArray(np * 2) { d.readInt() }
                 es += RawEdge(id, a, b, cls, oneway, mph, flags, if (ni >= 0) names[ni] else "", m, pts)
             }
             val ts = ArrayList<Pair<Long, TurnRule>>()
@@ -269,38 +283,37 @@ class RoadGraph(
     }
 
     private val snapIndex = RoadSnapIndex()
+    private var indexedCrossEdges = 0
 
     /** Adds a checked cell to the network read so far (each road once, by id). */
-    /** [mainOnly]: side roads are kept only where [keepSide] (at either end node, 1e-6 degrees) says so. */
-    private fun publish(c: Cell, mainOnly: Boolean = false, keepSide: ((Int, Int) -> Boolean)? = null) {
+    private fun publish(c: Cell) {
         // Nodes only for the roads kept: a main-roads-only cell must not pay for its side streets' nodes.
         val nodes = IntArray(c.nodeIds.size) { -1 }
         fun n(i: Int): Int { if (nodes[i] < 0) nodes[i] = node(c.nodeIds[i], c.nodeLat[i], c.nodeLon[i]); return nodes[i] }
         for (r in c.edges) {
             if (edgeIndex.containsKey(r.id)) continue
-            if (mainOnly && !isMain(r.cls) && (keepSide == null ||
-                    !(keepSide(c.nodeLat[r.a], c.nodeLon[r.a]) || keepSide(c.nodeLat[r.b], c.nodeLon[r.b])))) continue
             if (r.mph <= 0) { edgeIndex[r.id] = SKIPPED; continue }
             val a = n(r.a); val b = n(r.b)
             val e = Edge(r.id, a, b, r.cls, r.oneway, r.mph, r.name, r.meters, r.pts, r.flags)
             val index = edges.size
             if (cross?.let { alias(it, e, index) } == true) continue
             edges += e; edgeIndex[r.id] = index
-            snapIndex.add(index, lat[a], lon[a], lat[b], lon[b], e.pts)
-            adj[a].add(index); if (b != a) adj[b].add(index)
+            if (cross == null) snapIndex.add(index, lat[a], lon[a], lat[b], lon[b], e.pts)
+            appendAdjacent(a, index)
+            if (b != a) appendAdjacent(b, index)
             if (r.mph > maxMph) maxMph = r.mph
         }
         for ((from, rule) in c.turns) {
-            val list = turns.getOrPut(from) { ArrayList() }
+            val list = turns.getOrAdd(from)
             if (rule !in list) list += rule
-            if (rule.via != NO_VIA) cross?.restrictedJunctions?.add(rule.via)
+            if (rule.via != NO_VIA) cross?.restrictedJunctions?.set(rule.via, 1)
         }
         for (p in c.paths) {
             addPathRule(p.seq, p.to, p.only)
             val junctions = cross?.restrictedJunctions ?: continue
             for (raw in p.seq) edgeAt(raw)?.let { i ->
-                junctions.add(osm[edges[i].a])
-                junctions.add(osm[edges[i].b])
+                junctions[osm[edges[i].a]] = 1
+                junctions[osm[edges[i].b]] = 1
             }
         }
     }
@@ -339,7 +352,7 @@ class RoadGraph(
             if (edge.pts[i] != other.pts[j] || edge.pts[i + 1] != other.pts[j + 1]) return false
         }
         forRoadIds(other.id) { if (sourceOf(it) == sourceOf(edge.id)) return false }
-        join.aliases.getOrPut(other.id) { ArrayList(1) }.add(edge.id)
+        join.aliases.getOrAdd(other.id).add(edge.id)
         edgeIndex[edge.id] = index
         // If snapshots disagree on direction, keep only the direction representable by
         // the existing edge. An incompatible reverse-only copy is conservatively closed.
@@ -355,17 +368,22 @@ class RoadGraph(
     }
 
     private fun addPathRule(seq: LongArray, to: Long, only: Boolean) {
-        var n = 0
-        for (k in seq.indices) {
-            // An "only" rule: once on its from edge (k = 1) or part way along its via edges, the next edge is fixed.
-            if (only && k >= 1) ruleNodes[n].onlyNext += seq[k]
-            n = ruleNodes[n].next.getOrPut(seq[k]) { ruleNodes += RuleNode(); ruleNodes.size - 1 }
+        fun newRuleNode(): Int {
+            ruleNodes += RuleNode()
+            return ruleNodes.lastIndex
+        }
+        var n = child(0, seq[0]).takeIf { it != 0 } ?: newRuleNode().also { ruleStarts[seq[0]] = it }
+        for (k in 1 until seq.size) {
+            // An "only" rule fixes the next edge after its from edge and each via edge.
+            if (only) ruleNodes[n].onlyNext += seq[k]
+            n = ruleNodes[n].next.getOrPut(seq[k], ::newRuleNode)
         }
         if (only) ruleNodes[n].onlyNext += to else ruleNodes[n].noTo += to
     }
 
     /** The trie node reached by driving [edge] after [node] (0 if no rule continues that way). */
-    private fun child(node: Int, edge: Long): Int = ruleNodes[node].next[edge] ?: 0
+    private fun child(node: Int, edge: Long): Int =
+        if (node == 0) ruleStarts[edge].coerceAtLeast(0) else ruleNodes[node].next[edge] ?: 0
 
     /** The via-way rule progress after leaving [inEdge] (with progress [tag]) onto [out]. */
     private fun nextTag(tag: Int, inEdge: Long, out: Long): Int {
@@ -414,6 +432,7 @@ class RoadGraph(
             return true
         }
         val f = child(0, inEdge)
+        if (tag == 0 && f == 0) return true
         for (n in intArrayOf(tag, f)) {
             if (n == 0) continue
             val r = ruleNodes[n]
@@ -511,6 +530,13 @@ class RoadGraph(
     private fun nearby(la: Double, lo: Double, maxM: Double, hit: (Int, Double, Double) -> Unit) {
         val cx = Geo.tileX(lo, grid); val cy = Geo.tileY(la, grid)
         for (x in cx - 1..cx + 1) for (y in cy - 1..cy + 1) ensureDetail(x, y, la, lo, DETAIL_M[0])
+        // A joined graph is temporary. Most of the network is loaded after its endpoint snaps;
+        // index those roads only if a later query needs them, in the same publication order.
+        if (cross != null) while (indexedCrossEdges < edges.size) {
+            val e = edges[indexedCrossEdges]
+            snapIndex.add(indexedCrossEdges, lat[e.a], lon[e.a], lat[e.b], lon[e.b], e.pts)
+            indexedCrossEdges++
+        }
         val kx = 111_320.0 * cos(Math.toRadians(la)); val ky = 110_574.0
         for (i in snapIndex.nearby(la, lo, maxM, kx, ky)) {
             val e = edges[i]
@@ -573,13 +599,15 @@ class RoadGraph(
     private fun routesBetween(starts: List<Snap>, targets: List<Snap>, blocked: Set<Long>, count: Int, vehicle: Vehicle): List<Route> {
         val penalty = HashMap<Long, Double>()
         val out = ArrayList<Route>()
+        val states = SearchStates()
         // Main roads between the ends, side roads only near them. If that finds nothing (an end reached
         // only by a long track or side road), a wider area, then every road: heavier, but only then.
         var tier = 0
         for (i in 0 until count + 3) {
             if (out.size >= count) break
-            var r = search(starts, targets, blocked, penalty, vehicle, DETAIL_M[tier])
-            while (r == null && out.isEmpty() && tier < DETAIL_M.size - 1) r = search(starts, targets, blocked, penalty, vehicle, DETAIL_M[++tier])
+            var r = search(starts, targets, blocked, penalty, vehicle, DETAIL_M[tier], states)
+            while (r == null && out.isEmpty() && tier < DETAIL_M.size - 1)
+                r = search(starts, targets, blocked, penalty, vehicle, DETAIL_M[++tier], states)
             if (r == null) break
             // Start and end at the same spot on the road: there is nothing to drive and no alternative.
             if (r.meters < ZERO_M) return if (out.isEmpty()) listOf(r) else out
@@ -639,29 +667,39 @@ class RoadGraph(
     private fun turnAllowed(fromEdge: Edge, u: Int, toEdge: Edge): Boolean {
         cross?.let { return crossTurnAllowed(it, fromEdge, u, toEdge) }
         val all = turns[fromEdge.id] ?: return true
-        val rules = all.filter { appliesAt(it, fromEdge, u) }
-        if (rules.isEmpty()) return true
-        if (rules.any { it.only }) return rules.any { it.only && it.to == toEdge.id }
-        return rules.none { !it.only && it.to == toEdge.id }
+        var only = false
+        var prohibited = false
+        for (rule in all) {
+            if (!appliesAt(rule, fromEdge, u)) continue
+            if (rule.only) {
+                if (rule.to == toEdge.id) return true
+                only = true
+            } else if (rule.to == toEdge.id) prohibited = true
+        }
+        return !only && !prohibited
     }
 
     private fun crossTurnAllowed(join: Cross, from: Edge, u: Int, to: Edge): Boolean {
         forRoadIds(from.id) { raw ->
-            val rules = turns[raw]
-            if (rules != null) {
-                val here = rules.filter { appliesAt(it, from, u) }
-                if (here.any { !it.only && matchesRoadAt(it.to, to.id, u) }) return false
-                if (here.any { it.only } && here.none { it.only && sameRoad(it.to, to.id) }) return false
+            val rules = turns[raw] ?: return@forRoadIds
+            var only = false
+            var allowed = false
+            for (rule in rules) {
+                if (!appliesAt(rule, from, u)) continue
+                if (rule.only) {
+                    only = true
+                    if (sameRoad(rule.to, to.id)) allowed = true
+                } else if (matchesRoadAt(rule.to, to.id, u)) return false
             }
+            if (only && !allowed) return false
         }
         // Different extracts can cut the same approach at different far junctions.
         // If an alternate cut carries a restriction, do not infer a legal turn from it.
-        if (osm[u] in join.restrictedJunctions) {
+        if (join.restrictedJunctions.containsKey(osm[u])) {
             val inbound = arm(from, u)
-            val attached = adj[u]
-            for (i in 0 until attached.size) {
-                val other = edges[attached[i]]
-                if (other.id == from.id || arm(other, u) != inbound) continue
+            forEachAdjacent(u) { index ->
+                val other = edges[index]
+                if (other.id == from.id || arm(other, u) != inbound) return@forEachAdjacent
                 forRoadIds(other.id) { raw ->
                     if (turns[raw]?.any { appliesAt(it, other, u) } == true || child(0, raw) != 0) return false
                 }
@@ -738,7 +776,10 @@ class RoadGraph(
      * Driving straight along one road, when a start and a target are on the same road, is one priced
      * candidate among the others, so the penalties that make alternatives apply to it too.
      */
-    private fun search(starts: List<Snap>, targets: List<Snap>, blocked: Set<Long>, penalty: Map<Long, Double>, v: Vehicle, detailM: Double = DETAIL_M[0]): Route? {
+    private fun search(
+        starts: List<Snap>, targets: List<Snap>, blocked: Set<Long>, penalty: Map<Long, Double>,
+        v: Vehicle, detailM: Double, states: SearchStates,
+    ): Route? {
         val allRoads = detailM.isInfinite()
         fun cost(e: Edge) = if (e.id in blocked || !usable(e, v)) Double.POSITIVE_INFINITY
             else seconds(e, v) * (penalty[e.id] ?: 1.0) * classFactor(e.cls)
@@ -760,16 +801,26 @@ class RoadGraph(
         }
         // Search state in primitive arrays (one slot per state reached): boxed maps and queue objects
         // took ~250 MB on a 300-mile drive.
-        val slotOf = LongIntMap(1 shl 14)
-        var sKey = LongArray(1 shl 14); var sG = DoubleArray(1 shl 14); var sPrev = IntArray(1 shl 14); var nSlots = 0
+        // Ordinary states are indexed by their directed edge. Only states carrying via-way
+        // history need a hash table for the full edge-and-rule key.
+        val ordinarySlots = PagedInts()
+        val ruleSlots = LongIntMap()
+        var nSlots = 0
         val heap = StateHeap(1 shl 14)
         fun push(k: Long, c: Double, from: Int) {
-            var slot = slotOf[k]
-            if (slot == LongIntMap.MISSING) {
-                if (nSlots == sKey.size) { sKey = sKey.copyOf(nSlots * 2); sG = sG.copyOf(nSlots * 2); sPrev = sPrev.copyOf(nSlots * 2) }
-                slot = nSlots++; slotOf[k] = slot; sKey[slot] = k; sG[slot] = Double.POSITIVE_INFINITY
+            val state = stOf(k)
+            val ordinary = tagOf(k) == 0
+            var slot = if (ordinary) ordinarySlots[state] - 1 else ruleSlots[k]
+            if (slot < 0) {
+                slot = nSlots++
+                if (ordinary) ordinarySlots[state] = slot + 1 else ruleSlots[k] = slot
+                states.put(slot, k)
             }
-            if (c < sG[slot]) { sG[slot] = c; sPrev[slot] = from; heap.add(c + h(stOf(k)), c, slot) }
+            if (c < states.cost[slot]) {
+                states.cost[slot] = c
+                states.previous[slot] = from
+                heap.add(c + h(state), c, slot)
+            }
         }
         var best = Double.POSITIVE_INFINITY; var bestSlot = -1; var bestT: Snap? = null
         var direct: Pair<Snap, Snap>? = null
@@ -794,8 +845,8 @@ class RoadGraph(
         while (heap.isNotEmpty()) {
             val qf = heap.topF; val gs = heap.topG; val slot = heap.topSlot
             heap.pop()
-            val k = sKey[slot]
-            if (gs > sG[slot]) continue      // superseded by a cheaper way here
+            val k = states.keys[slot]
+            if (gs > states.cost[slot]) continue      // superseded by a cheaper way here
             if (qf >= best) break
             if (++expanded > 3_000_000) return null
             val st = stOf(k); val tag = tagOf(k)
@@ -819,20 +870,17 @@ class RoadGraph(
                 } + accessSeconds(t)
                 if (gs + extra < best) { best = gs + extra; bestSlot = slot; bestT = t; direct = null }
             }
-            val list = adj[u]
             // A U-turn only where nothing else can legally be driven from this arrival: a dead end, or a
             // junction whose other roads are one-way in, blocked, unusable for this vehicle or forbidden turns.
-            var otherExit = false
-            for (j in 0 until list.size) {
-                val ei = list[j]; if (ei == st / 2) continue
+            val otherExit = anyAdjacent(u) { ei ->
                 val e = edges[ei]
-                if (leaves(e, u) && cost(e).isFinite() && allowed(e)) { otherExit = true; break }
+                ei != st / 2 && leaves(e, u) && cost(e).isFinite() && allowed(e)
             }
-            for (j in 0 until list.size) {
-                val ei = list[j]; val e = edges[ei]
-                if (ei == st / 2 && otherExit) continue
-                if (!allowed(e)) continue
-                val c = cost(e); if (c.isInfinite()) continue
+            forEachAdjacent(u) { ei ->
+                val e = edges[ei]
+                if (ei == st / 2 && otherExit) return@forEachAdjacent
+                if (!allowed(e)) return@forEachAdjacent
+                val c = cost(e); if (c.isInfinite()) return@forEachAdjacent
                 val nt = nextTag(tag, inEdge.id, e.id)
                 if (e.a == u) push(key(ei * 2, nt), gs + c + turnSeconds(st, ei, true), slot)
                 if (e.b == u && !e.oneway && e.a != e.b) push(key(ei * 2 + 1, nt), gs + c + turnSeconds(st, ei, false), slot)
@@ -846,7 +894,7 @@ class RoadGraph(
         if (bestSlot < 0) return null
         val path = ArrayList<Int>()
         var sl = bestSlot
-        while (sl >= 0) { path += stOf(sKey[sl]); sl = sPrev[sl] }
+        while (sl >= 0) { path += stOf(states.keys[sl]); sl = states.previous[sl] }
         path.reverse()
         val target = bestT!!
         if (cross != null && !joinedPathAllowed(path, target.edge, v)) return null
@@ -998,7 +1046,85 @@ class RoadGraph(
         return out
     }
 
-    /** A growable list of ints (adjacency), lighter than List<Int>. */
+    /** Reused between alternatives. Every new search assigns slots from zero and resets their costs. */
+    private class SearchStates {
+        var keys = LongArray(1 shl 14); private set
+        var cost = DoubleArray(keys.size); private set
+        var previous = IntArray(keys.size); private set
+
+        fun put(slot: Int, key: Long) {
+            if (slot == keys.size) {
+                keys = keys.copyOf(slot * 2)
+                cost = cost.copyOf(slot * 2)
+                previous = previous.copyOf(slot * 2)
+            }
+            keys[slot] = key
+            cost[slot] = Double.POSITIVE_INFINITY
+        }
+    }
+
+    /** Road IDs are primitive keys. The small lists retain their original insertion order. */
+    private class RoadLists<T> {
+        private val index = LongIntMap()
+        private val values = ArrayList<MutableList<T>>()
+
+        operator fun get(id: Long): MutableList<T>? = values.getOrNull(index[id])
+
+        fun getOrAdd(id: Long): MutableList<T> = get(id) ?: ArrayList<T>(1).also {
+            index[id] = values.size
+            values += it
+        }
+    }
+
+    /**
+     * Junction adjacency in publication order. Heads and tails are indexed by node, and each edge
+     * has one successor slot per end. A link stores the edge index plus one, leaving zero for no link.
+     */
+    private fun appendAdjacent(node: Int, index: Int) {
+        val tail = adjacencyTails[node]
+        if (tail == 0) adjacencyHeads[node] = index + 1
+        else adjacencyNext[adjacencySlot(node, tail - 1)] = index + 1
+        adjacencyTails[node] = index + 1
+    }
+
+    private fun adjacencySlot(node: Int, index: Int): Int =
+        index * 2 + if (edges[index].a == node) 0 else 1
+
+    private inline fun forEachAdjacent(node: Int, visit: (Int) -> Unit) {
+        var link = adjacencyHeads[node]
+        while (link != 0) {
+            val index = link - 1
+            visit(index)
+            link = adjacencyNext[adjacencySlot(node, index)]
+        }
+    }
+
+    private inline fun anyAdjacent(node: Int, matches: (Int) -> Boolean): Boolean {
+        forEachAdjacent(node) { if (matches(it)) return true }
+        return false
+    }
+
+    /** Allocate integer pages on demand. Untouched positions read as zero. */
+    private class PagedInts {
+        private val pages = ArrayList<IntArray?>()
+
+        operator fun get(index: Int): Int = pages.getOrNull(index ushr PAGE_SHIFT)?.get(index and PAGE_MASK) ?: 0
+
+        operator fun set(index: Int, value: Int) {
+            val page = index ushr PAGE_SHIFT
+            while (pages.size <= page) pages.add(null)
+            val values = pages[page] ?: IntArray(PAGE_SIZE).also { pages[page] = it }
+            values[index and PAGE_MASK] = value
+        }
+
+        private companion object {
+            const val PAGE_SHIFT = 12
+            const val PAGE_SIZE = 1 shl PAGE_SHIFT
+            const val PAGE_MASK = PAGE_SIZE - 1
+        }
+    }
+
+    /** A growable list of ints, lighter than List<Int>. */
     class IntArrayList {
         private var a = IntArray(4); var size = 0; private set
         fun add(v: Int) { if (size == a.size) a = a.copyOf(size * 2); a[size++] = v }
@@ -1020,6 +1146,7 @@ class RoadGraph(
         private const val LEVEL_FULL = 2
         private const val LOCAL_EDGE_BITS = 48
         private const val LOCAL_EDGE_MASK = (1L shl LOCAL_EDGE_BITS) - 1
+        private val EMPTY_SHAPE = IntArray(0)
         /**
          * Every road is searched within this distance of each end of a route (metres): the first that
          * finds a route. In a town a main road is never far; a ranch or trailhead at the end of a long
