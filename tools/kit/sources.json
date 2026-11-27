@@ -1249,6 +1249,313 @@
       "licence": "CC BY-NC-SA 3.0 IGO (notice inside the file; keep it with the file)",
       "tier": "own",
       "flags": []
+    },
+    {
+      "id": "army-tm-3-34-46-electrical-systems",
+      "title": "Theater of Operations Electrical Systems (TM 3-34.46)",
+      "edition": "2013-05-03",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/tm3_34x46.pdf",
+      "file": "army-tm-3-34-46-electrical-systems.pdf",
+      "origin": "url",
+      "publisher": "Department of the Army and U.S. Marine Corps",
+      "licence": "“Approved for public release; distribution is unlimited.”",
+      "tier": "own",
+      "flags": [],
+      "sha256": "f1e1d9991aa56e4de6377bd1fd331907558f03ab36007101f43ef2f901beda79"
+    },
+    {
+      "id": "cpsc-5123-portable-generator-hazards",
+      "title": "CPSC Safety Alert: Portable Generator Hazards (Publication 5123)",
+      "edition": "2021-10",
+      "url": "https://www.cpsc.gov/s3fs-public/5123_SafetyAlert_PortableGenerators_102021.pdf?VersionId=3D.6KZkXcpeiyriLmSswrdnVQI4JERoN",
+      "file": "cpsc-5123-portable-generator-hazards.pdf",
+      "origin": "url",
+      "publisher": "U.S. Consumer Product Safety Commission",
+      "licence": "Federal CPSC public safety publication. No separate licence statement printed.",
+      "tier": "own",
+      "flags": [],
+      "sha256": "e0d63358b2c45b5b6250cb43173113e406b71d49a4bd557e60130dae8ec2ad36"
+    },
+    {
+      "id": "doe-residential-renewable-energy",
+      "file": "DOE-Consumer-Guide-Residential-Renewable-Energy-2022.pdf",
+      "url": "https://www.energy.gov/sites/default/files/2022-08/ES-ConsumerGuide-Residential-Renewable-Energy.pdf",
+      "origin": "url",
+      "sha256": "755756b0209f14ab451f454277f830a920509e4e253c581faa06616b6bdf51c0",
+      "title": "Energy Saver Consumer Guide to Residential Renewable Energy",
+      "publisher": "U.S. Department of Energy",
+      "edition": "2022-08",
+      "licence": "No separate notice in PDF. DOE Web Policies: “Government information at DOE websites is in the public domain.”",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "epa-burn-wise-practices",
+      "title": "Best Wood-Burning Practices",
+      "edition": "2026-10-13",
+      "url": "https://www.epa.gov/burnwise/best-wood-burning-practices",
+      "file": "EPA-Burn-Wise-Best-Wood-Burning-Practices-Historic.md",
+      "origin": "derived",
+      "publisher": "U.S. Environmental Protection Agency",
+      "licence": "U.S. Environmental Protection Agency. “These documents may be freely distributed and used for non-commercial, scientific and educational purposes.”",
+      "tier": "own",
+      "flags": [
+        "historic"
+      ],
+      "sha256": "13f503efa1705b4444341762104320d5a11dca8be07910f369726b7f66356b43",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://www.epa.gov/burnwise/best-wood-burning-practices",
+        "SHA-256 7d94daee36f4c46bffdbba715e6e7fc307f3c9c46ed2b0b967148a931d0b5bdc",
+        "root id main"
+      ]
+    },
+    {
+      "id": "epa-burn-wise-tips",
+      "title": "Burn Wise Tips",
+      "edition": "2010-12",
+      "url": "https://www.epa.gov/sites/default/files/documents/burnwisetips.pdf",
+      "file": "EPA-Burn-Wise-Tips-2010-Historic.pdf",
+      "origin": "url",
+      "publisher": "U.S. Environmental Protection Agency",
+      "licence": "U.S. Environmental Protection Agency. “These documents may be freely distributed and used for non-commercial, scientific and educational purposes.”",
+      "tier": "own",
+      "flags": [
+        "historic"
+      ],
+      "sha256": "f51809702ee45408088cf125acbe83a0dc8ff163175b23fe3bf878c1dec7f8c2"
+    },
+    {
+      "id": "epa-household-wells-2002",
+      "file": "EPA-Drinking-Water-from-Household-Wells-EPA816-K-02-003-2002.pdf",
+      "title": "Drinking Water From Household Wells",
+      "publisher": "U.S. Environmental Protection Agency",
+      "edition": "2002-01",
+      "sha256": "d025d17bb11f5fd3c878949676e4b8dceb00b48f7e50c4811943bc0ebeb1bc8f",
+      "origin": "url",
+      "url": "https://www.epa.gov/sites/default/files/2015-10/documents/2003_06_03_privatewells_pdfs_household_wells.pdf",
+      "licence": "EPA site terms: “These documents may be freely distributed and used for non-commercial, scientific and educational purposes.” Cover photo credit Charlene E. Shaw, U.S. Environmental Protection Agency.",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "fda-disaster-insulin",
+      "title": "Information Regarding Insulin Storage and Switching Between Products in an Emergency",
+      "edition": "2026-09-28",
+      "url": "https://www.fda.gov/drugs/emergency-preparedness-drugs/information-regarding-insulin-storage-and-switching-between-products-emergency",
+      "file": "FDA-Insulin-Storage-Switching-Emergency.md",
+      "origin": "derived",
+      "publisher": "U.S. Food and Drug Administration",
+      "licence": "U.S. Food and Drug Administration. FDA Website Policies: “They are in the public domain and may be republished, reprinted and otherwise used freely by anyone.” Source copied November 26, 2026.",
+      "tier": "own",
+      "flags": [],
+      "sha256": "80468c2a0a0b4813dbd0f7bb0f869f0ece7eaa05312f2e259c20bb5049730790",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://www.fda.gov/drugs/emergency-preparedness-drugs/information-regarding-insulin-storage-and-switching-between-products-emergency",
+        "SHA-256 621719f1d301be863c91ffd0c6bf0842a3bdfe17e277c7e6e2ce4637f35cf61a",
+        "root id main-content"
+      ]
+    },
+    {
+      "id": "fda-disaster-drugs",
+      "title": "Safe Drug Use After a Natural Disaster",
+      "edition": "2026-09-01",
+      "url": "https://www.fda.gov/drugs/emergency-preparedness-drugs/safe-drug-use-after-natural-disaster",
+      "file": "FDA-Safe-Drug-Use-After-Natural-Disaster.md",
+      "origin": "derived",
+      "publisher": "U.S. Food and Drug Administration",
+      "licence": "U.S. Food and Drug Administration. FDA Website Policies: “They are in the public domain and may be republished, reprinted and otherwise used freely by anyone.” Source copied November 26, 2026.",
+      "tier": "own",
+      "flags": [],
+      "sha256": "4b2500f8379bcbb6156c2956ce1dc4372c1348d54ace4d8d3f47939db0b5919e",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://www.fda.gov/drugs/emergency-preparedness-drugs/safe-drug-use-after-natural-disaster",
+        "SHA-256 075ccfbc97142ded319dffabf866df7cffc70b46690017300b930c4ba1fbc67c",
+        "root id main-content"
+      ]
+    },
+    {
+      "id": "chemm-salt-2026",
+      "title": "SALT Mass Casualty Triage Algorithm",
+      "edition": null,
+      "url": "https://chemm.hhs.gov/incident-primer/triage/salt-triage",
+      "file": "HHS-CHEMM-SALT-Triage-2026.md",
+      "origin": "derived",
+      "publisher": "U.S. Department of Health and Human Services / ASPR CHEMM",
+      "licence": "Source: CHEMM: Chemical Hazards Emergency Medical Management (U.S. Department of Health and Human Services). Government-authored text. Publisher notice: “freely used or reproduced without permission in the U.S.”",
+      "tier": "own",
+      "flags": [],
+      "sha256": "3628f498845a16ca7eccbf67159437b73189dde7b2f2d2735ead9a71c96f748c",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://chemm.hhs.gov/incident-primer/triage/salt-triage",
+        "SHA-256 3df151b42156f9da49eeb2b75346e8caa55f9df401818b80a7a582c02cec8997",
+        "root id main"
+      ]
+    },
+    {
+      "id": "chemm-start-2026",
+      "title": "START Adult Triage Algorithm",
+      "edition": null,
+      "url": "https://chemm.hhs.gov/incident-primer/triage/start-triage",
+      "file": "HHS-CHEMM-START-Triage-2026.md",
+      "origin": "derived",
+      "publisher": "U.S. Department of Health and Human Services / ASPR CHEMM",
+      "licence": "Source: CHEMM: Chemical Hazards Emergency Medical Management (U.S. Department of Health and Human Services). Government-authored text. Publisher notice: “freely used or reproduced without permission in the U.S.”",
+      "tier": "own",
+      "flags": [],
+      "sha256": "3c81fb06da15509bd1d6beb557d4a5bab4a127c60cc3cbde5bd2006b3e859fd5",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://chemm.hhs.gov/incident-primer/triage/start-triage",
+        "SHA-256 52cb7f610960067fa4ddd392b4f4fb2df0cd4e449a67239a03d14d54f68900bc",
+        "root id main"
+      ]
+    },
+    {
+      "id": "nchfp-drying",
+      "file": "NCHFP-Drying.md",
+      "url": "https://nchfp.uga.edu/how/dry/",
+      "origin": "derived",
+      "sha256": "a9c209fbbac0e29aee8b01db35d24ec1bb4baa0b989d17dd8b79f5b6da405731",
+      "title": "Drying",
+      "publisher": "National Center for Home Food Preservation, University of Georgia",
+      "edition": null,
+      "licence": "From the National Center for Home Food Preservation website, University of Georgia. Publisher disclaimer: “may be printed and copied for not-for-profit personal and educational use.”",
+      "tier": "own",
+      "flags": [
+        "noncommercial-with-credit"
+      ],
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://nchfp.uga.edu/how/dry/",
+        "SHA-256 7af840de65ddcd552a55b018cf2cd34e37748e0f330197e327c29f2b1c37a7b0",
+        "root class section__content"
+      ]
+    },
+    {
+      "id": "nchfp-fermenting",
+      "file": "NCHFP-Fermenting.md",
+      "url": "https://nchfp.uga.edu/how/ferment/",
+      "origin": "derived",
+      "sha256": "4a73d27c1546fa041260b4e915de0c8d6759a8ae55d64962b836307422713c20",
+      "title": "Fermenting",
+      "publisher": "National Center for Home Food Preservation, University of Georgia",
+      "edition": null,
+      "licence": "From the National Center for Home Food Preservation website, University of Georgia. Publisher disclaimer: “may be printed and copied for not-for-profit personal and educational use.”",
+      "tier": "own",
+      "flags": [
+        "noncommercial-with-credit"
+      ],
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://nchfp.uga.edu/how/ferment/",
+        "SHA-256 9bd5b28da6ddabb71cf26e09460e345978e0b2b09e4dffcb0176636cc02c75ff",
+        "root class section__content"
+      ]
+    },
+    {
+      "id": "nist-sp-811-si",
+      "file": "NIST-SP-811-Guide-to-SI-2008.pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication811e2008.pdf",
+      "origin": "url",
+      "sha256": "788dd8f0bcb0ec06e40c300690266742532a7e760a93be57764b77ed0ef3482f",
+      "title": "Guide for the Use of the International System of Units (SI)",
+      "publisher": "National Institute of Standards and Technology",
+      "edition": "2008",
+      "licence": "No separate notice in PDF. NIST Library FAQ: “publications of the Federal government, are in the public domain”",
+      "tier": "own",
+      "flags": [
+        "historical-si-definitions"
+      ]
+    },
+    {
+      "id": "nws-cloud-chart",
+      "file": "NOAA-NWS-Cloudwise-Cloud-Chart.pdf",
+      "url": "https://www.weather.gov/media/owlie/cloud_chart.pdf",
+      "origin": "url",
+      "sha256": "cd6baa797f52a10028cb6fd573ce016fd69696e164cca0f11813f7b4247b0117",
+      "title": "NOAA Cloudwise Cloud Chart",
+      "publisher": "National Oceanic and Atmospheric Administration / National Weather Service",
+      "edition": "2022",
+      "licence": "NOAA/NWS public-domain notice: “The information on National Weather Service (NWS) Web pages are in the public domain, unless specifically noted otherwise.”",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "peacecorps-r0025-2014",
+      "file": "Peace-Corps-R0025-Intensive-Vegetable-Gardening-2014.pdf",
+      "title": "Intensive Vegetable Gardening for Profit and Self-Sufficiency",
+      "publisher": "Peace Corps",
+      "edition": "2014",
+      "sha256": "473da0db754e40087d4d221ca6a2dddc7c7f1bf462a6ad092444231f46b28122",
+      "origin": "url",
+      "url": "https://files.peacecorps.gov/documents/R0025-Intensive-Vegetable-Gardening.pdf",
+      "licence": "Peace Corps publisher policy: “Unless otherwise indicated, information on the Peace Corps website is in the public domain and may be copied and distributed without permission.”",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "peacecorps-t0020-1984",
+      "file": "Peace-Corps-T0020-Improved-Food-Drying-and-Storage-1984.pdf",
+      "title": "Improved Food Drying and Storage: A Training Manual",
+      "publisher": "Peace Corps",
+      "edition": "1984-09",
+      "sha256": "6a7dd759df14aac63912e0dbc40e1d9488cd6a4b18faf225e3f0c0cfc864a17f",
+      "origin": "url",
+      "url": "https://files.peacecorps.gov/documents/T0020_Improved-Food-Drying-and-Storage.pdf",
+      "licence": "“This manual may be reproduced and/or translated in part or in full without payment or royalty. Please give standard acknowledgment.” Credit Peace Corps Information Collection and Exchange.",
+      "tier": "own",
+      "flags": [
+        "historic"
+      ]
+    },
+    {
+      "id": "pnnl-pv-battery-power-outages",
+      "file": "PNNL-PV-Battery-Storage-for-Power-Outages-2021.md",
+      "url": "https://basc.pnnl.gov/information/pv-battery-storage-power-outages",
+      "origin": "derived",
+      "sha256": "3c97079ede665d536086284c0d307bc3968909429bba33ba7958bd3d32e901ba",
+      "title": "PV Battery Storage for Power Outages",
+      "publisher": "Pacific Northwest National Laboratory and U.S. Department of Energy",
+      "edition": "2021-09-29",
+      "licence": "Pacific Northwest National Laboratory, Building America Solution Center. Publisher’s criteria state “unlimited download and use by all users of the Building America Solution Center.”",
+      "tier": "own",
+      "flags": [],
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://basc.pnnl.gov/information/pv-battery-storage-power-outages",
+        "SHA-256 a82f24e24ad52327cc05719c4eba3b43db323c31481ed274a51cac1b6da13cbd",
+        "root class information-guide"
+      ]
+    },
+    {
+      "id": "uf-ifas-enh1383-2024",
+      "file": "UF-IFAS-ENH1383-Seed-Saving-2024.pdf",
+      "title": "A Beginner’s Guide to Producing and Saving Open-Pollinated Seeds for North Florida Farmers and Gardeners",
+      "publisher": "UF/IFAS Extension",
+      "edition": "2024-12",
+      "sha256": "0e78755e99fd4b069b666440630e48586b09f0c3a0025e97230e4eef1d553613",
+      "origin": "url",
+      "url": "https://ask.ifas.ufl.edu/publication/EP647.pdf",
+      "licence": "“© 2024 UF/IFAS. This publication is licensed under CC BY-NC-ND 4.0” — Tere Davidson, Melissa DeSa, and Héctor E. Pérez. File preserved unchanged.",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "uscg-boaters-guide",
+      "file": "USCG-Boaters-Guide-Federal-Requirements-2023.pdf",
+      "url": "https://www.uscgboating.org/assets/1/AssetManager/Boaters-Guide-to-Federal-Requirements-for-Receational-Boats-20231108.pdf",
+      "origin": "url",
+      "sha256": "8379d7ad2af3f2f997a621f76bd31609c3da1e872163c52ee6c2bcdc43865a4b",
+      "title": "A Boater's Guide to the Federal Requirements for Recreational Boats",
+      "publisher": "U.S. Coast Guard Boating Safety Division",
+      "edition": "2023-11",
+      "licence": "No separate notice in PDF. U.S. Coast Guard federal work; print cover identifies the Boating Safety Division.",
+      "tier": "own",
+      "flags": []
     }
   ]
 }
