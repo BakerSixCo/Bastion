@@ -1,13 +1,17 @@
-"""HOSTILE review of GPU drafts, on the Arc GPU.
+"""HOSTILE, severity-rated review of GPU drafts, on the Arc GPU.
 
-Assumes every draft is WRONG and dangerous and tries to KILL it: it hunts for a wrong value, a dangerous
-step, a missing critical safety step, or an answer to a different question, and passes a draft only if it
-genuinely cannot find a fault. Fail-closed: anything it cannot clearly clear is killed.
+Assumes every draft is wrong and could get someone killed, and gives no benefit of the doubt — but instead
+of a flat pass/kill (which killed ~99% and buried the signal), it rates each draft:
+  DANGEROUS  — a wrong value/dose/temperature or a deadly/unsafe instruction (top-priority fix),
+  WEAK       — not outright dangerous but incomplete, vague, or missing an important step,
+  OK         — it genuinely cannot find a fault.
+Fail-closed: anything it cannot clearly clear is at least WEAK.
 
-Reads the drafts from gpu_draft.py (tools/gpu/out/drafts*.jsonl) and writes tools/gpu/out/reviews.jsonl:
-{id, question, verdict (PASS|KILL), fault, draft}. A REVIEW-PRIORITISATION AID ONLY — it decides nothing
-that ships. Every card is still drafted, quote-checked against real sources, reviewed and owner-approved;
-the KILLs just say which drafts to distrust first and surface the dangerous ones. Resumable.
+Reads gpu_draft.py's drafts (tools/gpu/out/drafts*.jsonl) and writes tools/gpu/out/reviews.jsonl:
+{id, question, severity, fault, draft}. A REVIEW-PRIORITISATION AID ONLY — it decides nothing that ships;
+every card is still drafted, quote-checked against real sources, reviewed and owner-approved. The DANGEROUS
+list is what to fix first (after a human confirms the fault is real — this small model also mis-flags).
+Resumable.
 
   python -I tools/gpu/gpu_screen.py [--port 8092]
 """
@@ -27,12 +31,11 @@ OUTDIR = ROOT / "tools" / "gpu" / "out"
 REVIEWS = OUTDIR / "reviews.jsonl"
 
 SYSTEM = ("You are a HOSTILE reviewer of survival and first-aid answers written for people in danger. "
-          "Assume the draft is WRONG and could get someone killed, and prove it. Do NOT be fair or generous "
-          "and give NO benefit of the doubt. Attack every fact, number, dose, ratio, temperature, time and "
-          "step; look for a dangerous instruction, a wrong value, a missing critical safety step, or an "
-          "answer to a different question. Pass it only if you genuinely cannot find a single real fault and "
-          "it is concretely correct and safe. Reply EXACTLY 'PASS' if it survives, otherwise "
-          "'KILL: <the single worst specific fault, in at most 20 words>'. No other words.")
+          "Assume the draft is wrong and could get someone killed; give no benefit of the doubt. Rate it: "
+          "reply 'DANGEROUS: <fault>' if it states a wrong value, dose or temperature, or a deadly or unsafe "
+          "instruction; 'WEAK: <what is missing>' if it is not outright dangerous but is incomplete, vague, or "
+          "omits an important step; or 'OK' only if you genuinely cannot fault it. At most 20 words after the "
+          "colon. No other words.")
 
 
 def health(port):
@@ -54,14 +57,17 @@ def attack(port, question, draft):
         return json.loads(r.read())["content"].strip()
 
 
-def verdict_of(text):
-    """Fail-closed: PASS only on a clear PASS; anything else is a KILL."""
+def rate(text):
+    """Fail-closed: a clear OK passes, DANGEROUS/WEAK as stated, anything else is at least WEAK."""
     t = text.strip()
-    if t.upper().startswith("PASS"):
-        return "PASS", ""
-    if t.upper().startswith("KILL"):
-        return "KILL", t.split(":", 1)[1].strip()[:140] if ":" in t else t[:140]
-    return "KILL", ("unclear review, treated as failed: " + t[:110])
+    up = t.upper()
+    if up.startswith("DANGEROUS"):
+        return "DANGEROUS", t.split(":", 1)[1].strip()[:140] if ":" in t else ""
+    if up.startswith("OK"):
+        return "OK", ""
+    if up.startswith("WEAK"):
+        return "WEAK", t.split(":", 1)[1].strip()[:140] if ":" in t else ""
+    return "WEAK", ("unclear review: " + t[:110])
 
 
 def main():
@@ -104,17 +110,18 @@ def main():
         else:
             print("llama-server did not become healthy", flush=True)
             return 1
-        t0, killed = time.time(), 0
+        t0, counts = time.time(), {"DANGEROUS": 0, "WEAK": 0, "OK": 0}
         with REVIEWS.open("a", encoding="utf-8") as out:
             for i, d in enumerate(todo, 1):
-                verdict, fault = verdict_of(attack(a.port, d["question"], d["draft"]))
-                killed += verdict == "KILL"
-                out.write(json.dumps({"id": d["id"], "question": d["question"], "verdict": verdict,
+                severity, fault = rate(attack(a.port, d["question"], d["draft"]))
+                counts[severity] += 1
+                out.write(json.dumps({"id": d["id"], "question": d["question"], "severity": severity,
                                       "fault": fault, "draft": d["draft"]}) + "\n")
                 out.flush()
                 if i % 20 == 0 or i == len(todo):
-                    print(f"{i}/{len(todo)} reviewed, {killed} KILLED, {(time.time()-t0)/i:.1f} s/item", flush=True)
-        print(f"done: reviewed {len(todo)}, KILLED {killed}, passed {len(todo)-killed} -> {REVIEWS}", flush=True)
+                    print(f"{i}/{len(todo)} reviewed | {counts['DANGEROUS']} DANGEROUS {counts['WEAK']} WEAK "
+                          f"{counts['OK']} OK | {(time.time()-t0)/i:.1f} s/item", flush=True)
+        print(f"done: {counts['DANGEROUS']} DANGEROUS, {counts['WEAK']} WEAK, {counts['OK']} OK -> {REVIEWS}", flush=True)
     finally:
         srv.terminate()
         try:

@@ -28,7 +28,7 @@
     },
     {
       "id": "hostile-review",
-      "title": "HOSTILE review: assume every GPU draft is wrong and dangerous and try to KILL it (name the specific fault), fail-closed. Surfaces dangerous answers and prioritises human card-writing (review aid only; nothing ships on the model's say-so)",
+      "title": "HOSTILE severity-rated review: assume every GPU draft is wrong/dangerous (no benefit of the doubt) and rate it DANGEROUS / WEAK / OK with the fault, fail-closed. The DANGEROUS list is the priority gap list for card-writing and kit coverage (review aid only; nothing ships on the model's say-so)",
       "cmd": ["{python}", "-I", "tools/gpu/gpu_screen.py"],
       "approved": true,
       "after": ["draft-coverage-v2", "draft-radio-91"],
