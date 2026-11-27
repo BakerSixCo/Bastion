@@ -1,5 +1,5 @@
 {
-  "about": "Arc 140V GPU job queue. Mostly llama.cpp Vulkan (-ngl 99) for generation/screening; also runs the OpenVINO VLM figure-captioning job (device GPU), which has no NPU path and so lives here, in parallel with the NPU. Runs IN PARALLEL with the NPU queue (owner 2026-11-26: use the GPU as well). Start with: python -I tools/npu/run_queue.py --queue tools/gpu/queue.json (its state/lock live in tools/gpu/out/, separate from the NPU's). GPU = generation/eval; the NPU = per-page batch work. Models (owner 2026-11-26 'use the most optimal models to maximize the npu and gpu for s-tier work'): the hostile reviewer runs Qwen2.5-14B-Instruct Q4_K_M — the strongest model the 16 GB Arc runs at usable burst speed, and a DIFFERENT family from the drafter (the review gate is never the model that wrote the draft); the drafter runs gemma-4-E4B (phone-family 4B). Pass --model to override either. All local-model output here is a drafting/screening aid only and is re-grounded, checked, reviewed and owner-approved before anything ships to the phone.",
+  "about": "Arc 140V GPU job queue. Mostly llama.cpp Vulkan (-ngl 99) for generation/screening; also runs the OpenVINO VLM figure-captioning job (device GPU), which has no NPU path and so lives here, in parallel with the NPU. Runs IN PARALLEL with the NPU queue (owner 2026-11-26: use the GPU as well). Start with the OpenVINO venv python (the figure-captioning job needs it; the stdlib-only draft/screen jobs run under it too): tools\\.venv-npu\\Scripts\\python -I tools/npu/run_queue.py --queue tools/gpu/queue.json (its state/lock live in tools/gpu/out/, separate from the NPU's). GPU = generation/eval; the NPU = per-page batch work. Models (owner 2026-11-26 'use the most optimal models to maximize the npu and gpu for s-tier work'): the hostile reviewer runs Qwen2.5-14B-Instruct Q4_K_M — the strongest model the 16 GB Arc runs at usable burst speed, and a DIFFERENT family from the drafter (the review gate is never the model that wrote the draft); the drafter runs gemma-4-E4B (phone-family 4B). Pass --model to override either. All local-model output here is a drafting/screening aid only and is re-grounded, checked, reviewed and owner-approved before anything ships to the phone.",
   "jobs": [
     {
       "id": "draft-card-answers",
@@ -38,11 +38,11 @@
     {
       "id": "figure-descriptions",
       "title": "Caption the figures extracted from the kit PDFs (diagrams, knots, antennas, map symbols, tables) so their visual content becomes searchable text. RELOCATED from the NPU queue 2026-11-26: the VLM (Phi-3.5-vision-instruct, MIT, int4 OpenVINO) has no NPU path in OpenVINO GenAI, so it runs on the Arc GPU (OpenVINO device GPU, not llama.cpp) — placed here so it runs in parallel with, and never blocks, the NPU's text jobs. A SEARCH-INDEX AID ONLY: the descriptions are never shown as answers or treated as fact; the extractor's own caption/labels are kept verbatim alongside. Resumable. Prereq: run the figure extractor (tools/figures) first so tools/figures/out/index.json exists.",
-      "cmd": ["tools/.venv-npu/Scripts/python.exe", "-I", "tools/npu/tag_figures.py"],
+      "cmd": ["{python}", "-I", "tools/npu/tag_figures.py"],
       "approved": true,
       "est_hours": 8.0,
       "output": "tools/figures/out/figure-descriptions.jsonl",
-      "note": "Uses the OpenVINO venv python explicitly (not {python}) because the model needs openvino-genai + Pillow regardless of which interpreter launches this queue. Model + build decision recorded in tag_figures.py's header."
+      "note": "Needs openvino-genai + Pillow, so START THIS GPU QUEUE WITH THE OpenVINO VENV PYTHON: tools\\.venv-npu\\Scripts\\python -I tools/npu/run_queue.py --queue tools/gpu/queue.json. {python} then resolves to that venv (absolute sys.executable; a relative exe path like tools/.venv-npu/... fails CreateProcess with WinError 2 on Windows). The draft/screen jobs are stdlib-only (urllib) and run fine under the venv python too. Model + build decision recorded in tag_figures.py's header."
     }
   ]
 }
