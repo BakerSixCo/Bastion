@@ -10,8 +10,15 @@ one finishes there is always another that is not blocked. Keep this list deep (o
 always be going and we should keep ChatGPT queue full at all times... make it a heavy-lifting workhorse").
 
 **Merged 2026-11-27 (Claude reviewed + merged, branch pushed):** `route-perf-1`, `kit-4`, `kit-5`, `kit-6`,
-`kitconv-1`, `mapverify-1`, `evalclean-1`. `chunk-tables-1` stays open (needs a retrieval re-scope:
-`LibraryStore` + `ai/Retriever`, so it's owner/Claude work, not ChatGPT-scoped).
+`kitconv-1`, `mapverify-1`, `evalclean-1`. **`chunk-tables-1` CLOSED 2026-11-27 (dead end, Claude
+measured it):** the task and its re-scope both measure ~+0 on questions-v2. The failing table questions
+(canning pressures, doses) fail because PDF extraction scrambles the table columns *before* chunking
+(`DocExtract.normalizePdf` flattens whitespace), plus SUBJECT/REFUSAL/OFF_TARGET — none of which
+header-with-row chunking fixes. The real upstream lever is PDF table extraction, **deliberately not
+built**: table data here is life-safety (wrong canning PSI → botulism, wrong dose → overdose), so
+abstaining (NO_ANSWER) is the correct behavior and a flaky auto-parser would create exactly the
+wrong-answer risk the fail-closed design prevents. If a specific critical table is ever wanted,
+hand-curate it as verified Markdown (card-style), not an auto-parser.
 
 **Backlog (low priority; spec when it reaches the head):** `meshsim-eval-1` — stand up Meshtasticator's
 discrete-event sim and stress-test the radio card-responder (`mesh/MeshAutoResponder`, `RadioCardFallback`)
