@@ -43,6 +43,41 @@
       "est_hours": 8.0,
       "output": "tools/figures/out/figure-descriptions.jsonl",
       "note": "Needs openvino-genai + Pillow, so START THIS GPU QUEUE WITH THE OpenVINO VENV PYTHON: tools\\.venv-npu\\Scripts\\python -I tools/npu/run_queue.py --queue tools/gpu/queue.json. {python} then resolves to that venv (absolute sys.executable; a relative exe path like tools/.venv-npu/... fails CreateProcess with WinError 2 on Windows). The draft/screen jobs are stdlib-only (urllib) and run fine under the venv python too. Model + build decision recorded in tag_figures.py's header."
+    },
+    {
+      "id": "draft-cards-14b",
+      "title": "Stronger-drafter pass: re-draft the 40 planned-card questions with the 14B (Qwen2.5-14B-Instruct Q4_K_M) instead of E4B — a materially better first-pass drafting aid for card-writing and gap-finding. Every draft is STILL re-grounded, quote-checked, hostile-reviewed and owner-approved before any card ships; nothing here reaches the phone.",
+      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--model", "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf", "--out", "tools/gpu/out/drafts-14b.jsonl"],
+      "approved": true,
+      "est_hours": 0.5,
+      "output": "tools/gpu/out/drafts-14b.jsonl"
+    },
+    {
+      "id": "draft-coverage-v2-14b",
+      "title": "Stronger-drafter pass on the 156 coverage questions (model-eval/questions-v2), incl. the trap questions, with the 14B drafter — a better first-pass gap list. Drafting aid only; re-grounded, checked, reviewed and owner-approved before any card ships.",
+      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--questions", "tools/model-eval/questions-v2.json", "--model", "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf", "--out", "tools/gpu/out/drafts-v2-14b.jsonl"],
+      "approved": true,
+      "after": ["draft-cards-14b"],
+      "est_hours": 1.0,
+      "output": "tools/gpu/out/drafts-v2-14b.jsonl"
+    },
+    {
+      "id": "draft-radio-14b",
+      "title": "Stronger-drafter pass on the 91 radio-net questions (model-eval/radio-questions) with the 14B drafter. Drafting aid only; nothing ships unchecked.",
+      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--questions", "tools/model-eval/radio-questions.json", "--model", "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf", "--out", "tools/gpu/out/drafts-radio-14b.jsonl"],
+      "approved": true,
+      "after": ["draft-coverage-v2-14b"],
+      "est_hours": 0.6,
+      "output": "tools/gpu/out/drafts-radio-14b.jsonl"
+    },
+    {
+      "id": "enrich-pages",
+      "title": "Full-corpus retrieval enrichment: a one-line searchable summary + 5-15 key terms for every page of all kit manuals (~10,100 pages) on the GPU with gemma-4-E4B. A SEARCH-INDEX AID ONLY, the same category as the figure captions and the NPU topic tags: never shown as an answer, never treated as true; everything that ships to the phone is still quote-checked, reviewed and owner-approved. It raises retrieval recall on pages whose prose never uses the asker's words. Reads tools/kit/.textcache (no new PDF extraction). Resumable. Runs after the 14B draft pass so it never contends for the 16 GB Arc.",
+      "cmd": ["{python}", "-I", "tools/gpu/enrich_pages.py"],
+      "approved": true,
+      "after": ["draft-radio-14b"],
+      "est_hours": 15.0,
+      "output": "tools/gpu/out/page-notes.jsonl"
     }
   ]
 }
