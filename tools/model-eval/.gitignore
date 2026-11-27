@@ -1,0 +1,8 @@
+# Scratch outputs. Paths already tracked remain part of the repository.
+/results/
+*.server.log
+/plans/*.log
+/evalset-*.json
+/evalvariants-*.json
+*.summary.txt
+__pycache__/

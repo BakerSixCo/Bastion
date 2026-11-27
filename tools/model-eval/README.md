@@ -18,14 +18,19 @@ scores is a difference between models and not between searches.
 
 Models and the llama.cpp build live in `tools/kit/pc-eval/` and are never committed.
 
-## To rerun
+## Replay the archived comparison
 
-    adb shell am instrument -w -e class com.bastion.terminal.ai.EvalSetExportTest com.bastion.terminal.test/androidx.test.runner.AndroidJUnitRunner
-    adb pull /sdcard/Android/media/com.bastion.terminal/evalset.json evalset-retrieved.json
-    perl build-set.pl
-    bash run-model.sh gemma-4-E4B-it-Q4_0.gguf gemma4-e4b-q4 chat
-    bash run-model.sh OCC-RAG-1.7B-Q8_0.gguf occ-rag-1.7b-q8 occ
-    perl score.pl -v gemma4-e2b-q4 gemma4-e4b-q4 qwen3.5-4b-q4km occ-rag-1.7b-q8
+From `tools/model-eval`, choose fresh run tags and use the checked-in `evalset.json`.
+
+```bash
+EVALSET=evalset.json bash run-model.sh gemma-4-E4B-it-Q4_0.gguf replay-e4b chat
+EVALSET=evalset.json bash run-model.sh OCC-RAG-1.7B-Q8_0.gguf replay-occ occ
+perl score.pl -v replay-e4b replay-occ
+```
+
+To rebuild the legacy set, export the default `EvalSetExportTest#writeTheFixedSet` to a scratch
+directory as `evalset-retrieved.json`. Run `perl /path/to/build-set.pl` from that directory because
+the script writes a fixed `evalset.json` filename.
 
 `chat` sends BASTION's own instructions and source layout. `occ` sends OCC-RAG's own layout
 (query and sources in its special tokens, no instructions) and reads its ANSWERABLE /
@@ -66,6 +71,76 @@ The app's pipeline (`CheckedAnswer.twoPaths`) is: restate → search the restate
 answer → code checks + judge → search the asker's own words → answer → checks + judge → show
 the restated path's answer only if both passed. The on-device run of exactly that is
 `CheckedAnswerEvalTest` (results in `results/device-v2-twopaths.jsonl`).
+
+The PC harness uses the device's exported passages and a separate llama.cpp runtime. It generates
+both answer arms before joining their verdicts. Use `radio-questions.json` for radio-card tuning
+and `radio-questions-holdout.json` as the frozen radio holdout. Those sets belong to the radio eval,
+while `read-labels-v2.json` records human-reviewed checked-answer verdicts.
+
+## Run the PC checked-answer comparison
+
+Run the wrappers from `tools/model-eval` in Windows Bash with Perl, curl, standard shell utilities
+and Windows PowerShell on PATH. Place the existing GGUF files in `tools/kit/pc-eval/models/` and
+the Windows `llama-server.exe` Vulkan build and its libraries in `tools/kit/pc-eval/llama-vulkan/`.
+`pipeline.sh` defaults to `gemma-4-E2B-it-Q4_0.gguf`. `MODEL_FILE` selects another model in the
+same folder. `LLAMA_BIN` selects the server directory. The wrappers use loopback port 8089 and
+stop processes named `llama-server` on exit, so reserve the server for one eval at a time.
+
+1. **Restate.** Set a fresh tag for this run and generate query plans and alternate search wordings.
+
+   ```bash
+   run_tag=fresh-v2-run
+   plan_tag="$run_tag-plan"
+   EVALSET=questions-v2.json IDS=. bash restate.sh gemma-4-E2B-it-Q4_0.gguf "$plan_tag"
+   ```
+
+   With a server already listening, the equivalent planner invocation is
+   `EVALSET=questions-v2.json IDS=. perl restate.pl "$plan_tag" 8089`.
+   It writes `plans/<tag>.json` for the checker and `plans/<tag>-queries.json` for Android search.
+   The wrapper also records the planner and server logs.
+
+2. **Search on Android.** Install the debug and instrumentation APKs with `adb install -r`.
+   Use the same library and ZIMs for both exports. The commands below use the usual app media path.
+   The `EvalSet` log records the exact output path.
+   In Git Bash, set `MSYS_NO_PATHCONV=1` for the `adb` commands if it translates `/sdcard` paths.
+
+   ```bash
+   media=/sdcard/Android/media/com.bastion.terminal
+   eval_class=com.bastion.terminal.ai.EvalSetExportTest
+   runner=com.bastion.terminal.test/androidx.test.runner.AndroidJUnitRunner
+   adb push questions-v2.json "$media/questions-$run_tag.json"
+   adb push "plans/$plan_tag-queries.json" "$media/$plan_tag-queries.json"
+   adb shell am instrument -w -e class "$eval_class#writeTheFixedSet" \
+     -e questions "questions-$run_tag.json" -e wide 0 "$runner"
+   adb pull "$media/evalset-questions-$run_tag.json" "evalset-$run_tag-input.json"
+   adb shell am instrument -w -e class "$eval_class#searchOtherWordings" \
+     -e queries "$plan_tag-queries.json" -e wide 0 "$runner"
+   adb pull "$media/evalvariants-w0.json" "evalvariants-$run_tag-w0.json"
+   ```
+
+3. **Answer, check and judge on the PC.** Pass the plan that generated the variant export.
+
+   ```bash
+   bash pipeline.sh "$run_tag" "evalset-$run_tag-input.json" \
+     "evalvariants-$run_tag-w0.json" "plans/$plan_tag.json"
+   ```
+
+   `mkarm.pl` builds the keyword arm from the variant export and falls back to the raw export
+   when a keyword variant record is absent. Both arms go through `run.pl` for generation,
+   `plaincheck.pl` for the code checks, and `ansjudge.pl` for the answer judge. `pipeline.pl`
+   emits the keyword answer for cases where both paths pass and reports the stage for each case.
+
+| Run file | Contents |
+| --- | --- |
+| `evalset-<tag>-kw.json`, `evalset-<tag>-raw.json` | Exact passages supplied to each arm |
+| `results/<tag>.server.log`, `results/<tag>-{kw,raw}.run.log` | Server and answer-run diagnostics |
+| `results/<tag>-{kw,raw}.jsonl` | Raw model answers, timings and token usage |
+| `results/<tag>-{kw,raw}-checked.jsonl`, `results/<tag>-{kw,raw}-checked-judge.jsonl` | Code-check and judge verdicts |
+| `results/<tag>.jsonl` | Joined decision and the answer shown or withheld per case |
+
+Use fresh tags to preserve checked-in evidence. Git ignores newly generated results, intermediate
+exports, logs, summaries and Python bytecode. Existing tracked question sets, exports and historical
+results remain visible to Git. New plan JSON stays visible so it can be kept as a replay input.
 
 ## Arc GPU (2026-11-24)
 
