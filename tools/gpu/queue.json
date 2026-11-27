@@ -1,0 +1,13 @@
+{
+  "about": "Arc 140V GPU job queue (llama.cpp Vulkan, -ngl 99). Runs IN PARALLEL with the NPU queue (owner 2026-11-26: use the GPU as well). Start with: python -I tools/npu/run_queue.py --queue tools/gpu/queue.json (its state/lock live in tools/gpu/out/, separate from the NPU's). GPU = generation/eval; the NPU = per-page batch work. All local-model output here is a drafting/screening aid only and is re-grounded, checked, reviewed and owner-approved before anything ships to the phone.",
+  "jobs": [
+    {
+      "id": "draft-card-answers",
+      "title": "Draft first-pass answers for the 40 planned-card questions on the GPU (drafting aid; every draft re-grounded, quote-checked, reviewed and owner-approved before any card ships)",
+      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py"],
+      "approved": true,
+      "est_hours": 0.3,
+      "output": "tools/gpu/out/drafts.jsonl"
+    }
+  ]
+}

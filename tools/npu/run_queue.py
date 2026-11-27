@@ -67,9 +67,16 @@ def status(jobs, state):
 
 
 def main():
+    global QUEUE, OUT, STATE, LOCK
     ap = argparse.ArgumentParser()
     ap.add_argument("--status", action="store_true")
+    ap.add_argument("--queue", default=str(QUEUE), help="queue file (default: the NPU queue). Its folder's "
+                    "out/ holds the state and lock, so two queues (NPU, GPU) run in parallel without colliding.")
     a = ap.parse_args()
+    QUEUE = pathlib.Path(a.queue)
+    OUT = QUEUE.parent / "out"
+    STATE = OUT / "queue-state.json"
+    LOCK = OUT / "queue.lock"
     OUT.mkdir(parents=True, exist_ok=True)
     jobs = json.loads(QUEUE.read_text(encoding="utf-8"))["jobs"]
     state = load_state()
