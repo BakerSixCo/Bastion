@@ -25,7 +25,7 @@ import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 LLAMA = ROOT / "tools" / "kit" / "pc-eval" / "llama-vulkan" / "llama-server.exe"
-LLAMA_MODEL = ROOT / "tools" / "kit" / "pc-eval" / "models" / "gemma-4-E4B-it-Q4_0.gguf"
+LLAMA_MODEL = ROOT / "tools" / "kit" / "pc-eval" / "models" / "gemma-4-E2B-it-Q4_0.gguf"
 OV_MODEL = ROOT / "tools" / "npu" / "models" / "Qwen3-8B-int4-cw-ov"
 OUTDIR = ROOT / "tools" / "gpu" / "out" / "zim-notes"
 

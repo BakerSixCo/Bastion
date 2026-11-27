@@ -30,7 +30,7 @@ import urllib.request
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 LLAMA = ROOT / "tools" / "kit" / "pc-eval" / "llama-vulkan" / "llama-server.exe"
-MODEL = ROOT / "tools" / "kit" / "pc-eval" / "models" / "gemma-4-E4B-it-Q4_0.gguf"
+MODEL = ROOT / "tools" / "kit" / "pc-eval" / "models" / "gemma-4-E2B-it-Q4_0.gguf"
 CACHE = ROOT / "tools" / "kit" / ".textcache"
 OUT = ROOT / "tools" / "gpu" / "out" / "page-notes.jsonl"
 
