@@ -47,6 +47,33 @@
       "output": "tools/npu/out/page-quotes.jsonl"
     },
     {
+      "id": "zim-enrich-energypedia",
+      "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each Energypedia article (off-grid energy: micro-hydro, solar, mini-grids, biogas). SEARCH-INDEX AID ONLY — never shown as an answer, never treated as true; raises retrieval recall on the ZIM. Reads the ZIM via libzim (installed in the venv). Resumable per article.",
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/energypedia_en_all_nopic_2026-06.zim", "--backend", "openvino", "--device", "NPU"],
+      "approved": true,
+      "after": ["extract-quotes"],
+      "est_hours": 20.0,
+      "output": "tools/gpu/out/zim-notes/energypedia_en_all_nopic_2026-06.jsonl"
+    },
+    {
+      "id": "zim-enrich-postdisaster",
+      "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each article of the post-disaster survival ZIM (zimgit). Search-index aid only, never an answer. Resumable.",
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/zimgit-post-disaster_en_2024-05.zim", "--backend", "openvino", "--device", "NPU"],
+      "approved": true,
+      "after": ["zim-enrich-energypedia"],
+      "est_hours": 15.0,
+      "output": "tools/gpu/out/zim-notes/zimgit-post-disaster_en_2024-05.jsonl"
+    },
+    {
+      "id": "zim-enrich-wikipedia-medicine",
+      "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each Wikipedia-Medicine article (~1 GB ZIM). Search-index aid only, never an answer; the medical ZIM stays the source of record. Resumable.",
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/wikipedia_en_medicine_nopic_2026-10.zim", "--backend", "openvino", "--device", "NPU"],
+      "approved": true,
+      "after": ["zim-enrich-postdisaster"],
+      "est_hours": 24.0,
+      "output": "tools/gpu/out/zim-notes/wikipedia_en_medicine_nopic_2026-10.jsonl"
+    },
+    {
       "id": "gemma-npu-checked-answers",
       "title": "DROPPED 2026-11-26: Gemma 4 E2B checked-answer runs on the PC already exist on the Arc GPU (tools/model-eval/pipeline.sh, llama.cpp Vulkan, gemma-4-E2B-it-Q4_0.gguf in tools/kit/pc-eval/models; 20 questions in 78 s). An OpenVINO copy would add a 5 GB download and nothing new. Owner approved the download; Claude withdrew it, nothing downloaded.",
       "cmd": [],
