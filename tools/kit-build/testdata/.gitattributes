@@ -1,0 +1,4 @@
+* text eol=lf
+meshdocs/expected.md whitespace=-blank-at-eof
+meshtrim/expected.md whitespace=-blank-at-eof
+nccih/expected.md whitespace=-blank-at-eof

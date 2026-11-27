@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Reconstructed from the Part 97 kit excerpt, with the last empty cell omitted. -->
+<DIV5 N="97" TYPE="PART">
+  <DIV6 N="D" TYPE="SUBPART">
+    <HEAD>Subpart D—Technical Standards</HEAD>
+    <DIV8 N="97.301" TYPE="SECTION">
+      <HEAD>§ 97.301 Authorized frequency bands.</HEAD>
+      <TABLE>
+        <THEAD>
+          <TR>
+            <TH>Wavelength band</TH>
+            <TH>ITU Region 1</TH>
+            <TH>ITU Region 2</TH>
+            <TH>ITU Region 3</TH>
+            <TH>Sharing<BR/>requirements<BR/>see § 97.303<BR/>(paragraph)</TH>
+          </TR>
+        </THEAD>
+        <TBODY>
+          <TR><TD>VHF</TD><TD>MHz</TD><TD>MHz</TD><TD>MHz</TD></TR>
+          <TR><TD>6 m</TD><TD/><TD>50-54</TD><TD>50-54</TD><TD>(a).</TD></TR>
+        </TBODY>
+      </TABLE>
+    </DIV8>
+  </DIV6>
+</DIV5>

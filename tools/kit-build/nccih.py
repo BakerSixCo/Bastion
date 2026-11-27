@@ -12,7 +12,8 @@ import urllib.request
 index, out = sys.argv[1:3]
 NOT_HERBS = {'atoz', 'complementary-alternative-or-integrative-health-whats-in-a-name', 'espanol', 'herblist-app',
              'herbsataglance', 'know-science', 'pain', 'providers', 'safety', 'tips'}
-herbs = sorted({m for m in re.findall(r'href="/health/([a-z0-9-]+)"', open(index, encoding='utf-8').read())} - NOT_HERBS)
+with open(index, encoding='utf-8') as source:
+    herbs = sorted(set(re.findall(r'href="/health/([a-z0-9-]+)"', source.read())) - NOT_HERBS)
 extra = ['traditional-chinese-medicine-what-you-need-to-know', 'acupuncture-what-you-need-to-know',
          'using-dietary-supplements-wisely', 'safety']
 UA = {'User-Agent': 'Mozilla/5.0 (offline-library-builder)'}
@@ -62,7 +63,8 @@ head = ("# NIH NCCIH: Traditional Chinese Medicine, acupuncture, supplement safe
         "(https://www.nccih.nih.gov/health/), pages downloaded 2026-11-26. U.S. government work (public domain). "
         "Herbs at a Glance fact sheets give each herb's common names, what the science says, safety, side effects and "
         "cautions. Page text kept; site menus, share buttons and footers removed.\n\n")
-open(out, 'w', encoding='utf-8', newline='\n').write(head + "\n".join(parts))
+with open(out, 'w', encoding='utf-8', newline='\n') as target:
+    target.write(head + "\n".join(parts))
 print(len(parts), 'pages;', len(failed), 'failed')
 for f in failed:
     print('  FAILED', f)
