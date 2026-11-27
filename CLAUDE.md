@@ -281,8 +281,11 @@ Do not use `gradlew connectedDebugAndroidTest` on an emulator that holds a set-u
 - Guided emergency flows are data: `tools/knowledge/flows/<id>.json` (format in its README), checked by
   `perl tools/knowledge/flows.pl` (structure, verbatim quotes, every number in a quote) — only approved flows
   are written to `assets/knowledge/flows.json`. The phone re-validates and rejects invalid flows.
-- Flows are life-safety content: drafted, independently reviewed by a second model, approved by the owner,
-  like cards. Never hand-write protocol text in code.
+- Flows are life-safety content: drafted, then put through a **hostile** adversarial review by a different
+  model than the drafter — the reviewer assumes the flow is wrong and dangerous and tries to kill it (a wrong
+  value, a dangerous step, a missing safety step), fail-closed — then approved by the owner, like cards.
+  Never hand-write protocol text in code. (`tools/gpu/gpu_screen.py` runs a cheap first-pass hostile review
+  on the GPU; the shipping gate is a strong model, never the small local one.)
 - Debug builds also read `Android/media/com.bastion.terminal/flows-test/` with a red "TEST FLOW — NOT
   APPROVED" banner; release builds never do. Test flows are obviously fake.
 - The casualty log (`files/guide/`) is private data and is erased by the wipe PIN.

@@ -27,13 +27,13 @@
       "output": "tools/gpu/out/drafts-radio.jsonl"
     },
     {
-      "id": "screen-drafts",
-      "title": "Self-critique pass: flag GPU drafts that likely have a factual error / unsafe step / off-target answer, to prioritise human card-writing (review aid only; nothing ships on the model's say-so)",
+      "id": "hostile-review",
+      "title": "HOSTILE review: assume every GPU draft is wrong and dangerous and try to KILL it (name the specific fault), fail-closed. Surfaces dangerous answers and prioritises human card-writing (review aid only; nothing ships on the model's say-so)",
       "cmd": ["{python}", "-I", "tools/gpu/gpu_screen.py"],
       "approved": true,
       "after": ["draft-coverage-v2", "draft-radio-91"],
       "est_hours": 0.3,
-      "output": "tools/gpu/out/screens.jsonl"
+      "output": "tools/gpu/out/reviews.jsonl"
     }
   ]
 }
