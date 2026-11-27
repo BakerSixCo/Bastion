@@ -2,9 +2,12 @@ package com.bastion.terminal.map
 
 import com.bastion.terminal.link.Cot
 import org.json.JSONObject
+import org.junit.Assert.assertEquals
 import org.junit.Assume.assumeTrue
 import org.junit.Test
 import java.io.File
+import java.nio.ByteBuffer
+import java.security.MessageDigest
 import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicLong
@@ -76,6 +79,8 @@ class StatePackRouteTest {
                 }
                 val measured = measure { graph.routes(trip.fLat, trip.fLon, trip.tLat, trip.tLon, count = 3) }
                 val routes = measured.result
+                val label = "${trip.from} -> ${trip.to}"
+                checkIdentity(label, routes) { listOf(roadSnapshot(zip)) }
                 val best = routes.firstOrNull()
                 val hours = best?.seconds?.div(3600)
                 println(String.format(
@@ -126,6 +131,7 @@ class StatePackRouteTest {
                     CrossPackDrive.routes(sources, trip.from.lat, trip.from.lon, trip.to.lat, trip.to.lon, count = 3)
                 }
                 val best = measured.result.firstOrNull()
+                checkIdentity(label, measured.result) { archives.map(::roadSnapshot) }
                 val hours = best?.seconds?.div(3600.0)
                 println(String.format(
                     Locale.ROOT,
@@ -185,10 +191,54 @@ class StatePackRouteTest {
 
     private data class Measurement<T>(val result: T, val elapsedSeconds: Double, val peakMiB: Double, val incrementMiB: Double)
 
+    private fun checkIdentity(label: String, routes: List<RoadGraph.Route>, packSnapshots: () -> List<String>) {
+        val actual = routeIdentities(routes)
+        println("IDENTITY $label: $actual")
+        val baseline = baselines[label] ?: return
+        if (packSnapshots() == baseline.packs) {
+            assertEquals("$label ordered route identity", baseline.routes, actual)
+            println("IDENTITY MATCH $label: ${actual.size} routes")
+        } else {
+            println("IDENTITY BASELINE OMITTED $label: road pack snapshots differ")
+        }
+    }
+
+    /** Identify the baseline road cells and pack metadata without reading full map packs. */
+    private fun roadSnapshot(zip: ZipFile): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        zip.entries().asSequence().filter { it.name == "pack.json" || ROAD_CELL.matches(it.name) }
+            .sortedBy { it.name }.forEach { entry ->
+                digest.update("${entry.name}\t${entry.size}\t${entry.crc}\n".toByteArray(Charsets.UTF_8))
+            }
+        return digest.finish()
+    }
+
+    private fun MessageDigest.finish(): String = digest().joinToString("") { "%02x".format(it) }
+
+    private fun routeIdentities(routes: List<RoadGraph.Route>): List<String> = routes.map { route ->
+        val digest = MessageDigest.getInstance("SHA-256")
+        val buffer = ByteBuffer.allocate(Long.SIZE_BYTES)
+        fun write(value: Long) {
+            buffer.putLong(0, value)
+            digest.update(buffer.array())
+        }
+        write(route.edgeIds.size.toLong())
+        route.edgeIds.forEach(::write)
+        write(route.points.size.toLong())
+        for ((lat, lon) in route.points) {
+            write(lat.toRawBits())
+            write(lon.toRawBits())
+        }
+        write(route.meters.toRawBits())
+        write(route.seconds.toRawBits())
+        digest.finish()
+    }
+
     private fun <T> measure(block: () -> T): Measurement<T> {
         val runtime = Runtime.getRuntime()
         fun usedBytes() = runtime.totalMemory() - runtime.freeMemory()
         System.gc()
+        Thread.sleep(75)
         val before = usedBytes()
         val peak = AtomicLong(before)
         val running = AtomicBoolean(true)
@@ -215,5 +265,22 @@ class StatePackRouteTest {
         const val MIB = 1_048_576.0
         const val METRES_PER_MILE = 1_609.344
         val ROAD_CELL = Regex("layers/streets/(\\d+)/(\\d+)\\.bin")
+
+        private data class Baseline(val packs: List<String>, val routes: List<String>)
+
+        private const val IDAHO_SNAPSHOT = "a55da24ed604bfb07a35bf78f44f9d6f91d351be2a9d860d8d0055ee0790d5b6"
+        private const val WASHINGTON_SNAPSHOT = "f7f2155879cf56c2d4f541c86c4488d18fdb4478a1db09dae94955df6299612a"
+        private val baselines = mapOf(
+            "Boise -> Idaho Falls" to Baseline(listOf(IDAHO_SNAPSHOT), listOf(
+                "0c3d1ccf27b5fe0eddd5135e6b99de263f60f637b3734d2b50b5fc5391acf0d8",
+                "5eda5edd3f6bcafb847edc4be0a8fab6940453a47f9b67f96c1930267615d91e",
+                "658ecce17f1bfae1b975461b1ceae3f4e07e71b230ca0402713becc41ea4d1ae",
+            )),
+            "Boise -> Spokane" to Baseline(listOf(IDAHO_SNAPSHOT, WASHINGTON_SNAPSHOT), listOf(
+                "fb32eb6cf90edd5135063717a071926868915bb22604924994779b90881ed407",
+                "a040ce533ae02667713ee9938de867735d106f9f29afd4162849c5a2b2e408c0",
+                "1be98deadeb17bcda1a617a314d36a4fde69178bb19ed9c665c0c0be82994de6",
+            )),
+        )
     }
 }
