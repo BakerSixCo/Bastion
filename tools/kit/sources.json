@@ -1249,6 +1249,152 @@
       "licence": "CC BY-NC-SA 3.0 IGO (notice inside the file; keep it with the file)",
       "tier": "own",
       "flags": []
+    },
+    {
+      "id": "atak-civ-icon-glossary-2024",
+      "file": "ATAK-CIV-Icon-Glossary-v5.5-2024.pdf",
+      "title": "ATAK Supplemental Icon Glossary",
+      "publisher": "TAK Product Center",
+      "edition": "2024-11-18",
+      "sha256": "f5d512bdf04a75e96fe51564bd7011ccaa45e3531eebd780a4e61b8fae2aa298",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "owner-copy-rights-unconfirmed",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usfs-field-guide-forest-plants-rmrs-gtr-118",
+      "file": "Field-Guide-Forest-Plants-Northern-Idaho-RMRS-GTR-118.pdf",
+      "title": "Field Guide to Forest Plants of Northern Idaho",
+      "publisher": "USDA Forest Service, Rocky Mountain Research Station",
+      "edition": "2004",
+      "sha256": "40f29334c44f406660a6ad456a41e19a1fd8f0352514c903644cd1c180d83307",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "idfg-big-game-seasons-rules-2026",
+      "file": "Idaho-Big-Game-Seasons-Rules-2026.pdf",
+      "title": "Idaho Big Game, 2026 Seasons and Rules",
+      "publisher": "Idaho Department of Fish and Game",
+      "edition": "2026-07",
+      "sha256": "feb85a9c8741a72a1aeb40462cceaa391e8d1849df3604fdaa156a07d5494520",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "idfg-fishing-seasons-rules-2025-2027",
+      "file": "Idaho-Fishing-Seasons-Rules-2025-2027.pdf",
+      "title": "Idaho Fishing, 2025–2027 Seasons and Rules, second edition",
+      "publisher": "Idaho Department of Fish and Game",
+      "edition": "2026",
+      "sha256": "540ae4ddaa0d1f46a4fefbd54f1d5fa9b62a8037b44322469a799121055b0e42",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "idfg-migratory-game-bird-2026-2027",
+      "file": "Idaho-Migratory-Game-Bird-2026-2027.pdf",
+      "title": "Idaho Migratory Game Bird, 2026–2027 Seasons and Rules",
+      "publisher": "Idaho Department of Fish and Game",
+      "edition": "2026",
+      "sha256": "0a85df7986a19ad6bc0acd4504d142724e2d307ba789c1ededf0228162f7949b",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "idfg-moose-sheep-goat-2025-2026",
+      "file": "Idaho-Moose-Sheep-Goat-2025-2026.pdf",
+      "title": "Idaho Moose, Bighorn Sheep and Mountain Goat, 2025 and 2026 Seasons and Rules",
+      "publisher": "Idaho Department of Fish and Game",
+      "edition": "2026-03",
+      "sha256": "a179b77405b7a6741ab242a91cd1d6b7af40e2c56d0fe4062c6a8823fd96d532",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usfs-special-forest-products-pnw-gtr-513",
+      "file": "Special-Forest-Products-Pacific-Northwest-PNW-GTR-513.pdf",
+      "title": "Special Forest Products: Species Information Guide for the Pacific Northwest",
+      "publisher": "USDA Forest Service, Pacific Northwest Research Station",
+      "edition": "2001",
+      "sha256": "cbf35f8b1894bc751c56e3bc62721a6df400442f04e4ab58965abbca27d93f8d",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usda-complete-guide-home-canning-2015",
+      "file": "USDA-Complete-Guide-to-Home-Canning-2015.pdf",
+      "title": "Complete Guide to Home Canning, Agriculture Information Bulletin No. 539",
+      "publisher": "USDA National Institute of Food and Agriculture",
+      "edition": "2015",
+      "sha256": "82014af73d1d5283ed1a711f7d0940e72a7ea9a10d0c0c4551bc79a1f4092028",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usfs-wild-edible-mushrooms-pnw-gtr-393",
+      "file": "Wild-Edible-Mushrooms-Blue-Mountains-PNW-GTR-393.pdf",
+      "title": "Wild Edible Mushrooms in the Blue Mountains: Resource and Issues",
+      "publisher": "USDA Forest Service, Pacific Northwest Research Station",
+      "edition": "1997-01",
+      "sha256": "774284cd6d8b9293238d090536682c30b692079bd420b7cc5f1416ebf94dc2f2",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
     }
   ]
 }
