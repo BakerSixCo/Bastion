@@ -399,3 +399,13 @@ and whether a second device (USB drive or a spare phone running Kiwix) holds the
 | FJC *Benchbook*; *Black's Law Dictionary* (1910); Blackstone; Anti-Federalist papers; Geneva Conventions | Specialist, archaic or wartime-only |
 
 Large ZIMs (Wikipedia, Wikibooks/Wikisource, Gutenberg, LibreTexts): **later**, with the owner's storage decision.
+
+## Owner decisions, 2026-11-26 (decision walkthrough)
+
+1. **Operational military manuals — INCLUDE.** ATP 6-02.53 (produce the appendix A/E/G/H trim + cover), Army ATP 3-50.21 Survival, TC 21-3 Cold Weather, TC 3-21.76 Ranger Handbook, and the USAMRIID Biological Casualties handbook. All public-release, already owner-downloaded into the kit; ChatGPT withheld them in kit-1 on content grounds and the owner overruled that. Add provenance + the ATP trim (task kit-6).
+2. **Large reference ZIMs — DEFERRED (firm).** Full Wikipedia, Project Gutenberg and LibreTexts are NOT put on the phones (no SD slot, limited storage); they are the base station's Kiwix server's job (base station committed, after the phone works). WikiMed + the curated kit stay on-device.
+3. **ATAK-CIV EULA — ACCEPT.** Proceed past the EULA on the emulator and test ATAK<->mesh integration (markers, TAK data-package import, the plugin path). Claude emulator task.
+4. **NPU figure-descriptions — APPROVED.** Claude picks a free-licence OpenVINO vision-language model, verifies the licence, downloads it, builds tools/npu/tag_figures.py, then enables the queued figure-descriptions job.
+5. **"Not free" sources — DROPPED (for now).** Hesperian "Where There Is No Doctor", WHO Psychological First Aid, FAO, "Where There Is No Animal Doctor": not pursued; rely on the free government / public-health sources already in the kit.
+
+**Hardware (owner 2026-11-26):** keep BOTH the NPU and the Arc 140V GPU always tasked, in parallel. NPU = per-page batch work (tagging, source packs, conflict scan, figure descriptions); GPU (llama.cpp Vulkan) = generation/eval work (checked-answer eval runs, answer-quality screening, draft/paraphrase generation — all drafting aids, never shipped unchecked).

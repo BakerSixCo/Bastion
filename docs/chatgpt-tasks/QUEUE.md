@@ -13,8 +13,9 @@ always be going and we should keep ChatGPT queue full at all times... make it a 
 
 | Task | What | Where it runs |
 |---|---|---|
-| `device-1` | Phone-check tool (`hw/`), `docs/devices.md`, `tools/device-report.ps1` | Android + emulator. **Runnable now**: the tool, verdict logic, tests and the emulator row are all buildable today; only the **Verified** phone rows wait on the phones (see C). |
-| `kit-1` | Kit manifest (`sources.json`), `kit.py verify/fetch/trim`, the owner's NIFOG/AUXFOG/ATP trims | PC (Python). Unblocks the kit chain (B). |
+| `kit-6` | Add the owner-approved operational manuals (ATP 6-02.53 trim + 4 Army + USAMRIID) and close the 17 manifest gaps so `kit.py verify` shows 0 unknown | PC (Python). |
+| ~~`device-1`~~ | Phone-check tool + `devices.md` + report tool | **Merged** 2026-11-26 (Claude reviewed). Verified phone rows wait on the phones (C). |
+| ~~`kit-1`~~ | Kit manifest + `kit.py verify/fetch/trim` + CISA trims | **Merged** 2026-11-26 (Claude reviewed). Unblocked kit-6 and the kit chain (B). |
 | `route-perf-1` | Cut cross-state routing peak memory (~255/256 MiB) with no route change | PC (JVM unit tests, `-PunitTestHeap=256m`). |
 | `mapverify-1` | Offline `.bmap` pack validator: structure + cross-pack junction consistency | PC. |
 | `kitconv-1` | Golden-file tests + determinism for the `tools/kit-build/` converters | PC (Python). |

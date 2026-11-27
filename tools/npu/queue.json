@@ -56,7 +56,7 @@
       "title": "Describe the figures in the kit PDFs (diagrams, knots, antennas, tables) so their content becomes searchable text",
       "cmd": [],
       "approved": false,
-      "needs": "download a vision-language model for OpenVINO (licence to be checked before asking)",
+      "needs": "owner APPROVED 2026-11-26; Claude to pick a free-licence OpenVINO vision-language model, verify its licence, download it, build tools/npu/tag_figures.py, then set approved true",
       "est_hours": 8.0
     }
   ]
