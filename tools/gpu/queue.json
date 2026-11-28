@@ -4,7 +4,11 @@
     {
       "id": "draft-card-answers",
       "title": "Draft first-pass answers for the 40 planned-card questions on the GPU (drafting aid; every draft re-grounded, quote-checked, reviewed and owner-approved before any card ships)",
-      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/gpu_draft.py"
+      ],
       "approved": true,
       "est_hours": 0.3,
       "output": "tools/gpu/out/drafts.jsonl"
@@ -12,7 +16,15 @@
     {
       "id": "draft-coverage-v2",
       "title": "Draft first-pass answers for the 156 coverage questions (model-eval/questions-v2) on the GPU, incl. the trap questions (drafting aid; re-grounded, checked, reviewed and owner-approved before any card ships)",
-      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--questions", "tools/model-eval/questions-v2.json", "--out", "tools/gpu/out/drafts-v2.jsonl"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/gpu_draft.py",
+        "--questions",
+        "tools/model-eval/questions-v2.json",
+        "--out",
+        "tools/gpu/out/drafts-v2.jsonl"
+      ],
       "approved": true,
       "est_hours": 0.2,
       "output": "tools/gpu/out/drafts-v2.jsonl"
@@ -20,25 +32,46 @@
     {
       "id": "draft-radio-91",
       "title": "Draft answers for the 91 radio-net questions (model-eval/radio-questions) on the GPU (drafting aid)",
-      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--questions", "tools/model-eval/radio-questions.json", "--out", "tools/gpu/out/drafts-radio.jsonl"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/gpu_draft.py",
+        "--questions",
+        "tools/model-eval/radio-questions.json",
+        "--out",
+        "tools/gpu/out/drafts-radio.jsonl"
+      ],
       "approved": true,
-      "after": ["draft-coverage-v2"],
+      "after": [
+        "draft-coverage-v2"
+      ],
       "est_hours": 0.15,
       "output": "tools/gpu/out/drafts-radio.jsonl"
     },
     {
       "id": "hostile-review",
       "title": "HOSTILE severity-rated review: assume every GPU draft is wrong/dangerous (no benefit of the doubt) and rate it DANGEROUS / WEAK / OK with the fault, fail-closed. The DANGEROUS list is the priority gap list for card-writing and kit coverage (review aid only; nothing ships on the model's say-so)",
-      "cmd": ["{python}", "-I", "tools/gpu/gpu_screen.py"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/gpu_screen.py"
+      ],
       "approved": true,
-      "after": ["draft-coverage-v2", "draft-radio-91"],
+      "after": [
+        "draft-coverage-v2",
+        "draft-radio-91"
+      ],
       "est_hours": 0.3,
       "output": "tools/gpu/out/reviews.jsonl"
     },
     {
       "id": "figure-descriptions",
       "title": "Caption the figures extracted from the kit PDFs (diagrams, knots, antennas, map symbols, tables) so their visual content becomes searchable text. RELOCATED from the NPU queue 2026-11-26: the VLM (Phi-3.5-vision-instruct, MIT, int4 OpenVINO) has no NPU path in OpenVINO GenAI, so it runs on the Arc GPU (OpenVINO device GPU, not llama.cpp) — placed here so it runs in parallel with, and never blocks, the NPU's text jobs. A SEARCH-INDEX AID ONLY: the descriptions are never shown as answers or treated as fact; the extractor's own caption/labels are kept verbatim alongside. Resumable. Prereq: run the figure extractor (tools/figures) first so tools/figures/out/index.json exists.",
-      "cmd": ["{python}", "-I", "tools/npu/tag_figures.py"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/npu/tag_figures.py"
+      ],
       "approved": true,
       "est_hours": 8.0,
       "output": "tools/figures/out/figure-descriptions.jsonl",
@@ -47,7 +80,15 @@
     {
       "id": "draft-cards-14b",
       "title": "Stronger-drafter pass: re-draft the 40 planned-card questions with the 14B (Qwen2.5-14B-Instruct Q4_K_M) instead of E4B — a materially better first-pass drafting aid for card-writing and gap-finding. Every draft is STILL re-grounded, quote-checked, hostile-reviewed and owner-approved before any card ships; nothing here reaches the phone.",
-      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--model", "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf", "--out", "tools/gpu/out/drafts-14b.jsonl"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/gpu_draft.py",
+        "--model",
+        "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf",
+        "--out",
+        "tools/gpu/out/drafts-14b.jsonl"
+      ],
       "approved": true,
       "est_hours": 0.5,
       "output": "tools/gpu/out/drafts-14b.jsonl"
@@ -55,58 +96,184 @@
     {
       "id": "draft-coverage-v2-14b",
       "title": "Stronger-drafter pass on the 156 coverage questions (model-eval/questions-v2), incl. the trap questions, with the 14B drafter — a better first-pass gap list. Drafting aid only; re-grounded, checked, reviewed and owner-approved before any card ships.",
-      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--questions", "tools/model-eval/questions-v2.json", "--model", "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf", "--out", "tools/gpu/out/drafts-v2-14b.jsonl"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/gpu_draft.py",
+        "--questions",
+        "tools/model-eval/questions-v2.json",
+        "--model",
+        "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf",
+        "--out",
+        "tools/gpu/out/drafts-v2-14b.jsonl"
+      ],
       "approved": true,
-      "after": ["draft-cards-14b"],
+      "after": [
+        "draft-cards-14b"
+      ],
       "est_hours": 1.0,
       "output": "tools/gpu/out/drafts-v2-14b.jsonl"
     },
     {
       "id": "draft-radio-14b",
       "title": "Stronger-drafter pass on the 91 radio-net questions (model-eval/radio-questions) with the 14B drafter. Drafting aid only; nothing ships unchecked.",
-      "cmd": ["{python}", "-I", "tools/gpu/gpu_draft.py", "--questions", "tools/model-eval/radio-questions.json", "--model", "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf", "--out", "tools/gpu/out/drafts-radio-14b.jsonl"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/gpu_draft.py",
+        "--questions",
+        "tools/model-eval/radio-questions.json",
+        "--model",
+        "tools/kit/pc-eval/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf",
+        "--out",
+        "tools/gpu/out/drafts-radio-14b.jsonl"
+      ],
       "approved": true,
-      "after": ["draft-coverage-v2-14b"],
+      "after": [
+        "draft-coverage-v2-14b"
+      ],
       "est_hours": 0.6,
       "output": "tools/gpu/out/drafts-radio-14b.jsonl"
     },
     {
       "id": "enrich-pages",
       "title": "Full-corpus retrieval enrichment: a one-line searchable summary + 5-15 key terms for every page of all kit manuals (~10,100 pages) on the GPU with gemma-4-E4B. A SEARCH-INDEX AID ONLY, the same category as the figure captions and the NPU topic tags: never shown as an answer, never treated as true; everything that ships to the phone is still quote-checked, reviewed and owner-approved. It raises retrieval recall on pages whose prose never uses the asker's words. Reads tools/kit/.textcache (no new PDF extraction). Resumable. Runs after the 14B draft pass so it never contends for the 16 GB Arc.",
-      "cmd": ["{python}", "-I", "tools/gpu/enrich_pages.py"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/enrich_pages.py"
+      ],
       "approved": true,
-      "after": ["draft-radio-14b"],
+      "after": [
+        "draft-radio-14b"
+      ],
       "est_hours": 15.0,
       "output": "tools/gpu/out/page-notes.jsonl"
     },
     {
       "id": "gen-eval-questions",
       "title": "Generate CANDIDATE eval questions from the corpus (~10,100 pages) on the GPU with gemma-4-E4B: 1-3 short field questions per page that the page answers, with the page recorded as the expected source. Measures retrieval coverage on the 2026-11-26 kit additions (electronics, navigation, livestock, butchering, food safety, herbs) that the current eval sets predate. RAW MATERIAL ONLY: the owner/Claude curate a small careful eval set from these, like questions-v2; the checked-answer pipeline stays the real gate and nothing here is shown or treated as true. Reads tools/kit/.textcache. Resumable. Runs after enrich-pages so it never contends for the Arc.",
-      "cmd": ["{python}", "-I", "tools/gpu/gen_eval_questions.py"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/gen_eval_questions.py"
+      ],
       "approved": true,
-      "after": ["enrich-pages"],
+      "after": [
+        "enrich-pages"
+      ],
       "est_hours": 13.0,
       "output": "tools/gpu/out/candidate-questions.jsonl"
     },
     {
       "id": "zim-enrich-appropedia",
       "title": "ZIM retrieval enrichment (GPU/llama, gemma-4-E4B): one-line summary + key terms for each of ~22,300 Appropedia articles (appropriate-tech: micro-hydro, solar, water, agriculture, stoves, construction). A SEARCH-INDEX AID ONLY, same category as the figure captions and PDF page-notes — never shown as an answer, never treated as true; it only raises retrieval recall on the ZIM, which stays the source of record. Reads the ZIM via libzim (installed in the venv). Resumable per article.",
-      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/appropedia_en_all_maxi_2026-02.zim", "--relevant-only"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/zim_enrich.py",
+        "--zim",
+        "tools/kit/appropedia_en_all_maxi_2026-02.zim",
+        "--relevant-only"
+      ],
       "approved": true,
-      "after": ["gen-eval-questions"],
+      "after": [
+        "gen-eval-questions"
+      ],
       "est_hours": 14.0,
       "output": "tools/gpu/out/zim-notes/appropedia_en_all_maxi_2026-02.jsonl"
     },
     {
       "id": "zim-enrich-ifixit",
       "title": "ZIM retrieval enrichment (GPU/llama, gemma-4-E4B): summary + key terms for every iFixit repair guide (3.4 GB ZIM). Repair is otherwise only browsable; this makes the right guide findable by symptom/part/tool. Search-index aid only, never an answer. Resumable.",
-      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/ifixit_en_all_2025-12.zim", "--relevant-only"],
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/zim_enrich.py",
+        "--zim",
+        "tools/kit/ifixit_en_all_2025-12.zim",
+        "--relevant-only"
+      ],
       "approved": false,
       "dropped": true,
       "note": "DROPPED 2026-11-27 after the step-1 coverage diagnostic: enrichment is a modest lever and iFixit is ~3.4 GB of mostly consumer-electronics repair that barely survives the survival relevance filter. Not worth ~60h. Re-enable if gear-repair coverage is wanted.",
-      "after": ["zim-enrich-appropedia"],
+      "after": [
+        "zim-enrich-appropedia"
+      ],
       "est_hours": 60.0,
       "output": "tools/gpu/out/zim-notes/ifixit_en_all_2025-12.jsonl"
+    },
+    {
+      "id": "zim-enrich-medlineplus",
+      "title": "ZIM retrieval enrichment (GPU/llama, gemma-4-E2B): one-line summary + key terms for each relevant MedlinePlus article (US NIH consumer health: conditions, symptoms, first aid, drugs). OFFICIAL tier — a preferred answer source. SEARCH-INDEX AID ONLY — never shown as an answer, never treated as true; it only raises retrieval recall on the ZIM, which stays the source of record. --relevant-only skips off-topic articles (keeps the field/survival-relevant subset). Reads the ZIM via libzim. Resumable per article. Runs on the Arc with gemma-4-E2B.",
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/zim_enrich.py",
+        "--zim",
+        "tools/kit/medlineplus.gov_en_all_2025-01.zim",
+        "--relevant-only"
+      ],
+      "approved": true,
+      "after": [
+        "zim-enrich-appropedia"
+      ],
+      "est_hours": 12.0,
+      "output": "tools/gpu/out/zim-notes/medlineplus.gov_en_all_2025-01.jsonl"
+    },
+    {
+      "id": "zim-enrich-cdc-travel",
+      "title": "ZIM retrieval enrichment (GPU/llama, gemma-4-E2B): summary + key terms for each relevant CDC Travelers' Health article (water/food safety, tropical & waterborne disease, immunizations). OFFICIAL tier — a preferred answer source. SEARCH-INDEX AID ONLY — never shown as an answer, never treated as true; it only raises retrieval recall on the ZIM, which stays the source of record. --relevant-only skips off-topic articles (keeps the field/survival-relevant subset). Reads the ZIM via libzim. Resumable per article. Runs on the Arc with gemma-4-E2B.",
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/zim_enrich.py",
+        "--zim",
+        "tools/kit/wwwnc.cdc.gov_en_all_2024-11.zim",
+        "--relevant-only"
+      ],
+      "approved": true,
+      "after": [
+        "zim-enrich-medlineplus"
+      ],
+      "est_hours": 8.0,
+      "output": "tools/gpu/out/zim-notes/wwwnc.cdc.gov_en_all_2024-11.jsonl"
+    },
+    {
+      "id": "zim-enrich-nhs-medicines",
+      "title": "ZIM retrieval enrichment (GPU/llama, gemma-4-E2B): summary + key terms for each relevant NHS UK medicines A–Z article (uses, dosing, interactions, warnings). OFFICIAL tier — a preferred answer source. SEARCH-INDEX AID ONLY — never shown as an answer, never treated as true; it only raises retrieval recall on the ZIM, which stays the source of record. --relevant-only skips off-topic articles (keeps the field/survival-relevant subset). Reads the ZIM via libzim. Resumable per article. Runs on the Arc with gemma-4-E2B.",
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/zim_enrich.py",
+        "--zim",
+        "tools/kit/nhs.uk_en_medicines_2026-09b.zim",
+        "--relevant-only"
+      ],
+      "approved": true,
+      "after": [
+        "zim-enrich-cdc-travel"
+      ],
+      "est_hours": 6.0,
+      "output": "tools/gpu/out/zim-notes/nhs.uk_en_medicines_2026-09b.jsonl"
+    },
+    {
+      "id": "zim-enrich-fas-milmed",
+      "title": "ZIM retrieval enrichment (GPU/llama, gemma-4-E2B): summary + key terms for each relevant FAS military-medicine article (field medical manuals, casualty care). OFFICIAL tier — a preferred answer source. SEARCH-INDEX AID ONLY — never shown as an answer, never treated as true; it only raises retrieval recall on the ZIM, which stays the source of record. --relevant-only skips off-topic articles (keeps the field/survival-relevant subset). Reads the ZIM via libzim. Resumable per article. Runs on the Arc with gemma-4-E2B.",
+      "cmd": [
+        "{python}",
+        "-I",
+        "tools/gpu/zim_enrich.py",
+        "--zim",
+        "tools/kit/irp.fas.org_en_military-medicine_2026-10.zim",
+        "--relevant-only"
+      ],
+      "approved": true,
+      "after": [
+        "zim-enrich-nhs-medicines"
+      ],
+      "est_hours": 8.0,
+      "output": "tools/gpu/out/zim-notes/irp.fas.org_en_military-medicine_2026-10.jsonl"
     }
   ]
 }
