@@ -5,12 +5,20 @@ the branch it builds on). ChatGPT works in its worktree `C:\Users\ccie5\StudioPr
 **Android Studio, the emulator and `adb`** as well as the PC tools; it never pushes or merges. Claude reviews
 each branch, the owner decides merges. Each task file holds the full spec.
 
-**ChatGPT should never be idle.** The "Runnable now" tasks below are independent — pick any one, and whenever
+**ChatGPT should never be idle.** The tasks below are independent — pick any one, and whenever
 one finishes there is always another that is not blocked. Keep this list deep (owner 2026-11-26: "NPU should
 always be going and we should keep ChatGPT queue full at all times... make it a heavy-lifting workhorse").
 
+**>>> CURRENT HEAD: Section D (app quality & UX wave).** Section A is fully merged/closed/done — nothing to
+pick there. **Pick any Tier-1 task in Section D** (all 9 specs are written, independent, none started). Kit
+chain (B) is blocked on the kit-4/5 file fetch (see `kit-3`). Keep one Section-D task going at all times.
+
 **Merged 2026-11-27 (Claude reviewed + merged, branch pushed):** `route-perf-1`, `kit-4`, `kit-5`, `kit-6`,
-`kitconv-1`, `mapverify-1`, `evalclean-1`. **`chunk-tables-1` CLOSED 2026-11-27 (dead end, Claude
+`kitconv-1`, `mapverify-1`, `evalclean-1`. **`release-smoke-1` DONE 2026-11-27 (Claude reviewed, merge-ready,
+awaiting owner merge):** tools-only R8 smoke automation; release build + R8 + signature, ZIM search and PDF
+import all PASS; the AI-answer leg FAILS on the emulator (WebGPU 600s timeout, then CPU litertlm cache-dir +
+storage pressure) — an emulator-environment limit, not a build defect; real AI-answer validation is parked for
+the physical phones (section C). **`chunk-tables-1` CLOSED 2026-11-27 (dead end, Claude
 measured it):** the task and its re-scope both measure ~+0 on questions-v2. The failing table questions
 (canning pressures, doses) fail because PDF extraction scrambles the table columns *before* chunking
 (`DocExtract.normalizePdf` flattens whitespace), plus SUBJECT/REFUSAL/OFF_TARGET — none of which
@@ -25,19 +33,16 @@ discrete-event sim and stress-test the radio card-responder (`mesh/MeshAutoRespo
 across a multi-hop mesh: does a 4×200-byte card answer actually propagate, hop-limit, airtime cost. PC/Python,
 no app code. It's life-safety-adjacent and only 2-node-tested today, so the coverage gap is real but not urgent.
 
-## A. Runnable now — independent (pick any; always have one going)
+## A. Complete — nothing to pick here (history)
 
-| Task | What | Where it runs |
-|---|---|---|
-| `kit-6` | Add the owner-approved operational manuals (ATP 6-02.53 trim + 4 Army + USAMRIID) and close the 17 manifest gaps so `kit.py verify` shows 0 unknown | PC (Python). |
-| ~~`device-1`~~ | Phone-check tool + `devices.md` + report tool | **Merged** 2026-11-26 (Claude reviewed). Verified phone rows wait on the phones (C). |
-| ~~`kit-1`~~ | Kit manifest + `kit.py verify/fetch/trim` + CISA trims | **Merged** 2026-11-26 (Claude reviewed). Unblocked kit-6 and the kit chain (B). |
-| `route-perf-1` | Cut cross-state routing peak memory (~255/256 MiB) with no route change | PC (JVM unit tests, `-PunitTestHeap=256m`). |
-| `mapverify-1` | Offline `.bmap` pack validator: structure + cross-pack junction consistency | PC. |
-| `kitconv-1` | Golden-file tests + determinism for the `tools/kit-build/` converters | PC (Python). |
-| `chunk-tables-1` | Keep table rows with their headers when chunking (wins back answer coverage) | Android + emulator (evals must stay 13/13 and 14/14). Claude reviews closely. |
-| `evalclean-1` | `.gitignore` + README for the `tools/model-eval/` harness (clear ~35 untracked files) | PC. Low-risk. |
-| `release-smoke-1` | Automate the R8 release smoke test (ZIM search, PDF import, AI answer) | Android + emulator. |
+All Section-A tasks are merged, closed, or done. Do not re-pick any of these.
+
+| Task | Status |
+|---|---|
+| `kit-1`, `device-1` | **Merged** 2026-11-26 (Claude reviewed). |
+| `route-perf-1`, `mapverify-1`, `kitconv-1`, `kit-4`, `kit-5`, `kit-6`, `evalclean-1` | **Merged** 2026-11-27 (Claude reviewed, pushed). |
+| `release-smoke-1` | **Done** 2026-11-27 — Claude reviewed, **merge-ready, awaiting owner merge**. R8 build/sign + ZIM + PDF PASS; AI-answer leg fails on the emulator only (WebGPU timeout + litertlm cache/storage), parked for the physical phones (C). |
+| `chunk-tables-1` | **Closed** 2026-11-27 — dead end, Claude measured ~+0 (see note above). |
 
 ## B. Kit download + measure chain (sequential, after `kit-1`)
 
@@ -48,7 +53,7 @@ no app code. It's life-safety-adjacent and only 2-node-tested today, so the cove
 | `kit-5` | Fetch batches 2 and 3 (weapons care, trapping, leather, metals; trades, cradle to grave, law) | kit-4 |
 | `kit-3` | Load the whole new kit on the emulator; `KitRetrievalEvalTest` on the new topics | kit-1,2,4,5 **and** Claude has moved the kit-4/kit-5 files into the kit |
 
-## D. App quality & UX wave — runnable now, independent
+## D. App quality & UX wave — runnable now, independent  ← PICK FROM HERE (current head)
 
 Owner 2026-11-26: keep a deep, never-ending queue of real S-tier work — GUI/UX, optimization, compression, features (not make-work). Grounded in a codebase survey; every task file carries file:line evidence, a verify bar, and guardrails keeping it off the owner/Claude-only zones with all evals green. Tier 1 are mutually independent.
 
@@ -63,8 +68,9 @@ Owner 2026-11-26: keep a deep, never-ending queue of real S-tier work — GUI/UX
 | `perf-libsearch-1` | Debounce Library live search (runs FTS on every keystroke) | Emulator. |
 | `mem-tilecache-1` | Size-aware map tile bitmap cache (count-based now → up to ~51 MB) | Emulator. |
 | `feat-reader-textsize-1` | Reader A−/A+ text size, persisted (outdoors/gloved legibility) | Emulator. |
+| `apk-pdfbox-audit-1` | Audit (measure + propose) the PdfBox CMap/AFM assets in the release APK; no removal | **PC only** — good when the emulator is busy. |
 
-Deeper backlog, staged from the same survey (Claude writes the full spec when one reaches the head): `test-ui-smoke-1` (first Compose UI test), `feat-reader-find-1` (in-doc find next/prev), `apk-shrink-1` (resource shrink + locale filter), `mem-rgb565-1` (RGB_565 base tiles — pairs with `mem-tilecache-1`), `startup-baselineprofile-1` (Baseline Profile), `apk-pdfbox-audit-1` (trim PdfBox CMap/AFM assets), `mem-reader-1` (bounded Reader read of large originals).
+Deeper backlog, staged from the same survey (Claude writes the full spec when one reaches the head): `test-ui-smoke-1` (first Compose UI test), `feat-reader-find-1` (in-doc find next/prev), `apk-shrink-1` (resource shrink + locale filter), `mem-rgb565-1` (RGB_565 base tiles — pairs with `mem-tilecache-1`), `startup-baselineprofile-1` (Baseline Profile), `mem-reader-1` (bounded Reader read of large originals).
 
 ## C. Parked — needs the physical phones (do **not** put at the queue head)
 
