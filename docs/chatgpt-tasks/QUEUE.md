@@ -9,9 +9,16 @@ each branch, the owner decides merges. Each task file holds the full spec.
 one finishes there is always another that is not blocked. Keep this list deep (owner 2026-11-26: "NPU should
 always be going and we should keep ChatGPT queue full at all times... make it a heavy-lifting workhorse").
 
-**>>> CURRENT HEAD: Section D (app quality & UX wave).** Section A is fully merged/closed/done — nothing to
-pick there. **Pick any Tier-1 task in Section D** (all 9 specs are written, independent, none started). Kit
-chain (B) is blocked on the kit-4/5 file fetch (see `kit-3`). Keep one Section-D task going at all times.
+**>>> CURRENT HEAD:**
+- **`kit-3` is now UNBLOCKED (highest-value pick) — Claude transferred the 46 kit-4/5 files into the kit on
+  2026-11-27** (`kit.py verify` on Claude's `tools/kit/docs` = 0 missing, 137 verified, 0 mismatched; the 8
+  UNKNOWN are documented owner-gated gaps, not a stop condition — see `kit-3.md`). It loads the whole new kit on
+  the emulator and measures retrieval on the 2026-11-26 additions — the core coverage question. **Run it next.**
+- **Section D (app quality & UX wave)** — the independent backlog. `apk-pdfbox-audit-1` is **PC-only**, so run it
+  (or any Tier-1 PC task) while the emulator is busy with `kit-3`.
+
+Section A is fully merged/closed/done — nothing to pick there. Keep one emulator task and, when possible, one
+PC task going at all times.
 
 **Merged 2026-11-27 (Claude reviewed + merged, branch pushed):** `route-perf-1`, `kit-4`, `kit-5`, `kit-6`,
 `kitconv-1`, `mapverify-1`, `evalclean-1`. **`release-smoke-1` DONE 2026-11-27 (Claude reviewed, merge-ready,
@@ -51,7 +58,7 @@ All Section-A tasks are merged, closed, or done. Do not re-pick any of these.
 | `kit-2` | Exclude list for unvetted bundle documents (e.g. "under the tongue diagnosis") | kit-1 |
 | `kit-4` | Fetch batch 1 (contingency gap audit, approved with two holds and three conditions) | kit-1 |
 | `kit-5` | Fetch batches 2 and 3 (weapons care, trapping, leather, metals; trades, cradle to grave, law) | kit-4 |
-| `kit-3` | Load the whole new kit on the emulator; `KitRetrievalEvalTest` on the new topics | kit-1,2,4,5 **and** Claude has moved the kit-4/kit-5 files into the kit |
+| `kit-3` | Load the whole new kit on the emulator; `KitRetrievalEvalTest` on the new topics | ✅ **RUNNABLE** — kit-1,2,4,5 merged; Claude transferred the 46 files 2026-11-27 (verify clean). |
 
 ## D. App quality & UX wave — runnable now, independent  ← PICK FROM HERE (current head)
 

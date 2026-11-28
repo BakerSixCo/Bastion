@@ -1,8 +1,17 @@
 # Task kit-3: load the new kit on the emulator and measure search on the new topics (branch `chatgpt/kit-3`)
 
-**Queue:** after `kit-5` (and after Claude has moved the kit-4 and kit-5 files into the kit). **Previous step:** kit-1 (manifest, `kit.py verify`), kit-2 (exclude list), kit-4 and kit-5 (new documents).
+**Queue:** RUNNABLE NOW. ✅ Claude transferred the kit-4 + kit-5 files into the kit on 2026-11-27 (all 46 copied
+into `tools/kit/docs/`; `kit.py verify` = **0 missing, 137 verified, 0 mismatched**). **Previous step:** kit-1
+(manifest, `kit.py verify`), kit-2 (exclude list), kit-4 and kit-5 (new documents).
 **Next step:** Claude drafts cards from what this run shows is findable; later additions re-run this
 measurement with new questions.
+
+**Note on `kit.py verify`:** it reports **8 UNKNOWN** files (Army Survival ATP-3-50.21, ATP-6-02.53 radios,
+TC-21-3 Cold-Weather, Ranger Handbook, USAMRIID, SOF Medical Handbook, Idaho-Upland-Game, NOAA-Weather-Radio-
+Stations). These are **pre-existing, deliberately un-pinned owner-gated gaps** documented in `kit-6-report.md`
+(dual-use tactical/biological content, trapping content, or unverified provenance — not for ChatGPT to register).
+They are **not corruption** (0 mismatched) and **not the new files**. Proceed: import everything in the kit and
+measure; do not treat the 8 UNKNOWN (nonzero verify exit) as a stop condition — only a MISMATCH is.
 
 ```powershell
 git fetch origin
