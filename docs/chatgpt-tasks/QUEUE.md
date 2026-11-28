@@ -9,23 +9,27 @@ each branch, the owner decides merges. Each task file holds the full spec.
 one finishes there is always another that is not blocked. Keep this list deep (owner 2026-11-26: "NPU should
 always be going and we should keep ChatGPT queue full at all times... make it a heavy-lifting workhorse").
 
-**>>> CURRENT HEAD:**
-- **`kit-3` is now UNBLOCKED (highest-value pick) — Claude transferred the 46 kit-4/5 files into the kit on
-  2026-11-27** (`kit.py verify` on Claude's `tools/kit/docs` = 0 missing, 137 verified, 0 mismatched; the 8
-  UNKNOWN are documented owner-gated gaps, not a stop condition — see `kit-3.md`). It loads the whole new kit on
-  the emulator and measures retrieval on the 2026-11-26 additions — the core coverage question. **Run it next.**
-- **Section D (app quality & UX wave)** — the independent backlog. `apk-pdfbox-audit-1` is **PC-only**, so run it
-  (or any Tier-1 PC task) while the emulator is busy with `kit-3`.
+**>>> CURRENT HEAD (updated 2026-11-28):**
+- **Emulator storage FIXED** (Claude freed the emulator 2026-11-28: dropped the 2 FORUM-tier Stack Exchange ZIMs
+  + the maps folder — none searched for answers or used by any eval, all re-pushable from PC; **0.9 GB → 1.59 GB
+  free**, clearing kit-3's 1.2 GB floor). WikiMed + the searched reference/official ZIMs were kept.
+- **`kit-3` MEASUREMENT is the top pick** — the corpus (`kit-questions.json`) + `KitRetrievalEvalTest` harness are
+  merged; the on-emulator run was blocked by storage and is **now unblocked**. Re-run it: build, `adb install -r`
+  + `am instrument` the merged `KitRetrievalEvalTest` (+ keep `RetrievalEvalTest` 13/13, `ZimRetrievalEvalTest`
+  14/14), record per-topic HIT/MISS. After removing the 2 ZIMs, do **Home → Rescan first** so the library index
+  drops their stale rows. (Run a new branch, e.g. `chatgpt/kit-3-measure`.)
+- **`release-smoke-1` AI leg** can now also be re-checked on the emulator (model has room to start).
+- **Section D (app quality & UX wave)** — the independent backlog. `test-lint-1` is the remaining **PC-only** pick
+  to interleave while the emulator is busy.
 
-Section A is fully merged/closed/done — nothing to pick there. Keep one emulator task and, when possible, one
-PC task going at all times.
+Section A is fully merged/closed/done. Keep one emulator task and, when possible, one PC task going at all times.
 
+**Merged 2026-11-28 (Claude reviewed + merged, pushed):** `apk-pdfbox-audit-1` (keep all PdfBox assets; only
+`Scripts.txt` is a tiny candidate, proposal not applied), `release-smoke-1` (R8 smoke automation; AI leg pending
+on-emulator re-check now that storage is fixed), `kit-3` (eval corpus + `KitRetrievalEvalTest`; on-emulator
+measurement pending).
 **Merged 2026-11-27 (Claude reviewed + merged, branch pushed):** `route-perf-1`, `kit-4`, `kit-5`, `kit-6`,
-`kitconv-1`, `mapverify-1`, `evalclean-1`. **`release-smoke-1` DONE 2026-11-27 (Claude reviewed, merge-ready,
-awaiting owner merge):** tools-only R8 smoke automation; release build + R8 + signature, ZIM search and PDF
-import all PASS; the AI-answer leg FAILS on the emulator (WebGPU 600s timeout, then CPU litertlm cache-dir +
-storage pressure) — an emulator-environment limit, not a build defect; real AI-answer validation is parked for
-the physical phones (section C). **`chunk-tables-1` CLOSED 2026-11-27 (dead end, Claude
+`kitconv-1`, `mapverify-1`, `evalclean-1`. **`chunk-tables-1` CLOSED 2026-11-27 (dead end, Claude
 measured it):** the task and its re-scope both measure ~+0 on questions-v2. The failing table questions
 (canning pressures, doses) fail because PDF extraction scrambles the table columns *before* chunking
 (`DocExtract.normalizePdf` flattens whitespace), plus SUBJECT/REFUSAL/OFF_TARGET — none of which
@@ -75,7 +79,7 @@ Owner 2026-11-26: keep a deep, never-ending queue of real S-tier work — GUI/UX
 | `perf-libsearch-1` | Debounce Library live search (runs FTS on every keystroke) | Emulator. |
 | `mem-tilecache-1` | Size-aware map tile bitmap cache (count-based now → up to ~51 MB) | Emulator. |
 | `feat-reader-textsize-1` | Reader A−/A+ text size, persisted (outdoors/gloved legibility) | Emulator. |
-| `apk-pdfbox-audit-1` | Audit (measure + propose) the PdfBox CMap/AFM assets in the release APK; no removal | **PC only** — good when the emulator is busy. |
+| ~~`apk-pdfbox-audit-1`~~ | Audit the PdfBox CMap/AFM assets | **Merged** 2026-11-28 (keep all; tiny Scripts.txt candidate only). |
 
 Deeper backlog, staged from the same survey (Claude writes the full spec when one reaches the head): `test-ui-smoke-1` (first Compose UI test), `feat-reader-find-1` (in-doc find next/prev), `apk-shrink-1` (resource shrink + locale filter), `mem-rgb565-1` (RGB_565 base tiles — pairs with `mem-tilecache-1`), `startup-baselineprofile-1` (Baseline Profile), `mem-reader-1` (bounded Reader read of large originals).
 
