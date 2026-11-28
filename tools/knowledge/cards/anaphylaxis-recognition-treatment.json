@@ -1,0 +1,73 @@
+{
+  "id": "anaphylaxis-recognition-treatment",
+  "kind": "protocol",
+  "title": "Severe allergic reaction (anaphylaxis): signs and what to do",
+  "asks": [
+    "severe allergic reaction what do I do",
+    "anaphylaxis signs and treatment",
+    "when and how do I use an epipen",
+    "bee sting and his throat is swelling",
+    "ate peanuts lips swelling cant breathe",
+    "allergic reaction with hives and wheezing",
+    "anaphylactic shock tx",
+    "when can I give a second epipen",
+    "alergic reaction face swelling help",
+    "stung and now dizzy and short of breath",
+    "epi auto injector emergency steps",
+    "allergic reaction should he lie down or sit up"
+  ],
+  "answer": [
+    "Signs, which can appear within seconds or minutes of exposure to an allergen: sudden and severe difficulty breathing, wheezing or shortness of breath; swelling of the face, lips or tongue; hives or widespread skin redness; a rapid or weak pulse; confusion, dizziness or loss of consciousness. There may also be nausea, vomiting, abdominal pain or a feeling of impending doom.",
+    "Call for medical help immediately. Anaphylaxis is life-threatening.",
+    "If an epinephrine (adrenaline) auto-injector is available, use it: help the person use it, or give it yourself if you are allowed and trained. Dosage guidelines are provided with the injector.",
+    "Remove the allergen, if possible.",
+    "Position: sources differ, and it depends on the main problem. If breathing is hard (swelling of the mouth, lips or tongue, wheezing or noisy breathing): let the person sit upright, if there is no injury, or stay in the position they find most comfortable (WHO). If the problem is shock or collapse (dizziness, confusion, a weak pulse, pale or bluish skin, passing out): lay the person on their back with the legs raised, if injuries permit (Army first aid manual). The Army manual also says that a sitting position is fine if it makes breathing easier.",
+    "If symptoms persist, further doses of epinephrine may be necessary, every 5 to 10 minutes, if prescribed.",
+    "Give rescue breathing and chest compressions if required.",
+    "Monitor the person's vital signs every three to five minutes until they are stable, and get them to medical care as soon as possible."
+  ],
+  "warnings": [
+    "The reaction can return when the adrenaline (epinephrine) wears off, which can be within minutes. Keep watching the person closely and be prepared to give additional doses.",
+    "Anaphylaxis is life-threatening and immediate action is crucial. Seek professional medical help promptly even while giving first aid."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Assess Symptoms: ▪ Observe for sudden and severe symptoms like difficulty breathing, wheezing, or shortness of breath. ▪ Check for a rapid or weak pulse. ▪ Look for swelling of the face, lips, or tongue. ▪ Note any hives or widespread skin redness. ▪ Be alert to signs of confusion, dizziness, or loss of consciousness." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Look for Other Symptoms: ▪ Be aware of nausea, vomiting, abdominal pain, or a feeling of impending doom." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "… manifest within seconds or minutes after exposure to an allergen, affecting the skin, respiratory, and circulatory systems." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "The treatment of anaphylactic shock is urgent and time sensitive. Immediate actions include calling for medical help and, if available, using the casualty's epinephrine auto-injector." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If anaphylactic shock is suspected, immediate medical assistance is crucial. The primary treatment involves administering epinephrine (adrenaline). If an epinephrine auto-injector is available, assist the affected individual in using it, or administer it yourself if you are allowed and trained. Dosage guidelines are typically provided with the injector—0.15 milligrams (mg) for children and 0.3 mg for adults weighing more than 66 pounds." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Further doses of epinephrine may be necessary, administered every 5 to 10 minutes if prescribed and symptoms persist. Additionally, provide supportive measures for treating shock, respiratory failure, circulatory collapse, or cardiac arrest: • Position the casualty supine with legs elevated if injuries permit. • Perform rescue breathing and external chest compressions if required. • Monitor vital signs every three to five minutes until the casualty is stable." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Use CASEVAC only if MEDEVAC is unavailable and transport the casualty to the nearest MTF as soon as possible. Anaphylaxis is life-threatening, and immediate action is crucial. Seek professional medical help promptly and provide supportive care while awaiting arrival of medical personnel." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "Remove the allergen, if possible. For severe allergic reaction with difficulty breathing give intramuscular adrenaline as soon as possible." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "If a patient with a severe allergic reaction is given adrenaline, the reaction can return when the adrenaline wears off. Patients need to be monitored closely." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "Obstruction due to severe allergic reaction (anaphylaxis) • Mouth, lip, and tongue swelling • Difficulty breathing with stridor and/or wheezing • Rash or hives (patches of pale or red, itchy, warm, swollen skin) • Tachycardia and hypotension • Abnormal sounds from the airway (such as stridor, snoring, gurgling) • Poor chest rise Severe allergic reactions can cause swelling of the airway that can lead to obstruction. • Give intramuscular adrenaline for airway obstruction, severe wheezing or shock. [See SKILLS] –– Adrenaline can wear off in minutes so be prepared to give additional doses. • Place an IV and give IV fluids. [See SKILLS] • Reposition airway as needed (sit patient upright if no trauma) and give oxygen." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "If the patient has swelling, hives or stridor, consider severe allergic reaction (anaphylaxis), and give intramuscular adrenaline. [See SKILLS] • Allow the patient to stay in a position of comfort and prepare for rapid handover/transfer to a centre capable of advanced airway management, if needed." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Check Circulation: ▪ Assess the pulse to determine its rate and strength. ▪ Look for signs of poor circulation, such as pale or bluish skin." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If the casualty is conscious, place the casualty in the shock recovery position (see figure 7-1), which is on their back with their feet elevated slightly above the level of their heart. This will help their blood circulation. A log, field pack, box, rolled field jacket, or other stable objects can be used to elevate their feet. If a sitting position makes it easier for the casualty to breathe, that is fine." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If a casualty can breathe on their own, let them assume the best position (position of comfort) that allows them to breathe, including sitting up." }
+  ],
+  "conflict": "POSITION (the card shows both, attributed): ATP 4-02.11 (2026) para 7-36 says 'Position the casualty supine with legs elevated if injuries permit', listed as a supportive measure 'for treating shock, respiratory failure, circulatory collapse, or cardiac arrest'. WHO-ICRC Basic Emergency Care 2018, under airway obstruction due to severe allergic reaction, says 'Reposition airway as needed (sit patient upright if no trauma)', and its airway steps say 'Allow the patient to stay in a position of comfort'. ATP 4-02.11's own general paragraphs side with sitting when breathing is the problem: para 7-15 (position for shock) 'If a sitting position makes it easier for the casualty to breathe, that is fine' and para 5-24 'let them assume the best position (position of comfort) that allows them to breathe, including sitting up'. No kit document says which position to use for a person who has both hard breathing and signs of shock; the card says it depends on the main problem and shows both. The signs named for each position are taken from the same passages (WHO: mouth, lip and tongue swelling, stridor, wheezing; ATP 7-34: dizziness, confusion, weak pulse, pale or bluish skin, loss of consciousness). Owner to confirm. DOSE (the card gives no dose, only 'provided with the injector'): ATP 4-02.11 (2026) para 7-35 says auto-injector doses are typically 0.15 mg for children and 0.3 mg for adults weighing more than 66 pounds; JTS Spider and Scorpion Envenomation 2026 says 0.3 mg (0.15 mg pediatric) of 1:1000 epinephrine intramuscularly; WHO-ICRC Basic Emergency Care 2018 (trained providers, drawn up from an ampoule) says 0.5 mg IM for adults of 50 kg or above, 0.4 mg at 40 kg, 0.3 mg at 30 kg, and 0.15 mg for children. REPEAT INTERVAL (the card gives the ATP figure): ATP 4-02.11 says every 5 to 10 minutes if prescribed and symptoms persist; WHO BEC says adults may repeat at 5-minute intervals and children every 5–15 minutes as needed. HHS Ship's Medicine Chest 2003 (anaphylaxis appears only in its training outline and medicine list) and FEMA P-2064 (2020) give no anaphylaxis first aid.",
+  "review": {
+    "verdict": "pass",
+    "notes": "Re-review 2026-11-25 (claude-opus-5-5 xhigh). Previous finding fixed: A5 shows both positions, each attributed (WHO BEC: sit upright if no injury, or position of comfort, when breathing is hard; ATP 4-02.11 7-36: on the back with legs raised if injuries permit, for shock or collapse; plus ATP 7-15 'If a sitting position makes it easier for the casualty to breathe, that is fine'), the signs for each branch come from the same passages, and conflict records it. ATP 7-36 lists supine-legs-up for 'shock, respiratory failure, circulatory collapse, or cardiac arrest'; framing it as the shock branch is supported by ATP 7-13 (raise the legs 'if their airway tolerates lying flat') and 7-15, not stretched. All other lines checked in context (ATP 4-02.11 5-24, 7-32 to 7-37; WHO BEC remove allergen, adrenaline wears off). The card gives no dose of its own; dose and repeat-interval disagreements are attributed in conflict. All asks answered; kind protocol correct; no PDF junk. Optional: the kit's only text on the injection site is hospital protocol (JTS Snakebite 2026, 'IM ... in the lateral thigh'); usable if the owner wants 'into the outer thigh' for the 'how do I use an epipen' ask. previous review: (verdict fail, by claude-opus-5-5 (xhigh), independent review 2026-11-24) Problem: hidden conflict on positioning. A5 'Lay the person on their back with the legs raised, if injuries permit' follows ATP 4-02.11 7-35, but WHO BEC (Obstruction due to severe allergic reaction) says 'Reposition airway as needed (sit patient upright if no trauma)' and 'Allow the patient to stay in a position of comfort'. Laying flat someone whose throat or tongue is swelling can make breathing worse. Fix: 'If breathing is hard, let them sit up or stay in the position they choose (WHO); if they are faint, pale or collapsing, lay them flat with legs raised (ATP)', with the WHO quote, and list it in conflict. Confirmed: ATP 4-02.11 7-33 to 7-36 (signs, onset, call for help, auto-injector, repeat every 5-10 min if prescribed, CPR, vital signs every 3-5 min, evacuation), WHO (remove allergen, adrenaline can wear off in minutes). Dose and interval disagreements listed. Call for help and epinephrine come right after the signs, which is the right order. No PDF junk. Minor: 'give it yourself if you are allowed and trained' is ATP's wording; acceptable.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review",
+  "reviewed_by": "claude-opus-5-5",
+  "approved_by": ""
+}

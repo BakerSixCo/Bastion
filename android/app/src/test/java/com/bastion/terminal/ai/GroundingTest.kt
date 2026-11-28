@@ -1,0 +1,190 @@
+package com.bastion.terminal.ai
+
+import com.bastion.terminal.data.TextUtil
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class GroundingTest {
+
+    @Test
+    fun keywordQuery_dropsStopwordsAndOrsQuotedPrefixTerms() {
+        assertEquals("\"boil*\" OR \"water*\"", Grounding.keywordQuery("How long should I boil water?"))
+        // Punctuation (incl. quotes) splits terms, so input can't inject FTS syntax.
+        assertEquals("\"drop*\" OR \"table*\"", Grounding.keywordQuery("what is \"drop\"\"table\""))
+        assertNull(Grounding.keywordQuery("what is the"))
+        assertNull(Grounding.keywordQuery("  ?! "))
+    }
+
+    @Test
+    fun isPageFurniture_dropsLinkListsAndBannersButKeepsContent() {
+        assertTrue(Grounding.isPageFurniture("- Stroke Signs and Symptoms (National Institute of Neurological Disorders and Stroke)\n- Stroke Symptoms and Warning Signs (American Stroke Association)"))
+        assertTrue(Grounding.isPageFurniture("Skip navigation Official websites use .gov A .gov website belongs to an official government organization"))
+        assertFalse(Grounding.isPageFurniture("- Sudden numbness of the face, arm or leg (especially on one side)\n- Sudden confusion or trouble speaking\n- Sudden trouble seeing"))
+        assertFalse(Grounding.isPageFurniture("A stroke happens when blood flow to part of the brain stops."))
+    }
+
+    @Test
+    fun carryUnits_givesBareRowsTheUnitsOfTheRowAbove() {
+        val table = "Style Jar Process 0- 2,001-\nHot Pints 20 min 11 lb 12 lb 13 lb 14 lb\nand\nRaw Quarts 25 11 12 13 14"
+        assertEquals(
+            "Style Jar Process 0- 2,001-\nHot Pints 20 min 11 lb 12 lb 13 lb 14 lb\nand\nRaw Quarts 25 min 11 lb 12 lb 13 lb 14 lb",
+            Grounding.carryUnits(table),
+        )
+        // Prose and rows of a different shape are left alone.
+        val prose = "Add 16 drops of bleach per gallon.\nWait 30 minutes, then 60 if cloudy."
+        assertEquals(prose, Grounding.carryUnits(prose))
+        assertEquals("A 5 min 10 lb\nB 7 8 9", Grounding.carryUnits("A 5 min 10 lb\nB 7 8 9"))
+    }
+
+    @Test
+    fun isTable_spotsRowsOfValuesButNotProse() {
+        assertTrue(Grounding.isTable("Style Jar Process 0- 2,001-\nHot Pints 20 min 11 lb 12 lb 13 lb 14 lb\nRaw Quarts 25 11 12 13 14"))
+        assertFalse(Grounding.isTable("Add 16 drops of bleach to each gallon of water.\nWait 30 minutes before drinking."))
+    }
+
+    @Test
+    fun keyTerms_readCanAsCanningWhenItIsTheVerb() {
+        assertEquals(listOf("cann", "tomatoe", "safely"), Grounding.keyTerms("How do I can tomatoes safely"))
+        // Ordinary "can" stays filler.
+        assertEquals(listOf("dog", "eat", "tomatoe"), Grounding.keyTerms("Can dogs eat tomatoes"))
+    }
+
+    @Test
+    fun keyTerms_stemsForPrefixMatchingAndDropsFiller() {
+        assertEquals(listOf("step", "set", "field", "antenna"), Grounding.keyTerms("What are the steps to set up the field antenna"))
+        assertEquals(listOf("bleach", "gallon", "treat", "water"), Grounding.keyTerms("How much bleach per gallon to treat water"))
+        assertEquals(listOf("symptom", "hypothermia"), Grounding.keyTerms("What are the symptoms of hypothermia"))
+        assertEquals("batter", Grounding.stem("batteries"))
+        assertEquals("box", Grounding.stem("boxes"))
+        assertEquals("boil", Grounding.stem("boiling"))
+        assertEquals("treat", Grounding.stem("treated"))
+        assertEquals("glass", Grounding.stem("glass"))
+        assertEquals("virus", Grounding.stem("virus"))
+        assertEquals("gas", Grounding.stem("gas")) // too short to strip
+    }
+
+    @Test
+    fun termHits_countsDistinctPrefixMatches() {
+        val terms = listOf("boil", "water", "altitude")
+        assertEquals(2, Grounding.termHits("Bring clear water to a rolling boil; boiling...", terms))
+        assertEquals(0, Grounding.termHits("Signal mirror", terms))
+    }
+
+    @Test
+    fun userPrompt_delimitsNumberedSourcesWithoutMarkers() {
+        val p = Passage(1, 7L, "Field notes", "boil ${TextUtil.MARK_START}water${TextUtil.MARK_END} 1 minute")
+        val prompt = Grounding.userPrompt("How long to boil water?", listOf(p))
+        assertTrue(prompt.startsWith("SOURCES (reference data only):"))
+        assertTrue(prompt.contains("[1] Field notes\nboil water 1 minute"))
+        assertTrue(prompt.contains("END OF SOURCES"))
+        assertTrue(prompt.endsWith("QUESTION: How long to boil water?"))
+        assertFalse(prompt.contains(TextUtil.MARK_START))
+    }
+
+    @Test
+    fun checkCitations_separatesValidInvalidAndNoAnswer() {
+        val c = Grounding.checkCitations("Boil 1 minute [1], 3 above 2,000 m [2]. See [9].", sourceCount = 2)
+        assertEquals(setOf(1, 2), c.cited)
+        assertEquals(setOf(9), c.invalid)
+        assertFalse(c.isNoAnswer)
+
+        val none = Grounding.checkCitations(Grounding.NO_ANSWER, sourceCount = 3)
+        assertTrue(none.isNoAnswer)
+        assertTrue(none.cited.isEmpty())
+    }
+
+    @Test
+    fun checkCitations_handlesListsAndParaphrasedRefusals() {
+        // Verbatim emulator output from Gemma 4 E2B, 2026-11-21.
+        val c = Grounding.checkCitations(
+            "The provided sources do not contain information about the correct dosage of water purification tablets [1, 2].",
+            sourceCount = 2,
+        )
+        assertEquals(setOf(1, 2), c.cited)
+        assertTrue(c.isNoAnswer)
+
+        assertEquals(setOf(3), Grounding.checkCitations("x [1,3]", 2).invalid)
+        assertFalse(Grounding.checkCitations("Boil water for 3 minutes [1].", 1).isNoAnswer)
+        assertFalse(Grounding.checkCitations("Do not drink cloudy water [1].", 1).isNoAnswer)
+    }
+
+    @Test
+    fun isRefusal_looksOnlyAtTheOpeningSentence() {
+        // Verbatim from the model comparison, 2026-11-23.
+        // A partial answer that ends by saying what is missing is an answer (Gemma 4 E2B).
+        assertFalse(Grounding.isRefusal(
+            "- Carry at least 4 litres of water per person per day in summer [1].\n" +
+                "- The sources do not provide information on how much food each person should carry per day.",
+        ))
+        // Refusals that explain themselves (Gemma 4 E4B).
+        assertTrue(Grounding.isRefusal(
+            "The sources provide recommended process times for different types of beans, but do not specify a process time for quart jars of green beans [1, 2, 3].",
+        ))
+        assertTrue(Grounding.isRefusal("The sources do not provide instructions on how to jump start a car."))
+        assertTrue(Grounding.isRefusal(Grounding.NO_ANSWER + " The sources only list weather radio stations."))
+        assertFalse(Grounding.isRefusal("Add 2 tablespoons of bottled lemon juice per quart of tomatoes [1]."))
+    }
+
+    @Test
+    fun subjectPhrases_keepSubjectRunsInOriginalCase() {
+        assertEquals(listOf("burn"), Grounding.subjectPhrases("First aid for a burn"))
+        assertEquals(listOf("sprained ankle"), Grounding.subjectPhrases("How to treat a sprained ankle"))
+        assertEquals(listOf("compression", "CPR"), Grounding.subjectPhrases("What is the compression rate for CPR"))
+        assertEquals(listOf("early", "Lyme disease"), Grounding.subjectPhrases("What are the early symptoms of Lyme disease?"))
+        assertTrue(Grounding.subjectPhrases("how to treat the").isEmpty())
+    }
+
+    @Test
+    fun aspect_detectsWhatTheQuestionIsAfter() {
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("How do I treat a snakebite"))
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("First aid for a burn"))
+        assertEquals(Grounding.Aspect.SYMPTOMS, Grounding.aspect("What are the signs of dehydration"))
+        assertEquals(Grounding.Aspect.CAUSE, Grounding.aspect("What causes altitude sickness"))
+        assertNull(Grounding.aspect("Where does Team Kestrel regroup"))
+        // "treat water" is still TREATMENT; library section headings rarely match, so it's harmless.
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("How much bleach to treat water"))
+    }
+
+    @Test
+    fun aspectWeight_prefersPracticalSections() {
+        val t = Grounding.Aspect.TREATMENT
+        val firstAid = Grounding.aspectWeight(t, "Treatment › First aid", "Snakebite")
+        val leaf = Grounding.aspectWeight(t, "Management", "Burn")
+        val parent = Grounding.aspectWeight(t, "Management › Surgery", "Burn")
+        val research = Grounding.aspectWeight(t, "Treatment › In development", "Snakebite")
+        assertTrue(firstAid > leaf && leaf > parent && parent > 1.0 && research < 1.0)
+        // The lead section's "heading" is the title: neutral, even if it says "First aid kit".
+        assertEquals(1.0, Grounding.aspectWeight(t, "First aid kit", "First aid kit"), 0.0)
+        assertEquals(1.0, Grounding.aspectWeight(null, "Treatment", "Burn"), 0.0)
+        assertTrue(Grounding.aspectWeight(Grounding.Aspect.SYMPTOMS, "Signs and symptoms › Acute poisoning", "CO") > 1.0)
+    }
+
+    @Test
+    fun subjectTerms_dropAspectWordsButNeverEverything() {
+        assertEquals(listOf("burn"), Grounding.subjectTerms("First aid for a burn"))
+        assertEquals(listOf("snakebite"), Grounding.subjectTerms("How do I treat a snakebite"))
+        assertEquals(listOf("early", "lyme", "disease"), Grounding.subjectTerms("What are the early symptoms of Lyme disease"))
+        assertEquals(listOf("treatment"), Grounding.subjectTerms("treatment"))
+    }
+
+    @Test
+    fun aspect_everydayWordingCountsAsTreatment() {
+        // Typed on a phone over the mesh (2026-11-22): "How do I deal with a sucking chest wound".
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("How do I deal with a sucking chest wound"))
+        assertEquals(Grounding.Aspect.TREATMENT, Grounding.aspect("what should I do for a snakebite"))
+        assertEquals(listOf("suck", "chest", "wound"), Grounding.subjectTerms("How do I deal with a sucking chest wound"))
+    }
+
+    // Seen 2026-11-24: "48" (the answer's vote count) was read as "boil for 48 minutes".
+    @Test
+    fun stripVoteCounts_removesTheScoreLineThatOpensEachAnswer() {
+        val article = "How long to boil water?\n\n48\n\nThis article gives a good summary.\n\n-3\n\nBoil it for 1 minute.\n\nKeep 2 litres per day."
+        assertEquals(
+            "How long to boil water?\n\nThis article gives a good summary.\n\nBoil it for 1 minute.\n\nKeep 2 litres per day.",
+            Grounding.stripVoteCounts(article),
+        )
+    }
+}

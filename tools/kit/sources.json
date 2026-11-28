@@ -1,0 +1,2107 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "id": "doc-afrri-medical-management-radiological-casualties-5th-2022",
+      "file": "AFRRI-Medical-Management-Radiological-Casualties-5th-2022.pdf",
+      "title": "AFRRI Medical Management Radiological Casualties 5th 2022",
+      "publisher": "Armed Forces Radiobiology Research Institute",
+      "edition": "2022",
+      "sha256": "de93b19854fa2213c1a193edd1e3d24e6b9a618cfe18619da7d755f87c217b94",
+      "origin": "url",
+      "url": "https://afrri.usuhs.edu/sites/default/files/media/documents/affri_-_medical_management_of_rad_casualties_5th_edition_0.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-atp-4-02-11-casualty-response-tccc-first-aid-2026",
+      "file": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "title": "Army ATP 4 02.11 Casualty Response TCCC First Aid 2026",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2026-03-23",
+      "sha256": "a4a0650f5bb14c1c7163b9b1e9f08bcc012fb3fe49ea4432f0ccaffb9af86542",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN46159-ATP_4-02.11-000-WEB-1.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-atp-4-02-83-nuclear-radiological-casualties-2014",
+      "file": "Army-ATP-4-02.83-Nuclear-Radiological-Casualties-2014.pdf",
+      "title": "Army ATP 4 02.83 Nuclear Radiological Casualties 2014",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2014",
+      "sha256": "2e7c1ed711a7fc6a372e8992fc3852a10335d693aeadf3e0fd6324d9f3d3b2fc",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/atp4_02x83.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-atp-4-02-85-chemical-casualties-2016",
+      "file": "Army-ATP-4-02.85-Chemical-Casualties-2016.pdf",
+      "title": "Army ATP 4 02.85 Chemical Casualties 2016",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2016",
+      "sha256": "00d81daaea2b8fb363c26addd08e23b80041bbb2ecf2c6f8dcb5e64bef18af37",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN16674-ATP_4-02.85-001-WEB-3.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-atp-4-25-12-unit-field-sanitation-teams-2014-c2-2025",
+      "file": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "title": "Army ATP 4 25.12 Unit Field Sanitation Teams 2014 C2 2025",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2025",
+      "sha256": "2f51ec9f16984bd9a780cf14abd4d304d3e7f220f1f8e2a148eb360dff0b3f04",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44577-ATP_4-25.12-002-WEB-3.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "army-fm-3-25-26-map-reading-and-land-navigation-2001",
+      "file": "Army-FM-3-25.26-Map-Reading-and-Land-Navigation-2001.pdf",
+      "title": "Map Reading and Land Navigation (FM 3-25.26)",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2001-07-20",
+      "sha256": "e86dadb55f03d0cddb8b6c9a20458514743ce67ed7e29eef106b53211716d9f1",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded"
+      ]
+    },
+    {
+      "id": "doc-army-fm-7-22-holistic-health-and-fitness-2020",
+      "file": "Army-FM-7-22-Holistic-Health-and-Fitness-2020.pdf",
+      "title": "Army FM 7 22 Holistic Health and Fitness 2020",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2020",
+      "sha256": "fa298e5287117a0ca7080b950d1d8236b7e34b2a4a3435ce8058cdd4fa98b0b6",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN44522-FM_7-22-002-WEB-7.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-tb-med-507-heat-stress-control-2022",
+      "file": "Army-TB-MED-507-Heat-Stress-Control-2022.pdf",
+      "title": "Army TB MED 507 Heat Stress Control 2022",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2022",
+      "sha256": "4324016869827d39034a4acf705ccdb8209822a9bce7629226db5b2b50e2342e",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN43608-TB_MED_507-001-WEB-2.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-tb-med-508-cold-weather-injuries-2026",
+      "file": "Army-TB-MED-508-Cold-Weather-Injuries-2026.pdf",
+      "title": "Army TB MED 508 Cold Weather Injuries 2026",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2026",
+      "sha256": "7135b4e4824e4c0bd7da2eb5b5dc86586d09e744ddf1982b14f50d2d140e2b05",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/ARN45918-TB_MED_508-000-WEB-1.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-tb-med-577-field-water-supplies-2010",
+      "file": "Army-TB-MED-577-Field-Water-Supplies-2010.pdf",
+      "title": "Army TB MED 577 Field Water Supplies 2010",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2010",
+      "sha256": "c6545d275891af9b1204bcc4c6e924250e03579578fd29acc847bd0a66986df7",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/tbmed577.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-tb-med-593-field-waste-management-2006",
+      "file": "Army-TB-MED-593-Field-Waste-Management-2006.pdf",
+      "title": "Army TB MED 593 Field Waste Management 2006",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2006",
+      "sha256": "1a4af9a5d3524c62d7a3260eb2c5cdf56ae212130ef45c71731dd8b4a087d55a",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/tbmed593.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-army-tc-4-02-3-field-hygiene-and-sanitation-2015",
+      "file": "Army-TC-4-02.3-Field-Hygiene-and-Sanitation-2015.pdf",
+      "title": "Army TC 4 02.3 Field Hygiene and Sanitation 2015",
+      "publisher": "U.S. Department of the Army",
+      "edition": "2015",
+      "sha256": "e024b79ca8c638355eb70f33bb62bccc8070ab2d669bcfa9ad9e5c1ad9e43732",
+      "origin": "url",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/tc4_02x3.pdf",
+      "licence": "US government work; Approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "atak-civ-user-guide-v5-5-2025",
+      "file": "ATAK-CIV-User-Guide-v5.5-2025.pdf",
+      "title": "ATAK-CIV User Guide, v5.5",
+      "publisher": "TAK Product Center",
+      "edition": "2025-07-17",
+      "sha256": "2f019b5a8636072378234684003b26a34343a2c58c187192442930d0c2583cf4",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "owner-copy-rights-unconfirmed",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "doc-cdc-make-water-safe-during-an-emergency-2024",
+      "file": "CDC-Make-Water-Safe-During-an-Emergency-2024.pdf",
+      "title": "CDC Make Water Safe During an Emergency 2024",
+      "publisher": "Centers for Disease Control and Prevention",
+      "edition": "2024",
+      "sha256": "c39b55b4d8f3dd40ecd2b13175f7661b52dfc6e73e4a24ef189de64fb9d513b1",
+      "origin": "owner-download",
+      "url": "https://www.cdc.gov/water-emergency/media/pdfs/make-water-safe-during-emergency-p.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-cdc-use-safe-water-during-an-emergency-2024",
+      "file": "CDC-Use-Safe-Water-During-an-Emergency-2024.pdf",
+      "title": "CDC Use Safe Water During an Emergency 2024",
+      "publisher": "Centers for Disease Control and Prevention",
+      "edition": "2024",
+      "sha256": "f7bda1f9e7827ee74278d408001e9cdf4529924fa70144e0696ee0fd4ee39bad",
+      "origin": "owner-download",
+      "url": "https://www.cdc.gov/water-emergency/media/pdfs/334749-B_UseSafeWater-OnePager-508.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "cisa-auxfog",
+      "file": "CISA-AUXFOG-Auxiliary-Communications-Field-Operations-Guide-v1.1-2016.pdf",
+      "title": "Auxiliary Communications Field Operations Guide, v1.1",
+      "publisher": "DHS Office of Emergency Communications",
+      "edition": "2016-06",
+      "sha256": "9dd33816afd6e3e388532186f876f43c80258eafb77fed75e596807116dc687f",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ],
+      "trim": {
+        "output": "CISA-AUXFOG-v1.1-kit-trim.pdf",
+        "ranges": [
+          {
+            "pdfStart": 13,
+            "pdfEnd": 16,
+            "printed": "1-1\u20131-4"
+          },
+          {
+            "pdfStart": 23,
+            "pdfEnd": 25,
+            "printed": "3-5\u20133-7"
+          },
+          {
+            "pdfStart": 45,
+            "pdfEnd": 62,
+            "printed": "C-1\u2013C-18"
+          },
+          {
+            "pdfStart": 93,
+            "pdfEnd": 101,
+            "printed": "D-1\u2013D-9"
+          },
+          {
+            "pdfStart": 103,
+            "pdfEnd": 106,
+            "printed": "E-1\u2013E-4"
+          },
+          {
+            "pdfStart": 107,
+            "pdfEnd": 108,
+            "printed": "F-1\u2013F-2"
+          },
+          {
+            "pdfStart": 109,
+            "pdfEnd": 112,
+            "printed": "G-1\u2013G-4"
+          },
+          {
+            "pdfStart": 129,
+            "pdfEnd": 137,
+            "printed": "I-13\u2013I-21"
+          },
+          {
+            "pdfStart": 145,
+            "pdfEnd": 148,
+            "printed": "L-1\u2013L-4"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cisa-nifog",
+      "file": "CISA-NIFOG-National-Interoperability-Field-Operations-Guide-v2.02-2025.pdf",
+      "title": "National Interoperability Field Operations Guide, v2.02",
+      "publisher": "Cybersecurity and Infrastructure Security Agency",
+      "edition": "2025-01",
+      "sha256": "45c2f5d94861b3ed1b80f7ce5962a160fdd56092211586bdee711b68ca3d3142",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Federal work except credited third-party RJ-45 pinout figure.",
+      "tier": "own",
+      "flags": [
+        "third-party-figure",
+        "source-url-unrecorded"
+      ],
+      "trim": {
+        "output": "CISA-NIFOG-v2.02-kit-trim.pdf",
+        "ranges": [
+          {
+            "pdfStart": 8,
+            "pdfEnd": 127,
+            "printed": "1\u2013120"
+          },
+          {
+            "pdfStart": 146,
+            "pdfEnd": 150,
+            "printed": "139\u2013143"
+          },
+          {
+            "pdfStart": 188,
+            "pdfEnd": 190,
+            "printed": "181\u2013183"
+          }
+        ]
+      }
+    },
+    {
+      "id": "epa-emergency-disinfection-of-drinking-water-2026",
+      "file": "EPA-Emergency-Disinfection-of-Drinking-Water-2026.md",
+      "title": "Emergency Disinfection of Drinking Water",
+      "publisher": "U.S. Environmental Protection Agency",
+      "edition": "2026-02",
+      "sha256": "bbced719e9a6d12804068a27c73ff772b752de795d0c5b3d3554b52754642729",
+      "origin": "browser-copy",
+      "url": "https://www.epa.gov/ground-water-and-drinking-water/emergency-disinfection-drinking-water",
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [
+        "sha256-local-only"
+      ]
+    },
+    {
+      "id": "fcc-47-cfr-part-95-personal-radio-services-2026",
+      "file": "FCC-47-CFR-Part-95-Personal-Radio-Services-2026.md",
+      "title": "47 CFR Part 95: Personal Radio Services",
+      "publisher": "Office of the Federal Register and U.S. Government Publishing Office",
+      "edition": "2026-11-24",
+      "sha256": "6b82d661284f3eb41025632501691810a8843433a717adc4650b750abc4d90f0",
+      "origin": "derived",
+      "url": null,
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [],
+      "script": "tools/kit-build/ecfr2md.py",
+      "inputs": [
+        "https://www.ecfr.gov/api/versioner/v1/full/2026-11-24/title-47.xml?part=95"
+      ]
+    },
+    {
+      "id": "fcc-47-cfr-part-97-amateur-radio-service-2026",
+      "file": "FCC-47-CFR-Part-97-Amateur-Radio-Service-2026.md",
+      "title": "47 CFR Part 97: Amateur Radio Service",
+      "publisher": "Office of the Federal Register and U.S. Government Publishing Office",
+      "edition": "2026-11-24",
+      "sha256": "b5b7b5e815fe1ae9da62279d64b45877b75dc44f3e0ea14d880e5a16c4ed9f97",
+      "origin": "derived",
+      "url": null,
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [],
+      "script": "tools/kit-build/ecfr2md.py",
+      "inputs": [
+        "https://www.ecfr.gov/api/versioner/v1/full/2026-11-24/title-47.xml?part=97"
+      ]
+    },
+    {
+      "id": "fcc-consumer-guide-personal-radio-services",
+      "file": "FCC-Consumer-Guide-Personal-Radio-Services.md",
+      "title": "Personal Radio Services: Keeping in Touch",
+      "publisher": "Federal Communications Commission",
+      "edition": null,
+      "sha256": "e6018f73b07f10e47400bf6ba7e4d5067f8a1d51fb575ec3accc9ef7a220772b",
+      "origin": "browser-copy",
+      "url": "https://www.fcc.gov/consumers/guides/personal-radio-services-prs-keeping-touch",
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "fcc-personal-radio-services-channels-2026",
+      "file": "FCC-Personal-Radio-Services-Channels-2026.md",
+      "title": "Personal Radio Services Channels",
+      "publisher": "Federal Communications Commission",
+      "edition": "2026",
+      "sha256": "e6d24900832e67187cdb3c5024b47e2223368da4cec59dad10a2db3afb683b84",
+      "origin": "browser-copy",
+      "url": "https://www.fcc.gov/wireless/bureau-divisions/mobility-division/",
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-fda-potassium-iodide-guidance-2001",
+      "file": "FDA-Potassium-Iodide-Guidance-2001.pdf",
+      "title": "FDA Potassium Iodide Guidance 2001",
+      "publisher": "U.S. Food and Drug Administration",
+      "edition": "2001",
+      "sha256": "fe764cea401b612c0c5d7e0274f8f7ad1cde5eaeede52b4286a93ed3ae653f59",
+      "origin": "url",
+      "url": "https://www.fda.gov/media/72510/download",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-fda-potassium-iodide-qa-2002",
+      "file": "FDA-Potassium-Iodide-QA-2002.pdf",
+      "title": "FDA Potassium Iodide QA 2002",
+      "publisher": "U.S. Food and Drug Administration",
+      "edition": "2002",
+      "sha256": "3fbab88b57b0929c6ca21f3e6fc626aced3d105bfe11efbd74a169cc864b2b99",
+      "origin": "url",
+      "url": "https://www.fda.gov/media/72515/download",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-fema-are-you-ready-p-2064-2020",
+      "file": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "title": "FEMA Are You Ready P 2064 2020",
+      "publisher": "Federal Emergency Management Agency",
+      "edition": "2020-09",
+      "sha256": "3873f8ae7528389adacab72259c37b9ae3c507bd3ae23783122e06586560040c",
+      "origin": "url",
+      "url": "https://www.ready.gov/sites/default/files/2021-11/are-you-ready-guide.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-fema-nuclear-detonation-first-72-hours-2023",
+      "file": "FEMA-Nuclear-Detonation-First-72-Hours-2023.pdf",
+      "title": "FEMA Nuclear Detonation First 72 Hours 2023",
+      "publisher": "Federal Emergency Management Agency",
+      "edition": "2023",
+      "sha256": "e312a9e0c64b8e4cda0c12677695744abd254cfbdc45c10b14d290a7e7c1ee1f",
+      "origin": "owner-download",
+      "url": "https://www.fema.gov/sites/default/files/documents/fema_oet-72-hour-nuclear-detonation-response-guidance.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-fema-nuclear-detonation-planning-guidance-3rd-2022",
+      "file": "FEMA-Nuclear-Detonation-Planning-Guidance-3rd-2022.pdf",
+      "title": "FEMA Nuclear Detonation Planning Guidance 3rd 2022",
+      "publisher": "Federal Emergency Management Agency",
+      "edition": "2022-05",
+      "sha256": "d77550685227d652e13d515d717031ca81517eb150b5cb68aa79dbe2ac25aa1a",
+      "origin": "owner-download",
+      "url": "https://www.fema.gov/sites/default/files/documents/fema_nuc-detonation-planning-guide.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-hhs-ships-medicine-chest-medical-aid-at-sea-2003",
+      "file": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "title": "HHS Ships Medicine Chest Medical Aid at Sea 2003",
+      "publisher": "U.S. Public Health Service",
+      "edition": "2003",
+      "sha256": "c3395c1c01b93705d7b06c965c64b9d7c33fa99fd6161f0025a561bd115289cf",
+      "origin": "url",
+      "url": "https://www.govinfo.gov/content/pkg/GOVPUB-HE20-PURL-gpo20582/pdf/GOVPUB-HE20-PURL-gpo20582.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-airway-management-in-trauma-28-jan-2026-id39",
+      "file": "JTS-CPG-Airway_Management_in_Trauma_28_Jan_2026_ID39.pdf",
+      "title": "JTS CPG Airway_Management_in_Trauma_28_Jan_2026_ID39",
+      "publisher": "Joint Trauma System",
+      "edition": "2026-01-28",
+      "sha256": "a1e8ae0c8f538dfdd3e536828c2cc0a9f39c7d48e6b1220606b687b1e9c78524",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Airway_Management_in_Trauma_28_Jan_2026_ID39.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-altitude-emergencies-prehospital-environment-05-mar-2024-id95-v1-2",
+      "file": "JTS-CPG-Altitude_Emergencies_Prehospital_Environment_05_Mar_2024_ID95_v1.2.pdf",
+      "title": "JTS CPG Altitude_Emergencies_Prehospital_Environment_05_Mar_2024_ID95_v1.2",
+      "publisher": "Joint Trauma System",
+      "edition": "2024-03-05",
+      "sha256": "3796696d1f3ed125d56a2a28fd7abb6e5fbc7729969fa28ba51a249b38ed9ff3",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Altitude_Emergencies_Prehospital_Environment_05_Mar_2024_ID95_v1.2.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-analgesia-and-sedation-management-during-pfc-11-may-2017-id61",
+      "file": "JTS-CPG-Analgesia_and_Sedation_Management_during_PFC_11_May_2017_ID61.pdf",
+      "title": "JTS CPG Analgesia_and_Sedation_Management_during_PFC_11_May_2017_ID61",
+      "publisher": "Joint Trauma System",
+      "edition": "2017-05-11",
+      "sha256": "e0fd67fba597ed7c86c3ec53b8b0e6ffa596e2381384600cb937d7362703249e",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Analgesia_and_Sedation_Management_during_PFC_11_May_2017_ID61.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-burn-management-pfc-13-jan-2017-id57",
+      "file": "JTS-CPG-Burn_Management_PFC_13_Jan_2017_ID57.pdf",
+      "title": "JTS CPG Burn_Management_PFC_13_Jan_2017_ID57",
+      "publisher": "Joint Trauma System",
+      "edition": "2017-01-13",
+      "sha256": "1d5d671c3550189af6037e75d624f7ffdd521113a2d898ed6f074c6478c3f768",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Burn_Management_PFC_13_Jan_2017_ID57.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-crush-syndrome-pfc-28-dec-2016-id58",
+      "file": "JTS-CPG-Crush_Syndrome_PFC_28_Dec_2016_ID58.pdf",
+      "title": "JTS CPG Crush_Syndrome_PFC_28_Dec_2016_ID58",
+      "publisher": "Joint Trauma System",
+      "edition": "2016-12-28",
+      "sha256": "3b937201510e4a61d3acf30a5eaf77b752595c34136cd384c114d194342ebec4",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Crush_Syndrome_PFC_28_Dec_2016_ID58.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-drowning-management-17-mar-2025-id64-v1-1",
+      "file": "JTS-CPG-Drowning_Management_17_Mar_2025_ID64_v1.1.pdf",
+      "title": "JTS CPG Drowning_Management_17_Mar_2025_ID64_v1.1",
+      "publisher": "Joint Trauma System",
+      "edition": "2025-03-17",
+      "sha256": "59801674365622ca48e16b307a89e3bac077e797d0879c8e6eaefa68e46e5c4d",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Drowning_Management_17_Mar_2025_ID64_v1.1.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-eye-trauma-initial-care-01-jun-2021-id03",
+      "file": "JTS-CPG-Eye_Trauma_Initial_Care_01_Jun_2021_ID03.pdf",
+      "title": "JTS CPG Eye_Trauma_Initial_Care_01_Jun_2021_ID03",
+      "publisher": "Joint Trauma System",
+      "edition": "2021-06-01",
+      "sha256": "4eda56ea057e695bda5f5c78f4a6d26fea14f8b6b15dcefcce4e019ec756cacf",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Eye_Trauma_Initial_Care_01_Jun_2021_ID03.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-frostbite-and-immersion-foot-care-26-jan-2017-id-59",
+      "file": "JTS-CPG-Frostbite_and_Immersion_Foot_Care_26_Jan_2017_ID_59.pdf",
+      "title": "JTS CPG Frostbite_and_Immersion_Foot_Care_26_Jan_2017_ID_59",
+      "publisher": "Joint Trauma System",
+      "edition": "2017-01-26",
+      "sha256": "a139e3076222fbf9897a07dfc8510e621e1f9e786a4dc8f53496c9714efa7cfb",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Frostbite_and_Immersion_Foot_Care_26_Jan_2017_ID_59.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-hypothermia-prevention-treatment-07-jun-2023-id23",
+      "file": "JTS-CPG-Hypothermia_Prevention_Treatment_07_Jun_2023_ID23.pdf",
+      "title": "JTS CPG Hypothermia_Prevention_Treatment_07_Jun_2023_ID23",
+      "publisher": "Joint Trauma System",
+      "edition": "2023-06-07",
+      "sha256": "8602150aa26f4e33e572e686883224596ccc58935f4af5d256d232a07dbe88f0",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Hypothermia_Prevention_Treatment_07_Jun_2023_ID23.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-infection-prevention-in-combat-injuries-03-nov-2026-id24",
+      "file": "JTS-CPG-Infection_Prevention_in_Combat_Injuries_03_Nov_2026_ID24.pdf",
+      "title": "JTS CPG Infection_Prevention_in_Combat_Injuries_03_Nov_2026_ID24",
+      "publisher": "Joint Trauma System",
+      "edition": "2026-11-03",
+      "sha256": "bf15cc798e3d91354db1ced0f91192d186a6f2327eff0d5cfb460a54f110833d",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Infection_Prevention_in_Combat_Injuries_03_Nov_2026_ID24.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-nursing-interventions-pcc-08-july-2025-id70-v1-1",
+      "file": "JTS-CPG-Nursing_Interventions_PCC_08_July_2025_ID70_v1.1.pdf",
+      "title": "JTS CPG Nursing_Interventions_PCC_08_July_2025_ID70_v1.1",
+      "publisher": "Joint Trauma System",
+      "edition": "2025-07-08",
+      "sha256": "58d57dcbda1a5e28bf857ff8a288e6c3ea154d249da8156d91dd735a62c8eeda",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Nursing_Interventions_PCC_08_July_2025_ID70_v1.1.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-ocular-injuries-vision-threatening-conditions-pfc-01-dec-2017-id66",
+      "file": "JTS-CPG-Ocular_Injuries_Vision-Threatening_Conditions_PFC_01_Dec_2017_ID66.pdf",
+      "title": "JTS CPG Ocular_Injuries_Vision Threatening_Conditions_PFC_01_Dec_2017_ID66",
+      "publisher": "Joint Trauma System",
+      "edition": "2017-12-01",
+      "sha256": "c7ce80d075b166668baff85eb070e0049cec8e77d2ab4f3f6af126f083e57b7b",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Ocular_Injuries_Vision-Threatening_Conditions_PFC_01_Dec_2017_ID66.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-orthopaedic-trauma-extremity-fractures-id56-22-jun-2026",
+      "file": "JTS-CPG-Orthopaedic_Trauma_Extremity_Fractures_ID56_22_Jun_2026.pdf",
+      "title": "JTS CPG Orthopaedic_Trauma_Extremity_Fractures_ID56_22_Jun_2026",
+      "publisher": "Joint Trauma System",
+      "edition": "2026-06-22",
+      "sha256": "bc137daf79815a3ef0b44f9367a5e8fadf736902fc2f27198158f075add28328",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Orthopaedic_Trauma_Extremity_Fractures_ID56_22_Jun_2026.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-prolonged-casualty-care-guidelines-21-dec-2021-id91v1-1",
+      "file": "JTS-CPG-Prolonged_Casualty_Care_Guidelines_21_Dec_2021_ID91v1.1.pdf",
+      "title": "JTS CPG Prolonged_Casualty_Care_Guidelines_21_Dec_2021_ID91v1.1",
+      "publisher": "Joint Trauma System",
+      "edition": "2021-12-21",
+      "sha256": "f6f0c30b18e5697f8d1d3fc4ec7682272e2774e0393a6f7a7ff899f014f371a7",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Prolonged_Casualty_Care_Guidelines_21_Dec_2021_ID91v1.1.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-sepsis-management-pfc-28-oct-2020-id83",
+      "file": "JTS-CPG-Sepsis_Management_PFC_28_Oct_2020_ID83.pdf",
+      "title": "JTS CPG Sepsis_Management_PFC_28_Oct_2020_ID83",
+      "publisher": "Joint Trauma System",
+      "edition": "2020-10-28",
+      "sha256": "fad7aa643cf6f8ae739c532f546a1618280c1c92c335451475fac0095b9b40b8",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Sepsis_Management_PFC_28_Oct_2020_ID83.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-snakebite-envenomation-cpg-id81-26-apr-2026-v1-1",
+      "file": "JTS-CPG-Snakebite_Envenomation_CPG_ID81_26_Apr_2026_v1.1.pdf",
+      "title": "JTS CPG Snakebite_Envenomation_CPG_ID81_26_Apr_2026_v1.1",
+      "publisher": "Joint Trauma System",
+      "edition": "2026",
+      "sha256": "a4b8be2d4d7b558d3ccc544e9eb61f8c3897bffd3658c3ac503e7772895fd1a7",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Snakebite_Envenomation_CPG_ID81_26_Apr_2026_v1.1.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-spider-and-scorpion-envenomation-21-jul-2026-id84-v1",
+      "file": "JTS-CPG-Spider_and_Scorpion_Envenomation_21_Jul_2026_ID84_v1.pdf",
+      "title": "JTS CPG Spider_and_Scorpion_Envenomation_21_Jul_2026_ID84_v1",
+      "publisher": "Joint Trauma System",
+      "edition": "2026-07-21",
+      "sha256": "4b99fc9c76a7dd60f39434f51817c0d421edf5acb1f73ba035b7b79792771d14",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Spider_and_Scorpion_Envenomation_21_Jul_2026_ID84_v1.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-traumatic-brain-injury-pfc-06-dec-2017-id63",
+      "file": "JTS-CPG-Traumatic_Brain_Injury_PFC_06_Dec_2017_ID63.pdf",
+      "title": "JTS CPG Traumatic_Brain_Injury_PFC_06_Dec_2017_ID63",
+      "publisher": "Joint Trauma System",
+      "edition": "2017-12-06",
+      "sha256": "9ee64ac4a05d071cb9fae6dcae5a63528a6d1e8f93e47b407920f648edda453c",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Traumatic_Brain_Injury_PFC_06_Dec_2017_ID63.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-jts-cpg-wound-management-pfc-24-jul-2017-id62",
+      "file": "JTS-CPG-Wound_Management_PFC_24_Jul_2017_ID62.pdf",
+      "title": "JTS CPG Wound_Management_PFC_24_Jul_2017_ID62",
+      "publisher": "Joint Trauma System",
+      "edition": "2017-07-24",
+      "sha256": "aceed85cc5f53616ff181508e4778dcf27f0c257310cd510478b6d2e9c67686f",
+      "origin": "url",
+      "url": "https://jts.health.mil/assets/docs/cpgs/Wound_Management_PFC_24_Jul_2017_ID62.pdf",
+      "licence": "US government work (public domain)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "navy-neets-module-01-matter-energy-and-direct-current-navedtra-14173a",
+      "file": "Navy-NEETS-Module-01-Matter-Energy-and-Direct-Current-NAVEDTRA-14173A.pdf",
+      "title": "NEETS Module 1: Matter, Energy, and Direct Current (NAVEDTRA 14173A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "059df1a69617a337069aa03baf84dc247dbeb7fbb2185d96233e9c7ae93eb0c6",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-02-alternating-current-and-transformers-navedtra-14174a",
+      "file": "Navy-NEETS-Module-02-Alternating-Current-and-Transformers-NAVEDTRA-14174A.pdf",
+      "title": "NEETS Module 2: Introduction to Alternating Current and Transformers (NAVEDTRA 14174A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "c564bd2029c34ccb9091a943297745125ea1a815d416c205c2fdbb1e6e839619",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-03-circuit-protection-control-and-measurement-navedtra-14175a",
+      "file": "Navy-NEETS-Module-03-Circuit-Protection-Control-and-Measurement-NAVEDTRA-14175A.pdf",
+      "title": "NEETS Module 3: Introduction to Circuit Protection, Control, and Measurement (NAVEDTRA 14175A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "f3f12f8dc2ce95ffc519e0f5659a76b1ba244b2ab3de8b88b900af2b8316185c",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-04-conductors-wiring-soldering-and-schematics-navedtra-14176a",
+      "file": "Navy-NEETS-Module-04-Conductors-Wiring-Soldering-and-Schematics-NAVEDTRA-14176A.pdf",
+      "title": "NEETS Module 4: Introduction to Electrical Conductors, Wiring Techniques, and Schematic Reading (NAVEDTRA 14176A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "8aaab4efbc9404bee1437c13755429830b217ad8846770e89140849f9a6ee171",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-07-solid-state-devices-and-power-supplies-navedtra-14179a",
+      "file": "Navy-NEETS-Module-07-Solid-State-Devices-and-Power-Supplies-NAVEDTRA-14179A.pdf",
+      "title": "NEETS Module 7: Introduction to Solid-State Devices and Power Supplies (NAVEDTRA 14179A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "bc68cb805cbdfb3a170407c79caddeb6ec3ad3db50fe9e760601de97f8cd3ef0",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-10-wave-propagation-transmission-lines-and-antennas-navedtra-14182a",
+      "file": "Navy-NEETS-Module-10-Wave-Propagation-Transmission-Lines-and-Antennas-NAVEDTRA-14182A.pdf",
+      "title": "NEETS Module 10: Introduction to Wave Propagation, Transmission Lines, and Antennas (NAVEDTRA 14182A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "10700b200041b437c6ff0f95c20f9950a140f23045debc9740bf0b98ffdfc979",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-16-test-equipment-multimeters-navedtra-14188a",
+      "file": "Navy-NEETS-Module-16-Test-Equipment-Multimeters-NAVEDTRA-14188A.pdf",
+      "title": "NEETS Module 16: Introduction to Test Equipment (NAVEDTRA 14188A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "9447687e0b46f880f6d86530a11b48bb1757e5999665b7f24b196450b76444aa",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-17-radio-frequency-communications-principles-navedtra-14189a",
+      "file": "Navy-NEETS-Module-17-Radio-Frequency-Communications-Principles-NAVEDTRA-14189A.pdf",
+      "title": "NEETS Module 17: Radio-Frequency Communications Principles (NAVEDTRA 14189A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "63c8aaa5fefcae92282f383a6f982460664ec56d6e600589b523d378d2bbfb49",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-19-technicians-handbook-safety-and-tools-navedtra-14191",
+      "file": "Navy-NEETS-Module-19-Technicians-Handbook-Safety-and-Tools-NAVEDTRA-14191.pdf",
+      "title": "NEETS Module 19: The Technician's Handbook (NAVEDTRA 14191)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "a139de1f66b1cbede85c3a97e98fa9f923ab54e51e479d60fc2779dc415ebd7d",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-20-master-glossary-navedtra-14192",
+      "file": "Navy-NEETS-Module-20-Master-Glossary-NAVEDTRA-14192.pdf",
+      "title": "NEETS Module 20: Master Glossary (NAVEDTRA 14192)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "2dd888d7826a6c222894248c291b818d1f92fb74f21072461fd7190b1eaf5c41",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "navy-neets-module-21-test-methods-and-practices-troubleshooting-navedtra-14193a",
+      "file": "Navy-NEETS-Module-21-Test-Methods-and-Practices-Troubleshooting-NAVEDTRA-14193A.pdf",
+      "title": "NEETS Module 21: Test Methods and Practices (NAVEDTRA 14193A)",
+      "publisher": "U.S. Navy",
+      "edition": null,
+      "sha256": "ef450c3d6801bfabfc14ab0ba0afc9c0bfec10d414a7192c616c89365eeab835",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Approved for public release; distribution is unlimited.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "ncvec-technician-question-pool-2026-2030-answers",
+      "file": "NCVEC-Technician-Question-Pool-2026-2030-Answers.md",
+      "title": "Technician Class (Element 2) Question Pool, Keyed Answers",
+      "publisher": "NCVEC Question Pool Committee",
+      "edition": "2026-02-19",
+      "sha256": "9881253080e9210792f1f53e989900d77e06dbede89e472f7ee12ea965c137ad",
+      "origin": "derived",
+      "url": null,
+      "licence": "Released by NCVEC into the public domain.",
+      "tier": "own",
+      "flags": [],
+      "script": "tools/kit-build/ncvec2md.py",
+      "inputs": [
+        "2026\u20132030 Technician Class (Element 2) Question Pool PDF, errata 2026-02-19; pdftotext output.",
+        "https://ncvec.org/index.php/2026-2030-technician-question-pool"
+      ]
+    },
+    {
+      "id": "ncvec-technician-question-pool-2026-2030-diagrams",
+      "file": "NCVEC-Technician-Question-Pool-2026-2030-Diagrams.pdf",
+      "title": "Technician Class (Element 2) Question Pool, Diagrams",
+      "publisher": "NCVEC Question Pool Committee",
+      "edition": "2026-02-19",
+      "sha256": "0b2f636a399100ab42a929328e187cef925d6d50666599ad58aff318cd81147c",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Released by NCVEC into the public domain.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded"
+      ]
+    },
+    {
+      "id": "nih-nccih-chinese-medicine-and-herbs-at-a-glance-2026",
+      "file": "NIH-NCCIH-Chinese-Medicine-and-Herbs-at-a-Glance-2026.md",
+      "title": "Chinese Medicine and Herbs at a Glance",
+      "publisher": "National Center for Complementary and Integrative Health",
+      "edition": "2026",
+      "sha256": "3d00ab895bac96cf587bbea6ddfc1765a73602bb1aa395ef1c5af28fff603133",
+      "origin": "derived",
+      "url": null,
+      "licence": "Public domain; credited photographs omitted.",
+      "tier": "own",
+      "flags": [],
+      "script": "tools/kit-build/nccih.py",
+      "inputs": [
+        "https://www.nccih.nih.gov/health/herbsataglance"
+      ]
+    },
+    {
+      "id": "nwcg-basic-land-navigation-pms-475-2016",
+      "file": "NWCG-Basic-Land-Navigation-PMS-475-2016.pdf",
+      "title": "Basic Land Navigation (PMS 475)",
+      "publisher": "National Wildfire Coordinating Group",
+      "edition": "2016-05",
+      "sha256": "ea958624cc1ae95a71fe479e689ec19ca4459097399b4fbb9468a949442306f4",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "NWCG information is in the public domain, subject to the file's stated exceptions.",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded"
+      ]
+    },
+    {
+      "id": "nwcg-irpg-incident-response-pocket-guide-pms-461-2025",
+      "file": "NWCG-IRPG-Incident-Response-Pocket-Guide-PMS-461-2025.pdf",
+      "title": "Incident Response Pocket Guide (PMS 461)",
+      "publisher": "National Wildfire Coordinating Group",
+      "edition": "2025-01",
+      "sha256": "fe37094a3a7ceb8722cfe49f340757951a76d1122a316892608da2de74f3a92a",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "nws-noaa-weather-radio-same-codes-2026",
+      "file": "NWS-NOAA-Weather-Radio-SAME-Codes-2026.md",
+      "title": "NOAA Weather Radio SAME Codes",
+      "publisher": "National Weather Service",
+      "edition": "2026",
+      "sha256": "3e1771534185f018025543b09e6ef1cc50a06ca7f7d31cf4a8710dd823cf3c7d",
+      "origin": "browser-copy",
+      "url": "https://www.weather.gov/nwr/usingsame",
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [],
+      "inputs": [
+        "https://www.weather.gov/nwr/usingsame",
+        "https://www.weather.gov/nwr/eventcodes",
+        "https://www.weather.gov/source/nwr/SameCode.txt"
+      ]
+    },
+    {
+      "id": "doc-ornl-5037-nuclear-war-survival-skills-1979",
+      "file": "ORNL-5037-Nuclear-War-Survival-Skills-1979.pdf",
+      "title": "ORNL 5037 Nuclear War Survival Skills 1979",
+      "publisher": "Oak Ridge National Laboratory",
+      "edition": "1979",
+      "sha256": "8a101a9f55cc0b6a058985174b1fca2495e767d7cb4a1cb47363f2f798eccad0",
+      "origin": "url",
+      "url": "https://www.osti.gov/servlets/purl/814213",
+      "licence": "US government (ORNL); 1986 additions by C. Kearny may be reproduced full-scale with their notice",
+      "tier": "own",
+      "flags": [
+        "historic"
+      ]
+    },
+    {
+      "id": "peacecorps-backyard-rabbit-production-r0041-2014",
+      "file": "PeaceCorps-Backyard-Rabbit-Production-R0041-2014.pdf",
+      "title": "Backyard Rabbit Production (R0041)",
+      "publisher": "U.S. Peace Corps",
+      "edition": "2014",
+      "sha256": "e3e0e3dfd8ca01cf087e867600af96824d603eecaeeaa9c108ceb4f0cc0ebb68",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded"
+      ]
+    },
+    {
+      "id": "peacecorps-practical-poultry-raising-m0011-2015",
+      "file": "PeaceCorps-Practical-Poultry-Raising-M0011-2015.pdf",
+      "title": "Practical Poultry Raising (M0011)",
+      "publisher": "U.S. Peace Corps",
+      "edition": "2015-05",
+      "sha256": "b32cf43fd6fb2af6f1aa8866905b22c915536c48250722c667dc6ae4dce51fea",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded"
+      ]
+    },
+    {
+      "id": "meshtastic-user-guide-2026-11",
+      "file": "reference/Meshtastic-User-Guide-2026-11.md",
+      "title": "Meshtastic User Guide (kit selection)",
+      "publisher": "Meshtastic project",
+      "edition": "2026-11",
+      "sha256": "97a53fedf223e3ccccd21827e7fdf93781beabaf47ef915a5770698f9002efc9",
+      "origin": "derived",
+      "url": null,
+      "licence": "GPL-3.0.",
+      "tier": "reference",
+      "flags": [
+        "sha256-local-only"
+      ],
+      "script": "tools/kit-build/meshtrim.py",
+      "inputs": [
+        "tools/kit-build/meshdocs.py output from github.com/meshtastic/meshtastic docs, commit 8210e9d"
+      ]
+    },
+    {
+      "id": "uscg-emergency-radio-procedures-placard",
+      "file": "USCG-Emergency-Radio-Procedures-Placard.pdf",
+      "title": "Emergency Radio Procedures Placard",
+      "publisher": "U.S. Coast Guard",
+      "edition": null,
+      "sha256": "3058ad1f912e0c4ef513245d109daf85980b83c283044595a2079d0d4ad453f6",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "uscg-navcen-marine-vhf-channels-2026",
+      "file": "USCG-NAVCEN-Marine-VHF-Channels-2026.md",
+      "title": "Marine VHF Channels",
+      "publisher": "U.S. Coast Guard Navigation Center",
+      "edition": "2026",
+      "sha256": "9a2df260d5b32a515edbd16194b5fb7e9261fbd1b6d22ce299d2056f1553485b",
+      "origin": "browser-copy",
+      "url": "https://www.navcen.uscg.gov/us-vhf-channel-information",
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [],
+      "inputs": [
+        "https://www.navcen.uscg.gov/us-vhf-channel-information",
+        "https://www.navcen.uscg.gov/node/221"
+      ]
+    },
+    {
+      "id": "usda-fb2265-pork-slaughtering-cutting-preserving-cooking-on-the-farm-1981",
+      "file": "USDA-FB2265-Pork-Slaughtering-Cutting-Preserving-Cooking-on-the-Farm-1981.txt",
+      "title": "Pork Slaughtering, Cutting, Preserving, and Cooking on the Farm (FB 2265)",
+      "publisher": "U.S. Department of Agriculture",
+      "edition": "1981",
+      "sha256": "0ee4db74827da468524f8556f0b576f6d33dea6758b1335fc0ccaee112a964ea",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "Public domain.",
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded"
+      ]
+    },
+    {
+      "id": "usda-fsis-meat-food-safety-2026",
+      "file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "title": "Meat and Food Safety Fact Sheets",
+      "publisher": "USDA Food Safety and Inspection Service",
+      "edition": "2026",
+      "sha256": "1ae314ce91625db11c9d6a6cc9e988abe3247c145d5cefed40ad6768ef16960b",
+      "origin": "browser-copy",
+      "url": "https://www.fsis.usda.gov/food-safety/safe-food-handling-and-preparation/",
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "usda-historic-fb1775-homemade-bread-cake-pastry-1942",
+      "file": "USDA-Historic-FB1775-Homemade-Bread-Cake-Pastry-1942.pdf",
+      "title": "Homemade Bread, Cake, and Pastry (FB 1775)",
+      "publisher": "U.S. Department of Agriculture",
+      "edition": "1942",
+      "sha256": "ca562783783a6f16586d1d51cc6655c94620dd8aa3853467af4cc31af46d04ca",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usda-historic-fb2152-slaughtering-cutting-processing-lamb-mutton-1967",
+      "file": "USDA-Historic-FB2152-Slaughtering-Cutting-Processing-Lamb-Mutton-1967.pdf",
+      "title": "Slaughtering, Cutting, and Processing Lamb and Mutton (FB 2152)",
+      "publisher": "U.S. Department of Agriculture",
+      "edition": "1967",
+      "sha256": "21164d45f0a4b3016350c271b7358765de9ef6add949227e87af4c5f0ec1d820",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usda-historic-fb876-making-butter-on-the-farm-1924",
+      "file": "USDA-Historic-FB876-Making-Butter-on-the-Farm-1924.pdf",
+      "title": "Making Butter on the Farm (FB 876)",
+      "publisher": "U.S. Department of Agriculture",
+      "edition": "1924",
+      "sha256": "c3bf03fb82a0d9141bbe989c0645240dd61065d49e3bceac0da6159cb63c90ed",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usda-historic-slaughtering-cutting-processing-beef-on-the-farm-1973",
+      "file": "USDA-Historic-Slaughtering-Cutting-Processing-Beef-on-the-Farm-1973.pdf",
+      "title": "Slaughtering, Cutting, and Processing Beef on the Farm",
+      "publisher": "U.S. Department of Agriculture",
+      "edition": "1973",
+      "sha256": "e62448bd7ff34563a945da80885cdc938de8f51c2bca9fe333514426d02ba521",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usgs-topographic-map-symbols",
+      "file": "USGS-Topographic-Map-Symbols.pdf",
+      "title": "Topographic Map Symbols",
+      "publisher": "U.S. Geological Survey",
+      "edition": null,
+      "sha256": "edb97e137a1831e75f6fddb4971e5e46b9a68cd8ca17ef2c44480b453f49aa59",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "usgs-us-topo-map-symbols",
+      "file": "USGS-US-Topo-Map-Symbols.pdf",
+      "title": "US Topo Map Symbols",
+      "publisher": "U.S. Geological Survey",
+      "edition": null,
+      "sha256": "3c18cade6976ab2b9d424729aa849d347a32f38d2a488887735dc28b20a2ec34",
+      "origin": "owner-download",
+      "url": null,
+      "licence": "U.S. government work (public domain).",
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "edition-unrecorded"
+      ]
+    },
+    {
+      "id": "doc-who-icrc-basic-emergency-care-2018",
+      "file": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "title": "WHO ICRC Basic Emergency Care 2018",
+      "publisher": "World Health Organization and the International Committee of the Red Cross",
+      "edition": "2018",
+      "sha256": "51e5000a8f268d67f28a8206e7b8a35ba7877bec0b45e28084970b074e00043e",
+      "origin": "url",
+      "url": "https://iris.who.int/server/api/core/bitstreams/63432b9f-8808-44c5-9692-cea717c0cbda/content",
+      "licence": "CC BY-NC-SA 3.0 IGO (notice inside the file; keep it with the file)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-who-managing-complications-pregnancy-childbirth-2nd-2017",
+      "file": "WHO-Managing-Complications-Pregnancy-Childbirth-2nd-2017.pdf",
+      "title": "WHO Managing Complications Pregnancy Childbirth 2nd 2017",
+      "publisher": "World Health Organization",
+      "edition": "2017",
+      "sha256": "f472f20b1dd63f0fe5cddb20f43819d498184b58fe1d633474ab0818229a6b09",
+      "origin": "url",
+      "url": "https://iris.who.int/server/api/core/bitstreams/3bda1306-da5d-487d-b2ad-aff995112a7a/content",
+      "licence": "CC BY-NC-SA 3.0 IGO (notice inside the file; keep it with the file)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-who-model-list-essential-medicines-24th-2025",
+      "file": "WHO-Model-List-Essential-Medicines-24th-2025.pdf",
+      "title": "WHO Model List Essential Medicines 24th 2025",
+      "publisher": "World Health Organization",
+      "edition": "2025",
+      "sha256": "69daf7c8399b85978ba85e143d3af34e6ccf7f3d493b1e056daa7ef909d64eb2",
+      "origin": "url",
+      "url": "https://iris.who.int/server/api/core/bitstreams/17642505-ecd3-4940-a691-4f1dfa0d835a/content",
+      "licence": "CC BY-NC-SA 3.0 IGO (notice inside the file; keep it with the file)",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "doc-ornl-6404-simplified-wood-gas-generator-1989",
+      "file": "FEMA-ORNL-6404-Simplified-Wood-Gas-Generator-1989.pdf",
+      "title": "Construction of a Simplified Wood Gas Generator for Fueling Internal Combustion Engines in a Petroleum Emergency (ORNL-6404)",
+      "publisher": "Oak Ridge National Laboratory for the Federal Emergency Management Agency",
+      "edition": "1989-03",
+      "sha256": "bb649c6cf626ab8acd71c2ac4a05c9661003110522b230e89a7566b4738ece74",
+      "origin": "url",
+      "url": "https://www.osti.gov/servlets/purl/6054362",
+      "licence": "US government work; approved for public release, distribution unlimited",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "army-tm-3-34-46-electrical-systems",
+      "title": "Theater of Operations Electrical Systems (TM 3-34.46)",
+      "edition": "2013-05-03",
+      "url": "https://armypubs.army.mil/epubs/DR_pubs/DR_a/pdf/web/tm3_34x46.pdf",
+      "file": "army-tm-3-34-46-electrical-systems.pdf",
+      "origin": "url",
+      "publisher": "Department of the Army and U.S. Marine Corps",
+      "licence": "\u201cApproved for public release; distribution is unlimited.\u201d",
+      "tier": "own",
+      "flags": [],
+      "sha256": "f1e1d9991aa56e4de6377bd1fd331907558f03ab36007101f43ef2f901beda79"
+    },
+    {
+      "id": "cpsc-5123-portable-generator-hazards",
+      "title": "CPSC Safety Alert: Portable Generator Hazards (Publication 5123)",
+      "edition": "2021-10",
+      "url": "https://www.cpsc.gov/s3fs-public/5123_SafetyAlert_PortableGenerators_102021.pdf?VersionId=3D.6KZkXcpeiyriLmSswrdnVQI4JERoN",
+      "file": "cpsc-5123-portable-generator-hazards.pdf",
+      "origin": "url",
+      "publisher": "U.S. Consumer Product Safety Commission",
+      "licence": "Federal CPSC public safety publication. No separate licence statement printed.",
+      "tier": "own",
+      "flags": [],
+      "sha256": "e0d63358b2c45b5b6250cb43173113e406b71d49a4bd557e60130dae8ec2ad36"
+    },
+    {
+      "id": "doe-residential-renewable-energy",
+      "file": "DOE-Consumer-Guide-Residential-Renewable-Energy-2022.pdf",
+      "url": "https://www.energy.gov/sites/default/files/2022-08/ES-ConsumerGuide-Residential-Renewable-Energy.pdf",
+      "origin": "url",
+      "sha256": "755756b0209f14ab451f454277f830a920509e4e253c581faa06616b6bdf51c0",
+      "title": "Energy Saver Consumer Guide to Residential Renewable Energy",
+      "publisher": "U.S. Department of Energy",
+      "edition": "2022-08",
+      "licence": "No separate notice in PDF. DOE Web Policies: \u201cGovernment information at DOE websites is in the public domain.\u201d",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "epa-burn-wise-practices",
+      "title": "Best Wood-Burning Practices",
+      "edition": "2026-10-13",
+      "url": "https://www.epa.gov/burnwise/best-wood-burning-practices",
+      "file": "EPA-Burn-Wise-Best-Wood-Burning-Practices-Historic.md",
+      "origin": "derived",
+      "publisher": "U.S. Environmental Protection Agency",
+      "licence": "U.S. Environmental Protection Agency. \u201cThese documents may be freely distributed and used for non-commercial, scientific and educational purposes.\u201d",
+      "tier": "own",
+      "flags": [
+        "historic"
+      ],
+      "sha256": "13f503efa1705b4444341762104320d5a11dca8be07910f369726b7f66356b43",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://www.epa.gov/burnwise/best-wood-burning-practices",
+        "SHA-256 7d94daee36f4c46bffdbba715e6e7fc307f3c9c46ed2b0b967148a931d0b5bdc",
+        "root id main"
+      ]
+    },
+    {
+      "id": "epa-burn-wise-tips",
+      "title": "Burn Wise Tips",
+      "edition": "2010-12",
+      "url": "https://www.epa.gov/sites/default/files/documents/burnwisetips.pdf",
+      "file": "EPA-Burn-Wise-Tips-2010-Historic.pdf",
+      "origin": "url",
+      "publisher": "U.S. Environmental Protection Agency",
+      "licence": "U.S. Environmental Protection Agency. \u201cThese documents may be freely distributed and used for non-commercial, scientific and educational purposes.\u201d",
+      "tier": "own",
+      "flags": [
+        "historic"
+      ],
+      "sha256": "f51809702ee45408088cf125acbe83a0dc8ff163175b23fe3bf878c1dec7f8c2"
+    },
+    {
+      "id": "epa-household-wells-2002",
+      "file": "EPA-Drinking-Water-from-Household-Wells-EPA816-K-02-003-2002.pdf",
+      "title": "Drinking Water From Household Wells",
+      "publisher": "U.S. Environmental Protection Agency",
+      "edition": "2002-01",
+      "sha256": "d025d17bb11f5fd3c878949676e4b8dceb00b48f7e50c4811943bc0ebeb1bc8f",
+      "origin": "url",
+      "url": "https://www.epa.gov/sites/default/files/2015-10/documents/2003_06_03_privatewells_pdfs_household_wells.pdf",
+      "licence": "EPA site terms: \u201cThese documents may be freely distributed and used for non-commercial, scientific and educational purposes.\u201d Cover photo credit Charlene E. Shaw, U.S. Environmental Protection Agency.",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "fda-disaster-insulin",
+      "title": "Information Regarding Insulin Storage and Switching Between Products in an Emergency",
+      "edition": "2026-09-28",
+      "url": "https://www.fda.gov/drugs/emergency-preparedness-drugs/information-regarding-insulin-storage-and-switching-between-products-emergency",
+      "file": "FDA-Insulin-Storage-Switching-Emergency.md",
+      "origin": "derived",
+      "publisher": "U.S. Food and Drug Administration",
+      "licence": "U.S. Food and Drug Administration. FDA Website Policies: \u201cThey are in the public domain and may be republished, reprinted and otherwise used freely by anyone.\u201d Source copied November 26, 2026.",
+      "tier": "own",
+      "flags": [],
+      "sha256": "80468c2a0a0b4813dbd0f7bb0f869f0ece7eaa05312f2e259c20bb5049730790",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://www.fda.gov/drugs/emergency-preparedness-drugs/information-regarding-insulin-storage-and-switching-between-products-emergency",
+        "SHA-256 621719f1d301be863c91ffd0c6bf0842a3bdfe17e277c7e6e2ce4637f35cf61a",
+        "root id main-content"
+      ]
+    },
+    {
+      "id": "fda-disaster-drugs",
+      "title": "Safe Drug Use After a Natural Disaster",
+      "edition": "2026-09-01",
+      "url": "https://www.fda.gov/drugs/emergency-preparedness-drugs/safe-drug-use-after-natural-disaster",
+      "file": "FDA-Safe-Drug-Use-After-Natural-Disaster.md",
+      "origin": "derived",
+      "publisher": "U.S. Food and Drug Administration",
+      "licence": "U.S. Food and Drug Administration. FDA Website Policies: \u201cThey are in the public domain and may be republished, reprinted and otherwise used freely by anyone.\u201d Source copied November 26, 2026.",
+      "tier": "own",
+      "flags": [],
+      "sha256": "4b2500f8379bcbb6156c2956ce1dc4372c1348d54ace4d8d3f47939db0b5919e",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://www.fda.gov/drugs/emergency-preparedness-drugs/safe-drug-use-after-natural-disaster",
+        "SHA-256 075ccfbc97142ded319dffabf866df7cffc70b46690017300b930c4ba1fbc67c",
+        "root id main-content"
+      ]
+    },
+    {
+      "id": "chemm-salt-2026",
+      "title": "SALT Mass Casualty Triage Algorithm",
+      "edition": null,
+      "url": "https://chemm.hhs.gov/incident-primer/triage/salt-triage",
+      "file": "HHS-CHEMM-SALT-Triage-2026.md",
+      "origin": "derived",
+      "publisher": "U.S. Department of Health and Human Services / ASPR CHEMM",
+      "licence": "Source: CHEMM: Chemical Hazards Emergency Medical Management (U.S. Department of Health and Human Services). Government-authored text. Publisher notice: \u201cfreely used or reproduced without permission in the U.S.\u201d",
+      "tier": "own",
+      "flags": [],
+      "sha256": "3628f498845a16ca7eccbf67159437b73189dde7b2f2d2735ead9a71c96f748c",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://chemm.hhs.gov/incident-primer/triage/salt-triage",
+        "SHA-256 3df151b42156f9da49eeb2b75346e8caa55f9df401818b80a7a582c02cec8997",
+        "root id main"
+      ]
+    },
+    {
+      "id": "chemm-start-2026",
+      "title": "START Adult Triage Algorithm",
+      "edition": null,
+      "url": "https://chemm.hhs.gov/incident-primer/triage/start-triage",
+      "file": "HHS-CHEMM-START-Triage-2026.md",
+      "origin": "derived",
+      "publisher": "U.S. Department of Health and Human Services / ASPR CHEMM",
+      "licence": "Source: CHEMM: Chemical Hazards Emergency Medical Management (U.S. Department of Health and Human Services). Government-authored text. Publisher notice: \u201cfreely used or reproduced without permission in the U.S.\u201d",
+      "tier": "own",
+      "flags": [],
+      "sha256": "3c81fb06da15509bd1d6beb557d4a5bab4a127c60cc3cbde5bd2006b3e859fd5",
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://chemm.hhs.gov/incident-primer/triage/start-triage",
+        "SHA-256 52cb7f610960067fa4ddd392b4f4fb2df0cd4e449a67239a03d14d54f68900bc",
+        "root id main"
+      ]
+    },
+    {
+      "id": "nchfp-drying",
+      "file": "NCHFP-Drying.md",
+      "url": "https://nchfp.uga.edu/how/dry/",
+      "origin": "derived",
+      "sha256": "a9c209fbbac0e29aee8b01db35d24ec1bb4baa0b989d17dd8b79f5b6da405731",
+      "title": "Drying",
+      "publisher": "National Center for Home Food Preservation, University of Georgia",
+      "edition": null,
+      "licence": "From the National Center for Home Food Preservation website, University of Georgia. Publisher disclaimer: \u201cmay be printed and copied for not-for-profit personal and educational use.\u201d",
+      "tier": "own",
+      "flags": [
+        "noncommercial-with-credit"
+      ],
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://nchfp.uga.edu/how/dry/",
+        "SHA-256 7af840de65ddcd552a55b018cf2cd34e37748e0f330197e327c29f2b1c37a7b0",
+        "root class section__content"
+      ]
+    },
+    {
+      "id": "nchfp-fermenting",
+      "file": "NCHFP-Fermenting.md",
+      "url": "https://nchfp.uga.edu/how/ferment/",
+      "origin": "derived",
+      "sha256": "4a73d27c1546fa041260b4e915de0c8d6759a8ae55d64962b836307422713c20",
+      "title": "Fermenting",
+      "publisher": "National Center for Home Food Preservation, University of Georgia",
+      "edition": null,
+      "licence": "From the National Center for Home Food Preservation website, University of Georgia. Publisher disclaimer: \u201cmay be printed and copied for not-for-profit personal and educational use.\u201d",
+      "tier": "own",
+      "flags": [
+        "noncommercial-with-credit"
+      ],
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://nchfp.uga.edu/how/ferment/",
+        "SHA-256 9bd5b28da6ddabb71cf26e09460e345978e0b2b09e4dffcb0176636cc02c75ff",
+        "root class section__content"
+      ]
+    },
+    {
+      "id": "nist-sp-811-si",
+      "file": "NIST-SP-811-Guide-to-SI-2008.pdf",
+      "url": "https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication811e2008.pdf",
+      "origin": "url",
+      "sha256": "788dd8f0bcb0ec06e40c300690266742532a7e760a93be57764b77ed0ef3482f",
+      "title": "Guide for the Use of the International System of Units (SI)",
+      "publisher": "National Institute of Standards and Technology",
+      "edition": "2008",
+      "licence": "No separate notice in PDF. NIST Library FAQ: \u201cpublications of the Federal government, are in the public domain\u201d",
+      "tier": "own",
+      "flags": [
+        "historical-si-definitions"
+      ]
+    },
+    {
+      "id": "nws-cloud-chart",
+      "file": "NOAA-NWS-Cloudwise-Cloud-Chart.pdf",
+      "url": "https://www.weather.gov/media/owlie/cloud_chart.pdf",
+      "origin": "url",
+      "sha256": "cd6baa797f52a10028cb6fd573ce016fd69696e164cca0f11813f7b4247b0117",
+      "title": "NOAA Cloudwise Cloud Chart",
+      "publisher": "National Oceanic and Atmospheric Administration / National Weather Service",
+      "edition": "2022",
+      "licence": "NOAA/NWS public-domain notice: \u201cThe information on National Weather Service (NWS) Web pages are in the public domain, unless specifically noted otherwise.\u201d",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "peacecorps-r0025-2014",
+      "file": "Peace-Corps-R0025-Intensive-Vegetable-Gardening-2014.pdf",
+      "title": "Intensive Vegetable Gardening for Profit and Self-Sufficiency",
+      "publisher": "Peace Corps",
+      "edition": "2014",
+      "sha256": "473da0db754e40087d4d221ca6a2dddc7c7f1bf462a6ad092444231f46b28122",
+      "origin": "url",
+      "url": "https://files.peacecorps.gov/documents/R0025-Intensive-Vegetable-Gardening.pdf",
+      "licence": "Peace Corps publisher policy: \u201cUnless otherwise indicated, information on the Peace Corps website is in the public domain and may be copied and distributed without permission.\u201d",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "peacecorps-t0020-1984",
+      "file": "Peace-Corps-T0020-Improved-Food-Drying-and-Storage-1984.pdf",
+      "title": "Improved Food Drying and Storage: A Training Manual",
+      "publisher": "Peace Corps",
+      "edition": "1984-09",
+      "sha256": "6a7dd759df14aac63912e0dbc40e1d9488cd6a4b18faf225e3f0c0cfc864a17f",
+      "origin": "url",
+      "url": "https://files.peacecorps.gov/documents/T0020_Improved-Food-Drying-and-Storage.pdf",
+      "licence": "\u201cThis manual may be reproduced and/or translated in part or in full without payment or royalty. Please give standard acknowledgment.\u201d Credit Peace Corps Information Collection and Exchange.",
+      "tier": "own",
+      "flags": [
+        "historic"
+      ]
+    },
+    {
+      "id": "pnnl-pv-battery-power-outages",
+      "file": "PNNL-PV-Battery-Storage-for-Power-Outages-2021.md",
+      "url": "https://basc.pnnl.gov/information/pv-battery-storage-power-outages",
+      "origin": "derived",
+      "sha256": "3c97079ede665d536086284c0d307bc3968909429bba33ba7958bd3d32e901ba",
+      "title": "PV Battery Storage for Power Outages",
+      "publisher": "Pacific Northwest National Laboratory and U.S. Department of Energy",
+      "edition": "2021-09-29",
+      "licence": "Pacific Northwest National Laboratory, Building America Solution Center. Publisher\u2019s criteria state \u201cunlimited download and use by all users of the Building America Solution Center.\u201d",
+      "tier": "own",
+      "flags": [],
+      "script": "tools/kit-build/webtext.py",
+      "inputs": [
+        "https://basc.pnnl.gov/information/pv-battery-storage-power-outages",
+        "SHA-256 a82f24e24ad52327cc05719c4eba3b43db323c31481ed274a51cac1b6da13cbd",
+        "root class information-guide"
+      ]
+    },
+    {
+      "id": "uf-ifas-enh1383-2024",
+      "file": "UF-IFAS-ENH1383-Seed-Saving-2024.pdf",
+      "title": "A Beginner\u2019s Guide to Producing and Saving Open-Pollinated Seeds for North Florida Farmers and Gardeners",
+      "publisher": "UF/IFAS Extension",
+      "edition": "2024-12",
+      "sha256": "0e78755e99fd4b069b666440630e48586b09f0c3a0025e97230e4eef1d553613",
+      "origin": "url",
+      "url": "https://ask.ifas.ufl.edu/publication/EP647.pdf",
+      "licence": "\u201c\u00a9 2024 UF/IFAS. This publication is licensed under CC BY-NC-ND 4.0\u201d \u2014 Tere Davidson, Melissa DeSa, and H\u00e9ctor E. P\u00e9rez. File preserved unchanged.",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "uscg-boaters-guide",
+      "file": "USCG-Boaters-Guide-Federal-Requirements-2023.pdf",
+      "url": "https://www.uscgboating.org/assets/1/AssetManager/Boaters-Guide-to-Federal-Requirements-for-Receational-Boats-20231108.pdf",
+      "origin": "url",
+      "sha256": "8379d7ad2af3f2f997a621f76bd31609c3da1e872163c52ee6c2bcdc43865a4b",
+      "title": "A Boater's Guide to the Federal Requirements for Recreational Boats",
+      "publisher": "U.S. Coast Guard Boating Safety Division",
+      "edition": "2023-11",
+      "licence": "No separate notice in PDF. U.S. Coast Guard federal work; print cover identifies the Boating Safety Division.",
+      "tier": "own",
+      "flags": []
+    },
+    {
+      "id": "fema-nims-doctrine-2017",
+      "file": "FEMA-National-Incident-Management-System-Third-Edition-2017.pdf",
+      "sha256": "5496c912f312ffac5547ede249e9aec590ec2d176c260d243cdb6391ed702930",
+      "origin": "url",
+      "url": "https://preptoolkit.fema.gov/documents/4461741/40222908/National%2BIncident%2BManagement%2BSystem%2B%28NIMS%29%2C%2BThird%2BEdition%2C%2BOctober%2B2017..pdf/3a7ecaef-c85e-a612-a94d-eb27d89abf0b?download=true&t=1675369752086",
+      "title": "National Incident Management System, third edition",
+      "publisher": "Federal Emergency Management Agency",
+      "edition": "2017-10",
+      "tier": "own",
+      "licence": "U.S. government work. Issued by FEMA with no separate rights or limited distribution notice.",
+      "flags": []
+    },
+    {
+      "id": "congress-constitution-annotated-2022",
+      "file": "GPO-Constitution-Annotated-2022.pdf",
+      "url": "https://www.govinfo.gov/content/pkg/GPO-CONAN-2022/pdf/GPO-CONAN-2022.pdf",
+      "title": "Constitution Annotated",
+      "edition": "2022",
+      "publisher": "U.S. Government Publishing Office",
+      "tier": "own",
+      "flags": [],
+      "sha256": "dfd74f8593e1b11fe8eba814333433801d72c91be2d7ca7b4fa651a2d1a9d913",
+      "origin": "url",
+      "licence": "U.S. government work. Front matter identifies the U.S. Government Publishing Office."
+    },
+    {
+      "id": "congress-constitution-annotated-2024-supplement",
+      "file": "GPO-Constitution-Annotated-2024-Supplement.pdf",
+      "url": "https://constitution.congress.gov/static/files/GPO-CONAN-2024-SUPP.pdf",
+      "title": "Constitution Annotated, 2024 supplement",
+      "edition": "2024",
+      "publisher": "U.S. Government Publishing Office",
+      "tier": "own",
+      "flags": [],
+      "sha256": "2a65274769583fc3b445d02c918bdde9f06a39b45ba2fe13686fae4cead8d34f",
+      "origin": "url",
+      "licence": "U.S. government work. Front matter identifies the U.S. Government Publishing Office."
+    },
+    {
+      "id": "idaho-constitution",
+      "file": "Idaho-Legislature-Constitution.md",
+      "sha256": "768115bf5050ead4e7237adc109487cdd9979b654c3b5635002fb79540d2eea1",
+      "title": "Constitution of the State of Idaho",
+      "publisher": "Idaho State Legislature",
+      "edition": "2026-11-26",
+      "origin": "derived",
+      "tier": "own",
+      "flags": [],
+      "licence": "Public-domain constitutional text. Transcription credited to the Idaho State Legislature.",
+      "inputs": [
+        "url:https://legislature.idaho.gov/statutesrules/idconst/",
+        "source-inventory-sha256:95b2850da9e13a80d26a4a005151d78bd345646f89d0a96fe4c1eea7e1ce827a",
+        "script:tools/kit-build/webtext.py"
+      ],
+      "url": null,
+      "script": "tools/kit-build/legaltext.py"
+    },
+    {
+      "id": "nara-articles-of-confederation",
+      "file": "NARA-Articles-of-Confederation-1777.md",
+      "sha256": "cb123e27803aad8e6ffb1f6ceaccea69e74381279f7528dfc8c4c1c7ebfb8160",
+      "origin": "derived",
+      "title": "Articles of Confederation (1777)",
+      "publisher": "U.S. National Archives and Records Administration",
+      "edition": "1777-11-15",
+      "tier": "own",
+      "flags": [],
+      "licence": "Public-domain founding document. Transcription credited to the U.S. National Archives.",
+      "inputs": [
+        "url:https://www.archives.gov/milestone-documents/articles-of-confederation sha256:0a994a459d7686048873f4ad114d4ad2289e832e66e2d15e1f016a40dd3184aa",
+        "script:tools/kit-build/webtext.py",
+        "selector:nara confederation"
+      ],
+      "url": null,
+      "script": "tools/kit-build/legaltext.py"
+    },
+    {
+      "id": "nara-bill-of-rights",
+      "file": "NARA-Bill-of-Rights-1791.md",
+      "sha256": "ea854d30a55a2569492fe05285a889c8e6a5c64afa4f9f6149942e4c2f174ebc",
+      "origin": "derived",
+      "title": "The Bill of Rights: A Transcription",
+      "publisher": "U.S. National Archives and Records Administration",
+      "edition": "1791-12-15",
+      "tier": "own",
+      "flags": [],
+      "licence": "Public-domain founding document. Transcription credited to the U.S. National Archives.",
+      "inputs": [
+        "url:https://www.archives.gov/founding-docs/bill-of-rights-transcript sha256:43a8e162e0550406d3d952d9cefa8e3a5bd0b43bd09b908819cfb71620ab9b6d",
+        "script:tools/kit-build/webtext.py",
+        "selector:nara amendments-1-10"
+      ],
+      "url": null,
+      "script": "tools/kit-build/legaltext.py"
+    },
+    {
+      "id": "nara-declaration",
+      "file": "NARA-Declaration-of-Independence-1776.md",
+      "sha256": "ed5f01cebb15c84d5007b9112da7ed4b32a768ef85d16e67f96a4eaf9c86e85b",
+      "origin": "derived",
+      "title": "Declaration of Independence: A Transcription",
+      "publisher": "U.S. National Archives and Records Administration",
+      "edition": "1776-07-04",
+      "tier": "own",
+      "flags": [],
+      "licence": "Public-domain founding document. Transcription credited to the U.S. National Archives.",
+      "inputs": [
+        "url:https://www.archives.gov/founding-docs/declaration-transcript sha256:01915d46b1e51d1ec47599b13954bc6bbc87b35f44e0667f615901bbf872a059",
+        "script:tools/kit-build/webtext.py",
+        "selector:nara declaration"
+      ],
+      "url": null,
+      "script": "tools/kit-build/legaltext.py"
+    },
+    {
+      "id": "nara-constitution",
+      "file": "NARA-US-Constitution-1787.md",
+      "sha256": "505a46fe994679089c62097963219da874bcf5c6ff717cc3919dc8ddec82468b",
+      "origin": "derived",
+      "title": "The Constitution of the United States: A Transcription",
+      "publisher": "U.S. National Archives and Records Administration",
+      "edition": "1787-09-17",
+      "tier": "own",
+      "flags": [],
+      "licence": "Public-domain founding document. Transcription credited to the U.S. National Archives.",
+      "inputs": [
+        "url:https://www.archives.gov/founding-docs/constitution-transcript sha256:ca51d4bd2925cf73b46fddb30787259c945da2fc867d75a61bb2e91de51a1d79",
+        "script:tools/kit-build/webtext.py",
+        "selector:nara constitution"
+      ],
+      "url": null,
+      "script": "tools/kit-build/legaltext.py"
+    },
+    {
+      "id": "nara-amendments-11-27",
+      "file": "NARA-US-Constitution-Amendments-11-27.md",
+      "sha256": "fab6c60dd90b4d158bcf5f6185aeb3edd4e193a945847932d23c1815dd4f47e5",
+      "origin": "derived",
+      "title": "The Constitution: Amendments 11\u201327",
+      "publisher": "U.S. National Archives and Records Administration",
+      "edition": "1992-05-07",
+      "tier": "own",
+      "flags": [],
+      "licence": "Public-domain founding document. Transcription credited to the U.S. National Archives.",
+      "inputs": [
+        "url:https://www.archives.gov/founding-docs/amendments-11-27 sha256:62c5deaffe37ffb5b6fab72661531bc803708f1178ddaa9848749b83ea0edb89",
+        "script:tools/kit-build/webtext.py",
+        "selector:nara amendments-11-27"
+      ],
+      "url": null,
+      "script": "tools/kit-build/legaltext.py"
+    },
+    {
+      "id": "un-universal-declaration-human-rights",
+      "file": "United-Nations-Universal-Declaration-of-Human-Rights.pdf",
+      "url": "https://www.un.org/sites/un2.un.org/files/2021/03/udhr.pdf",
+      "title": "Universal Declaration of Human Rights",
+      "edition": "1948-12-10",
+      "publisher": "United Nations General Assembly",
+      "tier": "own",
+      "flags": [],
+      "sha256": "366eebb50e4cf32e7db54cc1eaedaa001438c35114274a5e2de2e959ad6888cd",
+      "origin": "url",
+      "licence": "Official text of United Nations General Assembly Resolution 217 A (III). Public domain under UN Publications Manual \u00a75.35(c)."
+    },
+    {
+      "id": "federal-rules-civil-procedure",
+      "file": "USCourts-Federal-Rules-of-Civil-Procedure-2025.pdf",
+      "url": "https://www.uscourts.gov/sites/default/files/document/federal-rules-of-civil-procedure.pdf",
+      "title": "Federal Rules of Civil Procedure",
+      "edition": "2025-12-01",
+      "publisher": "U.S. House Judiciary Committee",
+      "tier": "own",
+      "flags": [],
+      "sha256": "bd8705fc038d87e4fe222a7ea2e4324222c9430e2373fce56826bd2dfa2f8baf",
+      "origin": "url",
+      "licence": "U.S. government work. Front matter identifies the U.S. Government Publishing Office."
+    },
+    {
+      "id": "federal-rules-criminal-procedure",
+      "file": "USCourts-Federal-Rules-of-Criminal-Procedure-2025.pdf",
+      "url": "https://www.uscourts.gov/sites/default/files/document/federal-rules-of-criminal-procedure.pdf",
+      "title": "Federal Rules of Criminal Procedure",
+      "edition": "2025-12-01",
+      "publisher": "U.S. House Judiciary Committee",
+      "tier": "own",
+      "flags": [],
+      "sha256": "f1f7f98b64160e9174bca974d2bef2b06aaf949b9bfe9dba475d9d03710c689c",
+      "origin": "url",
+      "licence": "U.S. government work. Front matter identifies the U.S. Government Publishing Office."
+    },
+    {
+      "id": "federal-rules-evidence",
+      "file": "USCourts-Federal-Rules-of-Evidence-2025.pdf",
+      "url": "https://www.uscourts.gov/sites/default/files/document/federal-rules-of-evidence.pdf",
+      "title": "Federal Rules of Evidence",
+      "edition": "2025-12-01",
+      "publisher": "U.S. House Judiciary Committee",
+      "tier": "own",
+      "flags": [],
+      "sha256": "f6876184ae53b0e268cd5688e5bd7dba768ce15b12f5cfbb7ba6db0650de4ad1",
+      "origin": "url",
+      "licence": "U.S. government work. Front matter identifies the U.S. Government Publishing Office."
+    },
+    {
+      "id": "usfs-one-moving-part-use",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 11a, Using an Ax",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Chapter-11a.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part11a_UsingAnAx.pdf",
+      "sha256": "d8501cc921ecb5426e5e142c1a1386d55418c34d226d273cec43281a6c7e5678",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part0000",
+      "title": "One Moving Part: The Forest Service Ax Manual, Rear covers",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part0000_RearCovers.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part0000_RearCovers.pdf",
+      "sha256": "45432bf7e7a9b4d24e69f9c9acee381afdf986af76ad4118402824d3ef5ad1ab",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part01",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 1, Introduction",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part01_Intro.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part01_Intro.pdf",
+      "sha256": "110df40c1465ab963c1dde76dd4d76f553bbfce4bfb1d145403360413c2e4a52",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part02",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 2, The Ax in the Forest Service",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part02-FS-Relevance-Safety.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part02_FS%20Relevance+Safety.pdf",
+      "sha256": "9d76c20b2c95d5d5f71cedd7fa41e4bfe9e4a3bae3c3079cd63e4ad824ce341e",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part04",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 4, Anatomy of an Ax",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part04_Anatomy.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part04_Anatomy.pdf",
+      "sha256": "59810d0d85f83ecf3fc28cb197d01d110c95670afdf9bc4da8d735e54cfd2382",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part05",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 5, Types of Axes and Related Tools",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part05_Types.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part05_Types.pdf",
+      "sha256": "369985fe8219f2c8568818b46d84935a556a368b06a805df69bf20481c229f61",
+      "flags": [],
+      "licence": "U.S. government work. Quotation dated 1923 is in the U.S. public domain."
+    },
+    {
+      "id": "usfs-one-moving-part-part06",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 6, Selecting the Right Ax for You",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part06_SelectingAnAx.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part06_SelectingAnAx.pdf",
+      "sha256": "c9c9d6e81c37b5ef683247e5a112b25d55861ad4da75f6aa4ba465647ce5a800",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part07",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 7, Files and Filing Basics",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part07_Files.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part07_Files.pdf",
+      "sha256": "6f03322222aa7c92b2105f8e652c4195f0c29d6601e915cea02a335a2c201ea2",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part08",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 8, Sharpening and Shaping an Ax Head",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part08_Sharpening.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part08_Sharpening.pdf",
+      "sha256": "2daa9aa13586a3feda2fe74c678503bf896ffd25ea44489fd54176d9b8269cd2",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part09",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 9, Reshaping or Replacing an Ax Handle",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part09_ReplacingHandles.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part09_ReplacingHandles.pdf",
+      "sha256": "ce136e9afead7cfed97775ef266973312228874cfe4190a9a4ec0cd6471364ba",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part10",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 10, Hanging an Ax",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part10_HangingAnAx.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part10_HangingAnAx.pdf",
+      "sha256": "6cad48b23e5f3e6c8d1a9208a150b4a236a413986e7a3e06dbcc24cb4eb57e8c",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part12",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 12, Maintaining an Ax",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part12_MaintainingAnAx.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part12_MaintainingAnAx.pdf",
+      "sha256": "cb2a3ad19507d41922644f40851f1aa769b2ab0839bd4206b3144e7cdaa2e62d",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part14",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 14, Conclusion and Resources",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part14_Conclusion+Resources-new.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part14_Conclusion+Resources-new.pdf",
+      "sha256": "37ad0d0a05a6560b8a8722efb2fd24269ad2b3678b8fe2f41a4cf397bae02d67",
+      "flags": [],
+      "licence": "U.S. government work. No separately credited private material identified in this part."
+    },
+    {
+      "id": "usfs-one-moving-part-part15",
+      "title": "One Moving Part: The Forest Service Ax Manual, Chapter 15, Appendixes",
+      "publisher": "USDA Forest Service",
+      "edition": "2020-10",
+      "origin": "url",
+      "tier": "own",
+      "file": "USFS-One-Moving-Part-2020-Part15_Appendixes.pdf",
+      "url": "https://www.fs.usda.gov/t-d/pubs/pdfpubs/pdf18232812P/Part15_Appendixes.pdf",
+      "sha256": "5a6502127d0a25095fd9d7891c2a8371526fa68b860ae3b172599ee96b0e1063",
+      "flags": [],
+      "licence": "U.S. government work. Appendix A posters credit the USDA Forest Service."
+    },
+    {
+      "id": "atak-civ-icon-glossary-2024",
+      "file": "ATAK-CIV-Icon-Glossary-v5.5-2024.pdf",
+      "title": "ATAK Supplemental Icon Glossary",
+      "publisher": "TAK Product Center",
+      "edition": "2024-11-18",
+      "sha256": "f5d512bdf04a75e96fe51564bd7011ccaa45e3531eebd780a4e61b8fae2aa298",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "owner-copy-rights-unconfirmed",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usfs-field-guide-forest-plants-rmrs-gtr-118",
+      "file": "Field-Guide-Forest-Plants-Northern-Idaho-RMRS-GTR-118.pdf",
+      "title": "Field Guide to Forest Plants of Northern Idaho",
+      "publisher": "USDA Forest Service, Rocky Mountain Research Station",
+      "edition": "2004",
+      "sha256": "40f29334c44f406660a6ad456a41e19a1fd8f0352514c903644cd1c180d83307",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "historic",
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "idfg-big-game-seasons-rules-2026",
+      "file": "Idaho-Big-Game-Seasons-Rules-2026.pdf",
+      "title": "Idaho Big Game, 2026 Seasons and Rules",
+      "publisher": "Idaho Department of Fish and Game",
+      "edition": "2026-07",
+      "sha256": "feb85a9c8741a72a1aeb40462cceaa391e8d1849df3604fdaa156a07d5494520",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "idfg-fishing-seasons-rules-2025-2027",
+      "file": "Idaho-Fishing-Seasons-Rules-2025-2027.pdf",
+      "title": "Idaho Fishing, 2025\u20132027 Seasons and Rules, second edition",
+      "publisher": "Idaho Department of Fish and Game",
+      "edition": "2026",
+      "sha256": "540ae4ddaa0d1f46a4fefbd54f1d5fa9b62a8037b44322469a799121055b0e42",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "idfg-migratory-game-bird-2026-2027",
+      "file": "Idaho-Migratory-Game-Bird-2026-2027.pdf",
+      "title": "Idaho Migratory Game Bird, 2026\u20132027 Seasons and Rules",
+      "publisher": "Idaho Department of Fish and Game",
+      "edition": "2026",
+      "sha256": "0a85df7986a19ad6bc0acd4504d142724e2d307ba789c1ededf0228162f7949b",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "idfg-moose-sheep-goat-2025-2026",
+      "file": "Idaho-Moose-Sheep-Goat-2025-2026.pdf",
+      "title": "Idaho Moose, Bighorn Sheep and Mountain Goat, 2025 and 2026 Seasons and Rules",
+      "publisher": "Idaho Department of Fish and Game",
+      "edition": "2026-03",
+      "sha256": "a179b77405b7a6741ab242a91cd1d6b7af40e2c56d0fe4062c6a8823fd96d532",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usfs-special-forest-products-pnw-gtr-513",
+      "file": "Special-Forest-Products-Pacific-Northwest-PNW-GTR-513.pdf",
+      "title": "Special Forest Products: Species Information Guide for the Pacific Northwest",
+      "publisher": "USDA Forest Service, Pacific Northwest Research Station",
+      "edition": "2001",
+      "sha256": "cbf35f8b1894bc751c56e3bc62721a6df400442f04e4ab58965abbca27d93f8d",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usda-complete-guide-home-canning-2015",
+      "file": "USDA-Complete-Guide-to-Home-Canning-2015.pdf",
+      "title": "Complete Guide to Home Canning, Agriculture Information Bulletin No. 539",
+      "publisher": "USDA National Institute of Food and Agriculture",
+      "edition": "2015",
+      "sha256": "82014af73d1d5283ed1a711f7d0940e72a7ea9a10d0c0c4551bc79a1f4092028",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    },
+    {
+      "id": "usfs-wild-edible-mushrooms-pnw-gtr-393",
+      "file": "Wild-Edible-Mushrooms-Blue-Mountains-PNW-GTR-393.pdf",
+      "title": "Wild Edible Mushrooms in the Blue Mountains: Resource and Issues",
+      "publisher": "USDA Forest Service, Pacific Northwest Research Station",
+      "edition": "1997-01",
+      "sha256": "774284cd6d8b9293238d090536682c30b692079bd420b7cc5f1416ebf94dc2f2",
+      "origin": "owner-download",
+      "url": null,
+      "licence": null,
+      "tier": "own",
+      "flags": [
+        "source-url-unrecorded",
+        "licence-unconfirmed"
+      ]
+    }
+  ]
+}

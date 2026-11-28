@@ -1,0 +1,8 @@
+# Put companion app .apk files, a .litertlm model and .zim files here for tools\provision.ps1.
+# Managed kit assets and generated outputs stay local.
+*
+!.gitignore
+!/sources.json
+!/sources.schema.json
+!/kit.py
+!/test_kit.py

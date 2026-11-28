@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- INTERNET is declared for ONE purpose (owner decision 2026-11-22): the connection to
+         the Meshtastic app's local TAK server on this phone (127.0.0.1) — Android requires the
+         permission even for a socket that never leaves the device. BASTION opens no other
+         connection: link/TakClient connects to a literal 127.0.0.1 and NetworkGuardTest fails
+         the build if network code appears anywhere else. Still no Bluetooth or location. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- GPS position of this phone (owner decision 2026-11-22): distance and bearing to team
+         members and navigation answers. Satellites only (LocationManager GPS provider); the
+         position is held in memory and never stored or sent by BASTION's location code. -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!-- Always-on service (owner decision 2026-11-22): stay running to receive and answer
+         mesh messages with the screen off. Needs a permanent notification. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Silent installs from the kit folder; only honoured when BASTION is device manager. -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <queries>
+        <package android:name="org.kiwix.kiwixmobile" />
+        <package android:name="com.geeksville.mesh" />
+        <package android:name="com.atakmap.app.civ" />
+        <!-- The same apps as published outside the Play Store (different package names). -->
+        <package android:name="org.kiwix.kiwixmobile.standalone" />
+        <!-- Device manager's "Hide other apps" needs to see every app that has a launcher
+             icon; Android otherwise hides most installed apps from BASTION. -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
+    <application
+        android:label="@string/app_name"
+        android:allowBackup="false"
+        tools:replace="android:allowBackup"
+        android:largeHeap="true"
+        android:dataExtractionRules="@xml/no_backup"
+        android:fullBackupContent="@xml/no_backup_legacy"
+        android:theme="@style/Theme.Bastion">
+        <!-- GPU backend (LiteRT-LM via OpenCL). Optional: absent on the emulator and some
+             phones, where Auto falls back to CPU. Android 12+ needs these declared. -->
+        <uses-native-library android:name="libOpenCL.so" android:required="false" />
+        <uses-native-library android:name="libvndksupport.so" android:required="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-- BASTION as the home screen. Disabled on an ordinary install (no "choose a home app"
+             prompt); switched on only when BASTION is the device manager. -->
+        <activity-alias
+            android:name=".HomeAlias"
+            android:targetActivity=".MainActivity"
+            android:enabled="false"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity-alias>
+        <!-- Mesh inbox: reads the Meshtastic app's message notifications (and nothing else —
+             filtered in code). Runs only if the user grants notification access in Android
+             settings. Not a network or Bluetooth capability; no uses-permission is added. -->
+        <service
+            android:name=".mesh.MeshInboxService"
+            android:exported="true"
+            android:label="BASTION mesh inbox"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".BastionService"
+            android:exported="false"
+            android:foregroundServiceType="specialUse|location">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="Off-grid mesh inbox and auto-answer on a dedicated field device" />
+        </service>
+        <!-- Device-manager role (Android "device owner"): given once by the PC setup tool on a
+             factory-reset, dedicated phone. Without it these do nothing. -->
+        <receiver
+            android:name=".device.BastionAdmin"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".device.InstallResult" android:exported="false" />
+    </application>
+</manifest>

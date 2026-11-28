@@ -1,0 +1,68 @@
+{
+  "id": "shock-recognition-treatment",
+  "kind": "protocol",
+  "title": "Shock: how to recognize it and what to do",
+  "asks": [
+    "signs of shock",
+    "how do I treat shock",
+    "he lost a lot of blood and is pale and confused",
+    "going into shock what do I do",
+    "cold clammy skin and fast breathing after injury",
+    "should I raise the legs for shock",
+    "can I give water to someone in shock",
+    "casualty shocky weak pulse",
+    "shok treatment first aid",
+    "pt pale sweaty confused after bleed"
+  ],
+  "answer": [
+    "Signs of shock: mental confusion; weak or absent pulse at the wrist (radial pulse); rapid breathing; nausea; sweaty, cool or clammy skin; excessive thirst; pale or gray skin; severe bleeding earlier.",
+    "As soon as there are signs of shock, alert medical personnel: shock leads to death if it is not quickly recognized and treated. Confusion together with a weak or absent pulse at the wrist means a significant amount of blood has been lost.",
+    "Control any bleeding first. Even when shock is already present, this is the most critical first action. Keep rechecking that tourniquets and pressure dressings are still working.",
+    "Internal bleeding into the chest or abdomen cannot be controlled in the field: it requires rapid evacuation.",
+    "Move the person under a shelter, out of direct sunlight.",
+    "If the person is conscious, and has no injury to the spine, lay them on their back with the feet raised slightly above the level of the heart. A log, pack, box or rolled jacket can hold the feet up. If sitting makes it easier for them to breathe, that is fine.",
+    "Loosen clothing at the neck, waist or anywhere it is binding (but not in a chemically contaminated area).",
+    "Keep the person from getting chilled or overheated: wrap a blanket or clothing completely around them, and make sure no part of them is touching the ground.",
+    "Calm and reassure the person.",
+    "Watch closely for life-threatening conditions, check for other injuries, and seek medical aid."
+  ],
+  "warnings": [
+    "Do not give a person in shock any food or drink.",
+    "If a leg is broken, splint it before putting the person in the shock position.",
+    "If the person is unconscious, or you must leave them, turn their head to the side so they do not choke if they vomit."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "The signs and symptoms of shock include: • Mental confusion. • Weak or absent radial pulse. • Rapid breathing. • Nausea. • Sweaty, cool, or clammy skin. • Excessive thirst. • Pale or gray skin. • Previous severe bleeding" },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "IMPORTANT! Alert medical personnel if the casualty is presenting signs of shock. 7-7. If the casualty has both indicators of mental confusion and weak or absent radial pulse of shock, the casualty has lost a significant amount of blood. Shock will lead to the casualty's death if not quickly recognized and treated." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "It is more effective to prevent shock through hemorrhage control than to treat it once it has developed. Even in cases where shock is already present, the most critical first action is to control any bleeding. Continuously reassess all bleeding control measures, such as tourniquets and pressure dressings, to ensure they remain effective and are adjusted tightly as soon as possible." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Hypovolemic shock can also result from blood loss due to internal bleeding into the abdominal or chest cavity. The first responder or CLS will not be able to control internal bleeding. This condition requires rapid evacuation of the casualty." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Move the casualty under a permanent or improvised shelter to shade them from direct sunlight. If the casualty is conscious, place the casualty in the shock recovery position (see figure 7-1), which is on their back with their feet elevated slightly above the level of their heart. This will help their blood circulation. A log, field pack, box, rolled field jacket, or other stable objects can be used to elevate their feet. If a sitting position makes it easier for the casualty to breathe, that is fine." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "The candidate will describe (or select the answer that describes) the position for a shock patient that does not have an injury to the spine or a lower extremity including all of the following: (1) patient lying on the floor, and (2) legs elevated." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Loosen clothing at the neck, waist, or anywhere is binding. WARNING Do not loosen clothing if in a chemically contaminated area." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Prevent the casualty from getting chilled or overheated. Using a blanket or clothing, cover the casualty to avoid loss of body heat by wrapping the blanket completely around the casualty. Note. Ensure no part of the casualty is touching the ground, as this increases loss of body heat." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Calm and reassure the casualty by— ▪ Taking charge and showing self-confidence. ▪ Assuring the casualty that they are being taken care of. • Watch the casualty closely for life-threatening conditions and check for other injuries, if necessary. • Seek medical aid." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If the casualty has a fractured lower extremity, do not place the casualty in the shock position until the fracture has been splinted." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "When providing first aid for shock, DO NOT give the casualty any food or drink. If you must leave the casualty or if they are unconscious, turn their head to the side (see figure 7-2) to prevent them from choking, if they vomit." }
+  ],
+  "conflict": "FOOD OR DRINK (the card follows ATP 4-02.11: none): ATP 4-02.11 (2026) para 7-17 says DO NOT give the casualty any food or drink; ATP 3-50.21 (2018) says if the victim is conscious, slowly give small doses of a warm salt or sugar solution, lists warm liquids or foods as a way to warm the victim, and says no fluids by mouth only if the victim is unconscious or has abdominal wounds. POSITION of an unconscious person: ATP 4-02.11 says turn the head to the side; ATP 3-50.21 says place them on their side or abdomen with the head turned to one side, and if unsure of the best position place the victim perfectly flat. Leg height: ATP 4-02.11 says feet slightly above the level of the heart; ATP 3-50.21 says lower extremities elevated 6 to 8 inches; HHS Ship's Medicine Chest 2003 says lying on the floor with legs elevated, only if there is no injury to the spine or a lower extremity. Signs: Ship's Medicine Chest lists rapid and shallow respiration, thirst, nausea and vomiting, weak and rapid pulse, restlessness, excitement and anxiety (compatible with the ATP list). FEMA P-2064 (2020) names shock but gives no first aid for it.",
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed in context: ATP 4-02.11 ch. 7 (signs; alert medical personnel; confusion plus weak radial pulse = major blood loss; control bleeding first; internal bleeding needs rapid evacuation; shelter; shock position with feet slightly above heart, sitting if easier to breathe; loosen clothing except in chemical areas; prevent chilling or overheating, nothing touching the ground; reassure; splint a broken leg first; no food or drink; head to the side if unconscious or left alone), HHS position standard. Call for help is early (A2), bleeding control is the first action. Food/drink, position and leg-height disagreements are listed (ATP 3-50.21's warm salt or sugar solution vs ATP 4-02.11's none). No PDF junk. Minor: W3 'turn their head to the side' is ATP's wording; with no spinal injury the recovery position (on the side) protects the airway better, per ATP 3-50.21 and ATP 6-14; consider mentioning.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
+  "approved_by": ""
+}

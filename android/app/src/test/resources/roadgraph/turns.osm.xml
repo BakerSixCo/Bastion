@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6">
+<way id="1"><nd ref="1" lat="43.6000" lon="-116.2000"/><nd ref="2" lat="43.6000" lon="-116.1900"/><nd ref="3" lat="43.6000" lon="-116.1800"/><tag k="highway" v="primary"/><tag k="name" v="Main St"/><tag k="maxspeed" v="35 mph"/></way>
+<way id="2"><nd ref="2" lat="43.6000" lon="-116.1900"/><nd ref="4" lat="43.6100" lon="-116.1900"/><tag k="highway" v="residential"/><tag k="name" v="North Rd"/></way>
+<way id="5"><nd ref="4" lat="43.6100" lon="-116.1900"/><nd ref="7" lat="43.6100" lon="-116.1800"/><nd ref="3" lat="43.6000" lon="-116.1800"/><tag k="highway" v="residential"/><tag k="name" v="Loop Rd"/></way>
+<way id="6"><nd ref="1" lat="43.6000" lon="-116.2000"/><nd ref="8" lat="43.6100" lon="-116.2000"/><nd ref="4" lat="43.6100" lon="-116.1900"/><tag k="highway" v="track"/><tag k="tracktype" v="grade4"/><tag k="name" v="Ridge Track"/></way>
+<relation id="9"><member type="way" ref="1" role="from"/><member type="node" ref="2" role="via"/><member type="way" ref="2" role="to"/><tag k="type" v="restriction"/><tag k="restriction" v="no_left_turn"/></relation>
+</osm>

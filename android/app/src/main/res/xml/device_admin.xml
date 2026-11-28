@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Policies BASTION may use as device manager. Wipe is declared for a later, explicit
+     "also factory-reset the phone" option; nothing uses it yet. -->
+<device-admin>
+    <uses-policies>
+        <wipe-data />
+    </uses-policies>
+</device-admin>

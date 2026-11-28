@@ -1,0 +1,57 @@
+{
+  "id": "water-boil-time",
+  "kind": "fact",
+  "title": "How long to boil water to make it safe to drink",
+  "asks": [
+    "how long do I boil water",
+    "boil creek water how long",
+    "is boiling enough to make water safe",
+    "how many minutes to boil water before drinking",
+    "how long to boil lake or river water",
+    "boiling time for water at high altitude",
+    "how long boil water in the mountains",
+    "boil water time",
+    "how long 2 boil watter b4 drinking",
+    "need drinking water, only have a pot and fire, boil how long, over"
+  ],
+  "answer": [
+    "If the water is cloudy, first let it settle, then filter it through a clean cloth, paper towel or coffee filter.",
+    "Bring the water to a rolling boil and keep it boiling for at least 1 minute.",
+    "Start counting when the water reaches a constant boil.",
+    "At high elevation, boil for 3 minutes. EPA says to do this above 5,000 feet; CDC says above 6,500 feet.",
+    "Boiling kills bacteria, viruses and parasites.",
+    "Let the water cool naturally, then store it in clean containers with covers."
+  ],
+  "warnings": [
+    "Boiling will not destroy other contaminants such as heavy metals, salts and most other chemicals.",
+    "Do not use water with floating material in it, or water that has a dark color or a questionable odor. Flowing water is generally better than still, stagnant water."
+  ],
+  "quotes": [
+    { "doc": "EPA-Emergency-Disinfection-of-Drinking-Water-2026.md",
+      "text": "Disinfection does not work as well when water is cloudy or colored. If water is cloudy, let it settle. Then filter the water through a clean cloth, paper towel, or coffee filter." },
+    { "doc": "EPA-Emergency-Disinfection-of-Drinking-Water-2026.md",
+      "text": "Bring water to a rolling boil for at least one minute. At altitudes above 5,000 feet (1,000 meters), boil water for three minutes." },
+    { "doc": "CDC-Make-Water-Safe-During-an-Emergency-2024.pdf",
+      "text": "Boil your water for 1 minute. At elevations above 6,500 feet, boil for 3 minutes. Let the water cool." },
+    { "doc": "CDC-Use-Safe-Water-During-an-Emergency-2024.pdf",
+      "text": "Boil water for 1 minute if local officials say you need to boil it. This is enough time to kill germs in the water. Start counting when the water comes to a constant boil. Let the water cool before drinking." },
+    { "doc": "CDC-Make-Water-Safe-During-an-Emergency-2024.pdf",
+      "text": "This method will kill bacteria, viruses, and parasites. Boiling water is the best method." },
+    { "doc": "EPA-Emergency-Disinfection-of-Drinking-Water-2026.md",
+      "text": "Let water cool naturally and store it in clean containers with covers." },
+    { "doc": "EPA-Emergency-Disinfection-of-Drinking-Water-2026.md",
+      "text": "However, boiling or disinfection will not destroy other contaminants, such as heavy metals, salts, and most other chemicals." },
+    { "doc": "EPA-Emergency-Disinfection-of-Drinking-Water-2026.md",
+      "text": "You can also use river or lake water. It is generally better to use flowing water than still, stagnant water. However, do not use water with floating material in it or water that has a dark color or questionable odor. Regardless of the source, treat the water by following the instructions on the main page above." }
+  ],
+  "conflict": "Altitude for the 3-minute boil: EPA (2026) says above 5,000 feet; CDC (2024) says above 6,500 feet; Army ATP 3-50.21 (2018) says above 8,000 feet. The card shows the EPA and CDC figures side by side; the owner must choose. Boil time: EPA and CDC say 1 minute, but older Army documents in the kit say 5 minutes (TB MED 577, 2010: 'rolling boil for 5 min at sea level'; TC 4-02.3, 2015: 'rolling boil for five minutes'; ATP 4-25.12: 'boiling fresh water for five minutes'; ATP 3-50.21 says 'one minute at sea level' in para 3-41 but 'boiling for 5 minutes' in its illness rules). EPA's own text reads '5,000 feet (1,000 meters)', which do not match (5,000 feet is about 1,500 meters); the card gives feet only. Order: the settle-and-filter line is placed before the boil line because EPA lists it first in its boil instructions; the copy of that list in the kit file is garbled ('paperboiling water towel'), so the card quotes the same instruction from EPA's 'Additional Water Guidance' section. HHS Ship's Medicine Chest (2003) and FEMA P-2064 (2020) were searched: neither gives a boil time.",
+  "review": {
+    "verdict": "pass",
+    "notes": "Re-review of the revised card (full check). Confirmed: settle/filter now comes first (EPA lists it first; the card quotes EPA's clean 'Additional Water Guidance' copy because the boil-list copy is garbled in extraction, which is the right call); rolling boil at least 1 min and count from a constant boil (EPA, CDC); 3 min at altitude with EPA 5,000 ft vs CDC 6,500 ft shown; kills bacteria, viruses, parasites (CDC); cool and store covered (EPA); heavy metals/salts/chemicals caveat (EPA; CDC agrees). New W2 (floating material, dark color, odor; flowing better than stagnant) matches EPA's Additional Water Guidance word for word in meaning. Army 5-minute and 8,000 ft figures, HHS and FEMA searches are correctly recorded in conflict. No PDF junk. Asks all match.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
+  "approved_by": ""
+}

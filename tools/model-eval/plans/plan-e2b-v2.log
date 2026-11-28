@@ -1,0 +1,470 @@
+m01    7s valid=1 out=129 | how do I stop severe bleeding from a leg wound
+   kw: severe bleeding leg wound first aid control
+   not: treating minor cuts; cleaning a wound
+m02    6s valid=1 out=134 | buddy cut his arm bad blood squirting what do i do
+   kw: severe arterial bleeding first aid tourniquet
+   not: minor cuts; cleaning a superficial wound
+m03    5s valid=1 out=130 | where do I put a tourniquet
+   kw: how to apply tourniquet first aid
+   not: how to use a tourniquet for sports injuries
+m04    5s valid=1 out=121 | how do I treat a sucking chest wound
+   kw: sucking chest wound first aid treatment
+   not: treating a stab wound; treating a gunshot wound
+m05    5s valid=1 out=127 | what are the symptoms of hypothermia
+   kw: symptoms of hypothermia signs and symptoms
+   not: causes of hypothermia; prevention of hypothermia
+m06    7s valid=1 out=160 | guy is shivering stumbling and mumbling after falling in creek
+   kw: first aid cold water immersion hypothermia shivering stumbling creek rescue
+   not: treating a minor scrape; treating a broken bone
+m07    5s valid=1 out=111 | how do you treat frostbite
+   kw: frostbite first aid treatment
+   not: preventing frostbite
+m08    5s valid=1 out=128 | should I rub frostbitten fingers with snow
+   kw: treat frostbite snow fingers
+   not: causes of frostbite; prevention of frostbite
+m09    5s valid=1 out=117 | what are the signs of heat stroke
+   kw: signs of heat stroke symptoms medical
+   not: signs of heat exhaustion
+m10    5s valid=1 out=111 | how do I treat heat exhaustion
+   kw: heat exhaustion symptoms treatment hydration
+   not: heat stroke treatment
+m11    5s valid=1 out=112 | how do I treat a burn
+   kw: first aid burn treatment severity
+   not: how to prevent burns
+m12    5s valid=1 out=123 | how do I treat a rattlesnake bite
+   kw: rattlesnake bite first aid treatment
+   not: rattlesnake venom identification; snake identification
+m13    6s valid=1 out=124 | should I cut and suck the venom out of a snake bite
+   kw: snake bite first aid venom extraction
+   not: snake bite identification; snake venom properties
+m14    6s valid=1 out=126 | how do I splint a broken leg
+   kw: splint broken leg first aid immobilization
+   not: treating a sprained ankle; setting a broken arm
+m15    6s valid=1 out=138 | how do I tell if an ankle is broken or sprained
+   kw: ankle fracture vs sprain symptoms
+   not: how to treat a broken ankle
+m16    5s valid=1 out=106 | what are the signs of a concussion
+   kw: signs of concussion symptoms
+   not: treatment for a concussion
+m17    6s valid=1 out=110 | how do I treat shock
+   kw: first aid shock treatment management
+   not: causes of shock; symptoms of shock
+m18    6s valid=1 out=116 | what are the signs of anaphylaxis
+   kw: signs of anaphylaxis symptoms
+   not: mild allergic reaction symptoms
+m19    7s valid=1 out=125 | how do I remove a tick
+   kw: how to remove tick from skin
+   not: treating tick-borne diseases
+m20    6s valid=1 out=120 | what are the symptoms of lyme disease
+   kw: symptoms of lyme disease
+   not: treatment for lyme disease
+m21    6s valid=1 out=125 | what are the symptoms of giardia
+   kw: giardia symptoms diagnosis
+   not: symptoms of traveler's diarrhea; symptoms of amoebiasis
+m22    6s valid=1 out=128 | how do I treat diarrhea and dehydration in the field
+   kw: field diarrhea dehydration treatment first aid
+   not: causes of diarrhea; medical diagnosis of diarrhea
+m23    5s valid=1 out=125 | how do I make oral rehydration solution
+   kw: oral rehydration solution recipe preparation
+   not: treating severe dehydration with intravenous fluids
+m24    4s valid=1 out=105 | what are the signs of dehydration
+   kw: signs of dehydration symptoms
+   not: causes of dehydration
+m25    5s valid=1 out=122 | what are the symptoms of altitude sickness
+   kw: symptoms of altitude sickness symptoms
+   not: causes of altitude sickness; prevention of altitude sickness
+m26    5s valid=1 out=121 | how do I treat high altitude pulmonary edema
+   kw: high altitude pulmonary edema treatment management
+   not: acclimatization for high altitude
+m27    5s valid=1 out=131 | how do I clean a wound in the field
+   kw: field wound cleaning first aid
+   not: treating severe bleeding; suturing deep wounds
+m28    5s valid=1 out=115 | what are signs a wound is infected
+   kw: signs of wound infection
+   not: how to clean a wound; types of bandages
+m29    5s valid=1 out=128 | how do I do CPR on an adult
+   kw: adult cardiopulmonary resuscitation steps
+   not: CPR on a child; CPR on a pet
+m30    5s valid=1 out=121 | what is ibuprofen used for
+   kw: ibuprofen uses and indications
+   not: ibuprofen dosage and side effects
+m31    5s valid=1 out=119 | what is tylenol for
+   kw: acetaminophen uses and indications
+   not: ibuprofen uses and indications
+m32    5s valid=1 out=131 | what is the maximum daily dose of paracetamol for an adult
+   kw: paracetamol maximum daily dose adult
+   not: paracetamol overdose symptoms; paracetamol side effects
+m33    6s valid=1 out=133 | what is benadryl used for
+   kw: diphenhydramine uses for allergy symptoms
+   not: other antihistamines; prescription medications
+m34    5s valid=1 out=112 | how do I treat a bee sting
+   kw: bee sting first aid symptoms treatment
+   not: bee venom allergy diagnosis
+m35    5s valid=1 out=122 | how do I treat a blister on my foot while hiking
+   kw: treat hiking blister first aid
+   not: preventing blisters; causes of blisters
+m36    5s valid=1 out=117 | how do I treat carbon monoxide poisoning
+   kw: carbon monoxide poisoning first aid symptoms treatment
+   not: preventing carbon monoxide leaks
+m37    5s valid=1 out=122 | what are the symptoms of carbon monoxide poisoning
+   kw: carbon monoxide poisoning symptoms
+   not: causes of carbon monoxide poisoning; how to prevent carbon monoxide poisoning
+m38    5s valid=1 out=116 | how do I treat a dislocated shoulder
+   kw: dislocated shoulder first aid treatment immobilization
+   not: shoulder injury diagnosis
+m39    6s valid=1 out=132 | what is trench foot
+   kw: trench foot medical condition symptoms
+   not: how to prevent trench foot; symptoms of deep vein thrombosis
+m40    5s valid=1 out=109 | how do I treat snow blindness
+   kw: snow blindness treatment first aid
+   not: sunburn treatment
+m41    5s valid=1 out=124 | what dose of amoxicillin should I give my dog
+   kw: amoxicillin dosage for dogs
+   not: amoxicillin dosage for humans
+m42    7s valid=1 out=158 | can I use super glue from my truck toolbox to close a deep gash on my scalp
+   kw: super glue scalp wound deep gash safety
+   not: using super glue for deep cuts on the skin; first aid for scalp injuries
+m43    5s valid=1 out=114 | what is my blood type
+   kw: blood type determination methods
+   not: blood type transfusion compatibility
+w01    6s valid=1 out=134 | how many drops of bleach to purify a gallon of water
+   kw: bleach water purification dosage gallon
+   not: how to clean surfaces with bleach; bleach concentration for swimming pools
+w02    6s valid=1 out=137 | how much clorox per gallon to make creek water safe
+   kw: chlorine concentration water purification creek
+   not: how to filter creek water; water testing methods
+w03    5s valid=1 out=129 | how long do I boil water to make it safe
+   kw: boiling water safety time
+   not: water purification methods; water storage safety
+w04    5s valid=1 out=122 | how do I disinfect water with sunlight
+   kw: water disinfection sunlight method
+   not: boiling water to kill bacteria; chemical water purification
+w05    5s valid=1 out=119 | how do I find water in the desert
+   kw: desert water sources survival methods
+   not: how to purify water
+w06    5s valid=1 out=127 | how do I make a solar still
+   kw: solar still construction water distillation
+   not: solar water heater; solar panel installation
+w07    5s valid=1 out=116 | can I drink melted snow
+   kw: ingest melted snow safety
+   not: drinking ice cubes; water safety
+w08    5s valid=1 out=108 | is it safe to drink sea water
+   kw: drinking seawater safety effects
+   not: how to purify seawater
+w09    5s valid=1 out=122 | how much water does a person need per day
+   kw: daily water intake recommendation adults
+   not: how much water to drink during exercise
+w10    5s valid=1 out=128 | how do I store water long term for emergencies
+   kw: long term water storage emergency supplies
+   not: how to purify water from a well
+w11    5s valid=1 out=128 | can I drink water from a car radiator
+   kw: drinking car radiator water safety
+   not: car radiator coolant maintenance; radiator fluid composition
+w12    6s valid=1 out=145 | can I drink the water from my water heater tank after a hurricane
+   kw: drinking water from water heater after hurricane
+   not: how to clean a water heater; water heater maintenance
+w13    5s valid=1 out=122 | does a water filter remove viruses
+   kw: water filter virus removal effectiveness
+   not: how to install a water filter; types of water filters
+f01    5s valid=1 out=125 | how do I build a fire in the rain
+   kw: starting fire in rain methods
+   not: how to build a fire in snow
+f02    5s valid=1 out=118 | how do I start a fire without matches
+   kw: start fire without matches friction methods
+   not: how to use a lighter
+f03    5s valid=1 out=128 | what makes good tinder
+   kw: fire starting tinder materials types
+   not: how to build a campfire; types of wood for burning
+f04    5s valid=1 out=127 | how do I make a bow drill
+   kw: bow drill construction method friction fire
+   not: how to use a bow and arrow
+f05    5s valid=1 out=136 | can I start a fire with a battery and steel wool
+   kw: start fire battery steel wool ignition method
+   not: safe fire starting techniques; battery chemistry
+f06    6s valid=1 out=140 | can I start a fire with my phone screen
+   kw: start fire phone screen safety
+   not: using a phone screen for light; phone screen damage
+f07    5s valid=1 out=123 | what is a dakota fire hole
+   kw: Dakota fire hole definition
+   not: Dakota tribal history; Dakota people
+s01    5s valid=1 out=126 | how do I build a debris shelter
+   kw: debris shelter construction methods materials
+   not: emergency survival kits; building a permanent home
+s02    5s valid=1 out=128 | how do I build a snow cave
+   kw: snow cave construction techniques
+   not: snow cave safety regulations; snow cave equipment
+s03    5s valid=1 out=122 | where should I not set up camp
+   kw: unsafe camping locations hazards
+   not: how to set up a safe camp
+s04    6s valid=1 out=144 | how do I stay warm sleeping in the cold without a sleeping bag
+   kw: stay warm cold weather without sleeping bag
+   not: how to use a sleeping bag; buying a sleeping bag
+s05    5s valid=1 out=127 | how do I pitch a tarp shelter
+   kw: pitch tarp shelter setup instructions
+   not: how to buy a tarp; tarp material types
+n01    5s valid=1 out=118 | how do I find north without a compass
+   kw: find north without compass
+   not: how to use a compass
+n02    6s valid=1 out=118 | how do I find the north star
+   kw: finding north star navigation astronomy
+   not: how to use a compass
+n03    5s valid=1 out=125 | how do I use a watch to find direction
+   kw: using watch for direction navigation
+   not: how to set a watch for timekeeping; watch repair
+n04    5s valid=1 out=135 | what should I do if I get lost in the woods
+   kw: lost in woods navigation survival skills
+   not: how to build a shelter in the woods
+n05    5s valid=1 out=120 | what is magnetic declination
+   kw: magnetic declination definition
+   not: how to measure magnetic declination
+n06    5s valid=1 out=127 | what is the magnetic declination at my exact campsite right now
+   kw: magnetic declination at campsite
+   not: how to measure magnetic declination
+g01    5s valid=1 out=120 | how do I signal a rescue aircraft
+   kw: signal rescue aircraft distress signals aviation
+   not: how to fly a rescue aircraft; aircraft communication protocols
+g02    5s valid=1 out=116 | how do I use a signal mirror
+   kw: how to use signal mirror
+   not: how to use a rearview mirror
+g03    5s valid=1 out=112 | what is the international distress signal
+   kw: international distress signal meaning
+   not: how to use a distress signal
+g04    5s valid=1 out=125 | what are ground to air emergency signals
+   kw: ground to air emergency signals
+   not: air traffic control signals; radio communication
+o01    5s valid=1 out=128 | how do I do the universal edibility test
+   kw: universal edibility test procedure food safety
+   not: food spoilage testing; food preservation methods
+o02    4s valid=1 out=121 | are cattails edible
+   kw: cattail edibility toxicity edible plants
+   not: cattail identification; cattail harvesting
+o03    4s valid=1 out=114 | how do I identify morel mushrooms
+   kw: mushrooms identification identification guide
+   not: poisonous mushrooms identification
+o04    5s valid=1 out=138 | how do I tell a true morel from a false morel
+   kw: true morel false morel identification features
+   not: mushroom identification for cooking; poisonous mushrooms
+o05    5s valid=1 out=147 | i found a white mushroom with gills under a pine tree is it safe to eat
+   kw: white mushroom gills under pine tree edible identification
+   not: poisonous mushrooms; identifying edible fungi; mushroom cultivation
+o06    4s valid=1 out=109 | what wild berries are poisonous
+   kw: poisonous wild berries identification
+   not: edible wild berries
+o07    4s valid=1 out=118 | how do I set a snare
+   kw: how to set a snare trapping
+   not: how to build a trap
+o08    4s valid=1 out=116 | how do I clean a fish
+   kw: fish cleaning methods scale removal
+   not: how to cook fish
+o09    5s valid=1 out=126 | are huckleberries edible
+   kw: huckleberry edibility food safety
+   not: huckleberry identification; huckleberry cultivation
+o10    4s valid=1 out=118 | which insects are safe to eat
+   kw: edible insects safe for humans
+   not: insect venom toxicity; dangerous insects
+h01    5s valid=1 out=126 | what is the bag limit for trout in Idaho
+   kw: trout bag limit idaho fishing regulations
+   not: trout feeding regulations; trout stocking limits
+h02    5s valid=1 out=123 | do I need a hunting license in Idaho
+   kw: Idaho hunting license requirements
+   not: how to hunt in Idaho; hunting regulations for other states
+h03    5s valid=1 out=123 | how do I field dress a deer
+   kw: field dressing deer guide
+   not: hunting deer; butchering game
+h04    5s valid=1 out=128 | where are the elk right now in unit 36
+   kw: elk location unit 36
+   not: elk behavior; wildlife tracking
+h05    4s valid=1 out=121 | when is elk season in Idaho
+   kw: elk hunting season Idaho
+   not: elk migration patterns; elk population statistics
+h06    5s valid=1 out=132 | how do I keep meat from spoiling in the backcountry
+   kw: meat preservation backcountry wilderness storage
+   not: refrigeration methods for meat; commercial meat packaging
+p01    5s valid=1 out=145 | how long do I process quart jars of green beans in a pressure canner
+   kw: pressure canning green beans quart jars processing time
+   not: canning vegetables in water bath; canning green beans in a pot
+p02    5s valid=1 out=134 | how much lemon juice do I add to a quart of tomatoes when canning
+   kw: tomato canning lemon juice ratio
+   not: tomato recipe ingredients; canning tomato acidity levels
+p03    5s valid=1 out=132 | can I water bath can green beans
+   kw: water bath cooking green beans
+   not: water bath canning vegetables; water bath for preserving
+p04    5s valid=1 out=128 | what are the signs of botulism in canned food
+   kw: botulism signs canned food symptoms
+   not: signs of food poisoning in general
+p05    5s valid=1 out=136 | how do I adjust canning time for high altitude
+   kw: canning time high altitude altitude adjustment food preservation
+   not: food spoilage at high altitude; altitude sickness symptoms
+p06    5s valid=1 out=125 | how do I make jerky
+   kw: how to make jerky recipe drying process
+   not: how to cure meat for long-term storage
+p07    4s valid=1 out=117 | how do I can venison
+   kw: cooking venison recipes preparation
+   not: hunting venison; venison identification
+p08    6s valid=1 out=169 | pressure canner pressure for pints at 5000 ft
+   kw: pressure canner cooking pressure pints altitude
+   not: pressure cooking food at sea level; pressure cooker safety
+p09    5s valid=1 out=132 | how long do I pressure can quart jars of broccoli
+   kw: pressure canning broccoli jar time
+   not: reheating canned broccoli; pressure canning vegetables other than broccoli
+p10    5s valid=1 out=124 | how long does dried rice last in storage
+   kw: dried rice storage shelf life
+   not: cooking methods for rice; moisture control for rice
+v01    5s valid=1 out=125 | how do I jump start a car
+   kw: jump start car procedure battery connection
+   not: diagnosing car battery failure; car battery maintenance
+v02    5s valid=1 out=141 | truck just clicks when i turn the key
+   kw: starter solenoid click no crank weak battery
+   not: clicking noise while driving; key stuck in the ignition
+v03    4s valid=1 out=122 | why is my car overheating
+   kw: car overheating causes engine coolant low
+   not: how to fix a car overheating
+v04    5s valid=1 out=123 | how do I change a flat tire
+   kw: change flat tire procedure vehicle repair
+   not: how to inflate a tire
+v05    5s valid=1 out=126 | how do I get my truck unstuck from mud
+   kw: vehicle stuck in mud recovery techniques
+   not: how to drive through deep mud
+v06    5s valid=1 out=143 | can I put water in the radiator instead of coolant
+   kw: radiator water vs coolant
+   not: how to fill a radiator with water; radiator maintenance schedule
+v07    5s valid=1 out=141 | can I weld with a car battery
+   kw: car battery welding power source safety
+   not: how to jump start a car; car battery maintenance
+v08    6s valid=1 out=151 | can I run a CPAP machine off my truck battery all night
+   kw: CPAP machine truck battery power safety
+   not: how to charge a CPAP machine; truck battery maintenance
+v09    5s valid=1 out=121 | what does the check engine light mean
+   kw: check engine light meaning diagnostic codes
+   not: how to fix a check engine light
+v10    4s valid=1 out=117 | how do I check the oil level
+   kw: check engine oil level procedure
+   not: how to change engine oil
+e01    5s valid=1 out=142 | is it safe to run a generator in the garage
+   kw: portable generator safety garage open door
+   not: storing a generator in a garage; garage door openers
+e02    5s valid=1 out=132 | can I charge my phone with a car battery
+   kw: charge phone car battery compatibility
+   not: starting a car with a phone charger
+e03    5s valid=1 out=131 | can I charge a phone from a lemon
+   kw: charge phone lemon battery safe
+   not: using citrus for cleaning; phone charging accessories
+e04    5s valid=1 out=121 | how do solar panels charge a battery
+   kw: solar panel battery charging process
+   not: how to install solar panels; battery maintenance
+e05    5s valid=1 out=125 | what size inverter do I need
+   kw: inverter size requirements power rating
+   not: how to install an inverter; inverter troubleshooting
+r01    5s valid=1 out=132 | what frequency is the NOAA weather radio in Boise
+   kw: NOAA weather radio frequency Boise
+   not: how to tune a weather radio; NOAA weather alerts
+r02    5s valid=1 out=137 | what NOAA weather radio station covers Valley county Idaho
+   kw: NOAA weather radio station coverage Valley County Idaho
+   not: local weather forecasts; specific weather alerts
+r03    5s valid=1 out=125 | do I need a license to use a ham radio
+   kw: ham radio license requirements amateur radio
+   not: commercial radio licensing; frequency allocation rules
+r04    5s valid=1 out=137 | what is the difference between FRS and GMRS
+   kw: FRS GMRS radio difference
+   not: how to operate FRS radio; how to operate GMRS radio
+r05    5s valid=1 out=136 | can I use a ham radio in an emergency without a license
+   kw: ham radio emergency operation without license
+   not: how to get a ham radio license
+r06    5s valid=1 out=121 | how do I make a dipole antenna
+   kw: how to make dipole antenna instructions
+   not: how to tune a dipole antenna; antenna theory
+r07    5s valid=1 out=128 | what radio channel does the Custer county sheriff use
+   kw: Custer County Sheriff radio frequency
+   not: how to contact the Custer County Sheriff
+r08    5s valid=1 out=124 | how do I reset a Garmin inReach
+   kw: Garmin inReach reset procedure
+   not: how to activate a Garmin inReach
+k01    5s valid=1 out=122 | how do I tie a bowline knot
+   kw: how to tie bowline knot
+   not: how to tie a clove hitch
+k02    5s valid=1 out=133 | how do I tie a clove hitch
+   kw: clove hitch knot tying instructions
+   not: how to tie a square knot; how to tie a bowline
+k03    5s valid=1 out=136 | what knot joins two ropes together
+   kw: rope joining knots tying two ropes together
+   not: how to untie a knot; how to make a bow
+k04    4s valid=1 out=118 | how do I sharpen a knife
+   kw: knife sharpening techniques whetstone sharpening process
+   not: knife repair
+k05    5s valid=1 out=127 | how do I tie a taut line hitch
+   kw: how to tie taut line hitch knot
+   not: how to tie a bowline knot
+x01    5s valid=1 out=132 | what should I do if caught in a lightning storm
+   kw: lightning storm safety procedures shelter protection
+   not: how to predict lightning; types of lightning
+x02    5s valid=1 out=130 | what do I do if I meet a bear
+   kw: encounter bear safety wildlife encounter procedure
+   not: how to feed a bear; bear behavior identification
+x03    4s valid=1 out=117 | how do I cross a river safely
+   kw: safe river crossing techniques water safety
+   not: river rafting equipment; swimming lessons
+x04    4s valid=1 out=119 | what should I do in an avalanche
+   kw: avalanche survival procedure rescue
+   not: preventing avalanches; avalanche prediction
+x05    5s valid=1 out=124 | how do I store food from bears when camping
+   kw: bear food storage camping wilderness
+   not: bear identification; bear safety rules
+x06    5s valid=1 out=127 | what should I do if I meet a mountain lion
+   kw: mountain lion encounter safety procedure
+   not: how to feed a mountain lion; mountain lion behavior
+x07    4s valid=1 out=118 | will it snow in Stanley tomorrow
+   kw: weather forecast Stanley snow
+   not: how to drive in snow; winter clothing
+y01    5s valid=1 out=133 | what should go in a bug out bag
+   kw: bug out bag contents survival kit essentials
+   not: how to pack a backpack; camping gear
+y02    5s valid=1 out=127 | what should be in a first aid kit
+   kw: first aid kit contents essential items
+   not: how to use a first aid kit
+y03    5s valid=1 out=127 | how much food should I store for an emergency
+   kw: emergency food storage quantities shelf life
+   not: how to prepare a meal for an emergency
+y04    4s valid=1 out=116 | how do I make an emergency toilet
+   kw: emergency toilet construction DIY
+   not: portable sanitation systems; plumbing repair
+y05    4s valid=1 out=116 | how do I dig a latrine
+   kw: latrine construction methods digging pit
+   not: latrine hygiene
+y06    5s valid=1 out=127 | how do I purify water after a flood
+   kw: water purification after flood methods
+   not: preventing flood damage; water filtration systems for drinking
+y07    5s valid=1 out=123 | what should I do after an earthquake
+   kw: earthquake aftercare safety procedures
+   not: earthquake causes; earthquake preparedness planning
+y08    4s valid=1 out=114 | what is the wifi password at the Stanley library
+   kw: Stanley library wifi password
+   not: how to connect to wifi
+y09    5s valid=1 out=123 | what time does the Stanley gas station close
+   kw: Stanley gas station hours of operation
+   not: fuel prices at Stanley gas station; finding a gas station location
+y10    5s valid=1 out=136 | who won the 2022 world cup
+   kw: 2022 world cup winner
+   not: 2022 football tournament schedule
+y11    5s valid=1 out=128 | how many calories are in a pound of elk meat
+   kw: calories in elk meat per pound
+   not: how to cook elk meat; elk meat nutritional guide
+y12    5s valid=1 out=129 | what is the phone number of the Boise weather radio station
+   kw: Boise weather radio station phone number
+   not: weather forecast for Boise; local news station schedule
+y13    5s valid=1 out=140 | can I use my chainsaw to cut through a car door to free someone
+   kw: chainsaw cut car door emergency
+   not: chainsaw safety instructions; vehicle lock picking
+d01    5s valid=1 out=123 | how do I get rid of aphids
+   kw: aphid control organic pesticides gardening
+   not: treating severe plant diseases
+d02    5s valid=1 out=124 | when should I plant potatoes
+   kw: potato planting time soil temperature
+   not: how to harvest potatoes; potato storage
+d03    5s valid=1 out=120 | how do I save tomato seeds
+   kw: saving tomato seeds propagation methods
+   not: how to grow tomato plants from seeds
+d04    5s valid=1 out=121 | how do I make compost
+   kw: how to make compost organic waste
+   not: how to use finished compost
+valid 156/156  seconds median 4.9 max 7.2
+exit=0

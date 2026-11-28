@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Reconstructed from the Part 95 kit excerpt, with a synthetic table title and note. -->
+<DIV5 N="95" TYPE="PART">
+  <DIV6 N="A" TYPE="SUBPART">
+    <HEAD>Subpart A—General Rules for the Personal Radio Services</HEAD>
+    <DIV8 N="95.371" TYPE="SECTION">
+      <HEAD>§ 95.371 Emission types.</HEAD>
+      <GPOTABLE>
+        <TTITLE>Emission type designators</TTITLE>
+        <CHED>Description</CHED>
+        <CHED>Designator</CHED>
+        <ROW><ENT>Voice, AM</ENT><ENT>A3E</ENT></ROW>
+        <ROW><ENT>Voice, SSB</ENT><ENT><I>J3E</I></ENT></ROW>
+        <TNOTE>Only two rows are included in this fixture.</TNOTE>
+      </GPOTABLE>
+    </DIV8>
+  </DIV6>
+  <DIV6 N="B" TYPE="SUBPART">
+    <HEAD>Subpart B</HEAD>
+    <P>This subpart is excluded from the fixture output.</P>
+  </DIV6>
+</DIV5>

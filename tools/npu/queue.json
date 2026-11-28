@@ -1,0 +1,98 @@
+{
+  "about": "NPU job queue (owner 2026-11-26: the NPU should always be tasked). Run with tools\\.venv-npu\\Scripts\\python -I tools\\npu\\run_queue.py; state in tools/npu/out/queue-state.json. Jobs with approved=false need the owner's OK (downloads, installs) and are skipped until then. Local-model output is a drafting aid only: it never reaches the phone unchecked.",
+  "jobs": [
+    {
+      "id": "tag-new-2026-11-26",
+      "title": "Tag the pages of the 2026-11-26 kit additions with card topics (109 topics)",
+      "cmd": ["{python}", "-I", "tools/npu/tag_pages.py"],
+      "approved": true,
+      "est_hours": 6.5,
+      "output": "tools/npu/out/page-topics.jsonl"
+    },
+    {
+      "id": "retag-old-109",
+      "title": "Re-tag the 55 older kit documents with the full 109-topic list (radio, food, knots, signals in older manuals)",
+      "cmd": ["{python}", "-I", "tools/npu/tag_pages.py", "--docs-file", "tools/npu/old-docs.txt", "--out", "tools/npu/out/page-topics-retag.jsonl"],
+      "approved": true,
+      "after": ["tag-new-2026-11-26"],
+      "est_hours": 7.3,
+      "output": "tools/npu/out/page-topics-retag.jsonl"
+    },
+    {
+      "id": "source-packs-comms-food",
+      "title": "Source packs: word-for-word verified quotes for 40 planned card questions (radio, electronics, navigation, livestock, butchering, food safety, herbs)",
+      "cmd": ["{python}", "-I", "tools/npu/source_packs.py"],
+      "approved": true,
+      "after": ["tag-new-2026-11-26", "retag-old-109"],
+      "est_hours": 1.2,
+      "output": "tools/npu/out/source-packs/"
+    },
+    {
+      "id": "conflict-scan",
+      "title": "Flag places where two kit sources give different instructions or numbers for the same question (e.g. Ranger Handbook TCCC vs the 2026 TCCC manual, NAVCEN vs the USCG placard, historic bulletins vs FSIS), for Claude's review",
+      "cmd": ["{python}", "-I", "tools/npu/conflict_scan.py"],
+      "approved": true,
+      "after": ["source-packs-comms-food"],
+      "est_hours": 1.0,
+      "output": "tools/npu/out/conflicts.md",
+      "note": "built 2026-11-26: code pairs number-vs-number disagreements across two docs under one topic; the model only adds an advisory CONFLICT/DIFFERENT/UNSURE verdict. For Claude's review, never the phone."
+    },
+    {
+      "id": "extract-quotes",
+      "title": "Verbatim key-quote index over the whole corpus (~10,100 pages) on the NPU: the 1-3 most load-bearing sentences per page (key instruction, number/dose/frequency/temperature, safety warning), KEPT ONLY when they are a word-for-word substring of the page (fail-closed; paraphrase is dropped). A card-sourcing / retrieval AID ONLY — never shown to a user, never treated as true; everything that ships is still quote-checked and reviewed. source_packs only covers 40 targeted questions; this indexes the whole corpus. Reads tools/kit/.textcache. Resumable. Runs after conflict-scan.",
+      "cmd": ["{python}", "-I", "tools/npu/extract_quotes.py"],
+      "approved": true,
+      "after": ["conflict-scan"],
+      "est_hours": 12.0,
+      "output": "tools/npu/out/page-quotes.jsonl"
+    },
+    {
+      "id": "zim-enrich-energypedia",
+      "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each Energypedia article (off-grid energy: micro-hydro, solar, mini-grids, biogas). SEARCH-INDEX AID ONLY — never shown as an answer, never treated as true; raises retrieval recall on the ZIM. Reads the ZIM via libzim (installed in the venv). Resumable per article.",
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/energypedia_en_all_nopic_2026-06.zim", "--backend", "openvino", "--device", "NPU", "--relevant-only"],
+      "approved": true,
+      "after": ["extract-quotes"],
+      "est_hours": 20.0,
+      "output": "tools/gpu/out/zim-notes/energypedia_en_all_nopic_2026-06.jsonl"
+    },
+    {
+      "id": "zim-enrich-postdisaster",
+      "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each article of the post-disaster survival ZIM (zimgit). Search-index aid only, never an answer. Resumable.",
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/zimgit-post-disaster_en_2024-05.zim", "--backend", "openvino", "--device", "NPU", "--relevant-only"],
+      "approved": true,
+      "after": ["zim-enrich-energypedia"],
+      "est_hours": 15.0,
+      "output": "tools/gpu/out/zim-notes/zimgit-post-disaster_en_2024-05.jsonl"
+    },
+    {
+      "id": "zim-enrich-wikipedia-medicine",
+      "title": "ZIM retrieval enrichment (NPU/OpenVINO Qwen3-8B): summary + key terms for each Wikipedia-Medicine article (~1 GB ZIM). Search-index aid only, never an answer; the medical ZIM stays the source of record. Resumable.",
+      "cmd": ["{python}", "-I", "tools/gpu/zim_enrich.py", "--zim", "tools/kit/wikipedia_en_medicine_nopic_2026-10.zim", "--backend", "openvino", "--device", "NPU", "--relevant-only"],
+      "approved": true,
+      "after": ["zim-enrich-postdisaster"],
+      "est_hours": 24.0,
+      "output": "tools/gpu/out/zim-notes/wikipedia_en_medicine_nopic_2026-10.jsonl"
+    },
+    {
+      "id": "gemma-npu-checked-answers",
+      "title": "DROPPED 2026-11-26: Gemma 4 E2B checked-answer runs on the PC already exist on the Arc GPU (tools/model-eval/pipeline.sh, llama.cpp Vulkan, gemma-4-E2B-it-Q4_0.gguf in tools/kit/pc-eval/models; 20 questions in 78 s). An OpenVINO copy would add a 5 GB download and nothing new. Owner approved the download; Claude withdrew it, nothing downloaded.",
+      "cmd": [],
+      "approved": false,
+      "dropped": true
+    },
+    {
+      "id": "embed-library",
+      "title": "DROPPED 2026-11-26: meaning-based search was already measured on the PC with EmbeddingGemma 2 and Qwen3-Reranker (tools/kit/pc-eval/models; docs/status.md 2026-11-24: semantic 24/26 vs alternate wording 26/26). No download needed or useful.",
+      "cmd": [],
+      "approved": false,
+      "dropped": true
+    },
+    {
+      "id": "figure-descriptions",
+      "title": "RELOCATED 2026-11-26 to the GPU queue (tools/gpu/queue.json#figure-descriptions). The vision-language model (Phi-3.5-vision-instruct, MIT licence, int4 OpenVINO) runs on the Arc GPU, not the NPU: OpenVINO GenAI's VLMPipeline has no NPU path for VLMs yet, and run_queue runs jobs one at a time, so captioning here would block the NPU's ~9.5 h of text jobs for the whole pass. Model downloaded + licence-verified; tools/npu/tag_figures.py built and smoke-tested (ham-radio schematics + land-nav diagrams on the GPU). The approved job now lives on the GPU queue, in parallel with the NPU.",
+      "cmd": [],
+      "approved": false,
+      "relocated_to": "tools/gpu/queue.json#figure-descriptions"
+    }
+  ]
+}

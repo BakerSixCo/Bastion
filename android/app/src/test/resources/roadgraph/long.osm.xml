@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Test fixture for RoadGraphTest: one straight 32 km road with no junction in between, so its middle is
+     far from both ends. Built at grid zoom 12 (cells about 7 km):
+     java tools/RoadGraph.java <dir with this file> <out> 12 0 0 4095 4095   (out/<x>/<y>.bin -> long/<x>/<y>.bin) -->
+<osm version="0.6">
+<way id="31"><nd ref="301" lat="43.6000" lon="-116.4000"/><nd ref="302" lat="43.6000" lon="-116.0000"/><tag k="highway" v="secondary"/><tag k="name" v="Long Rd"/></way>
+</osm>

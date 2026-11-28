@@ -1,0 +1,73 @@
+{
+  "id": "sucking-chest-wound",
+  "kind": "protocol",
+  "title": "Open (sucking) chest wound",
+  "asks": [
+    "sucking chest wound what do i do",
+    "hole in his chest bubbling blood",
+    "stab wound to the chest and air is coming out",
+    "gunshot to the chest first aid",
+    "how do i make a chest seal",
+    "chest wound hissing when he breathes",
+    "no chest seal what can i use",
+    "chest seal tape 3 sides or 4",
+    "open chest wound treatment",
+    "sucking chest wond",
+    "man shot in chest, trouble breathing, what do i do, over"
+  ],
+  "answer": [
+    "Signs of an open (sucking) chest wound: a sucking or hissing sound when the person breathes in, difficulty breathing, froth or bubbles around the wound, coughing up blood.",
+    "If you cannot tell whether a chest wound goes all the way through the chest wall, treat it as an open chest wound.",
+    "Right away, place a gloved hand over the wound as a temporary seal.",
+    "Seek medical aid: chest injuries are very serious, can be life-threatening and can change quickly.",
+    "Chest seal (vented is preferred; use a non-vented seal if that is what you have): wipe dirt, blood and sweat off the skin, have the person breathe out fully, then place the seal directly over the wound with its edges 2 inches beyond the wound. Press it on firmly for an airtight seal.",
+    "If a commercial chest seal does not give an airtight seal, tape all four sides, without covering any vents.",
+    "No chest seal: use airtight material such as a plastic wrapper or cellophane. Have the person breathe out fully, place the inner surface of the material directly over the wound with its edges 2 inches beyond the wound, and tape it down on three sides. Leave the side nearest the ground un-taped.",
+    "Check the person's back for wounds and seal any you find the same way.",
+    "Position: if conscious, a position of comfort (usually sitting); if unconscious, on their side with the injured side down.",
+    "Keep watching for increased difficulty breathing.",
+    "If breathing gets worse, sources differ. The Army first aid manual says to lift the seal, release trapped air by wiping blood or debris from the wound, then reseal or replace the seal as the person breathes out. WHO says to remove the dressing completely."
+  ],
+  "warnings": [
+    "Do not pack a chest wound with gauze or any other dressing.",
+    "Do not touch the inner surface of the seal or covering.",
+    "A covering can get stuck to the chest with clotted blood; then air cannot escape and pressure builds up in the chest. Suspect this if the person's condition worsens.",
+    "WHO: if the person cannot be observed continuously, a three-sided dressing should not be placed."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "All open or sucking chest wounds are treated by immediately applying a vented chest seal to cover the defect. If a determination cannot be made if the wound has penetrated the chest wall completely, treat the wound as though it were an open chest wound. A casualty with an open chest wound will exhibit one or more of the following signs and symptoms: • A “sucking” or “hissing” sound when the casualty inhales. • Difficulty breathing. • A puncture wound of the chest. • Froth or bubbles around the injury. • Coughing up blood. • Blood-tinged sputum (spit)." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Once an open wound is discovered, place a gloved hand over the wound to provide a temporary seal." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Injuries to the chest are very serious and can be life-threatening. The casualty's condition can change quickly with a chest injury." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Recommended treatment for open or sucking chest wounds is prompt application of a vented chest seal. If a vented chest seal is NOT available, a non-vented chest seal should be used." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Wipe any dirt, blood, or sweat from the skin with gauze supplied in the commercial chest seal. Instruct the casualty to fully exhale and then immediately place the vent of the chest seal directly over the first wound encountered. Do not touch the inner adhesive surface of the commercial chest seal. Ensure that the edges of the chest seal extend two inches beyond the wound. Firmly press the chest seal on the skin to ensure a good airtight seal. If the chest seal does not provide a good airtight seal, apply a two-inch tape (from the casualty’s first aid kit) to all four sides of the chest seal, ensuring the tape does not cover any vents, and secure it firmly to the casualty’s chest." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If there is not a commercial chest seal available, the following examples can be used as occlusive (airtight) materials: • Plastics such as the outer wrapper of the emergency dressing from the first aid kit. • The combat ration packing. • Cellophane." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "An improvised chest seal may be used to treat an open chest wound by— • Wiping any dirt, blood, or sweat from the skin with gauze or any available clothing. • Instructing the casualty to fully exhale and then place the inner surface of the outer wrapper or other occlusive material directly over the wound. Note. Do not touch the inner surface of the occlusive material. Ensure that the edges of the occlusive material extend two inches beyond the wound. • Applying two-inch tape from the casualty’s first aid kit to three sides of the occlusive material and secure it firmly to the casualty’s chest. Leave the side nearest to the ground un-taped." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "To manage a sucking chest wound (open pneumothorax): • Give high flow oxygen. • Cover the sucking chest wound with petroleum gauze or other non-adhesive dressing such as the plastic wrapper from gauze packaging. • Tape three sides of the dressing, leaving one side un-taped to act as a flap valve. • These patients need to be transferred as soon as possible to a centre where a chest tube can be placed." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Roll the casualty on their side or have the conscious casualty sit up and examine their back for any wounds. If any wounds are present on the back, treat as a chest injury with a commercial chest seal. Encourage the casualty to breathe normally. Place the casualty in a position of comfort (usually sitting) if conscious, or in the recovery position (on the casualty’s side), with the injured side down if unconscious. Continue to monitor the casualty for signs of respiratory distress (increased difficulty breathing). If the casualty has increased difficulty breathing, lift the chest seal, release any trapped air by wiping blood or debris from the wound, and reseal or replace the chest seal upon exhalation. Seek medical aid and continue to monitor the casualty until relieved by medical personnel." },
+    { "doc": "WHO-ICRC-Basic-Emergency-Care-2018.pdf",
+      "text": "Caution! There is a danger of the dressing becoming stuck to the chest wall with clotted blood. When this happens, air cannot escape from the chest cavity and pressure can build up, leading to a tension pneumothorax. Remove the dressing completely if there is worsening respiratory status or evidence of worsening perfusion. If the patient cannot be observed continuously, a three-sided dressing should NOT be placed." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Suspect a tension pneumothorax if the casualty’s condition worsens. Treat the tension pneumothorax by burping the wound or temporarily removing the dressing." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "DO NOT pack chest wounds with a hemostatic (or other) dressing. REPORT a severe chest injury to medical personnel immediately." }
+  ],
+  "conflict": "When breathing gets worse after the wound is sealed: ATP 4-02.11 (2026) says to 'lift the chest seal, release any trapped air by wiping blood or debris from the wound, and reseal or replace the chest seal upon exhalation' (its warning box also allows 'temporarily removing the dressing'); WHO-ICRC BEC (2018) says 'Remove the dressing completely' and does not say to put it back. The card shows both; the owner must choose. WHO BEC also says a three-sided dressing should NOT be placed if the patient cannot be observed continuously; ATP 4-02.11 has no such limit (shown in the card as a WHO warning). The two agree that an improvised covering is taped on three sides. Army ATP 3-50.21 (2018) differs from both: it has the casualty exhale while holding the mouth and nose closed (the Valsalva maneuver) as the wound is closed, and says 'Frequently, a taped, airtight dressing is all that is needed', with no un-taped side or vent; this is not in the card. HHS Ship's Medicine Chest (2003) agrees with three sides ('tapes three sides of the dressing over the wound'). FEMA P-2064 (2020) was searched: nothing on chest wounds.",
+  "review": {
+    "verdict": "pass",
+    "notes": "Re-review of the revised card (full check). Answer and warning lines unchanged from batch 1 and re-confirmed against ATP 4-02.11 ch. 6 and WHO BEC in context. The conflict field now records ATP 3-50.21's Valsalva and 'taped, airtight dressing' (no un-taped side) and HHS's three-sided taping, as I recommended. No PDF junk.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
+  "approved_by": ""
+}

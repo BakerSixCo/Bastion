@@ -1,0 +1,51 @@
+m02 answerable    6s verdict              The library does not contain an answer to that.
+m05 answerable    6s SHOWN                Signs and symptoms vary depending on the degree of hypothermia, and ma
+m11 answerable   11s SHOWN                The most important first action is to stop the burning process. The so
+m13 answerable    9s SHOWN                Do not cut and suck the venom out of a snake bite because you can intr
+m20 answerable    6s SHOWN                Lyme disease can produce a broad range of symptoms.
+m22 answerable    6s SHOWN                Eating a berry that causes diarrhea can lead to dehydration.
+m34 answerable    7s SHOWN                The first step in treatment following a honey bee sting is removal of 
+m38 answerable    6s SHOWN                Prompt medical treatment should be sought for suspected dislocation.
+m41 absent        6s verdict              The library does not contain an answer to that.
+m42 absent        7s verdict              The library does not contain an answer to that.
+m43 absent       20s verdict              The library does not contain an answer to that.
+w01 answerable    9s SHOWN                Two drops of 8.25% sodium hypochlorite solution (regular, unscented ch
+w05 answerable    7s SHOWN                The best place to find water is in the mountains.
+w11 absent        6s evidence-short       The library does not contain an answer to that.
+w12 absent        6s verdict              The library does not contain an answer to that.
+f01 answerable    8s SHOWN                You will most likely need some kind of cover when starting the fire, a
+f04 answerable   15s evidence-not-quoted  The library does not contain an answer to that.
+f06 absent        7s evidence-short       The library does not contain an answer to that.
+s02 answerable    8s SHOWN                - Pack the snow down with your snow shoes and let the snow set a bit b
+s04 answerable    9s SHOWN                If you wear enough clothes to keep yourself warm anyway or have a good
+n04 answerable    8s SHOWN                You should have a shelter with you for the nights, and sufficient know
+n06 absent        6s verdict              The library does not contain an answer to that.
+g02 answerable    9s SHOWN                If you don't have a mirror, but have something else reflective, you mi
+g04 answerable    7s SHOWN                The Ground-to-Air Emergency Code consists of five definite, meaningful
+o03 answerable    8s verdict              The library does not contain an answer to that.
+o05 absent        9s SHOWN                Those look like oyster mushrooms, which are a common edible known as P
+o06 answerable    7s verdict              The library does not contain an answer to that.
+h01 answerable    8s SHOWN                The trout limit is 6, and there is no harvest of Cutthroat Trout lake 
+h04 absent        8s verdict              The library does not contain an answer to that.
+h06 answerable    7s verdict              The library does not contain an answer to that.
+p03 answerable    7s verdict              The library does not contain an answer to that.
+p05 answerable    6s verdict              The library does not contain an answer to that.
+p09 absent        6s verdict              The library does not contain an answer to that.
+p10 answerable    8s verdict              The library does not contain an answer to that.
+v02 answerable   10s verdict              The library does not contain an answer to that.
+v04 answerable    8s verdict              The library does not contain an answer to that.
+v07 absent        7s SHOWN                You should always disconnect the battery every time you perform electr
+v08 absent        8s verdict              The library does not contain an answer to that.
+e01 answerable    9s SHOWN                Running the machine every few weeks will heat it up, dry it out, and c
+e03 absent        7s verdict              The library does not contain an answer to that.
+e04 answerable   11s SHOWN                An 18v solar panel will only deliver the 18v when not under load, and 
+r07 absent        7s SHOWN                Clinton, OK uses 162.525 MHz (WXK87).
+r08 absent        8s SHOWN                - press and hold the "enter" button - press the "power/light" button
+x07 absent        5s verdict              The library does not contain an answer to that.
+y08 absent        6s verdict              The library does not contain an answer to that.
+y09 absent        6s verdict              The library does not contain an answer to that.
+y10 absent        6s verdict              The library does not contain an answer to that.
+y11 absent        7s verdict              The library does not contain an answer to that.
+y12 absent        7s SHOWN                The NOAA Weather Radio for Boise County, Idaho is on 162.550 MHz (WXK6
+y13 absent        8s verdict              The library does not contain an answer to that.
+exit=0

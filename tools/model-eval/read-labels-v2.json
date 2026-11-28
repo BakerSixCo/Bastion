@@ -1,0 +1,30 @@
+{
+ "about": "Owner-side reading (Claude, 2026-11-24) of every answer shown by v2-e2b-plain-checked. bad = wrong, misleading, garbled, or answers a different question than asked. Answers not listed were read as acceptable (some are weak but on target).",
+ "bad": {
+  "m22": "diarrhea treatment answered with berry allergy talk",
+  "m35": "blister: 'bear the pain' advice, no treatment",
+  "w03": "boil water '48 minutes' and 'does not need a rolling boil' (misleading, from a Q&A post)",
+  "w05": "desert water: mountains/rock crannies only, not how to find it",
+  "w06": "solar still: list of still types, not how to make one",
+  "f02": "fire without matches: kindling and fire triangle, no ignition method",
+  "s03": "where not to camp: wildlife habituation",
+  "s04": "stay warm without a bag: 'wear your clothes, doesn't matter'",
+  "n01": "north without a compass: rambling about map bearings",
+  "n04": "lost in the woods: 'setting up a refuge is the last thing to do'",
+  "o09": "huckleberries edible: school planter lists",
+  "h01": "trout bag limit: garbled table (bass/trout mixed, 'no bag limit')",
+  "h02": "hunting license: garbled junior-license rules",
+  "p05": "canning altitude adjustment answered with climbers' acclimatization",
+  "p06": "make jerky: no method",
+  "v03": "car overheating: anecdote about antifreeze mix, not causes",
+  "v04": "change a flat: finding slow leaks",
+  "v07": "weld with a car battery: welding ON a car",
+  "e02": "charge phone from car battery: power banks charging a car battery",
+  "x02": "meet a bear: answer is a question",
+  "y03": "food to store: peanut butter jar anecdote",
+  "y07": "after an earthquake: don't swim across a river",
+  "d02": "when to plant potatoes: midsummer latest/indoors",
+  "d03": "save tomato seeds: 'collect plenty'",
+  "d04": "make compost: municipal collection"
+ }
+}

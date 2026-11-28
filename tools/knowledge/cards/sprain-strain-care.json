@@ -1,0 +1,55 @@
+{
+  "id": "sprain-strain-care",
+  "kind": "fact",
+  "title": "Care for a sprain or strain (RICE)",
+  "asks": [
+    "twisted my ankle what do I do",
+    "sprained ankle treatment",
+    "how to treat a sprain",
+    "pulled a muscle hiking what helps",
+    "rolled my ankle on the trail",
+    "what does RICE mean for a sprain",
+    "sprain or strain first aid",
+    "strained muscle care no doctor",
+    "ankel sprain help",
+    "should I take my boot off a sprained ankle",
+    "tweaked my knee and it is swelling"
+  ],
+  "answer": [
+    "Treat sprains and strains the same way: follow RICE.",
+    "Rest the injured area.",
+    "Ice for 24 to 48 hours: use improvised ice packs and cold compresses on and off during that time.",
+    "Compression: wrap or splint the area to help stabilize it.",
+    "Elevate the affected area.",
+    "Sprained ankle: if possible, leave the boot on unless circulation is compromised.",
+    "A sprain shows as pain, swelling, bruising and loss of functional movement, sometimes with a pop or tear when it happens. A strain shows as pain, muscle spasms and muscle weakness."
+  ],
+  "warnings": [
+    "A different length or shape of the limb, loss of pulse or feeling in the limb, an audible \"snap\", or a crackling or popping sound under the skin are warning signs of a fracture, not just a sprain. If the injury is over a bone, consider the possibility of a fracture.",
+    "If the limb is numb, tingling, cold, or pale to bluish, circulation may be impaired: get the person to medical treatment as soon as possible. Prompt treatment may prevent loss of the limb.",
+    "Severe strains that partly or completely tear the muscle or tendon can be very painful and disabling."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "A sprain is an injury to a tendon or ligament in the body. Signs and symptoms associated with sprains include pain, swelling, bruising, and loss of functional movement. There may be a pop or a tear associated with the injury when it occurs. The treatment for sprains and strains are similar. When treating sprains, you should follow the letters in RICE." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "RICE as defined— z R-Rest injured area. z I-Ice for 24 to 48 hours. Use improvised ice packs and cold compresses intermittently for up to forty-eight hours following the injury. z C-Compression-wrap or splint to help stabilize. If possible, leave the boot on a sprained ankle unless circulation is compromised. z E-Elevate the affected area." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Strains are an injury to the muscle or the tendon, the tissue that connects the muscle to the bone. Signs and symptoms of a strain typically include pain, muscle spasms, and muscle weakness. There can be swelling, cramping, inflammation and, in severe cases, some loss of muscle functions. Severe strains that partially or completely tear the muscle or the tendon can be very painful and disabling. Treatment follows the RICE algorithm used to treat sprains." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "The warning signs that an arm or leg might be fractured include: • Significant pain along with marked swelling. • An audible or perceived \"snap.\" • Different length or shape of limb. • Loss of pulse or sensation in the injured arm or leg. • Crepitus (a crackling or popping sound under the skin)." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Casualties with fractures of the extremities may show impaired circulation, such as numbness, tingling, cold or pale to bluish skin tone. These casualties should be evacuated to medical personnel and treated as soon as possible. Prompt medical treatment may prevent possible loss of the limb." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "Blood seeping into soft tissues from injured vessels and capillaries causes swelling and pain that may be severe at the site of the injury. If the injury is over a bone, consider the possibility of a fracture." }
+  ],
+  "review": {
+    "verdict": "pass",
+    "notes": "Confirmed: ATP 3-50.21 sprain and strain paragraphs and RICE (rest, ice 24 to 48 h intermittently, compression or splint, boot left on unless circulation is compromised, elevate), fracture warning signs and impaired-circulation evacuation from ATP 4-02.11, HHS 'If the injury is over a bone, consider the possibility of a fracture'. No other kit document gives sprain care, so no conflict to list. kind 'fact' is acceptable (RICE is a set of measures, not a strict sequence). No PDF junk. Recommended, not blocking: (1) ice wrapped in a cloth, 10-15 min at a time (ATP 4-02.11 uses this for stings and centipede bites) to avoid cold injury, especially in cold weather; (2) 'cannot bear weight' is not in any source, so the fracture-sign warning is the right stopping rule.",
+    "by": "claude-opus-5-5 (xhigh), independent review 2026-11-24"
+  },
+  "status": "reviewed",
+  "drafted_by": "claude-fable-5-2 (max)",
+  "reviewed_by": "claude-opus-5-5 (xhigh)",
+  "approved_by": ""
+}

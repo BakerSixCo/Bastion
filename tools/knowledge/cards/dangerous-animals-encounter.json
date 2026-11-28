@@ -1,0 +1,65 @@
+{
+  "id": "dangerous-animals-encounter",
+  "kind": "fact",
+  "title": "Wild and dangerous animals: keep your distance",
+  "asks": [
+    "is it ok to get close to a bear or a moose",
+    "can i feed or pet a stray dog out here",
+    "how do i keep wild animals away from my shelter",
+    "wounded bear went into the brush do i follow it",
+    "is it safe to walk up to an animal i just shot",
+    "are wild animals more dangerous after a storm or flood",
+    "can i pet a stray dog if it looks frendly",
+    "moose with a calf on the trail ahead, do we go closer or keep back, over"
+  ],
+  "answer": [
+    "Do not approach, feed or handle wild or stray animals.",
+    "Mammals have teeth and will bite in self-defense. Any mother mammal can be extremely aggressive in defense of her young, and any mammal with no route of escape will fight when cornered. The amount of injury a mammal can inflict is in direct proportion to its size.",
+    "Avoid handling insects, snakes and other animals, to prevent bites or injury.",
+    "Do not place your hands or feet anywhere without first looking to see what is there.",
+    "Inspect a shelter site for venomous snakes, ticks, mites, scorpions and stinging ants.",
+    "Never store food in your shelter: it may attract wild animals and could be hazardous to you.",
+    "Bears are always dangerous. A wounded bear is most dangerous and should not be followed into cover.",
+    "Make sure a hunted animal is dead before approaching it: it may attack when wounded. A snared animal that is still alive becomes quite aggressive when approached.",
+    "After a disaster, be aware of snakes and other pests that may have come with the storm. Disasters and life-threatening situations increase the unpredictable nature of wild animals.",
+    "Not covered: this library has no guidance on what to do when a bear, mountain lion, moose or other large animal approaches, charges or attacks you. The lines above are about keeping your distance; they do not tell you what to do when the animal comes at you.",
+    "If an animal bites you, or its saliva gets on broken skin or in your eyes or mouth: immediately wash the area with soap and water and seek immediate medical attention. The full steps are on this library's card 'Animal bite: first aid and rabies'."
+  ],
+  "warnings": [
+    "You cannot always tell if an animal has rabies. Once the signs and symptoms of rabies develop, the disease is almost always fatal. Rabies is preventable if an exposed person receives prompt medical care."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Do not approach, feed or handle wild or stray animals. If you are bitten or get animal saliva on broken skin or in your eyes or mouth, immediately wash the area with soap and water and seek immediate medical attention. Rabies is preventable if exposed individuals receive prompt medical care after being exposed." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Take caution, mammals have teeth and will bite in self-defense. The bite from a mammal can cause a severe infection. The amount of injury that a mammal can inflict is in direct proportion to its size. Any mother mammal can be extremely aggressive in defense of her young. Any mammal with no route of escape will fight when cornered." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Remind Soldiers to avoid handling insects, arthropods, snakes, and other animals to prevent bites or injury." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Not placing your hands or feet anywhere without first looking to see what is there." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Remember thick, brushy, low ground also harbors more insects. Inspect the site for venomous snakes, ticks, mites, scorpions, and stinging ants." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Food should never be stored in the isolated person’s shelter as this may attract wild animals and could be hazardous to the isolated person." },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "Bears are always dangerous: A wounded bear is most dangerous and should not be followed into cover." },
+    { "doc": "Army-ATP-3-50.21-Survival-2018.pdf",
+      "text": "Ensure the animal is dead before approaching the animal, as it may attack when wounded." },
+    { "doc": "Army-TC-21-3-Cold-Weather-Operations-Survival-2025.pdf",
+      "text": "Check snares every few hours so that another animal does not take the catch. A snared animal that is still alive becomes quite aggressive when approached." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "Be aware of potential pest problems, such as mice, rats, insects, or snakes that may have come with the storm. Remember that disasters and life-threatening situations will increase the unpredictable nature of wild animals." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "You cannot always tell if an animal has rabies. Once the signs and symptoms of rabies develop, the disease is almost always fatal in man." }
+  ],
+  "conflict": "No disagreement between sources on this card. Split in revision (2026-11-25), as the reviewer asked: the animal-bite first aid and the rabies questions, with their source disagreements, moved to the new protocol card animal-bite-first-aid; this card keeps only 'keep your distance' and points to it by title ('Animal bite: first aid and rabies'). Dependency for the owner: approve this card only together with animal-bite-first-aid, or remove the pointer sentence; if that card's title changes, change it here too. Gap, now stated on the card: no kit source (including the Idaho regulations, which only say 'Caution: grizzly bears may be encountered') says what to do when a bear, mountain lion, moose or other large animal approaches, charges or attacks (searched every document). Added in revision from ATP 3-50.21 para 4-80: mammals bite in self-defense, a mother defends her young, a cornered mammal fights. Not used: ATP 3-50.21 para 5-1 lists 'Repels mosquitos and dangerous animals' among the uses of fire; left out because it is a bare list item and could be over-trusted against large animals; owner to decide.",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. (1) Fixed: the honest-gap line is added (no kit guidance for a bear, mountain lion or moose that approaches, charges or attacks; confirmed: the Idaho rules only say 'Caution: grizzly bears may be encountered', and their 'If you encounter animals, leave the area' is about not disturbing wintering deer and elk while gathering antlers, so it is rightly not used); the bite first aid is split into the protocol card animal-bite-first-aid, and the pointer names it by its exact title 'Animal bite: first aid and rabies' (the card exists). The bite-related findings (HHS unprovoked-bite sentence, capture-or-kill conflict, 'weeks, months or years' wording) now live on that card. (2) Every line re-checked: ATP 4-25.12 6-46 (do not approach, feed or handle; wash and seek immediate care), ATP 3-50.21 4-80 (bites in self-defense, mother defends her young, cornered mammal fights, injury in proportion to size; written in the food chapter but stated generally), ATP 4-25.12 avoid handling, ATP look before placing hands or feet, site inspection, no food in the shelter, TC 21-3 7-33 wounded bear, ATP make sure a shot animal is dead, TC 21-3 snared animal aggressive, FEMA post-disaster animals, rabies warning ('in man' dropped). (3) No conflicts left on this card. (4) Nothing missing that the kit holds. (5) All asks answered; 'keep wild animals away from my shelter' is answered by the no-food-in-shelter line. (6) Fact, correct after the split. previous review: (verdict fail, by claude-opus-5-5 xhigh; given on this card before it was split into this card and animal-bite-first-aid) Fail. Drafter flag verdicts: the rabies conflict is correctly shown attributed (ATP 4-02.11: vaccine unless a pet verified up to date; ATP 4-25.12: evaluate all exposures; HHS 2003: provoked bite by a domestic dog/cat observed healthy 10 days). No-approach guidance: confirmed, no kit source (including the Idaho regulations, which only say 'Caution: grizzly bears may be encountered') says what to do when a bear, mountain lion or moose approaches or charges. Problems: (1) The HHS line drops the sentence right after it in its own quote: 'However, the dog or cat that bites without apparent provocation may be considered rabid.' With stray-dog asks on the card it is needed. Fix: add it. (2) Conflict shown one way only: the last line (ATP 4-02.11 'If unable to capture or kill the animal...') implies the bitten person may try; ATP 4-25.12 says 'Capturing animals for observation or euthanizing animals for rabies testing is best performed by qualified veterinary or force health protection personnel who are already vaccinated against the disease.' Fix: show that line beside it, attributed. (3) Honest gap: add a plain line that the kit has no guidance for an approaching or charging bear, mountain lion or moose, so 'do not approach' is not taken as covering it. (4) Kind: the bite section is ordered first-aid steps inside a 'fact' card; split it (fact: keep away from animals; protocol: animal bite first aid) or make the bite part a protocol. (5) Wording: 'still effective if given weeks, months or even years later' can read as 'no hurry' to someone far from help; keep it after the prompt-care line and phrase it as 'even if time has passed, still get evaluated'. Verified faithful: avoid/feed/handle, look before placing hands or feet, site inspection, no food in the shelter, wounded bear, make sure a shot animal is dead, snared animal, FEMA post-disaster animals, bite steps, 15-minute wash (attributed), antiseptic conflict (ATP 4-02.11 vs JTS) shown, saliva in eyes or mouth, suturing warning. Optional: ATP 4-02.11 mentions tetanus prophylaxis by a health professional.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review (bite first aid split off into animal-bite-first-aid)",
+  "reviewed_by": "claude-opus-5-5",
+  "approved_by": ""
+}

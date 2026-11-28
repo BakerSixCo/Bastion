@@ -1,0 +1,368 @@
+{
+  "cases": [
+    {
+      "id": "rr01",
+      "topic": "radio-rules",
+      "question": "What does the FCC say about a license for General Mobile Radio Service?",
+      "expected_file": "FCC-Consumer-Guide-Personal-Radio-Services.md",
+      "expected_phrase": "operated only with an FCC license"
+    },
+    {
+      "id": "rr02",
+      "topic": "radio-rules",
+      "question": "Which bands does the FCC personal radio service guide identify for GMRS channels?",
+      "expected_file": "FCC-Personal-Radio-Services-Channels-2026.md",
+      "expected_phrase": "channels around 462 MHz and 467 MHz"
+    },
+    {
+      "id": "rr03",
+      "topic": "radio-rules",
+      "question": "Where can an owner check which radio service a dual-use FRS/GMRS handset was certified for?",
+      "expected_file": "FCC-Consumer-Guide-Personal-Radio-Services.md",
+      "expected_phrase": "label on the unit or the operations manual"
+    },
+    {
+      "id": "rr04",
+      "topic": "radio-rules",
+      "question": "What does Part 97 say about investigation and self-training as purposes of amateur radio?",
+      "expected_file": "FCC-47-CFR-Part-97-Amateur-Radio-Service-2026.md",
+      "expected_phrase": "self-training, intercommunication and technical investigations"
+    },
+    {
+      "id": "md01",
+      "topic": "mayday",
+      "question": "What title does the Coast Guard NAVCEN guide use for its section about making a maritime MAYDAY call?",
+      "expected_file": "USCG-NAVCEN-Marine-VHF-Channels-2026.md",
+      "expected_phrase": "Sending A Distress Call"
+    },
+    {
+      "id": "md02",
+      "topic": "mayday",
+      "question": "What vessel name appears in the NAVCEN example of a MAYDAY call?",
+      "expected_file": "USCG-NAVCEN-Marine-VHF-Channels-2026.md",
+      "expected_phrase": "BLUE DUCK"
+    },
+    {
+      "id": "md03",
+      "topic": "mayday",
+      "question": "What separate digital distress alert topic follows the NAVCEN voice MAYDAY section?",
+      "expected_file": "USCG-NAVCEN-Marine-VHF-Channels-2026.md",
+      "expected_phrase": "DSC Distress: Transmitting a DSC Distress Alert"
+    },
+    {
+      "id": "md04",
+      "topic": "mayday",
+      "question": "What kind of coordinates does the NAVCEN MAYDAY reference mention for vessel position?",
+      "expected_file": "USCG-NAVCEN-Marine-VHF-Channels-2026.md",
+      "expected_phrase": "latitude or longitude"
+    },
+    {
+      "id": "wx01",
+      "topic": "weather-radio",
+      "question": "Where does the NWS SAME guide point a reader for model-specific weather radio programming directions?",
+      "expected_file": "NWS-NOAA-Weather-Radio-SAME-Codes-2026.md",
+      "expected_phrase": "your radio's user's manual"
+    },
+    {
+      "id": "wx02",
+      "topic": "weather-radio",
+      "question": "What field identifies a county in the NWS weather radio SAME table?",
+      "expected_file": "NWS-NOAA-Weather-Radio-SAME-Codes-2026.md",
+      "expected_phrase": "SAME Location Code"
+    },
+    {
+      "id": "wx03",
+      "topic": "weather-radio",
+      "question": "What does the Transmitter Call Sign column identify in the NWS weather radio SAME guide?",
+      "expected_file": "NWS-NOAA-Weather-Radio-SAME-Codes-2026.md",
+      "expected_phrase": "Station call sign of the transmitter"
+    },
+    {
+      "id": "wx04",
+      "topic": "weather-radio",
+      "question": "What labels appear under transmitter status in the NWS SAME guide?",
+      "expected_file": "NWS-NOAA-Weather-Radio-SAME-Codes-2026.md",
+      "expected_phrase": "Normal, Degraded, and Out of Service"
+    },
+    {
+      "id": "el01",
+      "topic": "electronics",
+      "question": "What does the NEETS soldering module call the flux it associates with tinning copper wire?",
+      "expected_file": "Navy-NEETS-Module-04-Conductors-Wiring-Soldering-and-Schematics-NAVEDTRA-14176A.pdf",
+      "expected_phrase": "rosin flux"
+    },
+    {
+      "id": "el02",
+      "topic": "electronics",
+      "question": "What is the component protector in Figure 2-37 of the NEETS soldering module called?",
+      "expected_file": "Navy-NEETS-Module-04-Conductors-Wiring-Soldering-and-Schematics-NAVEDTRA-14176A.pdf",
+      "expected_phrase": "Heat shunt"
+    },
+    {
+      "id": "el03",
+      "topic": "electronics",
+      "question": "Which NEETS soldering illustration compares the shapes of soldering-iron tips?",
+      "expected_file": "Navy-NEETS-Module-04-Conductors-Wiring-Soldering-and-Schematics-NAVEDTRA-14176A.pdf",
+      "expected_phrase": "Soldering iron tip shapes"
+    },
+    {
+      "id": "el04",
+      "topic": "electronics",
+      "question": "What topic does Table 2-3 cover in the NEETS module on soldering?",
+      "expected_file": "Navy-NEETS-Module-04-Conductors-Wiring-Soldering-and-Schematics-NAVEDTRA-14176A.pdf",
+      "expected_phrase": "Approximate Soldering Iron Size for Tinning"
+    },
+    {
+      "id": "ln01",
+      "topic": "land-navigation",
+      "question": "What does a contour line represent in the USGS topographic map symbols booklet?",
+      "expected_file": "USGS-Topographic-Map-Symbols.pdf",
+      "expected_phrase": "a line of equal elevation"
+    },
+    {
+      "id": "ln02",
+      "topic": "land-navigation",
+      "question": "How does the USGS topographic map symbols booklet distinguish index contours?",
+      "expected_file": "USGS-Topographic-Map-Symbols.pdf",
+      "expected_phrase": "index contours are wider"
+    },
+    {
+      "id": "ln03",
+      "topic": "land-navigation",
+      "question": "Which colors does the USGS topographic map symbols booklet associate with vegetation and water?",
+      "expected_file": "USGS-Topographic-Map-Symbols.pdf",
+      "expected_phrase": "vegetation (green), water (blue)"
+    },
+    {
+      "id": "ln04",
+      "topic": "land-navigation",
+      "question": "Where does a US Topo map list its contour interval?",
+      "expected_file": "USGS-US-Topo-Map-Symbols.pdf",
+      "expected_phrase": "below the bar scale"
+    },
+    {
+      "id": "at01",
+      "topic": "atak",
+      "question": "Where is the toolbar in the ATAK-CIV map display?",
+      "expected_file": "ATAK-CIV-User-Guide-v5.5-2025.pdf",
+      "expected_phrase": "The toolbar sits at the top of the map display"
+    },
+    {
+      "id": "at02",
+      "topic": "atak",
+      "question": "What is the purpose of the Point Dropper in the ATAK-CIV icon glossary?",
+      "expected_file": "ATAK-CIV-Icon-Glossary-v5.5-2024.pdf",
+      "expected_phrase": "place internationally standardized markers"
+    },
+    {
+      "id": "at03",
+      "topic": "atak",
+      "question": "What does the ATAK-CIV guide call the upper-left control for map orientation?",
+      "expected_file": "ATAK-CIV-User-Guide-v5.5-2025.pdf",
+      "expected_phrase": "North Up/Track Up"
+    },
+    {
+      "id": "at04",
+      "topic": "atak",
+      "question": "Which ATAK-CIV tool does the user guide name for importing imagery into the map?",
+      "expected_file": "ATAK-CIV-User-Guide-v5.5-2025.pdf",
+      "expected_phrase": "Imagery can be imported via the Import Manager"
+    },
+    {
+      "id": "pr01",
+      "topic": "poultry-rabbits",
+      "question": "What heading introduces chicken classifications in Peace Corps Practical Poultry Raising?",
+      "expected_file": "PeaceCorps-Practical-Poultry-Raising-M0011-2015.pdf",
+      "expected_phrase": "Types of Chickens"
+    },
+    {
+      "id": "pr02",
+      "topic": "poultry-rabbits",
+      "question": "Where can the chickens raised by poultry producers come from, according to the Peace Corps overview?",
+      "expected_file": "PeaceCorps-Practical-Poultry-Raising-M0011-2015.pdf",
+      "expected_phrase": "local flocks or from improved breeds"
+    },
+    {
+      "id": "pr03",
+      "topic": "poultry-rabbits",
+      "question": "How does the Peace Corps backyard rabbit manual define a hutch?",
+      "expected_file": "PeaceCorps-Backyard-Rabbit-Production-R0041-2014.pdf",
+      "expected_phrase": "A string or line of cages"
+    },
+    {
+      "id": "pr04",
+      "topic": "poultry-rabbits",
+      "question": "Which table in the Peace Corps backyard rabbit manual lists some common rabbit breeds?",
+      "expected_file": "PeaceCorps-Backyard-Rabbit-Production-R0041-2014.pdf",
+      "expected_phrase": "Some Common Breeds of Rabbits"
+    },
+    {
+      "id": "bu01",
+      "topic": "butchering",
+      "question": "What name does the historical USDA beef bulletin give to the front quarter in its cutting chapter?",
+      "expected_file": "USDA-Historic-Slaughtering-Cutting-Processing-Beef-on-the-Farm-1973.pdf",
+      "expected_phrase": "The forequarter"
+    },
+    {
+      "id": "bu02",
+      "topic": "butchering",
+      "question": "What name does the historical USDA beef bulletin give to the rear quarter in its cutting chapter?",
+      "expected_file": "USDA-Historic-Slaughtering-Cutting-Processing-Beef-on-the-Farm-1973.pdf",
+      "expected_phrase": "The hindquarter"
+    },
+    {
+      "id": "bu03",
+      "topic": "butchering",
+      "question": "What is the USDA historical lamb bulletin's heading for cutting the carcass?",
+      "expected_file": "USDA-Historic-FB2152-Slaughtering-Cutting-Processing-Lamb-Mutton-1967.pdf",
+      "expected_phrase": "Cutting the Carcass"
+    },
+    {
+      "id": "bu04",
+      "topic": "butchering",
+      "question": "Which trimmed pork cuts does the historical USDA yield table name alongside ham and loin?",
+      "expected_file": "USDA-FB2265-Pork-Slaughtering-Cutting-Preserving-Cooking-on-the-Farm-1981.txt",
+      "expected_phrase": "Picnic shoulder and Boston butt"
+    },
+    {
+      "id": "ft01",
+      "topic": "food-temperatures",
+      "question": "What kind of thermometer does the FSIS minimum internal cooking temperature chart name for checking food?",
+      "expected_file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "expected_phrase": "as measured with a food thermometer"
+    },
+    {
+      "id": "ft02",
+      "topic": "food-temperatures",
+      "question": "What does FSIS call the column of its cooking temperature chart that also covers rest time?",
+      "expected_file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "expected_phrase": "Minimum Internal Temperature and Rest Time"
+    },
+    {
+      "id": "ft03",
+      "topic": "food-temperatures",
+      "question": "Does the FSIS cooking temperature chart give ground poultry a separate row?",
+      "expected_file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "expected_phrase": "Ground Poultry"
+    },
+    {
+      "id": "ft04",
+      "topic": "food-temperatures",
+      "question": "How does the FSIS temperature chart label the row for reheating a cured pork product that was already cooked?",
+      "expected_file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "expected_phrase": "Fully Cooked Ham (to Reheat)"
+    },
+    {
+      "id": "fo01",
+      "topic": "food-power-outage",
+      "question": "What is the heading in the FSIS emergency food reference for the period after electricity comes back?",
+      "expected_file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "expected_phrase": "After a Power Outage"
+    },
+    {
+      "id": "fo02",
+      "topic": "food-power-outage",
+      "question": "What equipment does the FSIS emergency food guide mention in its advance planning section for a power outage?",
+      "expected_file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "expected_phrase": "an appliance thermometer"
+    },
+    {
+      "id": "fo03",
+      "topic": "food-power-outage",
+      "question": "Which marker does the FSIS outage section list when discussing frozen foods that have thawed?",
+      "expected_file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "expected_phrase": "still contain ice crystals"
+    },
+    {
+      "id": "fo04",
+      "topic": "food-power-outage",
+      "question": "What heading does the FSIS refrigerator food list use for foods treated as unsafe after an outage?",
+      "expected_file": "USDA-FSIS-Meat-Food-Safety-2026.md",
+      "expected_phrase": "Refrigerated Foods Unsafe Foods"
+    },
+    {
+      "id": "hc01",
+      "topic": "herbs-chinese-medicine",
+      "question": "Which mind and body practices does the NCCIH overview give as examples of traditional Chinese medicine approaches?",
+      "expected_file": "NIH-NCCIH-Chinese-Medicine-and-Herbs-at-a-Glance-2026.md",
+      "expected_phrase": "acupuncture and tai chi"
+    },
+    {
+      "id": "hc02",
+      "topic": "herbs-chinese-medicine",
+      "question": "What section of the NCCIH Chinese medicine overview evaluates effectiveness?",
+      "expected_file": "NIH-NCCIH-Chinese-Medicine-and-Herbs-at-a-Glance-2026.md",
+      "expected_phrase": "What the Science Says About the Effectiveness of Traditional Chinese Medicine"
+    },
+    {
+      "id": "hc03",
+      "topic": "herbs-chinese-medicine",
+      "question": "What Latin name does the NCCIH Herbs at a Glance entry list for ashwagandha?",
+      "expected_file": "NIH-NCCIH-Chinese-Medicine-and-Herbs-at-a-Glance-2026.md",
+      "expected_phrase": "Withania somnifera"
+    },
+    {
+      "id": "hc04",
+      "topic": "herbs-chinese-medicine",
+      "question": "What alternate common name does NCCIH list for Asian ginseng that refers to China?",
+      "expected_file": "NIH-NCCIH-Chinese-Medicine-and-Herbs-at-a-Glance-2026.md",
+      "expected_phrase": "Asian ginseng, Chinese ginseng"
+    },
+    {
+      "id": "un01",
+      "topic": "unanswerable",
+      "question": "What GMRS repeater setting did the fictional Cedar Lantern neighborhood association choose at its last meeting?",
+      "expected_file": null,
+      "expected_phrase": null
+    },
+    {
+      "id": "un02",
+      "topic": "unanswerable",
+      "question": "Where is the audio recording of the fictional Copper Thimble vessel's May 18, 2031 MAYDAY drill?",
+      "expected_file": null,
+      "expected_phrase": null
+    },
+    {
+      "id": "un03",
+      "topic": "unanswerable",
+      "question": "Which menu button programs the SAME alerts on the fictional PocketNimbus WX-403B receiver?",
+      "expected_file": null,
+      "expected_phrase": null
+    },
+    {
+      "id": "un04",
+      "topic": "unanswerable",
+      "question": "What does the maintenance log say about the soldering iron issued to the fictional Orchard Hollows repair bench on Night Shift B?",
+      "expected_file": null,
+      "expected_phrase": null
+    },
+    {
+      "id": "un05",
+      "topic": "unanswerable",
+      "question": "What is the unpublished grid reference for the fictional Glass Lantern survey marker on the 2099 edition of an unissued US Topo map?",
+      "expected_file": null,
+      "expected_phrase": null
+    },
+    {
+      "id": "un06",
+      "topic": "unanswerable",
+      "question": "Which label does the uninstalled fictional Cedar Lantern ATAK plugin give its private event layer?",
+      "expected_file": null,
+      "expected_phrase": null
+    },
+    {
+      "id": "un07",
+      "topic": "unanswerable",
+      "question": "How many eggs were entered in the private flock notebook at fictional Rowan Hollow Farm last Thursday?",
+      "expected_file": null,
+      "expected_phrase": null
+    },
+    {
+      "id": "un08",
+      "topic": "unanswerable",
+      "question": "What was the final temperature in the fictional Juniper Pantry fridge after its privately logged 2032 outage?",
+      "expected_file": null,
+      "expected_phrase": null
+    }
+  ]
+}

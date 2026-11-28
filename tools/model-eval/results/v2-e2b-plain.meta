@@ -1,0 +1,7 @@
+model=gemma-4-E2B-it-Q4_0.gguf
+size_bytes=2841481184
+mode=chat
+load_s=3
+peak_working_set_mb=5672
+runtime=llama.cpp version: 1.0.0-dev (build 12651, commit f5e6915c2)
+context=4096 threads=4 backend=CPU temperature=0 reasoning=off

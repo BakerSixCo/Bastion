@@ -1,0 +1,16 @@
+{
+  "id": "fake-draft",
+  "title": "FAKE draft flow (not guidance)",
+  "entry": false,
+  "status": "draft",
+  "drafted_by": "fixture",
+  "reviewed_by": "",
+  "approved_by": "",
+  "start": "a",
+  "nodes": {
+    "a": { "type": "action", "text": "Test step A: press the green test button.", "quote_refs": ["q"], "next": "e" },
+    "e": { "type": "end", "text": "End of the fake draft." }
+  },
+  "quotes": [ { "id": "q", "doc": "Fake-Test-Manual.txt", "text": "Test step A: press the green test button 30 times" } ],
+  "links": []
+}

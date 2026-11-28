@@ -1,0 +1,45 @@
+r01 answerable     3s in=812 out=30 stop
+r02 answerable     3s in=806 out=30 stop
+r03 answerable     6s in=1171 out=85 stop
+r04 answerable     5s in=1289 out=24 stop
+r05 answerable     4s in=1184 out=24 stop
+r06 answerable     5s in=1184 out=39 stop
+r07 answerable     4s in=977 out=41 stop
+r08 answerable    11s in=932 out=241 stop
+r09 answerable     9s in=667 out=200 stop
+r10 answerable    15s in=773 out=345 stop
+r11 answerable    13s in=877 out=281 stop
+r12 answerable    11s in=1055 out=211 stop
+r13 answerable     7s in=866 out=113 stop
+r14 answerable     8s in=663 out=170 stop
+r15 answerable     6s in=1015 out=81 stop
+r16 answerable    11s in=1235 out=198 stop
+r17 absent        10s in=1334 out=151 stop
+r18 answerable    10s in=1141 out=191 stop
+r19 answerable    10s in=1294 out=175 stop
+r20 answerable     7s in=964 out=113 stop
+r21 absent         5s in=1308 out=17 stop
+r22 answerable     7s in=1140 out=108 stop
+r23 answerable     4s in=1001 out=17 stop
+r24 answerable     8s in=1205 out=133 stop
+r25 absent         7s in=1201 out=85 stop
+r26 answerable    10s in=1142 out=171 stop
+r27 absent         6s in=1051 out=80 stop
+r28 absent         4s in=1127 out=11 stop
+r29 absent         4s in=1274 out=14 stop
+r30 absent         5s in=1474 out=18 stop
+r31 absent         4s in=1215 out=20 stop
+r32 absent         3s in=1010 out=11 stop
+r33 absent         4s in=870 out=39 stop
+r34 absent         4s in=1229 out=18 stop
+r35 absent         8s in=869 out=146 stop
+r36 absent         4s in=1245 out=17 stop
+r37 absent         4s in=1072 out=17 stop
+r38 absent         4s in=1229 out=20 stop
+model=gemma-4-E2B-it-Q4_0.gguf
+size_bytes=2841481184
+mode=chat
+load_s=3
+peak_working_set_mb=3523
+runtime=llama.cpp version: 1.0.0-dev (build 12651, commit f5e6915c2)
+context=4096 threads=4 backend=CPU temperature=0 reasoning=off

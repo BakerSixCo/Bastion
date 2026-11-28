@@ -1,0 +1,65 @@
+{
+  "id": "lightning-safety",
+  "kind": "fact",
+  "title": "Lightning and thunderstorms: what to do",
+  "asks": [
+    "what to do in a lightning storm",
+    "lightning safety",
+    "caught in a thunderstorm where is safe",
+    "is a car safe in lightning",
+    "is it safe to shelter in a shed during lightning",
+    "thunder is getting close what do i do",
+    "lightning while swimming or in a boat",
+    "can i use running water during a thunderstorm",
+    "someone got struck by lightning what do i do",
+    "litening storm wat do i do",
+    "thunderstorm rolling in fast, where do we go, over"
+  ],
+  "answer": [
+    "When thunder roars, go indoors. When you hear thunder or see lightning, immediately get inside a sturdy building or an enclosed vehicle with a metal roof.",
+    "Caught outdoors with no sturdy building or metal-roofed vehicle within reach: this library has no guidance for that situation. All of its advice on where to shelter from lightning is FEMA's, on this card, and it is about getting to a sturdy building or an enclosed vehicle with a metal roof.",
+    "Do not take shelter in small sheds, gazebos, dugouts, bleachers or a convertible car.",
+    "If necessary, take shelter in a car with a metal top and sides. Do not touch anything metal.",
+    "If boating or swimming, get to land and find a sturdy, grounded shelter or vehicle immediately.",
+    "When you expect thunderstorms, plan to be near sturdy shelter. Find a safe location nearby that you can go to immediately at the first sound of thunder.",
+    "During a thunderstorm, avoid running water and landline phones: electricity can travel through plumbing and phone lines.",
+    "Unplug all chargers when the storm arrives.",
+    "Watch for fallen power lines and trees."
+  ],
+  "warnings": [
+    "Lightning can cause temporary unconsciousness, difficulties in breathing, or difficulties with the heart (irregular heartbeat).",
+    "Someone struck by lightning: pay close attention to the airway and breathing, check for other injuries, treat for shock and get medical aid (Army first aid manual, burn care). If the person is not breathing, start rescue breathing immediately; if the heart has stopped, CPR. The steps are on this library's CPR card."
+  ],
+  "quotes": [
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "When thunder roars, go indoors. When you hear thunder or see lightning, immediately get inside a sturdy building or enclosed vehicle with a metal roof." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "Do not take shelter in small sheds, gazebos, dugouts, bleachers, or in a convertible car. If necessary, take shelter in a car with a metal top and sides. Do not touch anything metal." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "If boating or swimming, get to land and find a sturdy, grounded shelter or vehicle immediately." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "When you expect thunderstorms, plan to be near sturdy shelter. Find a safe location nearby to immediately go to at the first sound of thunder." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "Charge your mobile phone before the storm arrives. Unplug all chargers when the storm arrives. During thunderstorms, avoid running water or using landline phones. Electricity can travel through plumbing and phone lines. During thunderstorms, pay attention to alerts from public officials. Watch for fallen power lines and trees." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "High voltage electrical burns from an electrical source or lightning may cause temporary unconsciousness, difficulties in breathing, or difficulties with the heart (irregular heartbeat)." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "All burn care consists of— • Monitoring the casualty for life-threatening conditions. • Checking for additional injuries. • Treating for shock (if applicable). • Seeking medical aid." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Close attention to the casualty’s airway, breathing is required and always assess for secondary injuries and shock." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If the casualty is not breathing, immediately start rescuing breathing and seek medical aid." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "CPR is conducted using a specific technique to provide manual circulation support during cardiac arrest or when the heart has stopped beating effectively." }
+  ],
+  "conflict": "No disagreement between sources. Dependency for the owner: the second warning points to the CPR card (cpr-adult); approve this card only together with that one, or remove the pointer sentence. Gap, now stated on the card: the kit has nothing for a person caught in the open with no building or vehicle (searched every document for 'lightning' and 'thunder': only FEMA P-2064's Thunderstorm, Lightning, and Hail section, ATP 4-02.11 para 12-10, and unrelated hits). The second warning is built from ATP 4-02.11's burn chapter (paras 12-10, 12-13, 12-14), where lightning is named with high voltage electrical burns, and from its rescue-breathing and CPR text; no kit document has first aid written specifically for a lightning strike. The first sentence of ATP 4-02.11's warning box ('Do not touch the casualty or the electrical source with your bare hands') is left out because it refers to a live electrical source, as the reviewer confirmed.",
+  "review": {
+    "verdict": "pass",
+    "notes": "Pass. (1) Both findings fixed: line 2 says plainly that the kit has no guidance for someone caught outdoors with no sturdy building or metal-roofed vehicle (confirmed by search: 'lightning' and 'thunder' occur only in FEMA P-2064's Thunderstorm, Lightning, and Hail bullets, ATP 4-02.11 12-10, and unrelated ORNL, FEMA Planning Guidance and Idaho hits); the struck-person warning now gives actions (airway and breathing, other injuries, shock, medical aid from ATP 4-02.11 12-13/12-14; rescue breathing from 6-15; CPR from its definition) and points to 'this library's CPR card': the card cpr-adult ('CPR for an adult') exists, and the pointer agrees with that card's pulse-based branching (no pulse: CPR; pulse but not breathing: rescue breaths). (2) Every FEMA line faithful; the lightning-effects line matches the 12-10 warning box, and leaving out its 'Do not touch the casualty' sentence (written for a live electrical source) is right. (3) No conflicts. (4) Nothing else in the kit. (5) All asks answered or the gap stated. (6) Fact, correct. Dependency for the owner: cpr-adult currently has verdict fail (sent back); approve this card only together with it, or remove the pointer sentence, as the conflict field says. previous review: (verdict fail, by claude-opus-5-5 xhigh) Fail. (1) Honest gap. Every answer line is FEMA P-2064 home/town guidance that assumes a sturdy building or hard-topped vehicle is close by. The kit has no guidance for someone caught outdoors with no building or vehicle (searched every document for lightning/thunder: only FEMA P-2064, ATP 4-02.11 12-10 and unrelated hits). In a backcountry app the asks 'caught in a thunderstorm where is safe' and 'thunderstorm rolling in fast, where do we go, over' will often come from exactly that person; the card must say plainly that the kit does not cover being caught in the open, rather than imply 'go indoors' is always possible. Fix: add that line. (2) The warning lists what lightning can do (ATP 4-02.11) with no action; add a pointer to the CPR card for someone not breathing. The card is right to leave out the first sentence of that ATP warning box ('Do not touch the casualty...'), which there refers to a live electrical source. All present lines match FEMA P-2064's Thunderstorm section; kind fact fine. Optional: drop 'Unplug all chargers' (true to FEMA, irrelevant in the field).",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review",
+  "reviewed_by": "claude-opus-5-5",
+  "approved_by": ""
+}

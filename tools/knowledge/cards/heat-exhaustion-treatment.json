@@ -1,0 +1,72 @@
+{
+  "id": "heat-exhaustion-treatment",
+  "kind": "protocol",
+  "title": "Heat exhaustion: signs and first aid",
+  "asks": [
+    "heat exhaustion what do I do",
+    "how to treat heat exhaustion",
+    "overheated hiking dizzy and sweating a lot",
+    "signs of heat exhaustion",
+    "he is pale clammy and weak in the heat",
+    "heat exhaustion vs heat stroke what to do first",
+    "got too hot feel faint and sick",
+    "heat casualty still sweating tx",
+    "heat exaustion treatment",
+    "cramps headache and nausea working in the sun",
+    "when is heat exhaustion an emergency"
+  ],
+  "answer": [
+    "Signs of heat exhaustion: heavy sweating; weakness and fatigue; dizziness or lightheadedness; headache; nausea or vomiting; pale, cool or clammy skin; rapid and shallow breathing; elevated heart rate; muscle cramps; feeling faint or fainting. Mental status is normal.",
+    "Heat exhaustion is serious and can rapidly progress to heat stroke. Treatment should be guided by medical advice if any is available.",
+    "Move the person to a cooler place: out of the heat and into a shaded or air-conditioned area.",
+    "Have them lie down and raise their legs slightly.",
+    "Cool the body: loosen or remove tight or unnecessary clothing, apply cool, wet cloths or towels to the skin, especially the neck, face and armpits, and fan them.",
+    "If the person is alert, give cool water or an electrolyte sports drink to sip. Avoid alcohol and caffeine.",
+    "Stay with the person and watch their symptoms. If they do not improve within 30 minutes, or their condition worsens, seek medical assistance immediately.",
+    "Afterwards the person should have no further heat exposure for several days."
+  ],
+  "warnings": [
+    "If the person becomes disoriented or confused, or loses consciousness, suspect heat stroke, a life-threatening condition and a true medical emergency: call for medical assistance immediately and start effective cooling rapidly.",
+    "Drinks in heat stroke: sources differ. FEMA says do not give a person with heat stroke anything to drink. The Army heat bulletin allows sips of water only if the person is conscious, fully alert and able to swallow without risk of choking or vomiting.",
+    "A person who is vomiting repeatedly should be evacuated immediately.",
+    "Give fluids by mouth only to a person who is alert."
+  ],
+  "quotes": [
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Heat exhaustion is a heat-related condition that occurs when the body becomes overheated due to prolonged exposure to high temperatures and inadequate fluid replacement. It is considered a milder form of heat illness compared to heat stroke. Signs and symptoms of heat exhaustion may include: • Heavy sweating." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Weaknesses and fatigue. • Dizziness or lightheadedness. • Headache. • Nausea or vomiting. • Pale, cool, or clammy skin. • Rapid and shallow breathing. • Elevated heart rate. • Muscle cramps. • Feeling faint or fainting." },
+    { "doc": "JTS-CPG-Prolonged_Casualty_Care_Guidelines_21_Dec_2021_ID91v1.1.pdf",
+      "text": "Heat exhaustion Symptoms: weak, dizzy, nauseated, headache, sweating, normal mental status. Heat exhaustion requires replacement of fluids and electrolytes. Heat stroke Symptoms: Hyperthermia + mental status changes. Heat stroke requires immediate cooling." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "Heat Exhaustion: Heat exhaustion is serious and can rapidly progress to heat stroke." },
+    { "doc": "HHS-Ships-Medicine-Chest-Medical-Aid-at-Sea-2003.pdf",
+      "text": "Treatment should be guided by medical advice. However, if none is available, the patient should rest in a cool environment, be hydrated, and have no further heat exposure for several days." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "If a Service member is suspected to have heat exhaustion, immediate first aid treatment should be provided. The first aid steps to treat heat exhaustion are: • Move the Service member to a cooler environment: Get them out of the heat and into a shaded or air-conditioned area. • Encourage rest and rehydration: Have the Service member lie down and elevate their legs slightly. Provide them with cool water and or an electrolyte-containing sports drink to sip on. Avoid alcohol or caffeine. • Cool the Service member's body: Loosen or remove any tight or unnecessary clothing. Apply a cool, wet cloth or towels to their skin, especially on the neck, face, and armpits. Use a fan or create air movement to aid in evaporation. • Monitor their condition: Stay with the Service member and observe their symptoms. If they do not improve within 30 minutes or their condition worsens, seek medical assistance immediately." },
+    { "doc": "Army-TB-MED-507-Heat-Stress-Control-2022.pdf",
+      "text": "The casualty should lie down in the shade with as much clothing removed as is practical. Body cooling should be initiated as quickly as possible. Thirsty and alert patients can be given oral fluids (initially 1 quart per 30 minutes). HE patients generally demonstrate rapid improvement (within the first hour) with simple cooling measures and rehydration; however, those failing to respond to treatment or manifesting decline in status during treatment should be evacuated to an MTF." },
+    { "doc": "Army-ATP-4-02.11-Casualty-Response-TCCC-First-Aid-2026.pdf",
+      "text": "Heat exhaustion can progress to heat stroke, a life-threatening condition. If the person's symptoms worsen, they become disoriented, confused, or lose consciousness, immediately call for medical assistance." },
+    { "doc": "Army-TB-MED-507-Heat-Stress-Control-2022.pdf",
+      "text": "Poor or worsening mental status represents a true medical emergency, and these Service members need rapid initiation of effective cooling measures, activation of EMS, and evacuation to an MTF." },
+    { "doc": "FEMA-Are-You-Ready-P-2064-2020.pdf",
+      "text": "Extremely high body temperature, skin that is hot and red, dizziness and confusion, and a rapid and strong pulse are all heat stroke symptoms and may be a medical emergency. Call 9-1-1 or get the victim to a hospital immediately. Do not give the person anything to drink." },
+    { "doc": "Army-TB-MED-507-Heat-Stress-Control-2022.pdf",
+      "text": "Immediately call medical evacuation or ambulance for emergency transport while doing the following: • Lay casualty down in shade, elevate feet until medical evacuation or ambulance arrives • Remove as much clothing as possible • Cool rapidly using best method possible: - Pour water over body while fanning - Repeatedly wrap in iced sheets - Apply contour conforming ice bags/frozen gel packs covering torso, neck, and scalp - Douse or immerse in iced/cold water • If conscious, provide sips of water • If persistent hyperthermia not improving, and emergency evacuation delayed, start IV hydration • Monitor airway and breathing" },
+    { "doc": "Army-TB-MED-507-Heat-Stress-Control-2022.pdf",
+      "text": "Oral fluids work well for most dehydrated patients who are not obtunded and can take fluids without risk of aspiration or vomiting." },
+    { "doc": "Army-ATP-4-25.12-Unit-Field-Sanitation-Teams-2014-C2-2025.pdf",
+      "text": "Note. Any Soldier who is vomiting repeatedly and may have sustained a heat-related injury should be immediately evacuated." }
+  ],
+  "conflict": "WHEN TO GET HELP (the card gives the ATP 4-02.11 figure): ATP 4-02.11 (2026) says seek medical assistance immediately if no improvement within 30 minutes or if worse; TC 21-3 (2025, heat exhaustion in a cold-weather environment) says evacuate if symptoms have not improved within 20 minutes or the Soldier cannot drink because of an upset stomach; TB MED 507 (2022) says patients generally improve within the first hour and those failing to respond or declining should be evacuated; FM 7-22 (2020) says heat exhaustion 'requires medical attention'; HHS Ship's Medicine Chest 2003 says treatment should be guided by medical advice. HOW MUCH TO DRINK (the card gives no amount): ATP 4-02.11 says sip cool water or an electrolyte sports drink; TB MED 507 says initially 1 quart per 30 minutes for thirsty, alert patients; TC 21-3 says one canteen over 30 to 45 minutes, plus a canteen with one packet of salt over 30 minutes if cramps occur; ATP 3-50.21 (2018) says slowly sip at least one quart per hour. MENTAL STATUS: JTS Prolonged Casualty Care 2021 says heat exhaustion has normal mental status; FM 7-22 lists confusion among heat exhaustion symptoms; ATP 4-02.11 and TB MED 507 treat confusion as heat stroke or a medical emergency. DRINKS IN HEAT STROKE (the card now shows both, attributed, in the same words as the heat-stroke card): FEMA P-2064 (2020) says of heat stroke 'Do not give the person anything to drink'; TB MED 507 (2022) Table 5-1 says 'If conscious, provide sips of water' and elsewhere limits oral fluids to 'thirsty and alert' patients who are 'not obtunded and can take fluids without risk of aspiration or vomiting'. The owner must choose, on both cards together.",
+  "review": {
+    "verdict": "pass",
+    "notes": "Re-review 2026-11-25 (claude-opus-5-5 xhigh). Both previous notes fixed: kind is now protocol and A3 to A7 are real steps in order (cooler place, lie down with legs raised, cool, sip if alert, watch 30 minutes); the heat-stroke drinking warning W2 is now attributed (FEMA: nothing to drink; TB MED 507: sips only if conscious, fully alert and able to swallow) and, after its label, matches the heat-stroke-signs-treatment line word for word (checked). 'Fully alert and able to swallow without risk of choking or vomiting' joins TB MED 507 Table 5-1 ('If conscious, provide sips of water') with its 'thirsty and alert' and 'not obtunded ... without risk of aspiration or vomiting' sentences; stricter than any one of them, not stretched. Checked in context: ATP 4-02.11 17-9 to 17-11, JTS PCC, HHS, TB MED 507 (its hydration sentence sits in the heat-casualty treatment section), ATP 4-25.12 repeated-vomiting note. Help-timing, drink-amount and mental-status disagreements are in conflict, and the card takes the cautious side (confusion treated as heat stroke). All asks answered; no PDF junk. Optional: W1 could point to the heat stroke card. previous review: (verdict pass, by claude-opus-5-5 (xhigh), independent review 2026-11-24) Confirmed in context: ATP 4-02.11 17-9 to 17-11 (signs, steps, 30-minute rule, progression to heat stroke), JTS PCC (normal mental status), HHS (serious, can progress rapidly; medical advice; rest, hydrate, no heat for several days), TB MED 507 (thirsty and alert patients drink; poor mental status = emergency), ATP 4-25.12 (repeated vomiting = evacuate), FEMA (heat stroke: nothing to drink). Drinks are limited to an alert person (A6, W3). Help-timing, drink-amount, mental-status and heat-stroke-drink disagreements are listed. No PDF junk. Point (b): A3-A7 are ordered steps (move, lie down, cool, drink, watch for 30 min); kind should be 'protocol'. Cross-card: W1 states FEMA's 'do not give the person anything to drink' for heat stroke as plain fact while the heat-stroke card follows TB MED 507 ('If conscious, provide sips'); attribute it in W1 or make both cards say the same thing.",
+    "by": "claude-opus-5-5 xhigh"
+  },
+  "status": "reviewed",
+  "drafted_by": "claude-fable-5-2 (max); revised 2026-11-25 by claude-fable-5-2 after the independent review",
+  "reviewed_by": "claude-opus-5-5",
+  "approved_by": ""
+}
